@@ -1,0 +1,14 @@
+{
+  "name": "cpeaustriajc",
+  "owner": { "name": "cpeaustriajc", "url": "https://github.com/cpeaustriajc" },
+  "description": "cpeaustriajc's Claude Code plugins.",
+  "plugins": [
+    {
+      "name": "project-knowledge",
+      "source": "./",
+      "description": "A decision log and research pages kept in your wiki, Notion, Linear, Obsidian or Confluence, read and written through the backend's CLI or MCP server.",
+      "category": "productivity",
+      "keywords": ["decisions", "adr", "wiki", "notion", "linear", "obsidian"]
+    }
+  ]
+}

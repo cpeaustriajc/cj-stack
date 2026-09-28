@@ -1,0 +1,81 @@
+{
+  "skill_name": "project-knowledge",
+  "evals": [
+    {
+      "id": 1,
+      "name": "read-supersede-chain",
+      "prompt": "in renav, are we still planning to run the core logic on the phone through JavaScriptCore? what did we decide and when",
+      "expected_output": "Finds Decision 005 (JavaScriptCore), follows Superseded by to Decision 006 (fully native, no JS on device), gives 2026-09-18 and the page names, and answers from the wiki rather than the code.",
+      "files": [],
+      "expectations": [
+        "Answer names Decision 006 (fully native) as the current decision",
+        "Answer says the JavaScriptCore decision (005) was superseded",
+        "Answer gives the date 2026-09-18",
+        "Wiki remote left untouched"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "record-decision",
+      "prompt": "note that down as a decision for renav: as of today (2026-09-28) we follow GitHub Flow \u2014 branch per issue, PR, I merge \u2014 instead of committing straight to the trunk. we copied it from my gaming-backlog-tracker repo. I'll review the wiki before it goes up.",
+      "expected_output": "A new Decision 010 page in the template, dated 2026-09-28, with a row added at the top of the Decisions index and no push; no invented rationale beyond what the user said; no mention of Claude or agents.",
+      "files": [],
+      "expectations": [
+        "A new Decision 010 page exists",
+        "New page follows the template (Status, Date 2026-09-28, Context/Decision/Consequences)",
+        "Decision 010 is the first row of the index (newest first)",
+        "New page mentions no Claude or agent",
+        "Nothing pushed to the wiki remote"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "supersede-decision",
+      "prompt": "we changed our mind on renav billing: Polar comes back as a web checkout next to the App Store, decided today 2026-09-28 in issue #15. update the decisions. don't publish yet, I want to look first.",
+      "expected_output": "A new Decision 010 superseding 003; Decision 003's body untouched, only its Status line changed to Superseded by 010; index row for 003 updated and 010 added at the top; nothing pushed.",
+      "files": [],
+      "expectations": [
+        "A new Decision 010 page exists",
+        "New page follows the template (Status, Date 2026-09-28, Context/Decision/Consequences)",
+        "Decision 010 is the first row of the index (newest first)",
+        "New page mentions no Claude or agent",
+        "Nothing pushed to the wiki remote",
+        "Decision 003 body unchanged apart from its Status line",
+        "Decision 003 Status says Superseded by 010",
+        "Index row for 003 shows Superseded by 010"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "partial-supersede",
+      "prompt": "for the backlog tracker: pro themes can now also pick a font, from a fixed list of fonts we self-host, on top of the seed colours. that goes past level 1 so it needs a decision. seed colours stay exactly as decided. decided today 2026-09-28, issue #24. don't push, I'll check it.",
+      "expected_output": "New Decision 002 that partly supersedes 001; 001's Status is one line 'Partly superseded by [[Decision 002 \u2026]]: <part>' and its body is untouched; index shows 002 at top and 001 partly superseded; nothing pushed; no Claude mentions.",
+      "files": [],
+      "expectations": [
+        "A new Decision 002 page exists",
+        "New page follows the template (Status, Date 2026-09-28, Context/Decision/Consequences)",
+        "Decision 002 is the first row of the index (newest first)",
+        "New page mentions no Claude or agent",
+        "Nothing pushed to the wiki remote",
+        "No existing decision page changed beyond its Status line",
+        "Decision 001 Status reads 'Partly superseded by' 002 on one line",
+        "Index row for 001 says partly superseded by 002"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "obsidian-bootstrap",
+      "prompt": "record a decision for pantry: the offline cache is SQLite through GRDB, not Core Data. we compared both today (2026-09-28) and GRDB won because the expiry report needs window functions. there's nothing in the vault for this project yet.",
+      "expected_output": "Creates Home.md, Decisions.md and a Decision 001 page in the vault folder the CLAUDE.md points at, with frontmatter (type decision, number, status, date), the template sections, the given reason and no invented one, no Claude mentions; other vault notes untouched.",
+      "files": [],
+      "expectations": [
+        "Home, Decisions and a Decision 001 page exist in the pointed-at folder",
+        "Decision 001 carries frontmatter with type, status and date 2026-09-28",
+        "Decision 001 follows the template sections",
+        "The given reason (window functions) is recorded",
+        "No page mentions Claude or agents",
+        "Other vault notes untouched"
+      ]
+    }
+  ]
+}
