@@ -11,7 +11,7 @@ items" and projects "spaces"; the APIs and MCP tools still say "issue" and "proj
 | Project | Epic. Its description holds the project template. |
 | Spec, engineering document | A Confluence page linked from the epic. Jira descriptions are a poor home for a long spec with a status line and history. |
 | Decision | Follows the `project-knowledge` skill if installed (Confluence adapter); otherwise a Confluence page per decision |
-| Phase | Jira has no milestone inside an epic. Use the epic's workflow status if the board has phase statuses; otherwise a `phase-demo`, `phase-implementation` … label on the epic, and a Fix Version for the Launch release. Pick one and record it in the project's facts. |
+| Phase | Jira has no milestone inside an epic. Use the epic's workflow status if the board has phase statuses; otherwise a `phase-demo`, `phase-implementation` … label on the epic, and a Fix Version for the Launch release. Pick one, and offer to note it in the project's facts. |
 | Work item | Story or Task (child of the epic); Bug for a defect |
 | Sub-item | Subtask |
 | Work type | Work type (Story, Task, Bug); a Chore is a Task with a `chore` label unless the space defines its own type |

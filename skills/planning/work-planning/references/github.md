@@ -6,7 +6,7 @@ Use `gh` (2.94 or later for sub-issues, types and dependencies; check with `gh -
 ## Objects
 
 GitHub has no project-with-documents object, so the mapping takes a choice. Ask once which the team
-uses and record it in the project's facts.
+uses, and offer to note the answer in the project's facts; don't edit the project's files unasked.
 
 | Level | GitHub object |
 |---|---|

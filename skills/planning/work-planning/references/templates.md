@@ -111,6 +111,8 @@ Only risks that change what gets built. Omit if none.
 | --- | --- | --- |
 ```
 
+Leave Owner blank unless someone named the owner; a role guessed from the question's topic is an invented owner.
+
 Omit Open questions once the scope is settled. Revise the description only when the intended
 behaviour or boundary changes.
 
@@ -137,6 +139,6 @@ Risks:
 Next:
 ```
 
-Read what changed since the previous update first. Report changed scope, dates, lead, dependencies
+Health is the project lead's judgement: if the facts given don't settle it, propose one and say it needs their confirmation. Only rate health when an update was asked for. Read what changed since the previous update first. Report changed scope, dates, lead, dependencies
 or phases. Counting finished items does not replace the lead's judgement: a project with most items
 done can still be at risk if the remaining one is blocked on another team.

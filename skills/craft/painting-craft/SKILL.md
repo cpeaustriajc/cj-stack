@@ -15,7 +15,8 @@ Each failure is cheap to prevent early and expensive to fix late, so this skill 
 
 ## References
 
-Read only the ones the picture needs:
+Read `recipes.md` before any picture with foliage, grass, metal, cloth, faces, windows, lights or water; then only the others the picture needs:
+- `references/recipes.md`: how to build the parts that fail at zoom (foliage, grass, plate armour, mail, cloth, small faces, windows, glow, wet ground, haze) and how to fix the light direction.
 - `references/anatomy.md`: human, seated, horse, dog and car measurements, pose geometry, ratios to check.
 - `references/scale.md`: one scale per depth plane, bridging scales, horizon and ground, buildings, streets, trees, reflections, atmosphere.
 - `references/armour.md`: European armour around 1400, layering, and how to brief costume research for any period.
@@ -34,16 +35,16 @@ How much the person cares about detail sets how far to take steps 5–9 below: a
 
 ## Workflow
 
-Each step stops one kind of mistake while it is still cheap to fix. Skip a step only when the picture has nothing it applies to (a landscape with no figures skips step 5), and say so.
+A picture rarely fails as a composition. It fails in its parts: a crown of blobs, armour made of tubes, grass in even strokes. Those failures are invisible at full view and obvious at 2× zoom, and patching them after the picture is composed costs round after round of review. So build and judge the hard parts on their own first, against a reference, before they go into the picture. Skip a step only when the picture has nothing it applies to, and say so.
 
-1. **Pin the tradition.** Name the art tradition with two or three named works, and get reference images before drawing. An era or place names a subject, not a style.
+1. **Pin the tradition and get references.** Name the art tradition with two or three named works, and fetch them: `python3 scripts/refs.py "<artist or subject>" <dir>` (Wikimedia Commons), or `--source met` for armour, costume and objects. Look at them with the Read tool. Get references for each hero element too (an oak, a 1400 harness, a 1990s sedan). An era or place names a subject, not a style.
 2. **Research.** Gather canon, history and real dimensions, with sources. Mark guesses UNVERIFIED.
-3. **Set up the space.** Choose the horizon, the camera's height and pitch, the ground plane, one light, and a scale in px per metre for each depth plane.
-4. **Block in masses.** Big shapes and a value plan only, nothing detailed yet.
-5. **Measure the figures and machines.** Build them from real dimensions, posed, and check them against the references as plain grey shapes.
-6. **Ground everything.** Contact, cast shadows, and overlaps in depth order.
-7. **Detail at the medium's scale.** Add only detail that survives the stylisation.
-8. **Unify.** One medium pass and one light over everything, so it reads as one picture.
+3. **Set up the space and the light.** Choose the horizon, the camera's height and pitch, the ground plane, and a scale in px per metre for each depth plane. Write down the light: source position, its colour, the fill colour (`recipes.md`, last section).
+4. **Block in masses.** Big shapes and a value plan only, nothing detailed yet. Screenshot it: if the value plan doesn't read as a thumbnail, no detail will save it.
+5. **Study the hero elements.** For each element a viewer will zoom into (the figure, the main tree, the vehicle, the building nearest the viewer), build it alone, at the pixel size it will have at 2× zoom, from its recipe in `recipes.md` and its measurements. Put it beside its reference with `scripts/compare.py` and name every structural difference: edges, value steps, shapes, how light meets it. Fix and compare again until it holds up. A study is cheap; a finished picture with a weak tree is not.
+6. **Compose.** Place the studied elements at their depth planes, scaled, and fill the rest from the same recipes at lower detail.
+7. **Ground everything.** Contact, cast shadows, and overlaps in depth order.
+8. **Unify.** One light and one medium over everything. For a painted look, render the composed picture to PNG and run `scripts/paintpass.py` over it (with `--focus` on the subject, and `--depth` if you have a depth mask), so every part shares the same brushwork. The pass unifies; it cannot rescue a weak drawing underneath.
 9. **Review zoomed in,** with the screenshot loop and the checklist at the end of this file, on every viewport and every state the picture has.
 
 ## Proportion
@@ -138,6 +139,7 @@ Look at the picture the way the user will: in the real page, on desktop and on a
 - **Space.** Do the horizon and scale with distance agree? Is there an empty gap between two scales? Are any edges unintended?
 - **Light.** Do shadows and highlights come from one source? Do reflections sit on a surface that can reflect?
 - **Tradition.** Would this sit beside the reference works, or does any part read as clip-art?
+- **Structure at zoom.** Does every 2× crop of a hero element show built structure (branches inside crowns, plate edges and environment bands, grass in tufts) and at least three value steps, or is it a flat shape with texture on top?
 - **Medium.** Did fine detail survive the stylisation? Is any repeating texture cut, smeared or evenly spread?
 - **States.** In every era, time of day and viewport, does each object belong, and do the in-between frames hold?
 - **Accuracy.** Does each costume piece, building, colour and canon detail match a source? Are proxies and UNVERIFIED items named?
