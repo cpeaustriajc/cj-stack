@@ -72,7 +72,7 @@ Brief a `researcher` agent for shapes and sizes, not history essays:
 3. Say what the game's own art shows (cover art, key art, in-game stills) and where it departs from history.
 4. Mark anything unverified as UNVERIFIED.
 
-Starting points for the next worlds:
+Worked starting points, from game-canon pictures:
 - **Kamakura Japan, 1274 (Ghost of Tsushima).** Ō-yoroi: lamellar of kozane laced in coloured silk, large square sode shoulder boards, a kabuto with fukigaeshi (turned-back wings), sometimes kuwagata horns, and a menpō or hōate face guard. The Tokyo National Museum and the Met's Japanese collection publish dimensions. Check Jin Sakai's canon armour sets against game art.
 - **Late Sengoku (Sekiro).** Wolf wears a shinobi's practical kit. Check the Shinobi Prosthetic, the Kusabimaru (a katana with a blade of about 70) and his tattered haori and scarf against game art; canon beats history here.
 - **Edo period (Onimusha: Way of the Sword).** Musashi and the Oni Gauntlet come from game key art. Tosei-gusoku plate-and-lame armour for any samurai foes.

@@ -12,19 +12,20 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "1.0.0",
-      "description": "linear-planning, linear-project and project-knowledge.",
+      "version": "2.0.0",
+      "description": "work-planning (any tracker: Linear, Jira, GitHub) and project-knowledge.",
       "category": "productivity",
       "keywords": [
-        "linear",
         "planning",
+        "linear",
+        "jira",
+        "github",
         "decisions",
         "adr",
         "wiki"
       ],
       "skills": [
-        "./skills/planning/linear-planning",
-        "./skills/planning/linear-project",
+        "./skills/planning/work-planning",
         "./skills/knowledge/project-knowledge"
       ]
     },
@@ -50,7 +51,7 @@
       "name": "cj-paint",
       "source": "./",
       "strict": false,
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "painting-craft: drawing and painting scenes, figures and vehicles in code (SVG, canvas, numpy, Blender) with a screenshot review loop.",
       "category": "design",
       "keywords": [

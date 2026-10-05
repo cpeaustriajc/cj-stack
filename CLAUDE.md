@@ -17,6 +17,11 @@ A skill changes bucket in one commit that also updates:
 
 Then run `claude plugin validate .`.
 
+## Tool-neutral
+
+A shipped skill holds a method that works on any tool. Tool mechanics go in `references/<tool>.md`
+adapters; a team's roles, rules and taste stay in that team's repo, which the skill reads first.
+
 ## Copies
 
 This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or a project's

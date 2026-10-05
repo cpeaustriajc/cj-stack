@@ -1,6 +1,6 @@
 ---
 name: painting-craft
-description: Draw and paint scenes, figures, creatures, vehicles, buildings and landscapes in code (SVG, canvas, numpy, Blender) to a gallery standard. It covers the four ways such pictures fail (wrong proportions; an amateur "a kid drew it" look; broken space, where things float, overlap in the wrong order or sit across empty gaps; and inaccurate canon or history). It also covers the code techniques that avoid them and a screenshot-and-zoom review loop. Use this skill whenever you draw, paint, illustrate or animate anything visual in code, including this site's Worlds eras. Also use it when the user pastes reference art, says a picture looks off, cheap, flat, floating, out of proportion or in the wrong depth order, says an object doesn't fit its era, or asks for research on armour, costume, architecture, vehicles or canon for a picture.
+description: Draw and paint scenes, figures, creatures, vehicles, buildings and landscapes in code (SVG, canvas, numpy, Blender) to a gallery standard, with a screenshot-and-zoom review loop. Use it whenever you draw, paint, illustrate or animate anything in code, and when someone pastes reference art, says a picture looks off, cheap, flat, floating, out of proportion or in the wrong depth order, or asks for armour, costume, architecture, vehicle or canon research for a picture.
 ---
 
 # Painting craft
@@ -15,13 +15,22 @@ Each failure is cheap to prevent early and expensive to fix late, so this skill 
 
 ## References
 
-Read `user-taste.md` first, then `worlds.md` if the picture is one of this site's eras, then only the others the picture needs:
-- `references/user-taste.md`: what this user notices and the rules each note taught. Read it once before any new picture.
+Read only the ones the picture needs:
 - `references/anatomy.md`: human, seated, horse, dog and car measurements, pose geometry, ratios to check.
 - `references/scale.md`: one scale per depth plane, bridging scales, horizon and ground, buildings, streets, trees, reflections, atmosphere.
 - `references/armour.md`: European armour around 1400, layering, and how to brief costume research for any period.
 - `references/render3d.md`: the numpy 3D figure renderer, for any figure whose pose foreshortens.
-- `references/worlds.md`: the cpeaustriajc.dev Worlds eras, their traditions and canon, and the rebuild commands. Read it before touching any era.
+- `references/code-techniques.md`: SVG, seeded randomness, animated scenes and raster passes. Read it before writing the picture's code.
+
+## Taste comes first
+
+Two people can ask for the same picture and reject each other's result. Before a new picture, find out how this person sees art, because it decides the tradition, the finish and how hard the review will be.
+
+1. **Look for a record.** A project may keep the person's taste in a rules file or a note its `CLAUDE.md` points to (for example `.claude/rules/painting-taste.md`). If one exists, read it and skip the questions.
+2. **Otherwise ask, briefly, with examples.** Ask which artists or works they love for this kind of picture; whether they will zoom in and judge fine detail or look at the whole from a distance; whether they want a quick sketch or a finished piece; and what has disappointed them in pictures before. Offer two or three named traditions to pick from rather than an open question.
+3. **Offer to save the answers** as that project's taste note, in their words, each followed by the rule it implies. Update it when a later review teaches something new, so their notes become predictable.
+
+How much the person cares about detail sets how far to take steps 5–9 below: a sketch for someone who looks from a distance still needs a sound space and value plan, but not measured hands.
 
 ## Workflow
 
@@ -110,38 +119,12 @@ Each step stops one kind of mistake while it is still cheap to fix. Skip a step 
 
 **Name your proxies and your gaps.** Record every stand-in value and every UNVERIFIED shape in the commit message, so the next pass knows what to check.
 
-## Painting in code
-
-These techniques recur whatever the subject.
-
-**SVG**
-- Document order is z-order. Build each depth plane as its own group, in back-to-front order, and insert moving elements at the depth they travel at.
-- `mix-blend-mode: multiply` on overlapping same-colour shapes darkens every overlap. Put each tint in one group and blend the group, so shapes merge instead of stacking.
-- Tile windows, bricks or halftone with a `<pattern>` anchored to one global origin, and snap shapes' edges to its grid. Otherwise the pattern cuts its cells in half at every edge.
-- Filters and gradients must be defined in the same document that renders them. A layer rasterised separately does not see the page's defs, and the page does not see the rasterised layer's.
-- Use `clipPath` to stop a shape at a horizon or region instead of trusting its outline.
-- Fit text to a box with `textLength` and `lengthAdjust="spacingAndGlyphs"`. Glyph-width estimates overflow.
-- Put labels and signs with a placement pass. Collect obstacle boxes for every placed item and every occluder (trunks, crowns, frames), then try several positions per anchor and keep the first one that is clear.
-
-**Randomness and iteration**
-- Seed every random stream, so a picture is reproducible.
-- To add random elements without moving the ones the user already approved, draw from a new seeded stream. Never insert calls into the old one. When you reorder code, keep the old stream's call order unchanged.
-- Keep magic numbers as named constants in real units (px per metre, floor pitch, heights), so the next edit can reason about them.
-
-**Animated and multi-state scenes**
-- Test the in-between frames, not only the end states. Widths, heights and positions should interpolate cleanly.
-- For moving objects, take several screenshots a fraction of a second apart, so each one is caught passing something.
-
-**Raster passes and 3D figures**
-- Paint the scene in 2D, where you control the style. Model posed figures in 3D, where proportion and foreshortening must be right. Then run one stylisation pass over everything. `render3d.md` covers the renderer, cloth, IK and the pitfalls that cost hours.
-- Preview a figure at final scale over a cached scene before running the full pipeline.
-
 ## Review loop
 
 Look at the picture the way the user will: in the real page, on desktop and on a phone, at full size and zoomed in.
 
 1. Set up once per session in your scratchpad: `mkdir -p <scratchpad>/shot && cd <scratchpad>/shot && npm i playwright && npx playwright install chromium`. Run the scripts from that folder by their path in this skill; `shoot.mjs` loads Playwright from the current directory.
-2. Serve the page (check the port is free first) and shoot it with `scripts/shoot.mjs`. A worked example is in `worlds.md`. It shoots each `--size` (default `1600x1000` and `390x844`) at device pixel ratio 2. `--section '#id' --at 0..1` scrolls through a sticky section, `--y` scrolls to a pixel, and `--repeat N --every ms` catches moving parts. It prints page errors; a page error means the picture is not the one you think.
+2. Serve the page (check the port is free first) and shoot it with `scripts/shoot.mjs`. It shoots each `--size` (default `1600x1000` and `390x844`) at device pixel ratio 2. `--section '#id' --at 0..1` scrolls through a sticky section, `--y` scrolls to a pixel, and `--repeat N --every ms` catches moving parts. It prints page errors; a page error means the picture is not the one you think.
 3. Look at the whole frame first: tradition, value plan, space.
 4. Cut 2× crops of every element with `scripts/crop.py SHOT OUT x,y,w,h:name ...` (boxes in CSS pixels; run it with `uv run --with pillow python`). Answer the checklist for each crop.
 5. Fix, re-shoot, and compare against the previous shots. Keep before and after shots, and put the exact commands in the commit message so someone else can re-run the check.

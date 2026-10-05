@@ -62,6 +62,9 @@ Then read the matching adapter:
 - **`Decision NNN <Topic>`.** One page per decision, numbered with zero padding (`001`). **It is
   never rewritten.** Its facts and wording stay as they were decided. That lets a reader trust any
   old decision page as a record of what was known then.
+- **Backends with search but no sorted views** (Linear) drop the number and the index: each
+  decision is titled `Decision: <Topic>` and found by search. Their adapter says so, and its shape
+  replaces the two items above.
 - **Research pages.** One topic each. Date the research, and mark anything not confirmed on a
   primary source as **UNVERIFIED**. When newer facts replace what a page describes, rewrite the page
   to describe the current state, and move the old description under `## History` at the foot, saying
@@ -98,9 +101,9 @@ Use the backend's own link syntax: `[[Page]]` on a wiki or in Obsidian, a page m
 5. If nothing matches, say so. Don't answer from the code or from memory as if it were the record.
 
 **Record a decision.**
-1. Read the index and take the next number.
+1. Read the index and take the next number (skip this where the adapter has no numbers).
 2. Write the page from the template.
-3. Add its row to the top of the index.
+3. Add its row to the top of the index, where there is one.
 4. Add or update the Home row, if the decision creates a page.
 5. Link the research pages it rests on.
 
@@ -155,4 +158,4 @@ gap: every later decision builds on it.
   - no page mentions Claude or agents
   - every internal link resolves
   - Home lists every page
-  - the index is newest first
+  - the index, where there is one, is newest first
