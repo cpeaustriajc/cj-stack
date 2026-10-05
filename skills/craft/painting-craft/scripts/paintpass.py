@@ -21,6 +21,7 @@ ap.add_argument('--focus-mask', help='greyscale PNG, white = focus')
 ap.add_argument('--depth', help='greyscale PNG, white = far: far areas get haze and softer strokes')
 ap.add_argument('--width', type=int, default=0, help='working width (default: source width)')
 ap.add_argument('--seed', type=int, default=7)
+ap.add_argument('--keep-lines', type=float, default=.45, help='0-1: how much of the source\'s thin lines (twigs, plate edges, rivets) survive the brushwork')
 ap.add_argument('--calm', type=float, default=.6, help='0-1: how far smooth passages (sky, gradients) are glazed back to blended paint')
 a = ap.parse_args()
 
@@ -158,6 +159,10 @@ out = np.asarray(cim).astype(np.float32) / 255
 if a.calm:
     smooth = ndimage.gaussian_filter(np.clip(1 - detail * 4, 0, 1), 4 * S) * a.calm * ~focus
     out = out * (1 - smooth[..., None]) + blur(ref, 1.2 * S) * smooth[..., None]
+if a.keep_lines:
+    # brushes wider than a twig erase it; put the source's high-frequency lines back where it has detail
+    lines = ref - blur(ref, 1.5 * S)
+    out = out + lines * (a.keep_lines * np.clip(detail, 0, 1))[..., None]
 if impasto:
     hgt = ndimage.gaussian_filter(np.asarray(hmap).astype(np.float32) / 255, .8 * S)
     gx, gy = ndimage.sobel(hgt, 1), ndimage.sobel(hgt, 0)
