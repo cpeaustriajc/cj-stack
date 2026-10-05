@@ -19,6 +19,7 @@ Build a hero element as a study first (SKILL.md, step 5), at the size it will be
 - Glow, lamps and light falloff
 - Wet ground and water
 - Distant trees, hills and haze
+- Dark passages
 - Light direction, checked once
 
 ## Foliage and tree crowns
@@ -40,7 +41,9 @@ with blob-shaped holes (reads as clip art), branches that stop at the crown's ed
    centre.
 5. **Interior shadow.** Clumps nearer the trunk and lower in the crown sit in the crown's own
    shadow: darker and less saturated than the outer, upper clumps.
-6. **Leaf scale sets mark size.** At painting scale, a mark is a cluster of leaves, never a single
+6. **Vary the outline, then lose some of it.** Give each clump its own edge scale (large lobes on big outer clumps, finer breakup on small ones), so the crown doesn't read as stacked paper cutouts with one wobble size. Where two clumps of similar value meet, drop the edge between them and let them merge; keep crisp edges only against the sky and where light meets shadow.
+7. **A lit clump is not one flat fill.** It grades from its lightest top toward its body, and carries a few leaf-cluster marks along its lit edge and a darker accent where it tucks under the clump above.
+8. **Leaf scale sets mark size.** At painting scale, a mark is a cluster of leaves, never a single
    leaf drawn individually unless it's in the near foreground.
 
 ## Grass and ground cover
@@ -142,6 +145,14 @@ do environment reflection.
   Their bases sit on the ground plane, partly hidden by the land in front.
 - With distance: lighter, cooler, lower contrast, softer edges, less detail. The farthest plane is
   close to the sky colour.
+
+## Dark passages
+
+The failure: shadowed areas (the shadow side of a trunk, the underside of a crown, a dark foreground) collapse into one muddy value with no structure, and a paint pass turns them to mud.
+
+- A dark passage still has at least two value steps and one structure: bark furrows that follow the trunk, the edges of clumps, grass tufts. Make them visible as low-contrast shapes, not as black.
+- Shadows are coloured: cooler and more saturated than the lit side, with warm reflected light near the ground or near a lit surface. A neutral grey-brown shadow is what reads as mud.
+- Keep the darkest dark small and placed (the deepest crevice, the contact under the figure), not spread over the whole shadow side.
 
 ## Light direction, checked once
 

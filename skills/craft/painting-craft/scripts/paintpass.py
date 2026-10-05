@@ -21,6 +21,7 @@ ap.add_argument('--focus-mask', help='greyscale PNG, white = focus')
 ap.add_argument('--depth', help='greyscale PNG, white = far: far areas get haze and softer strokes')
 ap.add_argument('--width', type=int, default=0, help='working width (default: source width)')
 ap.add_argument('--seed', type=int, default=7)
+ap.add_argument('--calm', type=float, default=.6, help='0-1: how far smooth passages (sky, gradients) are glazed back to blended paint')
 a = ap.parse_args()
 
 rng = np.random.default_rng(a.seed)
@@ -62,8 +63,9 @@ if depth is not None:
     ref = ref * (1 - far * .3) + sky_tint * far * .3
     ref = ref * (1 - far) + blur(ref, 1.4 * S) * far
 
-detail = ndimage.gaussian_filter(np.hypot(ndimage.sobel(lum(ref), 1), ndimage.sobel(lum(ref), 0)), 3 * S)
-detail = detail / (np.percentile(detail, 98) + 1e-6)
+detail = ndimage.gaussian_filter(np.hypot(ndimage.sobel(lum(ref), 1), ndimage.sobel(lum(ref), 0)), 1.5 * S)
+# absolute, not relative to the picture: a gentle sky gradient must never count as detail
+detail = np.clip(detail / .1, 0, 1.5)
 
 
 def orientation(x, s):
@@ -112,11 +114,13 @@ for li, (R, T, alpha, where) in enumerate(plan):
     d, hd = ImageDraw.Draw(cim, 'RGBA'), ImageDraw.Draw(hmap)
     for x0, y0 in pts:
         col = refR[y0, x0]
-        c = col * (1 + rng.normal(0, jitter)) + rng.normal(0, .01, 3)
+        # smooth passages (sky, gradients) get calm strokes, or the pass mottles them
+        busy = min(1.0, .25 + detail[y0, x0] * 2.5)
+        c = col * (1 + rng.normal(0, jitter * busy)) + rng.normal(0, .01 * busy, 3)
         L = lum(col)
-        if L > .55 and rng.random() < .4:
+        if L > .55 and rng.random() < .4 * busy:
             c = c + np.array([.04, .02, -.03]) * rng.random()
-        elif L < .38 and rng.random() < .4:
+        elif L < .38 and rng.random() < .4 * busy:
             c = c + np.array([-.02, -.004, .04]) * rng.random()
         c = np.clip(c, 0, 1)
         n = max(2, int(max_len * (1 - .7 * min(1.0, detail[y0, x0]))))
@@ -151,6 +155,9 @@ for li, (R, T, alpha, where) in enumerate(plan):
     print(f'[{li + 1}/{len(plan)}] brush {R}px  strokes {len(pts)}  ({time.time() - t0:.0f}s)', flush=True)
 
 out = np.asarray(cim).astype(np.float32) / 255
+if a.calm:
+    smooth = ndimage.gaussian_filter(np.clip(1 - detail * 4, 0, 1), 4 * S) * a.calm * ~focus
+    out = out * (1 - smooth[..., None]) + blur(ref, 1.2 * S) * smooth[..., None]
 if impasto:
     hgt = ndimage.gaussian_filter(np.asarray(hmap).astype(np.float32) / 255, .8 * S)
     gx, gy = ndimage.sobel(hgt, 1), ndimage.sobel(hgt, 0)
