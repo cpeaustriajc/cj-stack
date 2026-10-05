@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 
 ap = argparse.ArgumentParser()
-ap.add_argument('--art', default='prototypes/art', help='folder holding render3d.py and the figure module')
+ap.add_argument('--art', default=os.path.dirname(os.path.abspath(__file__)), help='folder holding render3d.py and the figure module')
 ap.add_argument('--module', required=True, help='figure module name, e.g. knight')
 ap.add_argument('--code', required=True, help='python run inside the module namespace; must assign `mesh`')
 ap.add_argument('--yaws', default='0,-50,90', help='degrees about the vertical axis')
