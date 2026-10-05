@@ -51,7 +51,7 @@
       "name": "cj-paint",
       "source": "./",
       "strict": false,
-      "version": "1.1.0",
+      "version": "1.2.0",
       "description": "painting-craft: drawing and painting scenes, figures and vehicles in code (SVG, canvas, numpy, Blender) with a screenshot review loop.",
       "category": "design",
       "keywords": [

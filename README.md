@@ -41,3 +41,32 @@ All skills are model-invoked: Claude picks them from their description.
 | [project-wiki](skills/archived/project-wiki/SKILL.md) | archived | GitHub-wiki-only predecessor of project-knowledge |
 
 The archived skills were written for one project and still name its files. Shipped skills stay tool-neutral: tool specifics go in a skill's adapters, and a project's own facts stay in that project.
+
+## painting-craft: before and after
+
+The same two prompts, each run once in a fresh session: the original skill on the left, the current
+painting-craft on the right. Nothing was touched up by hand.
+
+**"Paint a 1600x1000 SVG of a knight asleep against an oak tree at dusk, in a Romantic oil-painting look."**
+
+![Knight at dusk, full picture: before and after](docs/images/knight-full.jpg)
+
+At 2× zoom, where the viewer looks. The knight is a 3D figure lit by the low sun, with separate
+plates, mail in rows and a visor, instead of a mannequin of tubes:
+
+![Knight at dusk, 2x crop: before and after](docs/images/knight-zoom.jpg)
+
+**"Draw a night city street as a 1600x1000 SVG: a car passes behind a row of trees on the near verge.
+Flat vector style, but it must not look cheap."**
+
+![Night street, full picture: before and after](docs/images/street-full.jpg)
+
+At 2× zoom, a crown is clumps hung on a branch skeleton, in three values with broken edges, instead
+of a pile of round blobs:
+
+![Night street, 2x crop of a tree: before and after](docs/images/street-zoom.jpg)
+
+What changed: build recipes for the parts that fail up close (`references/recipes.md`), studies of
+each hero element against fetched public-domain references before composing (`scripts/refs.py`,
+`scripts/compare.py`), the bundled 3D figure renderer, a paint pass that unifies painted styles
+(`scripts/paintpass.py`), and delivery at twice the display size.
