@@ -3,6 +3,7 @@
 ## Buckets
 
 - `skills/planning/`, `skills/knowledge/`: shipped in the `cj-stack` plugin.
+- `skills/craft/`: shipped in the opt-in `cj-paint` plugin.
 - `skills/in-progress/`: not shipped. A skill starts here.
 - `skills/archived/`: shipped only in the opt-in `cj-jira` plugin, or not at all. Never delete a skill; archive it.
 
