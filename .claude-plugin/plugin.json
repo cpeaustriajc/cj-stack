@@ -1,9 +1,0 @@
-{
-  "name": "project-knowledge",
-  "version": "0.1.0",
-  "description": "Keep a project's decision log and research pages wherever the team already writes — GitHub wiki, Notion, Linear documents, Obsidian, Confluence or Google Docs — through the CLI or MCP server for that backend, never in the code repository.",
-  "author": { "name": "cpeaustriajc", "url": "https://github.com/cpeaustriajc" },
-  "repository": "https://github.com/cpeaustriajc/project-knowledge",
-  "keywords": ["decisions", "adr", "wiki", "notion", "linear", "obsidian", "confluence", "documentation"],
-  "skills": ["./skills/project-knowledge"]
-}

@@ -1,66 +1,40 @@
-# project-knowledge
+# cj-stack
 
-A Claude Code skill that keeps a project's **decision log** and **research pages** wherever the team
-already writes:
-
-- a GitHub wiki
-- Notion
-- Linear documents
-- Obsidian
-- Confluence
-- Google Docs
-
-It reads and writes them through that backend's CLI or MCP server at the moment they're needed.
-Nothing lands in the code repository except, optionally, one pointer line in `CLAUDE.md`.
+CJ's skills and mods for Claude Code.
 
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/project-knowledge
-/plugin install project-knowledge@cpeaustriajc
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install cj-stack@cj-stack
+/plugin install work-pane@cj-stack
 ```
 
-## What it does
+While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
+a directory marketplace hot-reloads.
 
-- **Finds where the knowledge lives.** It checks, in order:
-  1. a pointer line in the project's `CLAUDE.md` (a URL or a vault path)
-  2. a user-level map in `~/.claude/project-knowledge.json`
-  3. detection of a GitHub wiki
-  4. asking you once, and saving the answer
-- **Keeps one shape on every backend.**
-  - A Home page lists what each page answers.
-  - A Decisions index runs newest first.
-  - Each decision gets one `Decision NNN <Topic>` page that is never rewritten.
-  - Research pages are dated and mark unconfirmed claims UNVERIFIED. Superseded text moves under a
-    History heading.
-- **Answers "what did we decide about X".** It follows each "Superseded by" and "Partly superseded
-  by" link to the end of its chain.
-- **Records, supersedes and partly supersedes decisions.** Only the old page's Status line changes.
-- **Treats dates and reasons as evidence.** They come from git history, an issue or you. A missing
-  reason is marked "not recorded" and asked about, never invented.
-- **Writes for people.** Pages never mention Claude or agents. It shows you a first write to a
-  shared space before publishing.
+Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-skills.sh`.
 
-## Backends
+## Plugins
 
-| Backend | How it is reached | Status |
+| Plugin | Contents | Install |
 |---|---|---|
-| GitHub wiki | `scripts/ghwiki.sh`, one managed clone per wiki, using `gh auth` | tested |
-| Obsidian | vault files; sync detection before writing | tested |
-| Notion | Notion MCP; the decision log is a database sorted by date | untested |
-| Linear documents | Linear MCP; decisions linked to issues | untested |
-| Confluence, Google Docs | Atlassian MCP, Drive MCP | untested |
+| `cj-stack` | the shipped skills below | by default |
+| `work-pane` | a mod: holds Linear writes until you allow them; task progress and subagents in a pane | by default |
+| `cj-jira` | archived Jira-era skills | only for a Jira client |
 
-## Evals
+## Skills
 
-`skills/project-knowledge/evals/evals.json` holds five test prompts:
+All skills are model-invoked: Claude picks them from their description.
 
-- reading a supersede chain
-- recording a decision
-- superseding one
-- partly superseding one
-- bootstrapping an empty Obsidian vault
+| Skill | Bucket | What it is for |
+|---|---|---|
+| [linear-planning](skills/planning/linear-planning/SKILL.md) | planning | where a spec, story, AC, dependency or risk lands in Linear |
+| [linear-project](skills/planning/linear-project/SKILL.md) | planning | drafting, auditing and updating Linear projects |
+| [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
+| [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
+| [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |
+| [github-issue](skills/archived/github-issue/SKILL.md) | archived | GitHub issues holding a Jira ticket's engineering detail |
+| [project-wiki](skills/archived/project-wiki/SKILL.md) | archived | GitHub-wiki-only predecessor of project-knowledge |
 
-Across two rounds against real wikis, the skill passed every check. Without it, runs passed 85%.
-The runs without it put new rows at the bottom of the index, invented layouts and rules, and wrote
-unlinked supersede notes.
+The archived skills were written for one project and still name its files.

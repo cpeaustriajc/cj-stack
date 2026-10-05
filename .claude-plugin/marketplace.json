@@ -1,14 +1,44 @@
 {
-  "name": "cpeaustriajc",
+  "name": "cj-stack",
   "owner": { "name": "cpeaustriajc", "url": "https://github.com/cpeaustriajc" },
-  "description": "cpeaustriajc's Claude Code plugins.",
+  "metadata": {
+    "description": "CJ's skills and mods for Claude Code: planning in Linear, a decision log, and the work pane."
+  },
   "plugins": [
     {
-      "name": "project-knowledge",
+      "name": "cj-stack",
       "source": "./",
-      "description": "A decision log and research pages kept in your wiki, Notion, Linear, Obsidian or Confluence, read and written through the backend's CLI or MCP server.",
+      "strict": false,
+      "version": "1.0.0",
+      "description": "linear-planning, linear-project and project-knowledge.",
       "category": "productivity",
-      "keywords": ["decisions", "adr", "wiki", "notion", "linear", "obsidian"]
+      "keywords": ["linear", "planning", "decisions", "adr", "wiki"],
+      "skills": [
+        "./skills/planning/linear-planning",
+        "./skills/planning/linear-project",
+        "./skills/knowledge/project-knowledge"
+      ]
+    },
+    {
+      "name": "cj-jira",
+      "source": "./",
+      "strict": false,
+      "version": "1.0.0",
+      "description": "Archived Jira-era skills: jira-ticket, draft-ticket, github-issue and project-wiki. Install only for a Jira client.",
+      "category": "productivity",
+      "keywords": ["jira", "archived"],
+      "skills": [
+        "./skills/archived/jira-ticket",
+        "./skills/archived/draft-ticket",
+        "./skills/archived/github-issue",
+        "./skills/archived/project-wiki"
+      ]
+    },
+    {
+      "name": "work-pane",
+      "source": "./mods/work-pane",
+      "description": "Holds every Linear write until you allow it, and shows task progress and subagents in a pane.",
+      "category": "productivity"
     }
   ]
 }
