@@ -6,7 +6,7 @@ met:     The Met's open-access collection (armour, costume, objects, paintings),
 commons: Wikimedia Commons files (paintings by named artists, places, vehicles).
 Prints each saved file with its title and source page, so the source can be named.
 """
-import argparse, json, os, re, urllib.parse, urllib.request
+import argparse, json, os, re, time, urllib.error, urllib.parse, urllib.request
 
 ap = argparse.ArgumentParser()
 ap.add_argument('query'); ap.add_argument('outdir')
@@ -15,13 +15,23 @@ ap.add_argument('--n', type=int, default=4)
 ap.add_argument('--width', type=int, default=1200)
 a = ap.parse_args()
 os.makedirs(a.outdir, exist_ok=True)
-UA = {'User-Agent': 'painting-craft-refs/1.0 (reference lookup)'}
+# Wikimedia rate-limits anonymous clients that don't identify themselves with a contact URL
+UA = {'User-Agent': 'painting-craft-refs/1.1 (https://github.com/cpeaustriajc/cj-stack; reference lookup)'}
 
 
 def get(url, raw=False):
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30) as r:
-        data = r.read()
-    return data if raw else json.loads(data)
+    for attempt in range(5):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=30) as r:
+                data = r.read()
+            time.sleep(1)
+            return data if raw else json.loads(data)
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 503) or attempt == 4:
+                raise
+            wait = int(e.headers.get('Retry-After') or 0) or 2 ** (attempt + 2)
+            print(f'rate limited ({e.code}), waiting {wait}s', flush=True)
+            time.sleep(wait)
 
 
 def save(url, title, page):
