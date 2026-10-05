@@ -45,7 +45,7 @@ A picture rarely fails as a composition. It fails in its parts: a crown of blobs
 6. **Compose.** Place the studied elements at their depth planes, scaled, and fill the rest from the same recipes at lower detail.
 7. **Ground everything.** Contact, cast shadows, and overlaps in depth order.
 8. **Unify.** One light and one medium over everything. For a painted tradition (oil, gouache), render the composed picture to PNG and run `scripts/paintpass.py` over it (with `--focus` on the subject, and `--depth` if you have a depth mask), so every part shares the same brushwork. The pass unifies; it cannot rescue a weak drawing underneath. Flat-vector and graphic styles skip it: their finish is crisp edges and exact shapes, which brushwork smears.
-   **Deliver at the zoomed size.** The viewer zooms in, so the final image is rendered at twice its display size (3200 × 2000 for a 1600 × 1000 picture), and the paint pass runs at that width (`--width 3200`). A picture rendered at display size and scaled up goes soft exactly where the viewer looks.
+   **Deliver at the zoomed size.** The viewer zooms in, so the final image is rendered at twice its display size (3200 × 2000 for a 1600 × 1000 picture), and the paint pass runs at that width with half-size brushes (`--width 3200 --brush 0.5`), so the extra pixels become finer strokes rather than the same strokes twice as big. A picture rendered at display size and scaled up goes soft exactly where the viewer looks.
 9. **Review zoomed in,** with the screenshot loop and the checklist at the end of this file, on every viewport and every state the picture has.
 
 ## Proportion

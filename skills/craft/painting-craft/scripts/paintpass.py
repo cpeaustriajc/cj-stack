@@ -21,6 +21,7 @@ ap.add_argument('--focus-mask', help='greyscale PNG, white = focus')
 ap.add_argument('--depth', help='greyscale PNG, white = far: far areas get haze and softer strokes')
 ap.add_argument('--width', type=int, default=0, help='working width (default: source width)')
 ap.add_argument('--seed', type=int, default=7)
+ap.add_argument('--brush', type=float, default=1.0, help='brush size multiplier; use 0.5 when rendering at 2x display size, or the brushes double with the canvas')
 ap.add_argument('--keep-lines', type=float, default=.45, help='0-1: how much of the source\'s thin lines (twigs, plate edges, rivets) survive the brushwork')
 ap.add_argument('--calm', type=float, default=.6, help='0-1: how far smooth passages (sky, gradients) are glazed back to blended paint')
 a = ap.parse_args()
@@ -29,7 +30,7 @@ rng = np.random.default_rng(a.seed)
 img = Image.open(a.src).convert('RGB')
 W = a.width or img.width
 H = round(img.height * W / img.width)
-S = W / 800
+S = W / 800 * a.brush
 ref = np.asarray(img.resize((W, H), Image.LANCZOS)).astype(np.float32) / 255
 lum = lambda x: x[..., 0] * .3 + x[..., 1] * .59 + x[..., 2] * .11
 blur = lambda x, s: ndimage.gaussian_filter(x, (s, s, 0) if x.ndim == 3 else s)
