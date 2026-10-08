@@ -70,6 +70,12 @@
       "source": "./mods/work-pane",
       "description": "Holds every Linear write until you allow it, and shows test runs in a pane.",
       "category": "productivity"
+    },
+    {
+      "name": "usage-pace",
+      "source": "./mods/usage-pace",
+      "description": "Weekly usage in the status line, and whether it lasts until the reset.",
+      "category": "productivity"
     }
   ]
 }
