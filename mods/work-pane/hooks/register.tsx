@@ -1,17 +1,11 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { Plan, Subagent, TestRun } from '../types'
+import type { TestRun } from '../types'
 
-const PANE = 'work'
 const TESTS_PANE = 'tests'
-const PROGRESS_TOOL = 'progress'
-const PROGRESS = `mcp__work-pane__${PROGRESS_TOOL}`
-const SHOWN_AGENTS = 8
 const BAR_CELLS = 16
 
-const plan = atom({ plugin: 'work-pane', key: 'plan' } as const, null as Plan | null)
-const agents = atom({ plugin: 'work-pane', key: 'agents' } as const, [] as Subagent[])
 const runs = atom({ plugin: 'work-pane', key: 'runs' } as const, [] as TestRun[])
 const asks = atom({ plugin: 'work-pane', key: 'asks' } as const, {} as Record<string, string>)
 
@@ -321,79 +315,16 @@ function diffColor(line: string, current: string | undefined): string | undefine
   return undefined
 }
 
-const HANDBACK = 'SubagentHandback'
-
-async function markEnded($: Parameters<typeof read>[0], isEnded: (id: string) => boolean) {
-  const endedAt = Date.now()
-  await update($, agents, list => list.map(a => (a.endedAt === undefined && isEnded(a.id) ? { ...a, endedAt } : a)))
-}
-
-const clamp = (n: number, max: number) => Math.min(max, Math.max(0, Math.round(n)))
-
-function shortModel(model: string): string {
-  return /(haiku|sonnet|opus|fable)/i.exec(model)?.[1].toLowerCase() ?? model
-}
-
-function toolLabel(args: Record<string, unknown>): string {
-  const tool = String(args.tool)
-  const path = typeof args.file_path === 'string' ? args.file_path.split('/').pop() : undefined
-  if (path) return `${tool} ${path}`
-  if (typeof args.command === 'string') return `${tool} ${args.command.slice(0, 30)}`
-  if (typeof args.pattern === 'string') return `${tool} ${args.pattern.slice(0, 30)}`
-  return tool.startsWith('mcp__') ? tool.split('__').pop()! : tool
-}
-
-function elapsed(from: number, to: number): string {
-  const s = Math.max(0, Math.round((to - from) / 1000))
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
-}
-
-function answerProgress(current: Plan | null, input: Record<string, unknown>): { next: Plan | null; text: string } {
-  if (input.clear === true) return { next: null, text: 'Cleared the Work pane.' }
-  const steps = Array.isArray(input.steps) ? input.steps.filter((s): s is string => typeof s === 'string') : undefined
-  const done = typeof input.done === 'number' ? input.done : undefined
-  if (steps && steps.length > 0) {
-    const title = typeof input.title === 'string' ? input.title : 'Task'
-    return { next: { title, steps, done: clamp(done ?? 0, steps.length) }, text: `Plan set: ${steps.length} steps.` }
-  }
-  if (!current) return { next: null, text: 'No plan yet: call with title and steps first.' }
-  const title = typeof input.title === 'string' ? input.title : current.title
-  const next = { ...current, title, done: done === undefined ? current.done : clamp(done, current.steps.length) }
-  return { next, text: `${next.done} of ${next.steps.length} done.` }
-}
-
 export const register: Register = on => {
+  let isInteractive = true
+
   on('session.start', async ($, e, next) => {
-    await $.tool.register({
-      name: PROGRESS_TOOL,
-      description:
-        "Shows your progress in the user's Work pane. At the start of a task with three or more steps, call it with " +
-        '`title` and `steps`. After finishing each step, call it with `done` set to the number of steps finished. ' +
-        'Call it with `clear: true` when the task ends or is abandoned. Skip it for one-step tasks.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          title: { type: 'string', description: 'The task, a few words, with its issue key if it has one' },
-          steps: { type: 'array', items: { type: 'string' }, description: 'Every step, in order, a few words each' },
-          done: { type: 'number', description: 'How many steps are finished' },
-          clear: { type: 'boolean', description: 'Empty the pane' },
-        },
-      },
-    })
-    await $.command.register({ name: 'work', description: 'Open the Work pane' })
+    isInteractive = e.isInteractive !== false
+    if (!isInteractive) return next(e)
     await $.command.register({ name: 'tests', description: 'Open the Tests pane' })
-    void $.ui.open({ id: PANE, title: 'Work' })
     $.clock.every(1000, async () => {
-      const runningAgents = (await read($, agents)).some(a => a.endedAt === undefined)
       const runningRuns = (await read($, runs)).filter(r => r.endedAt === undefined)
-      if (!runningAgents && runningRuns.length === 0) return
-      if (runningAgents) {
-        let live: Set<string> | undefined
-        try {
-          live = new Set((await $.agent.list()).filter(a => a.status === 'running').map(a => a.id))
-        } catch {}
-        if (live) await markEnded($, id => !live!.has(id))
-      }
+      if (runningRuns.length === 0) return
       for (const run of runningRuns) {
         const read_ = await readRun($, run)
         const isComplete = read_.total !== undefined && read_.done === read_.total
@@ -410,21 +341,10 @@ export const register: Register = on => {
     return { text: 'Tests pane opened.' }
   })
 
-  on('command.run', { command: 'work' }, async $ => {
-    await $.ui.open({ id: PANE, title: 'Work' })
-    return { text: 'Work pane opened.' }
-  })
-
   on('tool.call', async ($, e, next) => {
     let args = e as unknown as Record<string, unknown>
 
-    if (e.tool === PROGRESS) {
-      const { next: value, text } = answerProgress(await read($, plan), args)
-      await update($, plan, () => value)
-      return { result: text } as never
-    }
-
-    const log = e.tool === 'Bash' && typeof args.command === 'string' ? teeLog(args.command) : undefined
+    const log = isInteractive && e.tool === 'Bash' && typeof args.command === 'string' ? teeLog(args.command) : undefined
     if (log) {
       const command = args.command as string
       const run: TestRun = {
@@ -441,17 +361,6 @@ export const register: Register = on => {
         await update($, runs, list => list.map(r => (r.id === run.id ? { ...final, endedAt: Date.now(), isFailed } : r)))
       }
       return ran
-    }
-
-    if (e.agentId && e.tool === HANDBACK) {
-      const ran = await next(e)
-      await markEnded($, id => id === e.agentId)
-      return ran
-    }
-
-    if (e.agentId) {
-      const label = toolLabel(args)
-      await update($, agents, list => list.map(a => (a.id === e.agentId ? { ...a, lastTool: label } : a)))
     }
 
     const name = linearWrite(e.tool)
@@ -484,27 +393,6 @@ export const register: Register = on => {
     return out
   })
 
-  on('agent.spawn', async ($, e, next) => {
-    const ran = await next(e)
-    if (ran.agentId) {
-      const row: Subagent = {
-        id: ran.agentId,
-        type: e.subagentType,
-        description: e.description,
-        model: shortModel(ran.model),
-        startedAt: Date.now(),
-      }
-      await update($, agents, list => [...list, row].slice(-20))
-    }
-    return ran
-  })
-
-  on('classic.SubagentStop', async ($, e, next) => {
-    const ran = await next(e)
-    await markEnded($, id => id === e.agent_id)
-    return ran
-  })
-
   on('ui.render', { component: 'AskUserQuestion' }, async ($, e, next) => {
     const questions = e.props.questions as { question?: unknown; header?: unknown }[]
     const q = questions.length === 1 ? questions[0] : undefined
@@ -521,45 +409,6 @@ export const register: Register = on => {
       <Box flexDirection="column">
         {rows}
         {dialog}
-      </Box>
-    )
-  })
-
-  on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
-    const { Box, Text } = $.ui.resolve(e)
-    const current = await read($, plan)
-    const list = (await read($, agents)).slice(-SHOWN_AGENTS)
-    const now = Date.now()
-
-    const filled = current ? Math.round((current.done / current.steps.length) * BAR_CELLS) : 0
-    const step = current && current.done < current.steps.length ? current.steps[current.done] : undefined
-
-    return (
-      <Box flexDirection="column">
-        {current ? (
-          <Box flexDirection="column" marginBottom={1}>
-            <Text bold>{current.title}</Text>
-            <Text>{`${'█'.repeat(filled)}${'░'.repeat(BAR_CELLS - filled)} ${current.done}/${current.steps.length}`}</Text>
-            <Text dimColor>{step ? `Now: ${step}` : 'All steps done'}</Text>
-          </Box>
-        ) : (
-          <Box marginBottom={1}>
-            <Text dimColor>No task in progress</Text>
-          </Box>
-        )}
-        <Text dimColor>Subagents</Text>
-        {list.length === 0 && <Text dimColor>No subagents yet</Text>}
-        {list.map(a => {
-          const running = a.endedAt === undefined
-          const time = running ? elapsed(a.startedAt, now) : `done ${elapsed(a.startedAt, a.endedAt!)}`
-          const tool = running && a.lastTool ? ` · ${a.lastTool}` : ''
-          return (
-            <Box flexDirection="column">
-              <Text dimColor={!running}>{`${running ? '●' : '✓'} ${a.type} · ${a.description}`}</Text>
-              <Text dimColor>{`  ${a.model} · ${time}${tool}`}</Text>
-            </Box>
-          )
-        })}
       </Box>
     )
   })

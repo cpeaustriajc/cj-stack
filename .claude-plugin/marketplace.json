@@ -68,7 +68,7 @@
     {
       "name": "work-pane",
       "source": "./mods/work-pane",
-      "description": "Holds every Linear write until you allow it, and shows task progress and subagents in a pane.",
+      "description": "Holds every Linear write until you allow it, and shows test runs in a pane.",
       "category": "productivity"
     }
   ]

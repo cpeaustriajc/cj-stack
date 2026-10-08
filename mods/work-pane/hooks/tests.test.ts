@@ -27,7 +27,7 @@ function world(on: On, logs: Record<string, string>, opts: { bashFails?: boolean
 const mounted = new WeakMap<Engine, Awaited<ReturnType<Engine['ui']['mount']>>>()
 
 async function pane($: Engine, surface: (typeof SURFACES)[number], requestId = 'tests') {
-  const key = requestId === 'tests' ? $ : (Object.assign(Object.create(null), { $ }) as Engine)
+  const key = $
   const drawn =
     mounted.get(key) ??
     (await $.ui.mount({
@@ -81,12 +81,11 @@ for (const surface of SURFACES) {
     expect(text).toMatch(/✗/)
   })
 
-  test(`${surface}: a run opens the Tests pane and stays out of the Work pane`, async ($, on) => {
+  test(`${surface}: a run opens the Tests pane`, async ($, on) => {
     world(on, {})
     await $.session.start({ cwd: '/tmp' } as never)
     await bash($, `pytest | tee ${LOG}`)
     expect(opened).toContain('tests')
-    expect(await pane($, surface, 'work')).not.toMatch(/pytest/)
   })
 
   test(`${surface}: an empty Tests pane says no runs yet`, async ($, on) => {

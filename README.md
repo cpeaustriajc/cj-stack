@@ -20,7 +20,7 @@ Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-s
 | Plugin | Contents | Install |
 |---|---|---|
 | `cj-stack` | the shipped skills below | by default |
-| `work-pane` | a mod: holds Linear writes until you allow them; task progress and subagents in a pane | by default |
+| `work-pane` | a mod: holds Linear writes until you allow them; test runs in a pane | by default |
 | `cj-paint` | painting-craft | where you paint in code |
 | `cj-jira` | archived Jira-era skills | only for a Jira client |
 
