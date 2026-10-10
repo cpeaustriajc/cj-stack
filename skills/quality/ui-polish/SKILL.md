@@ -12,7 +12,8 @@ reviews and reports. It changes nothing until I name what to change.
 
 Before judging anything, find the design: a mockup, a Figma frame, a design-tool export, a
 screenshot I gave you, or the closest existing screen in the same app. **The design wins over
-your taste.** Going off and inventing your own version is the worst outcome here. If there is
+your taste.** Going off and inventing your own version is the worst outcome here. A design plan
+I approved counts as the design, even when it departs from the existing screens. If there is
 no design, say so and judge against the existing screens.
 
 Look at the real thing in a browser, at the real width and at 375px, in light and dark if the
@@ -34,7 +35,10 @@ app has both. Reading the code is not enough.
 
 **Motion**
 - Entrances use `ease-in`. They should ease out. Use ease-in-out only for on-screen movement.
-- UI motion over about 300ms, or any delay before feedback to a click.
+- Motion that answers a click, key or hover taking over about 300ms, or any delay before
+  that feedback. One deliberate page-load or reveal sequence the design asks for may run longer.
+- More than one thing moving for attention at once. Stage one change at a time; secondary
+  motion stays smaller and quieter than the main one.
 - Things that grow from `scale(0)`. Start from about 0.95 with opacity.
 - Animating `width`, `height`, `top`, `left` or `margin` instead of `transform` and `opacity`.
 - Keyframe animations that can't be interrupted, so they jump when toggled fast. Prefer
