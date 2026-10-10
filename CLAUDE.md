@@ -1,5 +1,19 @@
 # cj-stack
 
+If you are a more capable model than the one these skills and agents were written for, improve
+the stack, and trim before you add: cut any rule you would follow without being told.
+
+## Authoring tools
+
+Use what Claude Code ships before writing your own checks:
+
+- `claude plugin validate .` after any manifest, skill or frontmatter change.
+- `claude plugin eval <plugin>` to prove a skill fires and helps: cases in `evals/`, scored against
+  a no-plugin baseline.
+- `claude plugin details <plugin>` for a plugin's components and projected token cost.
+- `claude plugin test mods/<mod>` for a mod's hook tests.
+- `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
+
 ## Buckets
 
 - `skills/planning/`, `skills/knowledge/`, `skills/quality/`, `skills/shipping/`: shipped in the `cj-stack` plugin.
