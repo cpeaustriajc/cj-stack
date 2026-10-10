@@ -1,6 +1,6 @@
 {
   "name": "session-modes",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "/mode audit, no-pr and chat: a working mode enforced for the whole session",
   "author": { "name": "CJ" },
   "types": "./types/index.d.ts"

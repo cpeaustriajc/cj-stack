@@ -6,6 +6,7 @@ type Surface = 'terminal' | 'desktop'
 function world(on: On, surfaces: Surface[] = ['desktop']) {
   const state = {
     commands: [] as string[],
+    hints: [] as (string | undefined)[],
     statuses: [] as (string | undefined)[],
     surfaces,
     writes: [] as { path: string; text: string }[],
@@ -34,7 +35,11 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     state.removed.push(...argv.slice(3))
     return { value: { exitCode: 0, stdout: '', stderr: '' } } as never
   })
-  on('command.register', (_$, e) => (state.commands.push((e as { name: string }).name), { value: {} }) as never)
+  on('command.register', (_$, e) => {
+    state.commands.push((e as { name: string }).name)
+    state.hints.push((e as { argumentHint?: string }).argumentHint)
+    return { value: {} } as never
+  })
   on('session.start', (_$, e) => e as never)
   on('ui.status', (_$, e) => {
     state.statuses.push(e.text)
@@ -235,6 +240,12 @@ test('an interactive session registers the mode command', async ($, on) => {
   const w = world(on)
   await start($ as never)
   expect(w.commands).toEqual(['mode'])
+})
+
+test('the mode command hints its four arguments', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  expect(w.hints).toEqual(['audit | no-pr | chat | off'])
 })
 
 test('a non-interactive session registers no command and draws no status', async ($, on) => {

@@ -2,6 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { Hook, Register } from 'claude-code'
 import { SECTION, parseMode, report, verdict } from './modes'
 import type { Mode } from './modes'
+import { modeSuggestions } from './suggest'
 
 type Api = Parameters<Hook<'session.start'>>[0]
 
@@ -64,7 +65,11 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const result = await next(e)
     if (e.isInteractive === false) return result
-    await $.command.register({ name: 'mode', description: 'Set the session mode: audit, no-pr, chat or off' })
+    await $.command.register({
+      name: 'mode',
+      description: 'Set the session mode: audit, no-pr, chat or off',
+      argumentHint: 'audit | no-pr | chat | off',
+    })
     const current = await read($, mode)
     await drawStatus($, current)
     if (current !== 'off') await publishState($, current)
@@ -105,5 +110,11 @@ export const register: Register = on => {
     const current = await read($, mode)
     if (current === 'off') return result
     return { sections: [...result.sections, { id: SECTION_ID, text: SECTION[current], scope: 'session' }] }
+  })
+
+  on('prompt.autocomplete', async ($, e, next) => {
+    const rows = modeSuggestions(e.text, e.cursor, await read($, mode))
+    const out = await next(e)
+    return rows.length ? { suggestions: [...out.suggestions, ...rows] } : out
   })
 }
