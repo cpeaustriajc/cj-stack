@@ -1,6 +1,6 @@
 {
   "name": "usage-pace",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Weekly usage in the status line, and whether it lasts until the reset",
   "author": { "name": "CJ" }
 }

@@ -4,6 +4,11 @@ import { weeklyStatus } from './pace'
 type Api = Parameters<Hook<'session.start'>>[0]
 
 async function show($: Api): Promise<void> {
+  const surfaces = await $.session.surfaces()
+  if (!surfaces.some(s => s !== 'terminal')) {
+    $.ui.status(undefined)
+    return
+  }
   const { rateLimits } = await $.session.usage()
   const week = rateLimits.find(r => r.kind === 'seven_day')
   const text = week && weeklyStatus(week.percentUsed, week.resetsAt, await $.clock.now())
@@ -36,6 +41,18 @@ export const register: Register = on => {
   on('session.measure', async ($, e, next) => {
     const result = await next(e)
     if (e.changed.includes('rateLimits')) await showOrClear($)
+    return result
+  })
+
+  on('session.attach', async ($, e, next) => {
+    const result = await next(e)
+    await showOrClear($)
+    return result
+  })
+
+  on('session.detach', async ($, e, next) => {
+    const result = await next(e)
+    await showOrClear($)
     return result
   })
 }
