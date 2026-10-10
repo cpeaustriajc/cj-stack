@@ -1,56 +1,35 @@
 ---
 name: interrogate
-description: Review a diff with reviewers from different model vendors when another vendor is reachable, else with Claude reviewers fed different inputs, then verify, filter and rank their findings into act on, consider, noted and dismissed - never auto-applying anything. Use when I say "interrogate", "second opinion", "cross-check this", "review with other models", or before opening a PR on a risky change (auth, money, data migrations, concurrency).
+description: Review a diff with fresh Claude reviewers that each see a different slice of it - the whole change, the code without its description, the spec against the code - then verify, filter and rank their findings into act on, consider, noted and dismissed, never auto-applying anything. Use when I say "interrogate", "second opinion", "cross-check this", or before opening a PR on a risky change (auth, money, data migrations, concurrency).
 ---
 
 # Interrogate
 
-One model reviewing its own vendor's code shares its blind spots. Different vendors fail
-differently, so a finding two of them agree on is worth more than one only Claude raises. The
-value comes from the filtering at the end, not from piling up comments.
+The session that wrote a change believes its own story about it. Reviewers that never saw that
+story, and that each get a different slice of the evidence, catch what the author explains
+away. The value comes from the filtering at the end, not from piling up comments.
 
 ## 1. Pick the diff
 
 The diff is, in order: what I named (PR number, branch, commit range), else the current branch
-against its base, else staged and unstaged changes. Write it to a file, together with the full
-text of each changed file with its line numbers (`cat -n`, so reviewers cite the
-file's real lines, not the bundle's), the spec or issue if one exists, and a one-paragraph description of
-what the change is meant to do. Reviewers get only this bundle. They don't explore, so the review
-works on models without tool use too.
+against its base, else staged and unstaged changes. Write a bundle file with the diff, the full
+text of each changed file with its line numbers (`cat -n`, so reviewers cite the file's real
+lines, not the bundle's), the spec or issue if one exists, and a one-paragraph description of
+what the change is meant to do. Reviewers get only their slice of this bundle and don't explore.
 
-## 2. Pick the reviewers
+## 2. Run the reviewers
 
-Code goes to another vendor only for repos I've cleared, since one account can hold both work
-and personal repos. The list is `~/.config/cj-stack/interrogate-vendors`, one `origin` per line
-as `host/owner/repo` (such as `github.com/acme/shop`). A line starting with `-` marks a repo
-that never goes out.
+Read-only subagents with fresh context, none of which has seen this conversation, run in
+parallel. Diversity comes from what each one sees, never from personas:
 
-- Listed: probe and review as below.
-- Marked `-`: Claude-only, without asking.
-- Not in the file: probe first. The probe sends no code. If a vendor answers, ask once with the
-  ask tool: "send this repo to <the vendors that answered>" (adds the line) or "keep it Claude-only" (adds the
-  `-` line). If none answers, use Claude-only and add nothing.
-
-Probing and running other vendors goes through `references/opencode.md` (OpenCode CLI, for
-GPT, Gemini, Grok, Kimi, GLM and DeepSeek), one model per vendor. Name the mode in
-the report's first line.
-
-**Cross-vendor** (another vendor answers): 2-3 of them plus one Claude subagent. Every reviewer
-gets the full bundle and the same prompt. Diversity comes from the model.
-
-**Claude-only** (the repo is marked `-`, or no other vendor answers): diversity has to come
-from what each reviewer sees, never from personas. Run read-only subagents with fresh
-context, none of which has seen this conversation:
 - **Full**: the whole bundle, on Opus.
 - **Blind**: the diff and the changed files with no description or spec, on Sonnet. It judges
   what the code does, not what it was meant to do, so it catches what the description explains
   away.
-- **Spec**: only when a spec or issue exists. It gets the spec and the diff with no description, so it checks
-  the code against what was asked, not what the author says was done.
+- **Spec**: only when a spec or issue exists. It gets the spec and the diff with no description,
+  so it checks the code against what was asked, not what the author says was done.
 
-Say in one line that this mode catches less than a cross-vendor review.
-
-The review prompt, the same for every reviewer:
+Every reviewer gets the same prompt:
 
 > Review this change for real defects only: wrong behaviour, regressions, broken edge cases,
 > security holes, data loss, divergence from the spec. No style, naming or "consider adding"
@@ -70,9 +49,8 @@ code yourself, since a reviewer can be confidently wrong. Sort them into:
 - **Dismissed**: wrong or irrelevant. Keep each one visible with a one-line reason so I can
   override.
 
-Weight agreement: a verified finding raised by 2+ vendors goes first. Agreement between
-Claude reviewers counts for less, because they share blind spots. In Claude-only mode, rank by
-verified severity.
+Rank by verified severity. Agreement between reviewers counts for little: they share a model's
+blind spots.
 
 ## 4. Report, then stop
 
