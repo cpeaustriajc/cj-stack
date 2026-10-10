@@ -17,6 +17,6 @@ export function modeSuggestions(text: string, cursor: number, current: Mode): Pr
   const partial = found[1].toLowerCase()
   return MODES.filter(m => m.startsWith(partial)).map(m => ({
     text: m,
-    description: m === current ? `${DIM[m]} (on)` : DIM[m],
+    description: m !== current ? DIM[m] : m === 'off' ? 'no mode is on' : `${DIM[m]} (on)`,
   }))
 }
