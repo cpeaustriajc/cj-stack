@@ -51,8 +51,11 @@ settings or other dense app screens. Every row in the report names the rule it b
 - Animation on something used dozens of times a session, such as typing or keyboard actions.
 - No `prefers-reduced-motion` fallback.
 
-Fix order for motion: delete the animation, shorten it, fix the easing, then change what it
-animates.
+Fix order for motion: delete the animation, shorten it, fix the easing, fix the origin, make it
+interruptible, then move it to `transform` and `opacity`.
+
+A tradeoff the code or design documents, such as a comment explaining a deliberately slow
+transition, is respected. Mention it in the row, but don't flag it as a mistake.
 
 ## 3. Report, then stop
 
@@ -61,6 +64,8 @@ One table with one row per issue, most visible first:
 | # | Where | Before | After | Why |
 |---|---|---|---|---|
 
-Attach a screenshot when the issue is visual. Then give one verdict: **Ship**, **Ship after
-the top N**, or **Rework** when it is off-design. Fix only the rows I name. For a visual change,
-show me before and after screenshots and wait for my sign-off before committing.
+When the issue is in code, "Where" cites `file:line` as well as the screen location. Re-read
+every cited line before reporting so each one is exact. Attach a screenshot when the issue is
+visual. Then give one verdict: **Ship**, **Ship after the top N**, or **Rework** when it is off-
+design. Fix only the rows I name. For a visual change, show me before and after screenshots and
+wait for my sign-off before committing.

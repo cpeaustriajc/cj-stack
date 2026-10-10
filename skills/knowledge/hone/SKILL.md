@@ -1,6 +1,6 @@
 ---
 name: hone
-description: Mine past Claude Code transcripts for the times I corrected, interrupted or pushed back on Claude, find the lessons that recur, and propose where each one should live - code structure, a lint rule, a hook, a test, a skill or an instruction file - plus what to prune, for my approval. With a skill name, improve that one skill from the corrections made while it ran. Use when I say "hone", "hone <skill>", "hone this skill", "improve this skill from my corrections", "reflect", "what do I keep correcting", "learn from my sessions", "why does Claude keep doing X", or after a session with several corrections.
+description: Mine past Claude Code transcripts for the times I corrected, interrupted or pushed back on Claude, find the lessons that recur, and propose where each one should live - code structure, a lint rule, a hook, a test, a skill or an instruction file - plus what to prune, for my approval. With a skill name, improve that one skill from the corrections made while it ran. Use when I say "hone", "hone <skill>", "hone this skill", "improve this skill from my corrections", "reflect", "what do I keep correcting", "learn from my sessions", "why does Claude keep doing X", or after a session with several corrections. Not for updating one CLAUDE.md from a single session.
 ---
 
 # Hone
@@ -52,12 +52,19 @@ Strongest first:
 2. **Lint, typecheck or CI rule**.
 3. **Hook** (use the `update-config` skill), when it's a tool-use pattern such as "never X on main".
 4. **Test**: an end-to-end check, when it's a behaviour that regressed.
-5. **Skill**: a procedure or a domain's know-how. Edit the skill that covers it before writing a
-   new one.
+5. **Skill**: a procedure or a domain's know-how. A lesson about one skill goes into that
+   skill's own SKILL.md or references, never a general instruction file. Edit the skill that
+   covers it before writing a new one.
 6. **Agent definition** (`.claude/agents/*.md` or a plugin's agents).
 7. **Instruction file**: CLAUDE.md, AGENTS.md or a `paths:`-scoped rule. Only rules and
    preferences belong here, each one line, never a status, a date or a finding. Keep each
    always-loaded file under 200 lines.
+
+A proposed lint, test or hook must first be shown failing on a real past instance of the
+mistake, such as the commit or transcript where it happened. If it can't be shown failing, it
+doesn't go in. A lint's error message names the fix, not just the problem. Any exception or
+suppression a proposal adds carries an expiry, such as a date or an issue to remove it, in the
+code or config it applies to and never in an instruction file.
 
 Trap: edit a skill in its source repo, never in the installed plugin cache copy, which is
 overwritten on update.

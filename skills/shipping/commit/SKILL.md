@@ -1,6 +1,6 @@
 ---
 name: commit
-description: Commit the uncommitted changes in small logical slices with messages in the repo's style, then push the current branch. Pass "local" to skip the push. Typed only - the terminal version of the desktop app's Commit and push button.
+description: Commit the uncommitted changes in small logical slices with messages in the repo's style, then push the current branch. Pass "local" to skip the push. Typed only - the terminal version of the desktop app's Commit and push button. Not for writing PR bodies or reviewing changes.
 disable-model-invocation: true
 argument-hint: "[local]"
 ---

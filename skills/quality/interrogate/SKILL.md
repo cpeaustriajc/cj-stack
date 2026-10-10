@@ -1,6 +1,6 @@
 ---
 name: interrogate
-description: Review a diff with fresh Claude reviewers that each see a different slice of it - the whole change, the code without its description, the spec against the code - then verify, filter and rank their findings into act on, consider, noted and dismissed, never auto-applying anything. Use when I say "interrogate", "second opinion", "cross-check this", or before opening a PR on a risky change (auth, money, data migrations, concurrency).
+description: Review a diff with fresh Claude reviewers that each see a different slice of it - the whole change, the code without its description, the spec against the code - then verify, filter and rank their findings into act on, consider, noted and dismissed, never auto-applying anything. Use when I say "interrogate", "second opinion", "cross-check this", or before opening a PR on a risky change (auth, money, data migrations, concurrency). Not for a quick single-pass PR review.
 ---
 
 # Interrogate

@@ -57,4 +57,13 @@ Check each rule against the change. A row in the report names the rule it breaks
 - Modals and drawers use `overscroll-behavior: contain`.
 - Full-bleed layouts respect `env(safe-area-inset-*)`.
 
+**Mobile web**
+- App shells use `100dvh` and full-screen heroes use `100svh`, never `100vh`, which jumps when
+  the mobile browser bars move.
+- `-webkit-tap-highlight-color: transparent` only when the control has its own visible pressed
+  state.
+- A `theme-color` meta for each colour scheme, light and dark, using its `media` attribute.
+- `user-select: none` only on controls such as buttons, tabs and drag handles, never on content.
+- Check on a real phone, not only a narrow desktop window.
+
 Sources: https://vercel.com/design/guidelines, https://github.com/vercel-labs/web-interface-guidelines, https://rauno.me/craft/interaction-design, https://developer.apple.com/videos/play/wwdc2018/803/, https://www.joshwcomeau.com/animation/css-transitions/, https://www.w3.org/TR/WCAG22/, https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html

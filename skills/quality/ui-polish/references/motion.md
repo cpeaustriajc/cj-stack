@@ -18,6 +18,11 @@ Check each rule against the change. A row in the report names the rule it breaks
 - Hover and colour changes use ease.
 - Linear is only for constant motion such as a spinner.
 - No ease-in anywhere, exits included.
+- Defaults when nothing in the design says otherwise:
+  - ease-out: `cubic-bezier(0.23, 1, 0.32, 1)`
+  - ease-in-out: `cubic-bezier(0.77, 0, 0.175, 1)`
+  - drawers and sheets: `cubic-bezier(0.32, 0.72, 0, 1)`
+- Flag the built-in `ease-out` keyword only when the motion feels weak, not as a violation.
 
 **Interruptible and gesture-driven motion**
 - It uses a spring that keeps its current velocity when retargeted. A fixed curve that restarts from zero is a mistake.
@@ -50,6 +55,8 @@ Check each rule against the change. A row in the report names the rule it breaks
 **Implementation**
 - Name the transitioned properties. `transition: all` is a mistake.
 - `will-change` appears only on elements that actually animate.
+- Values that change every frame, such as drag position or scroll-linked progress, are written
+  straight to the element's style, not routed through framework state that re-renders.
 
 **How to check**
 - Watch the motion at 2-5x slow motion in DevTools. Judge the origin, the easing and any overlap there, not at full speed.

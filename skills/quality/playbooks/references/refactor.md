@@ -8,6 +8,9 @@
 3. Change in small steps, each ending green. Migrate every caller, then delete the old path in
    the same task. No compatibility shims or re-exports unless a caller outside the repo needs
    one.
+   Also name the one fact the change's safety depends on, such as "no caller passes null
+   here". Say how well it's verified (assumed, read in code, covered by a test, or seen
+   running) and end with the cheapest test that would catch it if it's wrong.
 4. Stay inside the asked scope. Note other smells in one line for later; don't fix them now.
 5. Re-run the pins. Behaviour must be identical, and any difference is a bug in the refactor.
 6. If the diff doesn't make some code easier to read, revert it and say why.

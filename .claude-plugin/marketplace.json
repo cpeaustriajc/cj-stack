@@ -12,7 +12,7 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.5.0",
+      "version": "2.6.0",
       "description": "work-planning (any tracker), triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [

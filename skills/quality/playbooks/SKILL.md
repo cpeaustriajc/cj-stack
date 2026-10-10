@@ -14,7 +14,9 @@ Each kind of work fails in its own way, so each has a fixed order that carries i
    skip stays in the list, marked `skip: <reason>`. Never drop a step silently.
 3. Work the steps in order. A step that ends with a check isn't done until the check has run
    and its evidence is saved.
-4. Report the proof the playbook asks for, then commit per slice as usual.
+4. End every check as VERIFIED, NOT VERIFIED or INCONCLUSIVE. INCONCLUSIVE never counts as a
+   pass, and missing evidence is reported as a gap.
+5. Report the proof the playbook asks for, then commit per slice as usual.
 
 The steps fit into Scout → Spec → Build → Commit. They decide *what* each phase must prove,
 not who does it.
