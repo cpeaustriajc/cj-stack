@@ -76,6 +76,24 @@
       "source": "./mods/usage-pace",
       "description": "Weekly usage in the status line, and whether it lasts until the reset.",
       "category": "productivity"
+    },
+    {
+      "name": "session-modes",
+      "source": "./mods/session-modes",
+      "description": "/mode audit, no-pr or chat, enforced for the rest of the session.",
+      "category": "productivity"
+    },
+    {
+      "name": "denial-explainer",
+      "source": "./mods/denial-explainer",
+      "description": "Names the rule behind an auto-mode denial and the narrowest allow rule that would cover it.",
+      "category": "productivity"
+    },
+    {
+      "name": "loop-brake",
+      "source": "./mods/loop-brake",
+      "description": "Ends a turn after N forced Stop-hook continuations, so a goal hook can't burn your usage.",
+      "category": "productivity"
     }
   ]
 }

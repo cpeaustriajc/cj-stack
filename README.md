@@ -1,3 +1,6 @@
+| `session-modes` | a mod: `/mode audit`, `no-pr` or `chat`, enforced for the session | optional |
+| `denial-explainer` | a mod: names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
+| `loop-brake` | a mod: ends a turn after N forced Stop-hook continuations | optional |
 # cj-stack
 
 CJ's skills and mods for Claude Code.
@@ -9,6 +12,9 @@ CJ's skills and mods for Claude Code.
 /plugin install cj-stack@cj-stack
 /plugin install work-pane@cj-stack
 /plugin install usage-pace@cj-stack
+/plugin install session-modes@cj-stack
+/plugin install denial-explainer@cj-stack
+/plugin install loop-brake@cj-stack
 ```
 
 While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
