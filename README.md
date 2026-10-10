@@ -47,6 +47,9 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
 | [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
+| [reflect](skills/knowledge/reflect/SKILL.md) | knowledge | mining past transcripts for my repeated corrections and proposing where each lesson should live: code, lint, hook, test, skill or instruction file |
+| [playbooks](skills/quality/playbooks/SKILL.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
+| [interrogate](skills/quality/interrogate/SKILL.md) | quality | reviewing a diff with models from other vendors (OpenCode or a local model), then filtering into act on, consider, noted and dismissed |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
 | [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |
