@@ -12,7 +12,7 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.2.0",
+      "version": "2.2.1",
       "description": "work-planning (any tracker: Linear, Jira, GitHub), triage, project-knowledge, and break-it, ui-polish and feature-files for checking the running app.",
       "category": "productivity",
       "keywords": [

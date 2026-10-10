@@ -34,6 +34,9 @@ Keep it under about 40 lines. Describe behaviour a user can see, not implementat
 dates, statuses, ticket numbers or "fixed in…" notes in it: those go stale. They belong in the
 tracker and git history.
 
+Feature files say *what* to check. Launching the app stays with the built-in `run` skill or the
+project's launch skill. Don't copy launch steps into them.
+
 ## Using them
 
 1. Find the files for the areas the change touches, usually 1-2. Read only those.
