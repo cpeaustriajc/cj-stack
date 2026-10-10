@@ -1,7 +1,21 @@
 ---
-name: grill-me
-description: Interview me relentlessly about a plan, idea or design until we share one understanding, in short rounds of ask-tool questions with a recommended answer each. Use when I say "grill me", "ask me", "stress-test this", or "plan and ask me".
+name: triage
+description: Triage an idea, plan or change before building it - decide whether it needs questions at all, then interview me in short rounds of ask-tool questions with a recommended answer each until no decision is left open. Use when I say "triage this", "grill me", "ask me", "stress-test this", or "plan and ask me".
 ---
+
+## Triage first
+
+Look the work up before asking anything, then sort it:
+
+- **Trivial**: 1-2 files, one obvious approach, done is self-evident (a typo, a copy change, a
+  plainly broken guard). Say so in one line, with your plan, and ask only "go?". No rounds.
+- **Small**: one real decision. Ask it as a single question, then stop.
+- **Grill**: 3+ files, several viable approaches, unclear scope, new architecture, or something
+  other people will see. Run the rounds below.
+
+Say which tier you picked and why in one line. I can bump it up or down.
+
+## Grilling
 
 Interview me until we reach a shared understanding. Map the idea as a **design tree**: every
 decision branches into the decisions that hang off it. Work in **rounds**. The **frontier** is
@@ -63,6 +77,13 @@ about that conflict only.
 - **A dismissed or rejected form** means stop. Read what I type next and follow it. Never
   re-send the same form.
 - **Bulk replies** like "yes to all", "1 yes, 2 the second one" settle everything they name.
+
+## Done is always on the tree
+
+Round 1 always settles what "done" looks like as something observable: who does what, and what
+they see. For example: "A logged-out visitor clicks Buy and lands on register with the domain
+still in the cart". Recommend one from what you looked up. Don't ask "what are the success
+criteria?".
 
 ## Keep it lean
 

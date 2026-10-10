@@ -40,8 +40,11 @@ All skills are model-invoked: Claude picks them from their description.
 | Skill | Bucket | What it is for |
 |---|---|---|
 | [work-planning](skills/planning/work-planning/SKILL.md) | planning | shaping work in any tracker (Linear, Jira, GitHub, others): specs, work items, phases, projects, updates |
-| [grill-me](skills/planning/grill-me/SKILL.md) | planning | interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
+| [triage](skills/planning/triage/SKILL.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
 | [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
+| [break-it](skills/quality/break-it/SKILL.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
+| [ui-polish](skills/quality/ui-polish/SKILL.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
+| [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
 | [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |

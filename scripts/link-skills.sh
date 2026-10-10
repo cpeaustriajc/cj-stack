@@ -5,7 +5,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 target="${1:-$HOME/.agents/skills}"
 mkdir -p "$target"
-for dir in "$root"/skills/planning/*/ "$root"/skills/knowledge/*/; do
+for dir in "$root"/skills/planning/*/ "$root"/skills/knowledge/*/ "$root"/skills/quality/*/; do
   name="$(basename "$dir")"
   ln -sfn "${dir%/}" "$target/$name"
   echo "linked $name -> $target/$name"
