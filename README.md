@@ -7,6 +7,7 @@ CJ's skills and mods for Claude Code.
 - [Archived skills](#archived-skills): kept for reference, not maintained
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
 - [Other plugins](#other-plugins): opt-in skill sets
+- [Models](models/README.md): which model does what, and why cross-vendor review stays
 - [painting-craft: before and after](#painting-craft-before-and-after)
 
 ## Install
