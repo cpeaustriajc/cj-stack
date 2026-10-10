@@ -21,10 +21,8 @@ works on models without tool use too.
 ## 2. Pick the reviewers
 
 Use 2-3 reviewers from **different vendors**, and always one Claude subagent. Find the others
-through an adapter:
-- `references/opencode.md`: OpenCode CLI, for GPT, Gemini, Grok, Kimi, GLM and DeepSeek.
-- `references/local.md`: a local model behind an OpenAI-compatible server (llama.cpp, Ollama,
-  LM Studio).
+through `references/opencode.md` (OpenCode CLI, for GPT, Gemini, Grok, Kimi, GLM and
+DeepSeek).
 
 Probe each one with a one-line prompt first. If only Claude works, say so in one line: the
 review then runs Claude at two tiers, which catches less. Don't pretend it's cross-vendor.
