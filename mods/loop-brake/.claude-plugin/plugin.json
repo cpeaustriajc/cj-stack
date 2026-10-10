@@ -1,0 +1,14 @@
+{
+  "name": "loop-brake",
+  "version": "0.1.0",
+  "description": "Ends a turn after N forced Stop-hook continuations so a looping goal hook cannot burn your usage",
+  "author": { "name": "CJ" },
+  "userConfig": {
+    "maxContinuations": {
+      "type": "number",
+      "title": "Max continuations",
+      "description": "Forced Stop-hook continuations allowed per turn, 1 to 20",
+      "default": 3
+    }
+  }
+}
