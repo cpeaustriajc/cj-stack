@@ -26,6 +26,11 @@ test('the current mode is marked on its dim line', () => {
   ])
 })
 
+test('with no mode on, the off row says so instead of being marked on', () => {
+  const rows = modeSuggestions('/mode o', 7, 'off')
+  expect(rows.map(r => r.description)).toEqual(['no mode is on'])
+})
+
 test('a finished mode name with arguments after it lists nothing', () => {
   expect(modeSuggestions('/mode audit extra', 17, 'off')).toEqual([])
 })
