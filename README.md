@@ -1,10 +1,12 @@
-| `session-modes` | a mod: `/mode audit`, `no-pr` or `chat`, enforced for the session | optional |
-| `denial-explainer` | a mod: names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
-| `loop-brake` | a mod: ends a turn after N forced Stop-hook continuations | optional |
-| `hone-nudge` | a mod: suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
 # cj-stack
 
 CJ's skills and mods for Claude Code.
+
+- [Install](#install)
+- [Skills](#skills): what Claude can do, in the `cj-stack` plugin
+- [Mods](#mods): hooks that change how a session behaves, one plugin each
+- [Other plugins](#other-plugins): opt-in skill sets
+- [painting-craft: before and after](#painting-craft-before-and-after)
 
 ## Install
 
@@ -12,46 +14,32 @@ CJ's skills and mods for Claude Code.
 /plugin marketplace add cpeaustriajc/cj-stack
 /plugin install cj-stack@cj-stack
 /plugin install linear-gate@cj-stack
-/plugin install usage-pace@cj-stack
-/plugin install session-modes@cj-stack
-/plugin install denial-explainer@cj-stack
-/plugin install loop-brake@cj-stack
-/plugin install hone-nudge@cj-stack
 ```
 
-While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
-a directory marketplace hot-reloads.
+Add any mod or other plugin the same way: `/plugin install <name>@cj-stack`.
 
-Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-skills.sh`.
-
-## Plugins
-
-| Plugin | Contents | Install |
-|---|---|---|
-| `cj-stack` | the shipped skills below | by default |
-| `linear-gate` | a mod: holds Linear writes until you allow them | by default |
-| `work-pane` | a mod: test runs in a pane | optional |
-| `usage-pace` | a mod: weekly usage in the status line, and whether it lasts until your reset | optional |
-| `cj-paint` | painting-craft | where you paint in code |
-| `cj-jira` | archived Jira-era skills | only for a Jira client |
+- While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
+  a directory marketplace hot-reloads.
+- Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-skills.sh`.
 
 ## Skills
 
-All skills are model-invoked (Claude picks them from their description), except `commit` and `create-pr`, which run only when typed.
+All skills are model-invoked (Claude picks them from their description), except `commit` and
+`create-pr`, which run only when typed.
 
 | Skill | Bucket | What it is for |
 |---|---|---|
 | [work-planning](skills/planning/work-planning/SKILL.md) | planning | shaping work in any tracker (Linear, Jira, GitHub, others): specs, work items, phases, projects, updates |
 | [triage](skills/planning/triage/SKILL.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
 | [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
+| [hone](skills/knowledge/hone/SKILL.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
+| [playbooks](skills/quality/playbooks/SKILL.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
 | [break-it](skills/quality/break-it/SKILL.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
 | [ui-polish](skills/quality/ui-polish/SKILL.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
 | [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
+| [interrogate](skills/quality/interrogate/SKILL.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
 | [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
-| [hone](skills/knowledge/hone/SKILL.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
-| [playbooks](skills/quality/playbooks/SKILL.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
-| [interrogate](skills/quality/interrogate/SKILL.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
 | [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |
@@ -60,7 +48,28 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [linear-project](skills/archived/linear-project/SKILL.md) | archived | Linear-only predecessor of work-planning (not shipped) |
 | [project-wiki](skills/archived/project-wiki/SKILL.md) | archived | GitHub-wiki-only predecessor of project-knowledge |
 
-The archived skills were written for one project and still name its files. Shipped skills stay tool-neutral: tool specifics go in a skill's adapters, and a project's own facts stay in that project.
+`craft` skills ship in `cj-paint` and `archived` ones in `cj-jira` (see [Other plugins](#other-plugins)).
+The archived skills were written for one project and still name its files. Shipped skills stay
+tool-neutral: tool specifics go in a skill's adapters, and a project's own facts stay in that project.
+
+## Mods
+
+| Mod | What it does | Install |
+|---|---|---|
+| `linear-gate` | holds every Linear write until you allow it | by default |
+| `usage-pace` | weekly usage in the status line, and whether it lasts until your reset | optional |
+| `session-modes` | `/mode audit`, `no-pr` or `chat`, enforced for the session | optional |
+| `denial-explainer` | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
+| `loop-brake` | ends a turn after N forced Stop-hook continuations | optional |
+| `hone-nudge` | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
+| `work-pane` | test runs in a pane | optional |
+
+## Other plugins
+
+| Plugin | Contents | Install |
+|---|---|---|
+| `cj-paint` | painting-craft | where you paint in code |
+| `cj-jira` | archived Jira-era skills | only for a Jira client |
 
 ## painting-craft: before and after
 
