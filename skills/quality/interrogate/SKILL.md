@@ -20,19 +20,25 @@ works on models without tool use too.
 
 ## 2. Pick the reviewers
 
-Code goes to another vendor only when the repo's `origin` owner, written as `host/owner` such
-as `github.com/acme`, is a line in `~/.config/cj-stack/interrogate-vendors`. That keeps
-personal code out of a work account on a shared machine. If the file is missing or the owner
-isn't listed, skip the probe and use Claude-only mode, and say why in one line.
+Code goes to another vendor only for repos I've cleared, since one account can hold both work
+and personal repos. The list is `~/.config/cj-stack/interrogate-vendors`, one `origin` per line
+as `host/owner/repo` (such as `github.com/acme/shop`). A line starting with `-` marks a repo
+that never goes out.
 
-Otherwise, probe for other vendors through `references/opencode.md` (OpenCode CLI, for GPT,
-Gemini, Grok, Kimi, GLM and DeepSeek), one model per vendor. The probe picks the mode. Name the mode in
+- Listed: probe and review as below.
+- Marked `-`: Claude-only, without asking.
+- Not in the file: probe first. The probe sends no code. If a vendor answers, ask once with the
+  ask tool: "send this repo to <the vendors that answered>" (adds the line) or "keep it Claude-only" (adds the
+  `-` line). If none answers, use Claude-only and add nothing.
+
+Probing and running other vendors goes through `references/opencode.md` (OpenCode CLI, for
+GPT, Gemini, Grok, Kimi, GLM and DeepSeek), one model per vendor. Name the mode in
 the report's first line.
 
 **Cross-vendor** (another vendor answers): 2-3 of them plus one Claude subagent. Every reviewer
 gets the full bundle and the same prompt. Diversity comes from the model.
 
-**Claude-only** (the repo isn't on the list, or no other vendor answers): diversity has to come
+**Claude-only** (the repo is marked `-`, or no other vendor answers): diversity has to come
 from what each reviewer sees, never from personas. Run read-only subagents with fresh
 context, none of which has seen this conversation:
 - **Full**: the whole bundle, on Opus.
