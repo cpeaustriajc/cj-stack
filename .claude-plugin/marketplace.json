@@ -12,8 +12,8 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.2.1",
-      "description": "work-planning (any tracker: Linear, Jira, GitHub), triage, project-knowledge, and break-it, ui-polish and feature-files for checking the running app.",
+      "version": "2.3.0",
+      "description": "work-planning (any tracker: Linear, Jira, GitHub), triage, project-knowledge, and break-it, ui-polish and feature-files for checking the running app; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [
         "planning",
@@ -33,7 +33,9 @@
         "./skills/knowledge/project-knowledge",
         "./skills/quality/break-it",
         "./skills/quality/ui-polish",
-        "./skills/quality/feature-files"
+        "./skills/quality/feature-files",
+        "./skills/shipping/commit",
+        "./skills/shipping/create-pr"
       ]
     },
     {

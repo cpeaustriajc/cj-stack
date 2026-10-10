@@ -35,7 +35,7 @@ Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-s
 
 ## Skills
 
-All skills are model-invoked: Claude picks them from their description.
+All skills are model-invoked (Claude picks them from their description), except `commit` and `create-pr`, which run only when typed.
 
 | Skill | Bucket | What it is for |
 |---|---|---|
@@ -45,6 +45,8 @@ All skills are model-invoked: Claude picks them from their description.
 | [break-it](skills/quality/break-it/SKILL.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
 | [ui-polish](skills/quality/ui-polish/SKILL.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
 | [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
+| [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
+| [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
 | [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |
