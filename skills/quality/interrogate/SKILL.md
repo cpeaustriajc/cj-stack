@@ -20,14 +20,19 @@ works on models without tool use too.
 
 ## 2. Pick the reviewers
 
-First probe for other vendors through `references/opencode.md` (OpenCode CLI, for GPT,
+Code goes to another vendor only when the repo's `origin` owner, written as `host/owner` such
+as `github.com/acme`, is a line in `~/.config/cj-stack/interrogate-vendors`. That keeps
+personal code out of a work account on a shared machine. If the file is missing or the owner
+isn't listed, skip the probe and use Claude-only mode, and say why in one line.
+
+Otherwise, probe for other vendors through `references/opencode.md` (OpenCode CLI, for GPT,
 Gemini, Grok, Kimi, GLM and DeepSeek), one model per vendor. The probe picks the mode. Name the mode in
 the report's first line.
 
 **Cross-vendor** (another vendor answers): 2-3 of them plus one Claude subagent. Every reviewer
 gets the full bundle and the same prompt. Diversity comes from the model.
 
-**Claude-only** (nothing else answers, such as on a personal account): diversity has to come
+**Claude-only** (the repo isn't on the list, or no other vendor answers): diversity has to come
 from what each reviewer sees, never from personas. Run read-only subagents with fresh
 context, none of which has seen this conversation:
 - **Full**: the whole bundle, on Opus.
