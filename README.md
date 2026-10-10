@@ -3,7 +3,8 @@
 CJ's skills and mods for Claude Code.
 
 - [Install](#install)
-- [Skills](#skills): what Claude can do, in the `cj-stack` plugin
+- [Skills](#skills): maintained skills, shipped in `cj-stack` and `cj-paint`
+- [Archived skills](#archived-skills): kept for reference, not maintained
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
 - [Other plugins](#other-plugins): opt-in skill sets
 - [painting-craft: before and after](#painting-craft-before-and-after)
@@ -41,16 +42,22 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
-| [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
-| [draft-ticket](skills/archived/draft-ticket/SKILL.md) | archived | end-to-end Jira ticket drafting |
-| [github-issue](skills/archived/github-issue/SKILL.md) | archived | GitHub issues holding a Jira ticket's engineering detail |
-| [linear-planning](skills/archived/linear-planning/SKILL.md) | archived | Linear-only predecessor of work-planning (not shipped) |
-| [linear-project](skills/archived/linear-project/SKILL.md) | archived | Linear-only predecessor of work-planning (not shipped) |
-| [project-wiki](skills/archived/project-wiki/SKILL.md) | archived | GitHub-wiki-only predecessor of project-knowledge |
 
-`craft` skills ship in `cj-paint` and `archived` ones in `cj-jira` (see [Other plugins](#other-plugins)).
-The archived skills were written for one project and still name its files. Shipped skills stay
-tool-neutral: tool specifics go in a skill's adapters, and a project's own facts stay in that project.
+`craft` skills ship in `cj-paint` (see [Other plugins](#other-plugins)). Shipped skills stay tool-neutral:
+tool specifics go in a skill's adapters, and a project's own facts stay in that project.
+
+## Archived skills
+
+Written for one project and still naming its files. Some ship in `cj-jira`; none are maintained.
+
+| Skill | What it was for |
+|---|---|
+| [jira-ticket](skills/archived/jira-ticket/SKILL.md) | Jira tickets and acceptance criteria |
+| [draft-ticket](skills/archived/draft-ticket/SKILL.md) | end-to-end Jira ticket drafting |
+| [github-issue](skills/archived/github-issue/SKILL.md) | GitHub issues holding a Jira ticket's engineering detail |
+| [linear-planning](skills/archived/linear-planning/SKILL.md) | Linear-only predecessor of work-planning (not shipped) |
+| [linear-project](skills/archived/linear-project/SKILL.md) | Linear-only predecessor of work-planning (not shipped) |
+| [project-wiki](skills/archived/project-wiki/SKILL.md) | GitHub-wiki-only predecessor of project-knowledge |
 
 ## Mods
 
@@ -62,7 +69,6 @@ tool-neutral: tool specifics go in a skill's adapters, and a project's own facts
 | `denial-explainer` | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
 | `loop-brake` | ends a turn after N forced Stop-hook continuations | optional |
 | `hone-nudge` | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
-| `work-pane` | test runs in a pane | optional |
 
 ## Other plugins
 
