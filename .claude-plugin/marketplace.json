@@ -12,8 +12,8 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.0.0",
-      "description": "work-planning (any tracker: Linear, Jira, GitHub) and project-knowledge.",
+      "version": "2.1.0",
+      "description": "work-planning (any tracker: Linear, Jira, GitHub), grill-me and project-knowledge.",
       "category": "productivity",
       "keywords": [
         "planning",
@@ -22,10 +22,12 @@
         "github",
         "decisions",
         "adr",
-        "wiki"
+        "wiki",
+        "interview"
       ],
       "skills": [
         "./skills/planning/work-planning",
+        "./skills/planning/grill-me",
         "./skills/knowledge/project-knowledge"
       ]
     },

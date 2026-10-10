@@ -40,6 +40,7 @@ All skills are model-invoked: Claude picks them from their description.
 | Skill | Bucket | What it is for |
 |---|---|---|
 | [work-planning](skills/planning/work-planning/SKILL.md) | planning | shaping work in any tracker (Linear, Jira, GitHub, others): specs, work items, phases, projects, updates |
+| [grill-me](skills/planning/grill-me/SKILL.md) | planning | interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
 | [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | archived | Jira tickets and acceptance criteria |
