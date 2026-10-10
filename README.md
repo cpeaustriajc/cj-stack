@@ -10,7 +10,7 @@ CJ's skills and mods for Claude Code.
 ```
 /plugin marketplace add cpeaustriajc/cj-stack
 /plugin install cj-stack@cj-stack
-/plugin install work-pane@cj-stack
+/plugin install linear-gate@cj-stack
 /plugin install usage-pace@cj-stack
 /plugin install session-modes@cj-stack
 /plugin install denial-explainer@cj-stack
@@ -27,7 +27,8 @@ Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-s
 | Plugin | Contents | Install |
 |---|---|---|
 | `cj-stack` | the shipped skills below | by default |
-| `work-pane` | a mod: holds Linear writes until you allow them; test runs in a pane | by default |
+| `linear-gate` | a mod: holds Linear writes until you allow them | by default |
+| `work-pane` | a mod: test runs in a pane | optional |
 | `usage-pace` | a mod: weekly usage in the status line, and whether it lasts until your reset | optional |
 | `cj-paint` | painting-craft | where you paint in code |
 | `cj-jira` | archived Jira-era skills | only for a Jira client |

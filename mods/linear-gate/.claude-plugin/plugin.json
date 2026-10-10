@@ -1,0 +1,7 @@
+{
+  "name": "linear-gate",
+  "version": "0.1.0",
+  "description": "Holds every Linear write until you allow it.",
+  "author": { "name": "CJ" },
+  "types": "./types/index.d.ts"
+}

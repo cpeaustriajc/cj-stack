@@ -68,7 +68,13 @@
     {
       "name": "work-pane",
       "source": "./mods/work-pane",
-      "description": "Holds every Linear write until you allow it, and shows test runs in a pane.",
+      "description": "Shows test runs in a pane.",
+      "category": "productivity"
+    },
+    {
+      "name": "linear-gate",
+      "source": "./mods/linear-gate",
+      "description": "Holds every Linear write until you allow it.",
       "category": "productivity"
     },
     {
