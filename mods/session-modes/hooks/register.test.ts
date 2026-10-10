@@ -10,7 +10,9 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     surfaces,
     writes: [] as { path: string; text: string }[],
     removed: [] as string[],
+    runs: [] as string[][],
     failRm: false,
+    throwRm: false,
     files: [] as { name: string; kind: string; mtimeMs: number }[],
     env: { HOME: '/home/cj' } as Record<string, string | undefined>,
     now: 100 * 86_400_000,
@@ -25,8 +27,11 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
   on('fs.list', () => ({ value: state.files }) as never)
   on('fs.write', (_$, e) => (state.writes.push(e as never), { value: undefined }) as never)
   on('process.run', (_$, e) => {
+    const argv = (e as { argv: string[] }).argv
+    state.runs.push(argv)
+    if (state.throwRm) throw new Error('rm: Permission denied')
     if (state.failRm) return { deny: 'no' } as never
-    state.removed.push(...(e as { argv: string[] }).argv.slice(3))
+    state.removed.push(...argv.slice(3))
     return { value: { exitCode: 0, stdout: '', stderr: '' } } as never
   })
   on('command.register', (_$, e) => (state.commands.push((e as { name: string }).name), { value: {} }) as never)
@@ -282,12 +287,14 @@ test('changing the mode rewrites the file with the new mode', async ($, on) => {
   expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'chat' })
 })
 
-test('mode off removes the file instead of leaving a stale mode', async ($, on) => {
+test('turning the mode off marks the state file off instead of deleting it', async ($, on) => {
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'audit')
   await mode($ as never, 'off')
-  expect(w.removed).toContain(FILE)
+  expect(lastWrite(w).path).toBe(FILE)
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: null })
+  expect(w.runs).toEqual([])
 })
 
 test('CLAUDE_CONFIG_DIR moves the state directory', async ($, on) => {
@@ -296,6 +303,33 @@ test('CLAUDE_CONFIG_DIR moves the state directory', async ($, on) => {
   await start($ as never)
   await mode($ as never, 'audit')
   expect(lastWrite(w).path).toBe('/cfg/mod-state/sess1.session-modes.json')
+})
+
+test('USERPROFILE is the home directory when HOME is unset', async ($, on) => {
+  const w = world(on)
+  w.env = { USERPROFILE: '/profiles/cj' }
+  await start($ as never)
+  await mode($ as never, 'audit')
+  expect(lastWrite(w).path).toBe('/profiles/cj/.claude/mod-state/sess1.session-modes.json')
+})
+
+test('with neither HOME nor USERPROFILE nothing is written or pruned', async ($, on) => {
+  const w = world(on)
+  w.env = {}
+  w.files = [{ name: 'old.session-modes.json', kind: 'file', mtimeMs: 0 }]
+  await start($ as never)
+  await mode($ as never, 'audit')
+  expect(w.writes).toEqual([])
+  expect(w.runs).toEqual([])
+})
+
+test('a prune that throws does not stop /mode from being registered', async ($, on) => {
+  const w = world(on)
+  w.files = [{ name: 'old.session-modes.json', kind: 'file', mtimeMs: 0 }]
+  w.throwRm = true
+  await start($ as never)
+  expect(w.commands).toEqual(['mode'])
+  expect((await mode($ as never, 'audit')).text).toBe('Mode audit on.')
 })
 
 test('an unknown mode writes no file', async ($, on) => {
