@@ -10,10 +10,11 @@ function capFrom(value: unknown): number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 20 ? value : DEFAULT_CAP
 }
 
-async function stateDir($: Api): Promise<string> {
+async function stateDir($: Api): Promise<string | undefined> {
   const config = await $.env.get('CLAUDE_CONFIG_DIR')
   if (config) return `${config}/mod-state`
-  return `${(await $.env.get('HOME')) ?? ''}/.claude/mod-state`
+  const home = (await $.env.get('HOME')) || (await $.env.get('USERPROFILE'))
+  return home ? `${home}/.claude/mod-state` : undefined
 }
 
 async function remove($: Api, paths: string[]): Promise<void> {
@@ -23,9 +24,10 @@ async function remove($: Api, paths: string[]): Promise<void> {
 
 async function publishState($: Api, streak: number, cap: number): Promise<void> {
   try {
-    const path = `${await stateDir($)}/${await $.session.id()}.${MOD}.json`
-    if (streak === 0) await remove($, [path])
-    else await $.fs.write(path, JSON.stringify({ v: 1, streak, cap }))
+    const dir = await stateDir($)
+    if (!dir) return
+    const path = `${dir}/${await $.session.id()}.${MOD}.json`
+    await $.fs.write(path, JSON.stringify({ v: 1, streak, cap }))
   } catch (cause) {
     throw new Error(`${MOD}: could not publish state for the status line`, { cause })
   }
@@ -34,7 +36,7 @@ async function publishState($: Api, streak: number, cap: number): Promise<void> 
 async function pruneState($: Api): Promise<void> {
   try {
     const dir = await stateDir($)
-    if (!(await $.fs.exists(dir))) return
+    if (!dir || !(await $.fs.exists(dir))) return
     const now = await $.clock.now()
     const stale = (await $.fs.list(dir)).filter(
       f => f.kind === 'file' && f.name.endsWith(`.${MOD}.json`) && now - f.mtimeMs > WEEK,

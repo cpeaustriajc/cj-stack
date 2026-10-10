@@ -1,6 +1,6 @@
 {
   "name": "loop-brake",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Ends a turn after N forced Stop-hook continuations so a looping goal hook cannot burn your usage",
   "author": { "name": "CJ" },
   "userConfig": {

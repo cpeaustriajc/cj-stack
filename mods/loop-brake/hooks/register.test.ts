@@ -10,7 +10,9 @@ function world(on: On, hookBlocks: () => boolean = () => true, extra: object = {
     surfaces,
     writes: [] as { path: string; text: string }[],
     removed: [] as string[],
+    runs: [] as string[][],
     failRm: false,
+    throwRm: false,
     files: [] as { name: string; kind: string; mtimeMs: number }[],
     env: { HOME: '/home/cj' } as Record<string, string | undefined>,
     now: 100 * 86_400_000,
@@ -26,8 +28,11 @@ function world(on: On, hookBlocks: () => boolean = () => true, extra: object = {
   on('fs.list', () => ({ value: state.files }) as never)
   on('fs.write', (_$, e) => (state.writes.push(e as never), { value: undefined }) as never)
   on('process.run', (_$, e) => {
+    const argv = (e as { argv: string[] }).argv
+    state.runs.push(argv)
+    if (state.throwRm) throw new Error('rm: Permission denied')
     if (state.failRm) return { deny: 'no' } as never
-    state.removed.push(...(e as { argv: string[] }).argv.slice(3))
+    state.removed.push(...argv.slice(3))
     return { value: { exitCode: 0, stdout: '', stderr: '' } } as never
   })
   on('classic.Stop', () => ({ ...(hookBlocks() ? { block: 'Not satisfied: keep going' } : {}), ...extra }) as never)
@@ -182,33 +187,54 @@ test('CLAUDE_CONFIG_DIR moves the state directory', async ($, on) => {
   expect(lastWrite(w).path).toBe('/cfg/mod-state/sess1.loop-brake.json')
 })
 
-test('a stop let through at the cap removes the file', async ($, on) => {
+test('a reset streak marks the state file at zero instead of deleting it', async ($, on) => {
   const w = world(on)
   for (let i = 0; i < 4; i++) await stop($)
-  expect(w.removed).toEqual([FILE])
+  expect(lastWrite(w).path).toBe(FILE)
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, streak: 0, cap: 3 })
+  expect(w.runs).toEqual([])
 })
 
-test('a user prompt after a streak removes the file', async ($, on) => {
+test('a user prompt after a streak marks the state file at zero', async ($, on) => {
   const w = world(on)
   await stop($)
   await submit($)
-  expect(w.removed).toEqual([FILE])
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, streak: 0, cap: 3 })
+  expect(w.runs).toEqual([])
 })
 
 test('a prompt with no streak running touches no file', async ($, on) => {
   const w = world(on)
   await submit($)
-  expect(w.removed).toEqual([])
+  expect(w.runs).toEqual([])
   expect(w.writes).toEqual([])
 })
 
-test('a normal stop ending a streak removes the file', async ($, on) => {
+test('a normal stop ending a streak marks the state file at zero', async ($, on) => {
   let blocks = true
   const w = world(on, () => blocks)
   await stop($)
   blocks = false
   await stop($)
-  expect(w.removed).toEqual([FILE])
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, streak: 0, cap: 3 })
+  expect(w.runs).toEqual([])
+})
+
+test('USERPROFILE is the home directory when HOME is unset', async ($, on) => {
+  const w = world(on)
+  w.env = { USERPROFILE: '/profiles/cj' }
+  await stop($)
+  expect(lastWrite(w).path).toBe('/profiles/cj/.claude/mod-state/sess1.loop-brake.json')
+})
+
+test('with neither HOME nor USERPROFILE nothing is written or pruned', async ($, on) => {
+  const w = world(on)
+  w.env = {}
+  w.files = [{ name: 'old.loop-brake.json', kind: 'file', mtimeMs: 0 }]
+  await startSession($)
+  await stop($)
+  expect(w.writes).toEqual([])
+  expect(w.runs).toEqual([])
 })
 
 test('a terminal-only session draws no status row but still writes the file', async ($, on) => {
@@ -251,6 +277,15 @@ test('a failed prune does not stop the brake from counting', async ($, on) => {
   const w = world(on)
   w.files = [{ name: 'old.loop-brake.json', kind: 'file', mtimeMs: 0 }]
   w.failRm = true
+  await startSession($)
+  expect((await stop($)).block).toBeDefined()
+  expect(last(w.statuses)).toBe('1 of 3 forced continuations')
+})
+
+test('a prune that throws does not stop the brake from counting', async ($, on) => {
+  const w = world(on)
+  w.files = [{ name: 'old.loop-brake.json', kind: 'file', mtimeMs: 0 }]
+  w.throwRm = true
   await startSession($)
   expect((await stop($)).block).toBeDefined()
   expect(last(w.statuses)).toBe('1 of 3 forced continuations')
