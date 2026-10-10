@@ -1,7 +1,7 @@
 {
   "name": "work-pane",
-  "version": "0.4.1",
-  "description": "Holds every Linear write until you allow it, and shows test runs in a pane",
+  "version": "0.5.0",
+  "description": "Shows test runs in a pane.",
   "author": { "name": "CJ" },
   "types": "./types/index.d.ts"
 }

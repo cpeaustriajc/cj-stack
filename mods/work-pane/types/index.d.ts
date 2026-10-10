@@ -12,6 +12,6 @@ export type TestRun = {
 
 declare module 'claude-code' {
   interface PluginState {
-    'work-pane': { runs: TestRun[]; asks: Record<string, string> }
+    'work-pane': { runs: TestRun[] }
   }
 }
