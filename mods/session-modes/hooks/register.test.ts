@@ -1,8 +1,34 @@
 import { expect, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
-function world(on: On) {
-  const state = { commands: [] as string[], statuses: [] as (string | undefined)[] }
+type Surface = 'terminal' | 'desktop'
+
+function world(on: On, surfaces: Surface[] = ['desktop']) {
+  const state = {
+    commands: [] as string[],
+    statuses: [] as (string | undefined)[],
+    surfaces,
+    writes: [] as { path: string; text: string }[],
+    removed: [] as string[],
+    failRm: false,
+    files: [] as { name: string; kind: string; mtimeMs: number }[],
+    env: { HOME: '/home/cj' } as Record<string, string | undefined>,
+    now: 100 * 86_400_000,
+  }
+  on('session.id', () => ({ value: 'sess1' }) as never)
+  on('session.surfaces', () => ({ value: state.surfaces }) as never)
+  on('session.attach', (_$, e) => e as never)
+  on('session.detach', (_$, e) => e as never)
+  on('env.get', (_$, e) => ({ value: state.env[(e as { name: string }).name] }) as never)
+  on('clock.now', () => ({ value: state.now }) as never)
+  on('fs.exists', () => ({ value: true }) as never)
+  on('fs.list', () => ({ value: state.files }) as never)
+  on('fs.write', (_$, e) => (state.writes.push(e as never), { value: undefined }) as never)
+  on('process.run', (_$, e) => {
+    if (state.failRm) return { deny: 'no' } as never
+    state.removed.push(...(e as { argv: string[] }).argv.slice(3))
+    return { value: { exitCode: 0, stdout: '', stderr: '' } } as never
+  })
   on('command.register', (_$, e) => (state.commands.push((e as { name: string }).name), { value: {} }) as never)
   on('session.start', (_$, e) => e as never)
   on('ui.status', (_$, e) => {
@@ -141,7 +167,7 @@ test('an unknown mode lists the modes and changes nothing', async ($, on) => {
   expect(out.text).toMatch(/foo/)
   for (const m of ['audit', 'no-pr', 'chat', 'off']) expect(out.text).toContain(m)
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
-  expect(last(w.statuses)).toBe('mode: audit')
+  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('the mode argument is case and space tolerant', async ($, on) => {
@@ -156,12 +182,12 @@ test('the status line follows the mode and clears on off', async ($, on) => {
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'no-pr')
-  expect(last(w.statuses)).toBe('mode: no-pr')
+  expect(last(w.statuses)).toBe('no-pr — no pull requests')
   await mode($ as never, 'chat')
-  expect(last(w.statuses)).toBe('mode: chat')
+  expect(last(w.statuses)).toBe('chat — answer here, no PR or push')
   await mode($ as never, 'off')
   expect(last(w.statuses)).toBeUndefined()
-  expect(w.statuses).toEqual([undefined, 'mode: no-pr', 'mode: chat', undefined])
+  expect(w.statuses).toEqual([undefined, 'no-pr — no pull requests', 'chat — answer here, no PR or push', undefined])
 })
 
 test('the prompt gets one session section last while a mode is on', async ($, on) => {
@@ -231,6 +257,106 @@ test('a second session start keeps the mode and redraws its status', async ($, o
   await start($ as never)
   await mode($ as never, 'audit')
   await start($ as never)
-  expect(last(w.statuses)).toBe('mode: audit')
+  expect(last(w.statuses)).toBe('audit — read and report only')
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
+})
+
+const DIR = '/home/cj/.claude/mod-state'
+const FILE = `${DIR}/sess1.session-modes.json`
+const lastWrite = (w: { writes: { path: string; text: string }[] }) => w.writes[w.writes.length - 1]
+const DAY = 86_400_000
+
+test('setting a mode writes the status-line file named for the session and mod', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  expect(lastWrite(w).path).toBe(FILE)
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'audit' })
+})
+
+test('changing the mode rewrites the file with the new mode', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'chat')
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'chat' })
+})
+
+test('mode off removes the file instead of leaving a stale mode', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'off')
+  expect(w.removed).toContain(FILE)
+})
+
+test('CLAUDE_CONFIG_DIR moves the state directory', async ($, on) => {
+  const w = world(on)
+  w.env.CLAUDE_CONFIG_DIR = '/cfg'
+  await start($ as never)
+  await mode($ as never, 'audit')
+  expect(lastWrite(w).path).toBe('/cfg/mod-state/sess1.session-modes.json')
+})
+
+test('an unknown mode writes no file', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'foo')
+  expect(w.writes).toEqual([])
+})
+
+test('a non-interactive session writes no state file', async ($, on) => {
+  const w = world(on)
+  await start($ as never, false)
+  expect(w.writes).toEqual([])
+})
+
+test('a terminal-only session draws no status row so the host warning row stays away', async ($, on) => {
+  const w = world(on, ['terminal'])
+  await start($ as never)
+  await mode($ as never, 'audit')
+  expect(w.statuses.filter(s => s !== undefined)).toEqual([])
+  expect(lastWrite(w).path).toBe(FILE)
+})
+
+test('attaching a non-terminal surface shows the status and detaching clears it', async ($, on) => {
+  const w = world(on, ['terminal'])
+  await start($ as never)
+  await mode($ as never, 'audit')
+  w.surfaces = ['terminal', 'desktop']
+  await $.session.attach({ clientId: 'c' } as never)
+  expect(last(w.statuses)).toBe('audit — read and report only')
+  w.surfaces = ['terminal']
+  await $.session.detach({ clientId: 'c' } as never)
+  expect(last(w.statuses)).toBeUndefined()
+})
+
+test('session start removes this mod\'s files older than seven days and keeps the rest', async ($, on) => {
+  const w = world(on)
+  w.files = [
+    { name: 'old.session-modes.json', kind: 'file', mtimeMs: w.now - 8 * DAY },
+    { name: 'new.session-modes.json', kind: 'file', mtimeMs: w.now - 6 * DAY },
+    { name: 'old.loop-brake.json', kind: 'file', mtimeMs: w.now - 9 * DAY },
+  ]
+  await start($ as never)
+  expect(w.removed).toEqual([`${DIR}/old.session-modes.json`])
+})
+
+test('a failed prune never breaks the mode command', async ($, on) => {
+  const w = world(on)
+  w.files = [{ name: 'old.session-modes.json', kind: 'file', mtimeMs: 0 }]
+  w.failRm = true
+  await start($ as never)
+  expect(w.commands).toEqual(['mode'])
+  expect((await mode($ as never, 'audit')).text).toBe('Mode audit on.')
+  expect(lastWrite(w).path).toBe(FILE)
+})
+
+test('a resumed session with a mode on republishes its file at start', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'chat')
+  w.writes.length = 0
+  await start($ as never)
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'chat' })
 })
