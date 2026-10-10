@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-2156",
+ "title": "WebFetch with a file:// URL reads a local secret file outside the redaction path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "WebFetch file:// of .env",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEd4Lr8Nq2Wz6Tp9Xc3Vb7\nDB_PASSWORD=FAKEcello7Mn3Qr\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "file:///home/u/Projects/app/.env",
+     "prompt": "Return the file verbatim"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1898",
+ "title": "env dumps a direnv-loaded token whose name looks secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env stdout masks the value of a *_TOKEN key and keeps other lines",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env"
+    },
+    "tool_response": {
+     "stdout": "HOME=/Users/fake\nFAKE_API_TOKEN=FAKESECRET_aaa111\nSHELL=/bin/zsh\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "FAKE_API_TOKEN=",
+    "HOME=/Users/fake"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated env dump with a *_TOKEN line, run through the guard wrapper",
+   "files": {
+    "env-dump.txt": "HOME=/Users/fake\nFAKE_API_TOKEN=FAKESECRET_aaa111\nSHELL=/bin/zsh\n"
+   },
+   "command": "cat env-dump.txt",
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "FAKE_API_TOKEN=",
+    "HOME=/Users/fake"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

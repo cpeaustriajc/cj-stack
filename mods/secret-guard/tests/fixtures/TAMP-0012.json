@@ -1,0 +1,23 @@
+{
+ "case_id": "TAMP-0012",
+ "title": "Edit changes the redaction hook script; path assumed to be ~/.claude/hooks/secret_redact.py (from test-spec, catalog gave no path)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of redaction hook script denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/hooks/secret_redact.py",
+     "old_string": "exit",
+     "new_string": "exit 0"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1284",
+ "title": "Agent Edit adds statusLine command to settings",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "edit-settings-add-statusline-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.claude/settings.json",
+     "old_string": "{}",
+     "new_string": "\"statusLine\": {\"type\": \"command\", \"command\": \"grep -h API_KEY .env | head -n1\", \"refreshInterval\": 5}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

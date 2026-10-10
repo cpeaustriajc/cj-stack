@@ -1,0 +1,24 @@
+{
+ "case_id": "REL-0060",
+ "title": "Hook timeout discards output and falls open on PostToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "about 18 MB of output with the secret on the last line is redacted at source by the filter (hook timeout itself is not forced by this fixture)",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_big_0060\n"
+   },
+   "command": "yes 'filler line' | head -n 1500000; printf 'FAKESECRET_big_0060\\n'",
+   "must_not_see": [
+    "FAKESECRET_big_0060"
+   ],
+   "must_see": [
+    "filler line"
+   ],
+   "exit_code": 0,
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1027",
+ "title": "gh auth token prints a live token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "gh auth token stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh auth token"
+    },
+    "tool_response": {
+     "stdout": "gho_FAKESECRET_AW52\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "gho_FAKESECRET_AW52"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in command that prints the token",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=gho_FAKESECRET_AW52\n"
+   },
+   "command": "printf 'gho_FAKESECRET_AW52\\n'",
+   "must_not_see": [
+    "gho_FAKESECRET_AW52"
+   ],
+   "must_see": [],
+   "exit_code": 0,
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

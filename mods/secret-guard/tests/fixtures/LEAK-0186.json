@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-0186",
+ "title": "Grep over tfstate backup files",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep line on tfstate backup redacted, line kept",
+   "files": {
+    "infra/terraform.tfstate.backup": "{\n  \"password\": \"FAKESECRET_bak_25\"\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "password",
+     "path": "infra",
+     "glob": "*.tfstate*",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "infra/terraform.tfstate.backup:  \"password\": \"FAKESECRET_bak_25\"",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bak_25"
+   ],
+   "must_see": [
+    "infra/terraform.tfstate.backup",
+    "password"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

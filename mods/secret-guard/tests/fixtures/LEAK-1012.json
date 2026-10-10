@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1012",
+ "title": "ssh cat of another process environ found by pgrep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote gunicorn environ via tr: SECRET_KEY redacted",
+   "files": {},
+   "command": "printf 'SECRET_KEY=FAKESECRET_dj_AI55\\0DEBUG=0\\0' | tr '\\0' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_dj_AI55"
+   ],
+   "must_see": [
+    "SECRET_KEY=[REDACTED]",
+    "DEBUG=0"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0303",
+ "title": "Secret under a non-secret-named key outside the harvest list",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of config/app.ini: model-visible output",
+   "files": {
+    "config/app.ini": "MY_CONFIG=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./config/app.ini"
+    },
+    "tool_response": {
+     "stdout": "MY_CONFIG=FAKESECRET_zz9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_zz9"
+   ],
+   "must_see": [
+    "MY_CONFIG="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of config/app.ini: source-level redaction through filter",
+   "files": {
+    "config/app.ini": "MY_CONFIG=FAKESECRET_zz9\n"
+   },
+   "command": "cat ./config/app.ini",
+   "must_not_see": [
+    "FAKESECRET_zz9"
+   ],
+   "must_see": [
+    "MY_CONFIG="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

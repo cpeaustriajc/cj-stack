@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-1093",
+ "title": "Bash cat 2 MB build.log with forced hook failure (exit 1, no stdout)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "2 MB Bash stream containing the URL secret (normal filter path)",
+   "files": {},
+   "command": "printf 'DATABASE_URL=postgres://renav:FAKESECRET_pw@db:5432/renav\\n'; head -c 2000000 /dev/zero | tr '\\0' 'x'; echo",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Bash stdout not a string (forced-failure proxy): hook must withhold",
+   "files": {
+    "logs/build.log": "DATABASE_URL=postgres://renav:FAKESECRET_pw@db:5432/renav\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat logs/build.log"
+    },
+    "tool_response": {
+     "stdout": {
+      "text": "DATABASE_URL=postgres://renav:FAKESECRET_pw@db:5432/renav\n"
+     },
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

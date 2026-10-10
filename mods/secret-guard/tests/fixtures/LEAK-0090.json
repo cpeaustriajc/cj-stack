@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0090",
+ "title": "Base64 of whole .env at misaligned offset",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 -w0 .env; value's base64 chunk must be replaced, other base64 may stay",
+   "files": {
+    ".env": "APP_NAME=renav\nPOLAR_ORG=FAKESECRET_org_9f8e7d\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 -w0 .env"
+    },
+    "tool_response": {
+     "stdout": "QVBQX05BTUU9cmVuYXYKUE9MQVJfT1JHPUZBS0VTRUNSRVRfb3JnXzlmOGU3ZAo=",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "S0VTRUNSRVRfb3JnXzlmOGU3"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

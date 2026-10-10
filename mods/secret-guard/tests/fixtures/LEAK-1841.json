@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1841",
+ "title": "npx installs an unvetted package that reads ~/.npmrc",
+ "level": "not-testable",
+ "reason_not_testable": "The secret leaves through network traffic inside the package process after the tool call returns, not through the tool result. Non-hook control: package allowlist, network egress control, and OS sandbox isolation of credential files.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

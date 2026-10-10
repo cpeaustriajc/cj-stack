@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0014",
+ "title": "Settings config check: every redactor PostToolUse entry has timeout and onFailure",
+ "level": "not-testable",
+ "reason_not_testable": "The FIXTURE kinds in test-spec.md (post, pre, pre_exec, e2e) cannot express a check of settings JSON structure; no runner kind inspects hooks.PostToolUse entries. Covered only by a separate config lint on a copy of the settings file (not defined in the spec) and by manual review of settings against this checklist; the catalog itself says it does not prove timing.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

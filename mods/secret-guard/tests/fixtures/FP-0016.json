@@ -1,0 +1,50 @@
+{
+ "case_id": "FP-0016",
+ "title": "False positive: legitimate cmp -l between two non-secret binaries",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cmp -l of two non-secret files output unchanged",
+   "files": {
+    "dist/app-v1.bin": "app build v1\n",
+    "dist/app-v2.bin": "app build v2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cmp -l dist/app-v1.bin dist/app-v2.bin | head -5"
+    },
+    "tool_response": {
+     "stdout": "1 177 1\n2 105 6\n3 114 5\n4 106 6\n5 1 0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "1 177 1",
+    "5 1 0"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "control: cmp -l of non-secret files is allowed",
+   "files": {
+    "dist/app-v1.bin": "app build v1\n",
+    "dist/app-v2.bin": "app build v2\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cmp -l dist/app-v1.bin dist/app-v2.bin | head -5"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

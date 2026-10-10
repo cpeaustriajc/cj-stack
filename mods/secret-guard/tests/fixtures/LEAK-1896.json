@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1896",
+ "title": "Redactor does not mask a value that appears split across a Bash line break in a restored file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Value split by a newline inside a plist string is masked in joined output",
+   "files": {
+    "app.plist": "<key>apiToken</key>\n<string>FAKESECRET_\nSPLIT_1</string>\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings app.plist | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "    <key>apiToken</key>\n    <string>FAKESECRET_\nSPLIT_1</string>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_\nSPLIT_1"
+   ],
+   "must_see": [
+    "apiToken",
+    "<key>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

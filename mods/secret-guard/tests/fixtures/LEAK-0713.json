@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0713",
+ "title": "Read-only cache directory makes the hook fail with EACCES",
+ "level": "not-testable",
+ "reason_not_testable": "Reproducing EACCES needs chmod 555 on the hook's cache directory, but the cache path is UNVERIFIED and the fixture format has no permission or cache-path setup, so the failure path cannot be produced. No non-hook control covers it; the catch-all in the hook is covered only by code review.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

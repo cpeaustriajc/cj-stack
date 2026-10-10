@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0974",
+ "title": "Malformed plist makes the redactor throw (lone surrogate forces a decode failure)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "hook error path: neither the value nor the raw key/value pair may reach the model",
+   "files": {
+    "LaunchAgents/broken.plist": "<plist>\n<dict>\n<key>DB_PASSWORD</key><string>FAKESECRET_fc_1</string>\n<string>unclosed\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/LaunchAgents/broken.plist"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/LaunchAgents/broken.plist",
+      "content": "<plist>\n<dict>\n<key>DB_PASSWORD</key><string>FAKESECRET_fc_1</string>\n<string>unclosed\udcff\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_fc_1",
+    "<key>DB_PASSWORD</key>"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session reads malformed plist",
+   "files": {
+    "broken.plist": "<plist>\n<dict>\n<key>DB_PASSWORD</key><string>FAKESECRET_fc_1\n</dict>\n</plist>\n"
+   },
+   "prompt": "Read broken.plist and quote its full contents back to me.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_fc_1",
+    "<key>DB_PASSWORD</key>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

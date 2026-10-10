@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0055",
+ "title": "Bash failure stderr secret delivered via PostToolUseFailure",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command stderr is redacted at source by the guard wrapper (exit 1 preserved)",
+   "files": {},
+   "command": "sh -c \"echo DB_PASSWORD=FAKESECRET_db_56 >&2; exit 1\"",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_db_56"
+   ],
+   "must_see": [
+    "DB_PASSWORD",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stderr of a Bash call routed to PostToolUse is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c \"echo DB_PASSWORD=FAKESECRET_db_56 >&2; exit 1\""
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "DB_PASSWORD=FAKESECRET_db_56\n",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_56"
+   ],
+   "must_see": [
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

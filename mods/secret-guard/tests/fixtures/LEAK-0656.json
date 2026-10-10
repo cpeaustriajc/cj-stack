@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0656",
+ "title": "Bash cat of a DSN file: model-visible stdout and source redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env.test updatedToolOutput form",
+   "files": {
+    ".env.test": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.example.internal:5432/app\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.test"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.example.internal:5432/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:",
+    "@db.example.internal:5432/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env with second DSN value, run through the guard wrapper",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_PW_001@db.example.internal:5432/app\n"
+   },
+   "command": "cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW_001"
+   ],
+   "must_see": [
+    "@db.example.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

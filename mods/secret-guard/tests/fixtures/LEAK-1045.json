@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1045",
+ "title": "cd then echo of signing key in one compound command",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "compound cd and echo of signing key redacted by exact-value match",
+   "files": {
+    "services/payments/.env": "PAYMENTS_SIGNING_KEY=FAKESECRET_pay_BN75\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cd services/payments && echo $PAYMENTS_SIGNING_KEY"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pay_BN75\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pay_BN75"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in sources the .env in the second segment and echoes the key",
+   "files": {
+    "services/payments/.env": "PAYMENTS_SIGNING_KEY=FAKESECRET_pay_BN75\n"
+   },
+   "command": "cd services/payments && . ./.env && echo \"$PAYMENTS_SIGNING_KEY\"",
+   "must_not_see": [
+    "FAKESECRET_pay_BN75"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

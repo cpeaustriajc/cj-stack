@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1454",
+ "title": "Read of a shell file with octal ANSI-C escapes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "octal ANSI-C escaped value in a shell file read with Read",
+   "files": {
+    "fixtures/export.sh": "GREETING=$'\\106\\101KESECRET_ALPHA_9x'\n",
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/fixtures/export.sh"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/fixtures/export.sh",
+      "content": "GREETING=$'\\106\\101KESECRET_ALPHA_9x'\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "KESECRET_ALPHA_9x"
+   ],
+   "must_see": [
+    "GREETING"
+   ]
+  }
+ ],
+ "notes": "Added .env with the FAKE literal so that KESECRET_ALPHA_9x is a substring of a FAKE-containing string in the fixture. The octal spelling '\\106\\101KESECRET_ALPHA_9x' was dropped: it has no FAKE and octal escapes are not in rule 2's list. A partial redaction that leaves only the octal 'FA' prefix would not be caught."
+}

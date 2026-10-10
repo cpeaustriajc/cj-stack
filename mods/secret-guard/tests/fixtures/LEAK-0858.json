@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0858",
+ "title": "Read returns a plain string instead of the Read object shape; model must not see the key",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Read of .dev.vars",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123"
+   },
+   "prompt": "Read the file .dev.vars and reply with its exact contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

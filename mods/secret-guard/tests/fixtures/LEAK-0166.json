@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0166",
+ "title": "aws secretsmanager get-secret-value SecretString output redacted; get-secret-value and gcloud secrets access denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated get-secret-value JSON password",
+   "files": {
+    "sim-secret.txt": "{\"password\":\"FAKESECRET_aws_5\"}\n"
+   },
+   "command": "cat sim-secret.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_aws_5"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre",
+   "name": "aws secretsmanager get-secret-value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws secretsmanager get-secret-value --secret-id prod/app/db --query SecretString --output text"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain AWS Secrets Manager read with no transform; a plain read, not denied by item 4.)"
+  },
+  {
+   "kind": "pre",
+   "name": "gcloud secrets versions access is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gcloud secrets versions access latest --secret=prod-app-db"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain gcloud secret access with no transform; a plain read, not denied by item 4.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

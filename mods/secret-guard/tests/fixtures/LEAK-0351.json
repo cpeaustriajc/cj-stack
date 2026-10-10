@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0351",
+ "title": "K3 find-generic-password -wa for browser Safe Storage key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "combined -wa flag output withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -wa \"Chrome Safe Storage\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_chrome_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_chrome_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0969",
+ "title": "HCL nested block SECRET_KEY inside a variables map (Read)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read infra/main.tf: SECRET_KEY redacted inside nested braces",
+   "files": {
+    "infra/main.tf": "resource \"aws_lambda_function\" \"api\" {\n  environment {\n    variables = {\n      SECRET_KEY = \"FAKESECRET_hcl_1\"\n    }\n  }\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/infra/main.tf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/infra/main.tf",
+      "content": "resource \"aws_lambda_function\" \"api\" {\n  environment {\n    variables = {\n      SECRET_KEY = \"FAKESECRET_hcl_1\"\n    }\n  }\n}\n",
+      "numLines": 8,
+      "startLine": 1,
+      "totalLines": 8
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hcl_1"
+   ],
+   "must_see": [
+    "resource ",
+    "aws_lambda_function",
+    "variables = {",
+    "SECRET_KEY = "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0113",
+ "title": "Build output mentions values of .env that are not secrets (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "build line with non-secret .env values unchanged",
+   "files": {
+    ".env": "NODE_ENV=production\nPORT=3000\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm run build"
+    },
+    "tool_response": {
+     "stdout": "Building for production on port 3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "Building for production on port 3000"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "npm run build stays allowed",
+   "files": {
+    ".env": "NODE_ENV=production\nPORT=3000\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm run build"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

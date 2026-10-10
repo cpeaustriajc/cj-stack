@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0923",
+ "title": "Token split across lines by fold after base64 -d (docker config simulated; base64 step is real)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "decoded config token folded at 30 columns; neither split half may appear; key name visible",
+   "files": {
+    "sim-docker-config.sh": "printf 'api_token: FAKESECRET_anth_9Kd2Lm7Qp4Zx8Vw1Ns6Rt\\n' | base64\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=2Lm7Qp4Zx8Vw1Ns6Rt\nPLANTED_SERVICE_SECRET_1=FAKESECRET_anth_9Kd\n"
+   },
+   "command": "sh sim-docker-config.sh | base64 -d | fold -w 30",
+   "must_not_see": [
+    "FAKESECRET_anth_9Kd",
+    "2Lm7Qp4Zx8Vw1Ns6Rt"
+   ],
+   "must_see": [
+    "api_token"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0247",
+ "title": "Telemetry captures the original output before the hook runs",
+ "level": "not-testable",
+ "reason_not_testable": "OpenTelemetry tool-span and analytics export happens inside Claude Code, outside any hook-visible output; the PostToolUse hook cannot reach it and the fixture format has no telemetry sink. Non-hook control: disable tool-output content in OTel, or keep OTel off for sessions that handle secrets (catalog mitigation).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

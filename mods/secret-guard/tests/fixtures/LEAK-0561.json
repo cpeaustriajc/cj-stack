@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0561",
+ "title": "Sentry event JSON: api_key value redacted; non-standard tok key only asserted for the api_key line (tok is a documented gap, not asserted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "api_key frame var redacted in JSON body",
+   "files": {
+    "bin/curl.sh": "echo '{\"entries\":[{\"frames\":[{\"vars\":{\"api_key\":\"FAKESECRET_sentry25\"}}]}],\"extra\":{\"tok\":\"FAKESECRET_sentry25b\"}}'\n"
+   },
+   "command": "sh bin/curl.sh -s https://sentry.io/api/0/issues/1/events/latest/",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_sentry25\""
+   ],
+   "must_see": [
+    "\"api_key\":\"[REDACTED]\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

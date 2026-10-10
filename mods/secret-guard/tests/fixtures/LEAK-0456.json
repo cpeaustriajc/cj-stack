@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0456",
+ "title": "[12b] python3 plistlib decodes kMDItemWhereFroms via os.getxattr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python3 -c with getxattr and plistlib is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import os,plistlib;print(plistlib.loads(os.getxattr('/Users/cj/Downloads/build.zip','com.apple.metadata:kMDItemWhereFroms')))\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "decoded plist output (simulated) with token= is redacted if run",
+   "files": {
+    "py-out.txt": "['https://files.example.com/dl/abc?token=FAKESECRET_py12']\n"
+   },
+   "command": "cat py-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_py12"
+   ],
+   "must_see": [
+    "files.example.com/dl/abc"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

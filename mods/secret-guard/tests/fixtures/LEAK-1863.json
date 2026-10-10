@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1863",
+ "title": "Read deny rule on the file does not block xattr on the same path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "xattr -l output: signature value redacted (holds whether or not the guard denies the call)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -l ~/Downloads/FAKESECRET_report.pdf"
+    },
+    "tool_response": {
+     "stdout": "com.apple.metadata:kMDItemWhereFroms: https://files.example.com/dl/report.pdf?X-Amz-Signature=FAKESECRET_sig123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sig123"
+   ],
+   "must_see": [
+    "files.example.com"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated xattr -l on a Read-denied path: signature redacted at source",
+   "files": {},
+   "command": "printf 'com.apple.metadata:kMDItemWhereFroms: https://files.example.com/dl/report.pdf?X-Amz-Signature=FAKESECRET_sig123\\n'",
+   "must_not_see": [
+    "FAKESECRET_sig123"
+   ],
+   "must_see": [
+    "files.example.com"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

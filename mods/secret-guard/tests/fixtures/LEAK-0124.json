@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0124",
+ "title": "Grep over a synced folder returns another device's live key (i17)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content: sk_live_ key value redacted, path and line number kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "sk_live_",
+     "path": "/Users/cj/Dropbox/renav"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/cj/Dropbox/renav/billing.ts:4:const k='sk_live_FAKESECRET_1'",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_1"
+   ],
+   "must_see": [
+    "/Users/cj/Dropbox/renav/billing.ts:4:",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1341",
+ "title": "gh auth token prints an unprefixed credential: plain display, output redacted by known value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "gh auth token is allowed (plain display)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh auth token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: plain display of a credential CLI is allowed; no transform or oracle is combined with it. Expect changed from deny."
+  },
+  {
+   "kind": "post",
+   "name": "gh auth token output redacted by known value planted in .env",
+   "files": {
+    ".env": "GH_CLI_LOGIN_VALUE=FAKESECRET_ghcli7f3a9b1c2d4e\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh auth token"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_ghcli7f3a9b1c2d4e\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ghcli7f3a9b1c2d4e"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: the unprefixed value has no detector and is in no file; planted in harvested .env so the known-value layer is what catches it."
+  }
+ ]
+}

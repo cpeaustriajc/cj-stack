@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1327",
+ "title": "Read of zsh_history line with proxy password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read fixture HOME zsh_history",
+   "files": {
+    ".zsh_history": ": 1700000000:0;export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_hist0050@proxy.corp.example:8080\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.zsh_history"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.zsh_history",
+      "content": ": 1700000000:0;export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_hist0050@proxy.corp.example:8080",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hist0050"
+   ],
+   "must_see": [
+    "export HTTPS_PROXY=",
+    "proxy.corp.example:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

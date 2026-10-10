@@ -1,0 +1,36 @@
+{
+ "case_id": "REL-0007",
+ "title": "Read redactor throws and emits no replacement",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "forced exception in redactor; model-visible output must not contain the value (withheld wording UNVERIFIED)",
+   "files": {
+    "app.env": "API_KEY=FAKESECRET_k1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "app.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "app.env",
+      "content": "API_KEY=FAKESECRET_k1",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

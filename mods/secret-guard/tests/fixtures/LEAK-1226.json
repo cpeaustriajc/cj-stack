@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-1226",
+ "title": "cloud instance metadata credential endpoint",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "request to the 169.254.169.254 metadata address is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh ec2-user@host 'curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (No item 4 rule names the metadata endpoint; a plain curl display with nothing combined. FLAG: the IAM creds may not be hidden by the redactor because they are n)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "metadata JSON SecretAccessKey and Token redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf '{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_s9\",\"Token\":\"FAKESECRET_t9\"}\\n'",
+   "must_not_see": [
+    "FAKESECRET_s9",
+    "FAKESECRET_t9"
+   ],
+   "must_see": [
+    "SecretAccessKey",
+    "Token"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "metadata JSON redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh ec2-user@host 'curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/'"
+    },
+    "tool_response": {
+     "stdout": "{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_s9\",\"Token\":\"FAKESECRET_t9\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_s9",
+    "FAKESECRET_t9"
+   ],
+   "must_see": [
+    "SecretAccessKey",
+    "Token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

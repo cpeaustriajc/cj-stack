@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0882",
+ "title": "Opaque unprefixed token in a wrangler-style table cell",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "wrangler-table-harvested-token",
+   "files": {
+    ".env": "CLOUDFLARE_API_TOKEN=FAKESECRET_cfopaque0123456789abcdefABCDEF0123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wrangler whoami"
+    },
+    "tool_response": {
+     "stdout": "| account | token            |\n| renav   | FAKESECRET_cfopaque0123456789abcdefABCDEF0123 |\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cfopaque0123456789abcdefABCDEF0123"
+   ],
+   "must_see": [
+    "| account",
+    "renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

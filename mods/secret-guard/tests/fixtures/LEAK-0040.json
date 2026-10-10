@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0040",
+ "title": "Write creates source file with hard-coded password literal",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of source file with password literal is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "<repo>/src/db.ts",
+     "content": "const pool = new Pool({ password: \"FAKESECRET_pw_13\" })"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "control: password read from env stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "<repo>/src/db.ts",
+     "content": "const pool = new Pool({ password: process.env.DB_PASSWORD })"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

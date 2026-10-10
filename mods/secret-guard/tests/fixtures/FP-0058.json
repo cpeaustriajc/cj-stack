@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0058",
+ "title": "False positive: sha512 integrity digest in package-lock.json (Read)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sha512 integrity digest must survive (digest is 88 chars, body contains FAKE marker)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/package-lock.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/package-lock.json",
+      "content": "{\n  \"packages\": {\n    \"node_modules/left-pad\": {\n      \"integrity\": \"sha512-FAKEabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqr==\"\n    }\n  }\n}\n",
+      "numLines": 7,
+      "startLine": 1,
+      "totalLines": 7
+     }
+    }
+   },
+   "must_see": [
+    "sha512-FAKEabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqr=="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

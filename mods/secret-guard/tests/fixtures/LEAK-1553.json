@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1553",
+ "title": "Plugin script prints keychain password bare",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "security find-generic-password -w -s renav-deploy denied. Spec gap: deny rule not in test-spec Guard(a). Indirect script calls UNVERIFIED and not covered",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -w -s renav-deploy"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Keychain CLI printing a password with -w and nothing combined; plain display of a secret source, which owner allows.)"
+  },
+  {
+   "kind": "pre",
+   "name": "security find-generic-password with -w after -a denied (flag order variant)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -a cj -s renav-deploy -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same keychain plain display with flags reordered; nothing combined, so owner allows it.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

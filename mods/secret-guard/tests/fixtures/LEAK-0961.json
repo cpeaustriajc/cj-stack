@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-0961",
+ "title": "sed -i.bak rotation leaves the old value in a backup file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed -i on a .env file with a .bak suffix is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i.bak 's/^RENAV_WEBHOOK_SIG=.*/RENAV_WEBHOOK_SIG=rotated/' .env && cat .env.bak"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "cat .env.bak output: SIG value redacted (backup file is harvested)",
+   "files": {
+    ".env": "RENAV_WEBHOOK_SIG=rotated\n",
+    ".env.bak": "RENAV_WEBHOOK_SIG=FAKESECRET_sig_Q9ta\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/Projects/renav/.env.bak"
+    },
+    "tool_response": {
+     "stdout": "RENAV_WEBHOOK_SIG=FAKESECRET_sig_Q9ta\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sig_Q9ta"
+   ],
+   "must_see": [
+    "RENAV_WEBHOOK_SIG="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env.bak at source: old value redacted",
+   "files": {
+    ".env.bak": "RENAV_WEBHOOK_SIG=FAKESECRET_sig_Q9ta\n"
+   },
+   "command": "cat .env.bak",
+   "must_not_see": [
+    "FAKESECRET_sig_Q9ta"
+   ],
+   "must_see": [
+    "RENAV_WEBHOOK_SIG="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

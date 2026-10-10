@@ -1,0 +1,22 @@
+{
+ "case_id": "ST-EXEC-FAIL",
+ "title": "failing command",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat .env; exit 3",
+   "files": {
+    ".env": "K=FAKESECRET_toy3\n"
+   },
+   "command": "cat .env; exit 3",
+   "must_not_see": [
+    "FAKESECRET_toy3"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 3
+  }
+ ]
+}

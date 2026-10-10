@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0667",
+ "title": "Bash cat .env: updatedToolOutput keeps shape and non-secret keys",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env tool_response with password URL and Stripe key",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/renav\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\nPORT=3000\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/renav\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\nPORT=3000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1",
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "PORT=3000",
+    "STRIPE_SECRET_KEY=",
+    "isImage",
+    "interrupted"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env run through the guard wrapper",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/renav\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\nPORT=3000\n"
+   },
+   "command": "cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw1",
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

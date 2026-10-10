@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1239",
+ "title": "env inherited by ProxyCommand child process",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "exported secret env var is redacted from stderr dump",
+   "files": {
+    "aws.env": "AWS_SESSION_TOKEN=FAKESECRET_aws5\n"
+   },
+   "command": "set -a; . ./aws.env; set +a; env >&2",
+   "must_not_see": [
+    "FAKESECRET_aws5"
+   ],
+   "must_see": [
+    "AWS_SESSION_TOKEN="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

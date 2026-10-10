@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-0748",
+ "title": "Secret pulled out in two fragments via docker exec and cut (simulated remote; docker exec form is denied as source plus transform)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker exec echo of env var piped to cut is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker exec app sh -c 'echo $STRIPE_KEY' | cut -c1-12"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "first fragment (12 chars of the value) is redacted",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_stripe_abcdef123456\n"
+   },
+   "command": "printf '%s\\n' FAKESECRET_stripe_abcdef123456 | cut -c1-12",
+   "must_not_see": [
+    "FAKESECRET_s"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "second fragment (cut -c13-) is redacted",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_stripe_abcdef123456\n"
+   },
+   "command": "printf '%s\\n' FAKESECRET_stripe_abcdef123456 | cut -c13-",
+   "must_not_see": [
+    "tripe_abcdef123456"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

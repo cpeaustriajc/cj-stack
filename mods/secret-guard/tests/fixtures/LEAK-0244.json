@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0244",
+ "title": "updatedToolOutput object missing required Bash fields is ignored",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat of fixtures/one.env redacted at source by the filter",
+   "files": {
+    "fixtures/one.env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "cat ./fixtures/one.env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0590",
+ "title": "Grep over Charles .chls session file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content over .chls redacted",
+   "files": {
+    "fixtures/session.chls": "14 Authorization: Bearer FAKESECRET_chl54\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Authorization",
+     "path": "fixtures/session.chls",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "session.chls:14:Authorization: Bearer FAKESECRET_chl54",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_chl54"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "TAMP-0110",
+ "title": "Redactor PostToolUse entry configured async (guard tamper deny; the config assertion itself is not expressible in fixture kinds)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit adds async:true to settings.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "~/.claude/settings.json",
+     "old_string": "\"type\": \"command\"",
+     "new_string": "\"type\": \"command\", \"async\": true"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed adds async:true to settings.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/\"matcher\"/\"async\": true, \"matcher\"/' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

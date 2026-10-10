@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0032",
+ "title": "False positive: source constants not redacted in Read, and Edit on TOKEN_LIMIT still works",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of auth.ts with source constants",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "auth.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "auth.ts",
+      "content": "const TOKEN_LIMIT = 4096;\nexport const COOKIE_NAME = \"session\";\nconst keyboardLayout = \"qwerty\";\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_see": [
+    "const TOKEN_LIMIT = 4096;",
+    "keyboardLayout = "
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Read then Edit TOKEN_LIMIT in real session",
+   "files": {
+    "auth.ts": "const TOKEN_LIMIT = 4096;\nexport const COOKIE_NAME = \"session\";\nconst keyboardLayout = \"qwerty\";\n"
+   },
+   "prompt": "Read auth.ts. Then use Edit to change TOKEN_LIMIT from 4096 to 8192, and reply with the changed line.",
+   "allowed_tools": "Read,Edit",
+   "must_see": [
+    "TOKEN_LIMIT = 4096",
+    "TOKEN_LIMIT = 8192"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

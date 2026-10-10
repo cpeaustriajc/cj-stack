@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0353",
+ "title": "K5 find-generic-password -g writes secret to stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "-g secret in stderr field withheld (every string field scanned)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"example-svc\" -g"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "password: \"FAKESECRET_kc_2\"\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kc_2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

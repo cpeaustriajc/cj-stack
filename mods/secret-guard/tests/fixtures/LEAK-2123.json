@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2123",
+ "title": "Guard echoes the matched value in additionalContext",
+ "level": "not-testable",
+ "reason_not_testable": "additionalContext is a UserPromptSubmit output. No component or fixture kind in test-spec.md checks it (pre checks only permissionDecision). Non-hook control: keep secret values out of prompts so no context echo is needed; rotate exposed values.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

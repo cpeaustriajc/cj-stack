@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0652",
+ "title": "Plan file quoting a DATABASE_URL with password is denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write to plans/ with URL userinfo password",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "plans/renav-plan.md",
+     "content": "DATABASE_URL=postgres://user:FAKESECRET_pw7@db:5432/app"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1692",
+ "title": "Read of iTerm2 session log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read under iTerm2 Logs denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Logs/iTerm2/session-latest.txt"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of one iTerm2 log file. Owner allows this.)"
+  },
+  {
+   "kind": "post",
+   "name": "iTerm2 log value redacted if allowed",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Logs/iTerm2/session-latest.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/Logs/iTerm2/session-latest.txt",
+      "content": "export STRIPE_KEY=FAKESECRET_ITERM_0001\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ITERM_0001"
+   ],
+   "must_see": [
+    "STRIPE_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

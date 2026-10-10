@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1559",
+ "title": "Read of settings.json returns env.SOME_API_TOKEN",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of settings.json: token value replaced, key kept, JSON shape kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.claude/settings.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.claude/settings.json",
+      "content": "{\n  \"env\": {\n    \"SOME_API_TOKEN\": \"FAKESECRET_settings\"\n  }\n}\n",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_settings"
+   ],
+   "must_see": [
+    "SOME_API_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

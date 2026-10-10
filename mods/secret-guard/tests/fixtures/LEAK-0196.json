@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0196",
+ "title": "Read of Pulumi.prod.yaml with a plaintext config value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plaintext dbPassword replaced, region kept",
+   "files": {
+    "infra/Pulumi.prod.yaml": "config:\n  renav:region: us-east-1\n  renav:dbPassword: FAKESECRET_plain_31\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "infra/Pulumi.prod.yaml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "infra/Pulumi.prod.yaml",
+      "content": "config:\n  renav:region: us-east-1\n  renav:dbPassword: FAKESECRET_plain_31\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plain_31"
+   ],
+   "must_see": [
+    "us-east-1",
+    "renav:region"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

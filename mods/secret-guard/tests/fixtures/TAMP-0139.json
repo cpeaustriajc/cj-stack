@@ -1,0 +1,49 @@
+{
+ "case_id": "TAMP-0139",
+ "title": "Non-curl HTTP client bypasses a guard that matches only curl",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python urllib request to /actuator/env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import urllib.request;print(urllib.request.urlopen('http://127.0.0.1:8080/actuator/env').read().decode())\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "wget to /actuator/env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wget -qO- http://127.0.0.1:8080/actuator/env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (wget of /actuator/env to stdout is a plain display of a secret source with nothing combined; owner allows it, redactor hides values.)"
+  },
+  {
+   "kind": "pre",
+   "name": "bash /dev/tcp request to /actuator/env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "exec 3<>/dev/tcp/127.0.0.1/8080; printf 'GET /actuator/env HTTP/1.0\\r\\n\\r\\n' >&3; cat <&3"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Raw /dev/tcp GET of /actuator/env with output to stdout is a plain display of a secret source with nothing else combined.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

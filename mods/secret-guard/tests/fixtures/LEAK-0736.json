@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0736",
+ "title": "Parallel third-party PostToolUse hook times out while the redactor succeeds (combination of multiple updatedToolOutput values is UNVERIFIED; e2e only checks the outcome)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "redactor alone replaces echoed secret with placeholder",
+   "files": {
+    ".env": "TOK=FAKESECRET_tok_42\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_tok_42"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_tok_42\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_42"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "third-party hook sleeps past its 10 s timeout; model sees placeholder, not raw",
+   "files": {
+    ".env": "TOK=FAKESECRET_tok_42\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"sleep 20; exit 0\",\"timeout\":10}]}]}}"
+   },
+   "prompt": "Run cat .env and show the output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_tok_42"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

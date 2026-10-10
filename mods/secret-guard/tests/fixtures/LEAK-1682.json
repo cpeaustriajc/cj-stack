@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1682",
+ "title": "Grep API_KEY over the repo including typescript file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep match: API_KEY value redacted, file name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY",
+     "path": "/Users/cj/Projects/renav",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "typescript:2:API_KEY=FAKESECRET_TS_0002",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TS_0002"
+   ],
+   "must_see": [
+    "typescript:2:API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

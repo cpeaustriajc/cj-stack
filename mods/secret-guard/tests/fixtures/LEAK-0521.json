@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0521",
+ "title": "[69] sandboxed qlmanage render succeeds where cat is blocked",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "qlmanage on ~/Projects/app/.env denied before sandbox matters (catalog test_level is e2e; sandbox coverage of quicklookd is UNVERIFIED and not asserted)",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "qlmanage -t -o \"$TMPDIR\" ~/Projects/app/.env"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

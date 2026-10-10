@@ -1,0 +1,56 @@
+{
+ "case_id": "FP-0111",
+ "title": "Bash name-based false positives on non-secret config values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of wrangler.toml and .env.example with non-secret TOKEN_LIMIT, KEY_COUNT, AUTH_PROVIDER, COOKIE_MAX_AGE",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat wrangler.toml .env.example"
+    },
+    "tool_response": {
+     "stdout": "TOKEN_LIMIT=4096\nKEY_COUNT=3\nAUTH_PROVIDER=github\nCOOKIE_MAX_AGE=86400\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "TOKEN_LIMIT=4096",
+    "KEY_COUNT=3",
+    "AUTH_PROVIDER=github",
+    "COOKIE_MAX_AGE=86400"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "grep of config/limits.php for TOKEN_LIMIT and KEY_COUNT",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n 'TOKEN_LIMIT\\|KEY_COUNT' config/limits.php"
+    },
+    "tool_response": {
+     "stdout": "500:    'TOKEN_LIMIT' => 4096,\n12:    'KEY_COUNT' => 3,\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "TOKEN_LIMIT' => 4096",
+    "KEY_COUNT' => 3"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

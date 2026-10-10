@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0179",
+ "title": "docker exec env: API_TOKEN value redacted, PATH kept; docker exec env and printenv denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker exec env output",
+   "files": {
+    "sim-env.txt": "API_TOKEN=FAKESECRET_exec_18\nPATH=/usr/bin\n"
+   },
+   "command": "cat sim-env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_exec_18"
+   ],
+   "must_see": [
+    "PATH=/usr/bin",
+    "API_TOKEN=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker exec myapp-container env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker exec myapp-container env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain env display via docker exec with no transform; a plain display.)"
+  },
+  {
+   "kind": "pre",
+   "name": "docker exec myapp-container printenv is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker exec myapp-container printenv"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain printenv via docker exec with no transform; a plain display.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

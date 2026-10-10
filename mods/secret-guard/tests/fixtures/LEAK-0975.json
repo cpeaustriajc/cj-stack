@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0975",
+ "title": "ps argv: secret flag value in a filtered process listing",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ps args with --api-key: value redacted, pid, binary and --queue kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -eo pid,args | grep -i -- --api-key"
+    },
+    "tool_response": {
+     "stdout": "4410 /opt/bin/worker --api-key FAKESECRET_key_A1 --queue default\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_A1"
+   ],
+   "must_see": [
+    "4410 /opt/bin/worker",
+    "--api-key [REDACTED]",
+    "--queue default"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

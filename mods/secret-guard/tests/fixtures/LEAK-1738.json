@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1738",
+ "title": "git log -p with pickaxe -S/-G prints the matching removed hunk",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "pickaxe removed hunk value replaced, hunk header and path kept",
+   "files": {
+    "git-log-pickaxe.out": "commit 5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f\n\n    rotate api key\n\ndiff --git a/config/app.env b/config/app.env\n@@ -3 +3 @@\n-API_KEY=FAKESECRET_PICK_01\n+API_KEY=<rotated>\n"
+   },
+   "command": "cat git-log-pickaxe.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PICK_01"
+   ],
+   "must_see": [
+    "@@ -3 +3 @@",
+    "diff --git a/config/app.env b/config/app.env",
+    "-API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git log -p -S pickaxe stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -S 'API_KEY' --all"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1090",
+ "title": "Read 200 MB app.log: layer-2 regex exceeds a 5 s hook timeout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "200 MB Bash stream with the secret at the end (timeout proxy)",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_pw1\n"
+   },
+   "command": "head -c 20000000 /dev/zero | tr '\\0' 'x'; echo; printf 'DATABASE_URL=postgres://app:FAKESECRET_pw1@db\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R5: value planted in a harvested file | size cut to 20 MB: the 200 MB original timed out before any hook ran"
+  },
+  {
+   "kind": "post",
+   "name": "Read of a small log with the secret (normal path)",
+   "files": {
+    "logs/app.log": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "logs/app.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "logs/app.log",
+      "content": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "@db"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

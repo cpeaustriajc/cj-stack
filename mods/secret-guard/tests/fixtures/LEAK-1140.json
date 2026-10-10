@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-1140",
+ "title": "MCP filesystem read of .env: deny; mask API_KEY value if reached",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mcp__filesystem__read_text_file of .env denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__filesystem__read_text_file",
+    "tool_input": {
+     "path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain read of the project .env through an MCP filesystem read tool with nothing combined; owner allows reads of secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "MCP .env text: API_KEY value masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__filesystem__read_text_file",
+    "tool_input": {
+     "path": "/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "text": "API_KEY=FAKESECRET_k\n"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k"
+   ],
+   "must_see": [
+    "API_KEY=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

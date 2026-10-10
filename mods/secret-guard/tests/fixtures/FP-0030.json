@@ -1,0 +1,46 @@
+{
+ "case_id": "FP-0030",
+ "title": "[82] false positive: filenames containing token, password, key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find of filenames with token/password/key words is unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /Users/cj/Projects/renav/src -name '*token*' -o -name '*password*' -o -name '*key*'"
+    },
+    "tool_response": {
+     "stdout": "/Users/cj/Projects/renav/src/auth/token-utils.ts\n/Users/cj/Projects/renav/src/lib/password_reset.ts\n/Users/cj/Projects/renav/src/keys/public_key.pem\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "/Users/cj/Projects/renav/src/auth/token-utils.ts",
+    "/Users/cj/Projects/renav/src/lib/password_reset.ts",
+    "/Users/cj/Projects/renav/src/keys/public_key.pem"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "find with secret-word filenames stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /Users/cj/Projects/renav/src -name '*token*' -o -name '*password*' -o -name '*key*'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0144",
+ "title": "WebSearch snippet: pasted PrivateKey redacted (WebSearch response shape is not in hook-payloads.json, so the shape here is a guess, UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "search snippet key redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebSearch",
+    "tool_input": {
+     "query": "wireguard PrivateKey example config"
+    },
+    "tool_response": {
+     "query": "wireguard PrivateKey example config",
+     "results": [
+      {
+       "title": "WireGuard example",
+       "url": "https://example.com/wg",
+       "snippet": "PrivateKey = FAKESECRET_wg_pasted"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wg_pasted"
+   ],
+   "must_see": [
+    "WireGuard example"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

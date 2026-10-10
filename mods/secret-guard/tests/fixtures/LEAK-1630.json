@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1630",
+ "title": "Safari Cookies.binarycookies via Bash strings and via Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "strings on Safari cookie store",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings \"$HOME/Library/Cookies/Cookies.binarycookies\" | head"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Read Safari cookie store",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/Library/Cookies/Cookies.binarycookies"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Safari cookie store. Read on secret paths is allowed.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

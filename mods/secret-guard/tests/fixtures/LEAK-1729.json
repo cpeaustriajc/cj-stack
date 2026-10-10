@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1729",
+ "title": "base64 of zsh history via Bash (history file placed at ~/.zsh_history in temp HOME, so the file is actually present for the command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of history file: aligned base64 of the exported FAKE secret must not appear",
+   "files": {
+    "~/.zsh_history": "export AWS_SECRET_ACCESS_KEY=\"FAKESECRET_aws_value_1234\"\n"
+   },
+   "command": "base64 < ~/.zsh_history",
+   "must_not_see": [
+    "FAKESECRET_aws_value_1234"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

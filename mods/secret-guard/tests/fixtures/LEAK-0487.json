@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0487",
+ "title": "curl saves an OAuth token response into /tmp, then Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl token request writing headers and body to /tmp is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -D /tmp/hdrs.txt -X POST https://auth.example.com/oauth/token -d grant_type=client_credentials -d client_id=... -d client_secret=... -o /tmp/resp.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of token response in /tmp: access_token value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/resp.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/tmp/resp.json",
+      "content": "{\"access_token\":\"FAKESECRET_oa42\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oa42"
+   ],
+   "must_see": [
+    "access_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

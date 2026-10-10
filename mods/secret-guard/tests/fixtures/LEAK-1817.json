@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-1817",
+ "title": "gh run view --log-failed tail with URL-encoded and JSON-escaped values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "log tail with URL-encoded and JSON-escaped secrets; both redacted",
+   "files": {
+    "run-log.txt": "build\tStep 7\turl=FAKESECRET%5FURL%5F01\n{\"token\":\"FAKESECRET_JSON_01\"}\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_JSON_01\nPLANTED_SERVICE_SECRET_1=FAKESECRET_URL_01\n"
+   },
+   "command": "tail -300 run-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET%5FURL%5F01",
+    "FAKESECRET_JSON_01"
+   ],
+   "must_see": [
+    "Step 7"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file | R5: the URL-encoded value is planted too"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0387",
+ "title": "P12 Read tool on /proc/self/environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of NUL-separated /proc/self/environ, value redacted across NUL",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/proc/self/environ"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/proc/self/environ",
+      "content": "BW_SESSION=FAKESECRET_bw_sess_34\u0000PATH=/usr/bin\u0000",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bw_sess_34"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

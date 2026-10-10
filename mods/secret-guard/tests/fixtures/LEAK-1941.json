@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1941",
+ "title": "Scheduled job (at/cron/launchctl submit) writes secret later; no tool call is visible when it runs",
+ "level": "not-testable",
+ "reason_not_testable": "The scheduled job runs later with no hook event, and whether at/launchd jobs run outside the Bash sandbox is UNVERIFIED. The job's execution cannot be triggered inside a unit or e2e run without waiting on the OS scheduler. The later Read of the output file is covered by the LEAK-1937 Read redaction fixture. Non-hook controls: sandbox limits on child processes and PreToolUse guards on at/cron/launchctl submit commands.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0194",
+ "title": "aws s3 cp of remote tfstate to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "tfstate from s3 to stdout redacted, JSON structure kept (simulated)",
+   "files": {
+    "s3.out": "{\"resources\":[{\"instances\":[{\"attributes\":{\"password\":\"FAKESECRET_s3_30b\"}}]}]}\n"
+   },
+   "command": "cat s3.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_s3_30b"
+   ],
+   "must_see": [
+    "resources",
+    "instances"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "aws s3 cp to stdout via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws s3 cp s3://acme-tfstate/prod/terraform.tfstate -"
+    },
+    "tool_response": {
+     "stdout": "{\"resources\":[{\"instances\":[{\"attributes\":{\"password\":\"FAKESECRET_s3_30b\"}}]}]}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_s3_30b"
+   ],
+   "must_see": [
+    "resources",
+    "instances"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

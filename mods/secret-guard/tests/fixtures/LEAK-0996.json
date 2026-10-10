@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-0996",
+ "title": "MCP tool result echoes a resolved secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP tool_response text: NAME=value masked by name rule",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__svc__query",
+    "tool_input": {
+     "query": "list open tickets"
+    },
+    "tool_response": "error: auth failed for SERVICE_KEY=FAKESECRET_svc_V19 (resolved from launchd env)"
+   },
+   "must_not_see": [
+    "FAKESECRET_svc_V19"
+   ],
+   "must_see": [
+    "error: auth failed for",
+    "SERVICE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

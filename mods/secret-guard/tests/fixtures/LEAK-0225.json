@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0225",
+ "title": "File byte length via wc -c on a secret file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "wc -c on .env is denied",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_FAKE0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -c .env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "wc -c output passes unchanged with path intact",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_FAKE0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -c .env"
+    },
+    "tool_response": {
+     "stdout": "42 .env\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "42 .env"
+   ]
+  }
+ ]
+}

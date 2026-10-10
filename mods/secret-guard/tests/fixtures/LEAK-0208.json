@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0208",
+ "title": "kubectl get secret -o yaml shows base64 value (step 1)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 STRIPE_KEY value in secret YAML redacted",
+   "files": {
+    ".env": "STRIPE_KEY=sk_live_FAKESECRET_42\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl -n renav get secret app-env -o yaml"
+    },
+    "tool_response": {
+     "stdout": "apiVersion: v1\ndata:\n  STRIPE_KEY: c2tfbGl2ZV9GQUtFU0VDUkVUXzQy\nkind: Secret\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "c2tfbGl2ZV9GQUtFU0VDUkVUXzQy"
+   ],
+   "must_see": [
+    "apiVersion: v1",
+    "kind: Secret"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session cat of secret YAML",
+   "files": {
+    ".env": "STRIPE_KEY=sk_live_FAKESECRET_42\n",
+    "app-env.yaml": "apiVersion: v1\ndata:\n  STRIPE_KEY: c2tfbGl2ZV9GQUtFU0VDUkVUXzQy\nkind: Secret\n"
+   },
+   "prompt": "Run `cat app-env.yaml` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "c2tfbGl2ZV9GQUtFU0VDUkVUXzQy"
+   ],
+   "must_see": [
+    "kind: Secret"
+   ]
+  }
+ ]
+}

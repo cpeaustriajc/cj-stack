@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1660",
+ "title": "MCP list_network_requests with Authorization header (MCP tool name and input UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Authorization Bearer value is redacted, url kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__network__list_network_requests",
+    "tool_input": {
+     "headers": true
+    },
+    "tool_response": {
+     "requests": [
+      {
+       "url": "https://dash.example/api/x",
+       "headers": {
+        "Authorization": "Bearer FAKESECRET_BEARER_0001"
+       }
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_0001"
+   ],
+   "must_see": [
+    "https://dash.example/api/x",
+    "Authorization",
+    "Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

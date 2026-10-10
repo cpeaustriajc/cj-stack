@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0966",
+ "title": "Ruby symbol arrow assignment (Read)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read config/app.rb: symbol-key value replaced, key kept",
+   "files": {
+    "config/app.rb": "module App\n  CONFIG = {\n  :db_password => \"FAKESECRET_rb_3\",\n  }\nend\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/config/app.rb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/config/app.rb",
+      "content": "module App\n  CONFIG = {\n  :db_password => \"FAKESECRET_rb_3\",\n  }\nend\n",
+      "numLines": 6,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rb_3"
+   ],
+   "must_see": [
+    ":db_password =>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

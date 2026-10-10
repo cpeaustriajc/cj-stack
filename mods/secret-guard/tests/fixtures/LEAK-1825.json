@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1825",
+ "title": "git add -A and commit with a debug script containing a token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git add -A with untracked debug.sh holding a token; deny broad staging",
+   "files": {
+    "debug.sh": "export TOKEN=FAKESECRET_DBG_01\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add -A && git commit -m 'wip: add debug script'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "git add -A with untracked src/test-fixtures.ts holding a key; deny broad staging",
+   "files": {
+    "src/test-fixtures.ts": "export const k = 'FAKESECRET_BLOB_01'\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add -A && git commit -m 'add fixtures'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1227",
+ "title": "node -e prints process.env on a remote host",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "process.env object notation: API_KEY value redacted, PATH kept (remote simulated with printf)",
+   "files": {},
+   "command": "printf '%s\\n' \"{ API_KEY: 'FAKESECRET_a10', PATH: '/usr/bin' }\"",
+   "must_not_see": [
+    "FAKESECRET_a10"
+   ],
+   "must_see": [
+    "API_KEY:",
+    "PATH: '/usr/bin'"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "node -e process.env output redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh web-03 'node -e \"console.log(process.env)\"'"
+    },
+    "tool_response": {
+     "stdout": "{ API_KEY: 'FAKESECRET_a10', PATH: '/usr/bin' }\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a10"
+   ],
+   "must_see": [
+    "API_KEY:",
+    "PATH: '/usr/bin'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

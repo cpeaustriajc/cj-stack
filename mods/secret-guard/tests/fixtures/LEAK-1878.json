@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1878",
+ "title": "nohup open of a .command file in background is denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "nohup open background denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "nohup open ./FAKESECRET_dump.command > /dev/null 2>&1 &"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

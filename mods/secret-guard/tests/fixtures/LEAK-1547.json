@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1547",
+ "title": "SessionStart hook prints token file into context",
+ "level": "not-testable",
+ "reason_not_testable": "SessionStart output is not a tool_response and no hook component covers SessionStart. The expected outcome is a config lint over settings.json hook commands that cat secret paths or print env, which has no fixture kind. Non-hook control: that config lint.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

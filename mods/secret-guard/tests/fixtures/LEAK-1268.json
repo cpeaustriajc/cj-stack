@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1268",
+ "title": "Read of a file on an sshfs or NFS mount",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "read-sshfs-env-content-redacted",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a27\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Volumes/prod-sshfs/app/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Volumes/prod-sshfs/app/.env",
+      "content": "API_KEY=FAKESECRET_a27\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a27"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

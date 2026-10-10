@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-2022",
+ "title": "Percent-encoded password in proxy URL is still redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "percent-encoded proxy password redacted in printenv output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv https_proxy"
+    },
+    "tool_response": {
+     "stdout": "http://FAKEUSER_b:FAKESECRET%40pw%3Ax@proxy.example.internal:8080\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET%40pw%3Ax"
+   ],
+   "must_see": [
+    "http://FAKEUSER_b:[REDACTED]@proxy.example.internal:8080"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "percent-encoded proxy password redacted at source",
+   "files": {
+    "proxy-url.txt": "http://FAKEUSER_b:FAKESECRET%40pw%3Ax@proxy.example.internal:8080\n"
+   },
+   "command": "cat proxy-url.txt",
+   "must_not_see": [
+    "FAKESECRET%40pw%3Ax"
+   ],
+   "must_see": [
+    "@proxy.example.internal:8080"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

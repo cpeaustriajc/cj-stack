@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0061",
+ "title": "Read tool on session transcript JSONL returns an earlier tool result containing the value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of session transcript JSONL is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.claude/projects/-Users-cj-Projects-renav/example-session.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a transcript; no combo, tamper or write. Spec Goal: Claude may read anything, redactor hides values.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of an ordinary project README stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "README.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,19 @@
+{
+ "case_id": "REL-0019",
+ "title": "Large output with slow scan passes raw when the timeout fires (slow scanner not reproduced; size path only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "50 MB output with a secret is withheld or redacted at source",
+   "files": {},
+   "command": "yes 'DB_PASSWORD=FAKESECRET_big_10' | head -c 50000000",
+   "must_not_see": [
+    "FAKESECRET_big_10"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

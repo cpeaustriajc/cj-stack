@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0402",
+ "title": "L11 raw keyring payload with no vendor token shape [r2: converted to not-testable, the rejection's second option, because no hook can identify an unknown raw value]",
+ "level": "not-testable",
+ "reason_not_testable": "Documented gap, not a testable hook behaviour: the raw value FAKESECRET_raw_48 has no key=value shape, no token prefix and is not harvested from any file, so no hook can identify it and it reaches the model unchanged. Asserting it stays visible would require a test to demand a leak, and asserting it is hidden would fail by design. Non-hook controls: remote-side restriction of which paths prod-db-01 can read (e.g. /run/secrets), and command-side permission rules denying ssh reads of credential paths.",
+ "fixtures": []
+}

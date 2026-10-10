@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1120",
+ "title": "Interpreter inline code reads .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python3 -c opening .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"print(open('.env').read())\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "node -e reading .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "node -e \"console.log(require('fs').readFileSync('.env','utf8'))\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, DB_URL userinfo is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1120",
+    "tool_input": {
+     "command": "python3 -c \"print(open('.env').read())\""
+    },
+    "tool_response": {
+     "stdout": "DB_URL=postgres://u:FAKESECRET_pw@h/db\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://u:[REDACTED]@h/db"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0661",
+ "title": "base64 of a whole transcript file: value at three alignments",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 whole file, value at phase 0",
+   "files": {
+    "session.jsonl": "FAKESECRET_PW_001\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_PW_001\n"
+   },
+   "command": "base64 < session.jsonl",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW_001"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 whole file, value at phase 1",
+   "files": {
+    "session.jsonl": "AFAKESECRET_PW_001\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_PW_001\n"
+   },
+   "command": "base64 < session.jsonl",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW_001"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 whole file, value at phase 2",
+   "files": {
+    "session.jsonl": "ABFAKESECRET_PW_001\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_PW_001\n"
+   },
+   "command": "base64 < session.jsonl",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW_001"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ]
+}

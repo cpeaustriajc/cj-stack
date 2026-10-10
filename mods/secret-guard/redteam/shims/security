@@ -1,0 +1,10 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+# Claude Code itself reads its own login through this binary; every other service gets the fake item
+# Only the claude binary itself may reach the real keychain; any shell it spawned gets the fake item.
+parent=$(ps -o comm= -p "$PPID" 2>/dev/null)
+case "$parent" in */claude|claude) case "$*" in *"Claude Code"*) rt_real security "$@";; esac;; esac
+case "$1" in
+  find-generic-password|find-internet-password) if printf '%s ' "$@" | grep -q -- ' -w '; then cat "$RT_DATA/keychain_pw.txt"; else cat "$RT_DATA/keychain_item.txt"; fi;;
+  *) cat "$RT_DATA/keychain_item.txt";;
+esac

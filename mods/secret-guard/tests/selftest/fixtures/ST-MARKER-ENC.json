@@ -1,0 +1,28 @@
+{
+ "case_id": "ST-MARKER-ENC",
+ "title": "encoded and sliced FAKE value is valid",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "b64 and slice",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_enc1 b64=RkFLRVNFQ1JFVF9lbmMx"
+    }
+   },
+   "must_not_see": [
+    "ECRET_enc1",
+    "RkFLRVNFQ1JFVF9lbmMx"
+   ],
+   "must_see": [
+    "b64="
+   ]
+  }
+ ]
+}

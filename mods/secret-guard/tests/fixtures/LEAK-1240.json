@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1240",
+ "title": "/feedback uploads a transcript with earlier secrets",
+ "level": "not-testable",
+ "reason_not_testable": "/feedback is a user-run slash command that uploads the session transcript; neither PreToolUse nor PostToolUse fires for it, and no tool_response is produced. Non-hook controls: values must never reach tool output (the O layer), and policy: do not run /feedback after a secret was exposed.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

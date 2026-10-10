@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1165",
+ "title": "Edit tool copies a secret into old_string or new_string (Fastfile old_string is a placeholder added because Edit requires it)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies Edit whose old_string holds a secret value",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_key\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "src/client.ts",
+     "old_string": "const KEY = \"FAKESECRET_key\"",
+     "new_string": "const KEY = process.env.API_KEY",
+     "replace_all": false
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies Edit whose new_string holds a PEM header with a secret",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_p8\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/proj/fastlane/Fastfile",
+     "old_string": "# api key placeholder",
+     "new_string": "app_store_connect_api_key(key_id: 'XXXXXXXXXX', key_content: '-----BEGIN PRIVATE KEY-----FAKESECRET_p8')",
+     "replace_all": false
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit that swaps a literal for an env reference stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "src/client.ts",
+     "old_string": "const KEY = \"old\"",
+     "new_string": "const KEY = process.env.API_KEY",
+     "replace_all": false
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

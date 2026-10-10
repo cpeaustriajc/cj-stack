@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0324",
+ "title": "sudo security find-generic-password -w",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo security -w denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo security find-generic-password -s example-service -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain keychain CLI display (security -w) with nothing combined; keychain is a secret source, so this rests on the owner override and the redactor (UNVERIFIED th)"
+  },
+  {
+   "kind": "pre",
+   "name": "security -w without sudo denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s example-service -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-0324#0: plain keychain display without sudo; relies on owner override and redactor coverage (UNVERIFIED).)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

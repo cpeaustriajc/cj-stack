@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0175",
+ "title": "docker build --build-arg secret literal denied; non-secret build-arg and BuildKit --secret id stay allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker build with NPM_TOKEN literal build-arg is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker build --build-arg NPM_TOKEN=FAKESECRET_build_14 -t myapp ."
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "docker build with non-secret build-arg stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker build --build-arg NODE_ENV=production -t myapp ."
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "docker build with BuildKit --secret from file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker build --secret id=npm_token,src=npm-token.txt -t myapp ."
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

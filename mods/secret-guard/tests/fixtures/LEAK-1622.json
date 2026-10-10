@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1622",
+ "title": "fold splits harvested value across lines (known gap: expected red; P deny variant included)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "fold -w 8 over printenv-style output with harvested value",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_fold8\n"
+   },
+   "command": "printf 'DB_PASSWORD=FAKESECRET_fold8\\n' | fold -w 8",
+   "exit_code": 0,
+   "must_not_see": [
+    "ORD=FAKE"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ssh remote printenv piped to fold is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host 'docker exec app printenv DB_PASSWORD' | fold -w 8"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

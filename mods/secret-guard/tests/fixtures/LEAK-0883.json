@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0883",
+ "title": "Hook returns updatedToolOutput as a plain string for a Bash result",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plain-string-replacement-must-be-withheld",
+   "files": {
+    ".env": "TELEGRAM_API_ID=FAKESECRET_tg_12345\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "TELEGRAM_API_ID=FAKESECRET_tg_12345\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tg_12345"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "REL-0028",
+ "title": "Bash npm ci --verbose about 40 MB: timeout or non-zero exit must fail closed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Unknown Bash stdout shape (fail-closed proxy): hook must withhold, not pass npm lines through. Timeout and forced exit 1 are not expressible in fixtures",
+   "files": {
+    "package-lock.json": "\"integrity\": \"sha512-FAKEintegrity0001==\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm ci --verbose"
+    },
+    "tool_response": {
+     "stdout": [
+      "added 1 package, integrity sha512-FAKEintegrity0001=="
+     ],
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "sha512-FAKEintegrity0001"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

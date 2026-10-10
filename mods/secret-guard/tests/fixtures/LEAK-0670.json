@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0670",
+ "title": "Redactor failure or malformed input still withholds Bash stdout in object shape",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env DB_PASSWORD withheld in Bash object",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw2",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"isImage\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

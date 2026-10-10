@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1681",
+ "title": "Read of script(1) typescript file in repo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of typescript file: API_KEY value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/typescript"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/typescript",
+      "content": "$ cat .env\nAPI_KEY=FAKESECRET_TS_0001\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TS_0001"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]",
+    "$ cat .env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

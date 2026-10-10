@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2099",
+ "title": "Shape mismatch on updatedToolOutput silently keeps the original output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PGP private key block: emitted output must be the Bash object, not a bare string",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./pgp-export.asc"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PGP PRIVATE KEY BLOCK-----\nFAKESECRET_PGP_BODY_1\nFAKESECRET_PGP_BODY_2\n-----END PGP PRIVATE KEY BLOCK-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PGP_BODY_1",
+    "FAKESECRET_PGP_BODY_2"
+   ],
+   "must_see": [
+    "stdout",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

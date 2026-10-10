@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2040",
+ "title": "Sync client writes a conflicted copy that the guard never saw",
+ "level": "not-testable",
+ "reason_not_testable": "The conflicted copy is written by the Dropbox client, not by any Claude tool call, so no PreToolUse or PostToolUse hook fires. Non-hook control: avoid writing secrets into synced roots at the write step, keep secret-bearing paths out of synced folders, and run a periodic local scan of synced roots with rotation of any value found.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

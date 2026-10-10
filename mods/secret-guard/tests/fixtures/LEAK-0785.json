@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0785",
+ "title": "base64 of a value at alignment offsets 0, 1 and 2 is not left in Bash output (post and pre deny for literal command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 at alignment offsets 0,1,2 in stdout redacted",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pw5\n",
+    "~/Projects/app/.env": "POSTGRES_PASSWORD=FAKESECRET_pw5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'x%s' 'FAKESECRET_pw5' | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9wdzU=\neEZBS0VTRUNSRVRfcHc1\neHlGQUtFU0VDUkVUX3B3NQ==\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9wdzU=",
+    "eEZBS0VTRUNSRVRfcHc1",
+    "eHlGQUtFU0VDUkVUX3B3NQ=="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "literal harvested value in printf|base64 command is denied",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pw5\n",
+    "~/Projects/app/.env": "POSTGRES_PASSWORD=FAKESECRET_pw5\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'x%s' 'FAKESECRET_pw5' | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

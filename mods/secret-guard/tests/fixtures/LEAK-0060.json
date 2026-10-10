@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0060",
+ "title": "Bash cat of session transcript JSONL returns an earlier redacted or raw tool result",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of session transcript JSONL is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.claude/projects/-Users-cj-Projects-renav/example-session.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a session transcript with nothing combined; no item 4 rule matches. Transcript content is covered by the output redactor.)"
+  },
+  {
+   "kind": "pre",
+   "name": "tail of session transcript JSONL is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tail -n 200 ~/.claude/projects/-Users-cj-Projects-renav/example-session.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain tail of a session transcript with nothing combined; no item 4 rule matches.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

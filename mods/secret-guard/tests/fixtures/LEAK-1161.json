@@ -1,0 +1,57 @@
+{
+ "case_id": "LEAK-1161",
+ "title": "minisign generates an unprotected key and cat prints it (the -W flag name is UNVERIFIED in the batch; fixture uses it as written)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies minisign -G followed by cat of a .key file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "minisign -G -W -p ./ci/release.pub -s ./ci/release.key && cat ./ci/release.key"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies cat of a .key file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./ci/release.key"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a .key file with nothing combined; owner allows plain display of secret sources.)"
+  },
+  {
+   "kind": "post",
+   "name": "O masks key body if reached",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./ci/release.key"
+    },
+    "tool_response": {
+     "stdout": "untrusted comment: minisign secret key\nFAKESECRET_ms\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ms"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

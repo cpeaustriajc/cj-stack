@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0902",
+ "title": "Prefix-less opaque value under a generic key 'value' (jq)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "opaque value under key 'value' redacted; id and name kept (value has FAKESECRET marker; no real Cloudflare format assumed)",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_cf_Zk3vQ9mP2xR7tL4wB8nJ1cF6hD5sA0eG\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq -r '.result[0]' cf-response.json"
+    },
+    "tool_response": {
+     "stdout": "{\"id\":\"f1c9\",\"name\":\"deploy-bot\",\"value\":\"FAKESECRET_cf_Zk3vQ9mP2xR7tL4wB8nJ1cF6hD5sA0eG\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf_Zk3vQ9mP2xR7tL4wB8nJ1cF6hD5sA0eG"
+   ],
+   "must_see": [
+    "f1c9",
+    "deploy-bot",
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: added harvested .env with SERVICE_TOKEN=<same value as the fixture secret>; nothing else changed."
+  }
+ ]
+}

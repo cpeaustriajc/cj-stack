@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1611",
+ "title": "Unharvested container secret split by fold -w1 (documented O gap; tested as P guard deny per mitigation)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printenv via docker exec piped to fold -w1 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host docker exec app-web printenv INTERNAL_SESSION_KEY | fold -w1"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1057",
+ "title": "Read of a debug log containing a bearer token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of preload log: bearer value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.cache/node-preload.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.cache/node-preload.log",
+      "content": "2026-10-09T10:00Z bearer FAKESECRET_tok_BX87\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BX87"
+   ],
+   "must_see": [
+    "2026-10-09T10:00Z bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

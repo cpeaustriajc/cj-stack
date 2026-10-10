@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0618",
+ "title": "Bash env output emitted as object with same shape, not as a plain string (catalog marks this e2e; shape is checked on the post output)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env with API_KEY line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env"
+    },
+    "tool_response": {
+     "stdout": "PATH=/usr/bin\nAPI_KEY=FAKESECRET_pw1\nHOME=/home/cj\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "\"interrupted\"",
+    "\"isImage\"",
+    "PATH=/usr/bin",
+    "HOME=/home/cj"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1952",
+ "title": "otelHeadersHelper exports credentials to a collector",
+ "level": "not-testable",
+ "reason_not_testable": "OTEL exporter traffic leaves the process outside tool results, so no PostToolUse or PreToolUse event covers it. Whether tool content is exported is UNVERIFIED because the settings-reference entry was truncated. Non-hook control: keep OTEL disabled or pinned in managed settings, and confirm the content-logging keys in the full settings reference.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

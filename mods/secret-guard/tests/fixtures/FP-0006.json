@@ -1,0 +1,57 @@
+{
+ "case_id": "FP-0006",
+ "title": "numeric token_count:3 in JSON output is not redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "JSON output with token_count:3 passes unchanged",
+   "files": {
+    "resp.json": "{\"ok\":true,\"token_count\":3}\n"
+   },
+   "command": "cat resp.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "\"token_count\":3"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse Bash output with token_count:3 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -X POST http://127.0.0.1:8787/notify -H 'Content-Type: application/json' -d '{\"status\":\"ok\"}'"
+    },
+    "tool_response": {
+     "stdout": "{\"ok\":true,\"token_count\":3}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "token_count"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "curl notify to localhost stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -X POST http://127.0.0.1:8787/notify -H 'Content-Type: application/json' -d '{\"status\":\"ok\"}'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

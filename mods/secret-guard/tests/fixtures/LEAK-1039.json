@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1039",
+ "title": "mise task that echoes a token variable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echoed token value matched exactly via harvested .env value",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_BH69\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mise run deploy:check"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_tok_BH69\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BH69"
+   ],
+   "must_see": [
+    "token="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in task sources .env and echoes the token",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_BH69\n"
+   },
+   "command": ". ./.env; echo \"token=$API_TOKEN\"",
+   "must_not_see": [
+    "FAKESECRET_tok_BH69"
+   ],
+   "must_see": [
+    "token="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

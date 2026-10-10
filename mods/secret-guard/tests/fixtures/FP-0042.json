@@ -1,0 +1,35 @@
+{
+ "case_id": "FP-0042",
+ "title": "False positive: CI config and .env.example lines with TOKEN/AUTH_/KEY names",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep output of benign TOKEN/AUTH_/KEY names is kept",
+   "files": {
+    ".env.example": "AUTH_PROVIDER=github\nCSRF_TOKEN_NAME=csrftoken\n",
+    ".github/workflows/ci.yml": "jobs:\n  test:\n    env:\n      TOKEN_CACHE_DIR: .cache/tokens\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn 'TOKEN\\|AUTH_\\|KEY' .github/workflows/ci.yml .env.example"
+    },
+    "tool_response": {
+     "stdout": ".github/workflows/ci.yml:9:      TOKEN_CACHE_DIR: .cache/tokens\n.env.example:3:AUTH_PROVIDER=github\n.env.example:4:CSRF_TOKEN_NAME=csrftoken\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "TOKEN_CACHE_DIR: .cache/tokens",
+    "AUTH_PROVIDER=github",
+    "CSRF_TOKEN_NAME=csrftoken"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

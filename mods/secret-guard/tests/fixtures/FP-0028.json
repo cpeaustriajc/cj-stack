@@ -1,0 +1,49 @@
+{
+ "case_id": "FP-0028",
+ "title": "Read of package.json with secret-like words in keywords (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of package.json keywords is unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/private/tmp/secret-hooks-fixture-home/proj/package.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/private/tmp/secret-hooks-fixture-home/proj/package.json",
+      "content": "{\n  \"name\": \"renav-web\",\n  \"keywords\": [\"tokenizer\", \"keyring\"]\n}\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "renav-web",
+    "tokenizer",
+    "keyring"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Read of package.json stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/private/tmp/secret-hooks-fixture-home/proj/package.json"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

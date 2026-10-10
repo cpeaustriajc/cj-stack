@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1005",
+ "title": "env grep for proxy with credentials in URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "proxy URL userinfo password redacted, host kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i proxy"
+    },
+    "tool_response": {
+     "stdout": "HTTPS_PROXY=http://renav:FAKESECRET_px_AC26@proxy.example.test:8080\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_px_AC26"
+   ],
+   "must_see": [
+    "HTTPS_PROXY=http://renav:[REDACTED]@proxy.example.test:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

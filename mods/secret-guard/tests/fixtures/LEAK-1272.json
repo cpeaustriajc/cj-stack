@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-1272",
+ "title": "Bash tail of mcp-remote debug logs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "tail-mcp-auth-debug-logs-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tail -n 200 ~/.mcp-auth/*_debug.log"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain tail of debug logs under ~/.mcp-auth; a display with nothing combined.)"
+  },
+  {
+   "kind": "post",
+   "name": "bash-bearer-line-redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tail -n 200 ~/.mcp-auth/*_debug.log"
+    },
+    "tool_response": {
+     "stdout": "Authorization: Bearer FAKESECRET_dbgbearer0004\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dbgbearer0004"
+   ],
+   "must_see": [
+    "Authorization: Bearer"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "tail-local-debug-log-redacted-at-source",
+   "files": {
+    "0a1b2c_debug.log": "token refresh ok\nAuthorization: Bearer FAKESECRET_dbgbearer0004\n"
+   },
+   "command": "tail -n 200 0a1b2c_debug.log",
+   "must_not_see": [
+    "FAKESECRET_dbgbearer0004"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "token refresh ok"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

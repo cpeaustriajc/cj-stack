@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0361",
+ "title": "K15 git credential-osxkeychain get called directly",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "credential-osxkeychain get password line withheld or redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'protocol=https\\nhost=github.com\\n\\n' | git credential-osxkeychain get"
+    },
+    "tool_response": {
+     "stdout": "protocol=https\nhost=github.com\nusername=cj\npassword=FAKESECRET_git_8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_git_8"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

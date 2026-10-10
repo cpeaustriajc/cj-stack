@@ -1,0 +1,22 @@
+{
+ "case_id": "ST-DENY-NEEDS-RUN",
+ "title": "deny with must_see fails (expected FAIL under toy_good)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "files": {
+    ".env": "K=FAKESECRET_den1\n"
+   },
+   "command": "cat .env | base64",
+   "must_not_see": [
+    "FAKESECRET_den1"
+   ],
+   "policy_note": "deny is the intended outcome",
+   "name": "denied but must_see needs the run",
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

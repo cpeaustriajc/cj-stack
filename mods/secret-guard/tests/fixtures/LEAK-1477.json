@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1477",
+ "title": "ssh remote cat of .env prints KEY=VALUE lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-sim cat .env: URI password and API_TOKEN redacted, keys kept",
+   "files": {},
+   "command": "printf 'DATABASE_URL=postgres://app:FAKESECRET_pw@db.internal/app\\nAPI_TOKEN=FAKESECRET_tok\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw",
+    "FAKESECRET_tok"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:",
+    "@db.internal/app",
+    "API_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,34 @@
+{
+ "case_id": "FP-0161",
+ "title": "False positive: startup hook prints a non-secret build version",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Non-secret BUILD_ID and version lines are left unchanged",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_unused_Q7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import sys; print(sys.version)\""
+    },
+    "tool_response": {
+     "stdout": "3.12.4\nBUILD_ID=abc123-public-build\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "3.12.4",
+    "BUILD_ID=abc123-public-build"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

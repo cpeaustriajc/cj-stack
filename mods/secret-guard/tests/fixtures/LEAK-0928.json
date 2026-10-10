@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0928",
+ "title": "docker compose config: stderr warning kept, stdout YAML value redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated compose config: stdout DB_PASSWORD value hidden, stderr WARNING intact",
+   "files": {
+    "sim-compose-config.sh": "printf 'name: app\\nservices:\\n  web:\\n    environment:\\n      DB_PASSWORD: FAKESECRET_db_9f3a\\n'\nprintf 'WARNING: The \"DB_PASSWORD\" variable is not set. Defaulting to a blank string.\\n' >&2\n"
+   },
+   "command": "sh sim-compose-config.sh",
+   "must_not_see": [
+    "FAKESECRET_db_9f3a"
+   ],
+   "must_see": [
+    "name: app",
+    "DB_PASSWORD",
+    "WARNING: The",
+    "Defaulting to a blank string."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

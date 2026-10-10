@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1132",
+ "title": "grep over ~/.claude/projects: deny the grep, mask password_hash if reached",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -r password_hash over ~/.claude/projects denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r password_hash ~/.claude/projects/"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Content search of ~/.claude/projects, which is not a listed secret source; no transform or combo with a secret source.)"
+  },
+  {
+   "kind": "post",
+   "name": "transcript JSON line: password_hash value masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r password_hash ~/.claude/projects/"
+    },
+    "tool_response": {
+     "stdout": "{\"password_hash\":\"FAKESECRET_hash\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hash"
+   ],
+   "must_see": [
+    "password_hash"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

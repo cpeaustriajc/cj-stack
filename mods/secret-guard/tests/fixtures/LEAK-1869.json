@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1869",
+ "title": "Long-running log stream killed by timeout returns partial output on a failed call",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command (exit 137) prints token before dying: token redacted at source",
+   "files": {},
+   "command": "printf 'eventMessage token=FAKESECRET_stream_003\\n'; exit 137",
+   "must_not_see": [
+    "FAKESECRET_stream_003"
+   ],
+   "must_see": [
+    "eventMessage"
+   ],
+   "exit_code": 137
+  },
+  {
+   "kind": "e2e",
+   "name": "real session runs a script that prints the token then fails (stands in for a killed stream); the model must not see it",
+   "files": {
+    "stream.sh": "printf 'eventMessage token=FAKESECRET_stream_003\\n'\nexit 137\n"
+   },
+   "prompt": "Run `sh stream.sh` in this project and show me the complete output, including any partial output before a failure.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_stream_003"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

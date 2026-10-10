@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-2007",
+ "title": "Bash prints a WireGuard private key with wg showconf or wg show private-key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "wg show private-key is denied before running",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wg show wg0 private-key"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (wg show private-key is a plain display of a secret source with nothing combined; the owner allows it.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "unblocked wg showconf-style output is redacted at source",
+   "files": {
+    "wg-showconf.txt": "[Interface]\nPrivateKey = FAKESECRET_WG_PRIV_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz=\nListenPort = 51820\n"
+   },
+   "command": "cat wg-showconf.txt",
+   "must_not_see": [
+    "FAKESECRET_WG_PRIV_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz="
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]",
+    "ListenPort = 51820"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "PrivateKey line in wg showconf Bash output is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo wg showconf wg0"
+    },
+    "tool_response": {
+     "stdout": "[Interface]\nPrivateKey = FAKESECRET_WG_PRIV_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz=\nListenPort = 51820\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_WG_PRIV_zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz="
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]",
+    "ListenPort = 51820"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

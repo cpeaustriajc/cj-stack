@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-2019",
+ "title": "Grep with case-variant directory path returns secret lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep with case-variant ./Secrets path is denied",
+   "files": {
+    "secrets/Prod.txt": "token=FAKESECRET_grep_0006\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token",
+     "path": "./Secrets"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Grep tool over ./Secrets is a plain read; the owner allows Grep on secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "if Grep runs, secret value on matching line is redacted and prefix kept",
+   "files": {
+    "secrets/Prod.txt": "token=FAKESECRET_grep_0006\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token",
+     "path": "./Secrets",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "secrets/Prod.txt:12: token=FAKESECRET_grep_0006",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_grep_0006"
+   ],
+   "must_see": [
+    "secrets/Prod.txt:12: token=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

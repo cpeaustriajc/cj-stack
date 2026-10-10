@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0994",
+ "title": "Remote launchctl getenv over SSH",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote bare value matching a harvested .env value is masked",
+   "files": {
+    ".env": "OPENAI_API_KEY=FAKESECRET_oa_T18\n",
+    "fake-ssh.sh": "echo FAKESECRET_oa_T18\n"
+   },
+   "command": "sh fake-ssh.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oa_T18"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,27 @@
+{
+ "case_id": "LEAK-1835",
+ "title": "ssh cat of plaintext secret files",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote cat of shared .env and .npmrc",
+   "files": {
+    "remote-sim.sh": "printf 'DATABASE_URL=postgres://app:FAKESECRET_SSH_05@db/x\\n//registry.npmjs.org/:_authToken=FAKESECRET_SSH_06\\n'\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SSH_05",
+    "FAKESECRET_SSH_06"
+   ],
+   "must_see": [
+    "DATABASE_URL=",
+    "@db/x",
+    "//registry.npmjs.org/",
+    "_authToken="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

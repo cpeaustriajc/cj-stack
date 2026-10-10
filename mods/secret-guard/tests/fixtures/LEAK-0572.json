@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0572",
+ "title": "User pastes DSN into the prompt before any tool runs",
+ "level": "not-testable",
+ "reason_not_testable": "The DSN is in the user's prompt before any tool call. The spec's components only handle tool events (PreToolUse, PostToolUse, PostToolUseFailure, PostToolBatch), so secret_redact.py and secret_guard.py never receive user message text and cannot redact or deny it. Spec section 'Cases that genuinely cannot be tested' lists user-pasted prompts. Non-hook control: the user does not paste secrets (policy). Any prompt-side check would be a separate hook (UNVERIFIED design, not in the spec).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

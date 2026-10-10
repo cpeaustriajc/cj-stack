@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0813",
+ "title": "Secret only on stderr of Bash: stdout is ok, stderr carries the value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash object with secret only in stderr",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_token_stderr_3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_token_stderr_3 >&2; echo ok"
+    },
+    "tool_response": {
+     "stdout": "ok\n",
+     "stderr": "FAKESECRET_token_stderr_3\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_token_stderr_3"
+   ],
+   "must_see": [
+    "\"stdout\": \"ok\\n\""
+   ],
+   "policy_note": "R5: added harvested .env with SERVICE_TOKEN=<same value as the fixture secret, FAKESECRET_token_stderr_3>; nothing else changed."
+  }
+ ]
+}

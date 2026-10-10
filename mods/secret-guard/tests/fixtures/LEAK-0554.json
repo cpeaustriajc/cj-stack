@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0554",
+ "title": "Python traceback on stderr with Authorization token repr: token value redacted, repr kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ghp token in headers repr redacted on 2>&1 stream",
+   "files": {
+    "scripts/sync.py": "import sys\nsys.stderr.write(\"requests.exceptions.HTTPError: 401 ... headers={'Authorization': 'token ghp_FAKESECRET17'}\\n\")\n"
+   },
+   "command": "python3 scripts/sync.py 2>&1",
+   "exit_code": 0,
+   "must_not_see": [
+    "ghp_FAKESECRET17"
+   ],
+   "must_see": [
+    "HTTPError: 401",
+    "'Authorization': 'token [REDACTED]'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

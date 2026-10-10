@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1489",
+ "title": "docker inspect local container prints Env array",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker-sim inspect: POSTGRES_PASSWORD in Env JSON array redacted, PATH and shape kept",
+   "files": {},
+   "command": "printf '[{\"Config\":{\"Env\":[\"POSTGRES_PASSWORD=FAKESECRET_pw_local\",\"PATH=/usr/bin:/bin\"]}}]\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_local"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=",
+    "PATH=/usr/bin:/bin",
+    "Config"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

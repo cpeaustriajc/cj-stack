@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1129",
+ "title": "ps output shows a password in process argv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "if reached, ps argv -p value is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1129a",
+    "tool_input": {
+     "command": "ps aux | grep mysql"
+    },
+    "tool_response": {
+     "stdout": "app 4321 0.0 0.2 408112 13088 ?? S 9:41AM 0:00.05 mysql -h db.internal -u app -pFAKESECRET_pw\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "mysql -h db.internal -u app -p[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated ps argv line is masked at source",
+   "files": {
+    "keys/db.txt": "FAKESECRET_pw\n"
+   },
+   "command": "printf 'app 4321 mysql -h db.internal -u app -p%s\\n' \"$(cat keys/db.txt)\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "-p[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-1086",
+ "title": "Ssh docker exec printenv | sed separator change: remote value not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "remote value after => separator is redacted; simulated remote output via printf",
+   "files": {},
+   "command": "printf '%s\\n' 'POSTGRES_PASSWORD => FAKESECRET_remote3'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_remote3"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

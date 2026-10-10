@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0831",
+ "title": "Timeout discards redaction: printenv with a 6 s hook under a 5 s timeout (slow hook not reproduced)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv of token is redacted in the Bash object",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DOCS_TEST_TOKEN"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_tok_0123456789\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_0123456789"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printenv of token is redacted at source",
+   "files": {},
+   "command": "DOCS_TEST_TOKEN=FAKESECRET_tok_0123456789 printenv DOCS_TEST_TOKEN",
+   "must_not_see": [
+    "FAKESECRET_tok_0123456789"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

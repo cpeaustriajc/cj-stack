@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2034",
+ "title": "Write tool saves a secret value into an iCloud Drive path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of a secret into an iCloud Drive path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Mobile Documents/com~apple~CloudDocs/notes/deploy.md",
+     "content": "DEPLOY_TOKEN=FAKESECRET_aaa111\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write of non-secret notes to a local project path stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/notes/deploy.md",
+     "content": "deploy notes, no values\n"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

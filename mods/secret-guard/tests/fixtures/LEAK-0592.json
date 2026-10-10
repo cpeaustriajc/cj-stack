@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0592",
+ "title": "scp remote pcap then local tshark prints bearer",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tshark stdout after scp redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp prod-api:/var/tmp/incident.pcap scratch/ && tshark -r scratch/incident.pcap -Y http -T fields -e http.authorization"
+    },
+    "tool_response": {
+     "stdout": "Bearer FAKESECRET_scp56\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_scp56"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated tshark output redacted at source",
+   "files": {
+    "tshark-out.txt": "Bearer FAKESECRET_scp56\n"
+   },
+   "command": "cat tshark-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_scp56"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

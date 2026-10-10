@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-0558",
+ "title": "Edit writes a real secret value into env.example: denied; placeholder value allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit new_string with real STRIPE value denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "env.example",
+     "old_string": "PORT=3000",
+     "new_string": "STRIPE_SECRET_KEY=FAKESECRET_edit22",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit with placeholder value allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "env.example",
+     "old_string": "PORT=3000",
+     "new_string": "STRIPE_SECRET_KEY=your_stripe_key_here",
+     "replace_all": false
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

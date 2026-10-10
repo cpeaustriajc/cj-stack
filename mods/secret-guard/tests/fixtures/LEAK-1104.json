@@ -1,0 +1,57 @@
+{
+ "case_id": "LEAK-1104",
+ "title": "Read of a .env in a sibling project outside a cwd-relative deny",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of sibling apps/api/.env from cwd apps/web must be denied on the absolute path",
+   "files": {
+    "apps/api/.env": "JWT_SECRET=FAKESECRET_jwt\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "cwd": "/Users/cj/Projects/renav/apps/web",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/apps/api/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on a named secret file (apps/api/.env), nothing combined.)"
+  },
+  {
+   "kind": "post",
+   "name": "If the read runs: JWT_SECRET value masked",
+   "files": {
+    "apps/api/.env": "JWT_SECRET=FAKESECRET_jwt\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "cwd": "/Users/cj/Projects/renav/apps/web",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/apps/api/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/apps/api/.env",
+      "content": "JWT_SECRET=FAKESECRET_jwt\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_jwt"
+   ],
+   "must_see": [
+    "JWT_SECRET",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

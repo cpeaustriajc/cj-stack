@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1774",
+ "title": "Bash grep over .env* and logs prints matching secret lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -rn STRIPE_KEY over config/: value replaced, file:line prefix kept",
+   "files": {
+    "config/stripe.conf": "STRIPE_KEY=FAKESECRET_GREP_01\n"
+   },
+   "command": "grep -rn STRIPE_KEY config/",
+   "must_not_see": [
+    "FAKESECRET_GREP_01"
+   ],
+   "must_see": [
+    "config/stripe.conf:1:STRIPE_KEY="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -r SECRET over *.log: value replaced, file:line prefix kept",
+   "files": {
+    "logs/app.log": "SECRET=FAKESECRET_GREP_02\n"
+   },
+   "command": "grep -r 'SECRET' . --include='*.log'",
+   "must_not_see": [
+    "FAKESECRET_GREP_02"
+   ],
+   "must_see": [
+    "./logs/app.log:SECRET="
+   ],
+   "exit_code": 0,
+   "policy_note": "grep -r without -n prints no line number"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

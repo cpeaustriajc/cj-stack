@@ -1,0 +1,38 @@
+{
+ "case_id": "FP-0019",
+ "title": "Short harvested values redact unrelated values in package.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of package.json with port 3000 and strict true stays unchanged",
+   "files": {
+    ".env": "PORT=3000\nDB_SSL=true\n",
+    "package.json": "{\n  \"port\": \"3000\",\n  \"strict\": true\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "package.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "package.json",
+      "content": "{\n  \"port\": \"3000\",\n  \"strict\": true\n}\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_see": [
+    "port",
+    "strict",
+    "3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

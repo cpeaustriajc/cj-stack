@@ -1,0 +1,6 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+while [[ "$1" == -* ]]; do case "$1" in -u|-g|-C|-h|-p|-r|-t|-D) shift 2;; *) shift;; esac; done
+[ $# -ge 1 ] || exit 0
+args=(); for a in "$@"; do args+=("$(printf '%s' "$a" | rt_map)"); done
+exec "${args[@]}"

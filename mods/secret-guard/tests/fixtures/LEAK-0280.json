@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0280",
+ "title": "! bash prompt prints a secret from .env",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "! cat .env; model-visible output must not contain the value",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_st1\n"
+   },
+   "prompt": "! cat .env",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_st1"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

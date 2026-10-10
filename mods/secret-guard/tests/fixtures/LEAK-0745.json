@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0745",
+ "title": "Hook emits partial updatedToolOutput missing keys (checks the emitted object keeps stderr, interrupted and isImage)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "single-line token: no raw value and all keys present",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_tok_A\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_tok_A\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_A"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

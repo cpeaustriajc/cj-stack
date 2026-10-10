@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1657",
+ "title": "Read of a screenshot PNG (image content)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of Desktop screenshot PNG is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Desktop/shot.png"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a PNG; owner allows Read; no item-4 rule covers image reads.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of /private/tmp screenshot PNG is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/private/tmp/claude-501/shot.png"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a PNG under /private/tmp; owner allows Read; no item-4 rule.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1121",
+ "title": "Unfiltered environment dump (printenv, printenv | sort)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "plain printenv stays allowed (rewritten through filter)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printenv | sort shows SOME_API_TOKEN masked and HOME kept",
+   "files": {
+    "keys/tok.txt": "FAKESECRET_tok1\n"
+   },
+   "command": "export SOME_API_TOKEN=\"$(cat keys/tok.txt)\"; printenv | sort",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok1"
+   ],
+   "must_see": [
+    "SOME_API_TOKEN=[REDACTED]",
+    "HOME="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

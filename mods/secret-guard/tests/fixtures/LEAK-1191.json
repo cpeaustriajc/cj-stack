@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1191",
+ "title": "local env piped to grep -E (local shell)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "local env output with OPENAI_API_KEY",
+   "files": {},
+   "command": "env -i OPENAI_API_KEY=FAKESECRET_o1 /usr/bin/env | grep -i -E 'key|token|secret'",
+   "must_not_see": [
+    "FAKESECRET_o1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

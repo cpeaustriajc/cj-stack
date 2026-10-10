@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0080",
+ "title": "Guard bypass: absolute path /bin/cat .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "/bin/cat .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/bin/cat .env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of .env via /bin/cat, no transform. Owner decision allows it.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

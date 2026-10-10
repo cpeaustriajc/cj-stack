@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1761",
+ "title": "Bash grep -o prints only the matched token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -o sk_live_ prints bare token line, must be replaced",
+   "files": {
+    "dist/main.js": "const k=\"sk_live_FAKESECRETBLD01\";\n"
+   },
+   "command": "grep -o 'sk_live_[A-Za-z0-9]*' dist/main.js",
+   "must_not_see": [
+    "sk_live_FAKESECRETBLD01"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

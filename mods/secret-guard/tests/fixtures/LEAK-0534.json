@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0534",
+ "title": "curl -v prints Authorization header on local request",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl -v trace lines with bearer header",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -v -H \"Authorization: Bearer FAKESECRET_stripe_v0\" https://api.example.test/v1/charges 2>&1"
+    },
+    "tool_response": {
+     "stdout": "> GET /v1/charges HTTP/1.1\n> Host: api.example.test\n> Authorization: Bearer FAKESECRET_stripe_v0\n> Accept: */*\n>\n< HTTP/1.1 401 Unauthorized\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe_v0"
+   ],
+   "must_see": [
+    "> Host: api.example.test",
+    "> Accept: */*",
+    "< HTTP/1.1 401 Unauthorized",
+    "> Authorization: Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "FP-0133",
+ "title": "grep TOKEN in source (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep of TOKEN and apiKey lines in source is unchanged [pattern widened to TOKEN|apiKey so the apiKey line in the catalog scenario matches]",
+   "files": {
+    "src/config.ts": "// config\nimport 'dotenv/config';\n\nexport const TOKEN_TTL_SECONDS = 3600;\n\n\n\n\nconst apiKey = process.env.API_KEY;\n"
+   },
+   "command": "grep -rnE 'TOKEN|apiKey' src",
+   "must_not_see": [],
+   "must_see": [
+    "src/config.ts:4:export const TOKEN_TTL_SECONDS = 3600;",
+    "src/config.ts:9:const apiKey = process.env.API_KEY;"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

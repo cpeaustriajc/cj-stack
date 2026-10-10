@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0709",
+ "title": "Read of a .dev.vars file with a secret line (post on real Read shape; line numbers not in PostToolUse payload)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read .dev.vars STRIPE_SECRET_KEY line",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET_KEY=FAKESECRET_stripe_live\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.dev.vars",
+      "content": "STRIPE_SECRET_KEY=FAKESECRET_stripe_live\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe_live"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

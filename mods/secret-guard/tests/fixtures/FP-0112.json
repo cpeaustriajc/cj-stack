@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0112",
+ "title": "Git hash and lockfile integrity lines (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git hash and integrity lines pass through unchanged",
+   "files": {
+    "package-lock.json": "{\n  \"name\": \"demo\",\n  \"integrity\": \"sha512-AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIj==\"\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -1 --format=%H && grep integrity package-lock.json | head -1"
+    },
+    "tool_response": {
+     "stdout": "3f9a1c0d7b2e4455a6c8d9e0f1a2b3c4d5e6f708\n  \"integrity\": \"sha512-AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIj==\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "3f9a1c0d7b2e4455a6c8d9e0f1a2b3c4d5e6f708",
+    "sha512-AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+/AbCdEfGhIj=="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git log and grep on lockfile stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -1 --format=%H && grep integrity package-lock.json | head -1"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

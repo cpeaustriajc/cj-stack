@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0801",
+ "title": "Replacement JSON missing hookEventName or with updatedToolOutput of wrong type",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "correct Bash object shape with secret in stdout must still redact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DATABASE_PASSWORD=FAKESECRET_pw1\\n'"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_PASSWORD=FAKESECRET_pw1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "Bash tool_response as plain string (wrong shape for the object-expecting hook)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DATABASE_PASSWORD=FAKESECRET_pw1\\n'"
+    },
+    "tool_response": "DATABASE_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-2021",
+ "title": "env prints HTTPS_PROXY with userinfo; password part must be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "HTTPS_PROXY password redacted, NO_PROXY intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i proxy"
+    },
+    "tool_response": {
+     "stdout": "HTTPS_PROXY=http://FAKEUSER_a:FAKESECRET_proxy1@proxy.example.internal:3128\nNO_PROXY=localhost,127.0.0.1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_proxy1"
+   ],
+   "must_see": [
+    "HTTPS_PROXY=http://FAKEUSER_a:[REDACTED]@proxy.example.internal:3128",
+    "NO_PROXY=localhost,127.0.0.1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "lowercase all_proxy with socks5 userinfo redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i proxy"
+    },
+    "tool_response": {
+     "stdout": "all_proxy=socks5://FAKEUSER_a:FAKESECRET_proxy2@proxy.example.internal:1080\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_proxy2"
+   ],
+   "must_see": [
+    "all_proxy=socks5://FAKEUSER_a:[REDACTED]@proxy.example.internal:1080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

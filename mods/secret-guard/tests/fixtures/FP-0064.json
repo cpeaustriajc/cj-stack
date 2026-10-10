@@ -1,0 +1,20 @@
+{
+ "case_id": "FP-0064",
+ "title": "False positive: image digest and git revision label in docker inspect must be unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect of image digest and revision label; output unchanged",
+   "files": {
+    "sim-docker-image.sh": "printf 'sha256:3b7e9c1d0a4f58e2b6c9d7a1f0e3b5c8d2a4f6e9b1c7d0a3f5e8b2c4d6a9f1e0 org.opencontainers.image.revision=9d07a1d3f2b8c4e6a0d1f9b3c5e7a2d4f6b8c0e1\\n'\n"
+   },
+   "command": "sh sim-docker-image.sh",
+   "must_see": [
+    "sha256:3b7e9c1d0a4f58e2b6c9d7a1f0e3b5c8d2a4f6e9b1c7d0a3f5e8b2c4d6a9f1e0",
+    "org.opencontainers.image.revision=9d07a1d3f2b8c4e6a0d1f9b3c5e7a2d4f6b8c0e1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

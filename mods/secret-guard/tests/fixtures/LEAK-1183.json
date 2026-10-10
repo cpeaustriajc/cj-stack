@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1183",
+ "title": "tmux capture-pane shows a command the operator typed with a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "typed export line in pane capture is value-redacted",
+   "files": {},
+   "command": "printf '%s\\n' '$ export STRIPE_KEY=FAKESECRET_sk1'",
+   "must_not_see": [
+    "FAKESECRET_sk1"
+   ],
+   "must_see": [
+    "$ export STRIPE_KEY=[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2129",
+ "title": "Redactor killed mid-write: no truncated fragment or FAKESECRET_EPSILON reaches the model (SIGTERM injection not expressible; covers the normal path only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat fixture.env: redacted output, value absent",
+   "files": {
+    "fixture.env": "token=FAKESECRET_EPSILON\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixture.env"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_EPSILON\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    },
+    "tool_use_id": "toolu_FAKE2129"
+   },
+   "must_not_see": [
+    "FAKESECRET_EPSILON"
+   ],
+   "must_see": [
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1094",
+ "title": "Hook error path: stderr stack trace must not contain the harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content that makes a string-only redactor throw: stdout and stderr must not hold the value and the output must be withheld (exit code not asserted by the runner)",
+   "files": {
+    ".env": "DATABASE_PASSWORD=FAKESECRET_pg1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "FAKESECRET",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": [
+      "DATABASE_PASSWORD=FAKESECRET_pg1"
+     ],
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

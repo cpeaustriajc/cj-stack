@@ -1,0 +1,72 @@
+{
+ "case_id": "LEAK-1102",
+ "title": "Read of .env when .claudeignore lists it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of .env with a .claudeignore listing it must be denied",
+   "files": {
+    ".claudeignore": ".env\n.env.*\n",
+    ".env": "API_KEY=FAKESECRET_k1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of .env; claudeignore is irrelevant under the owner decision, and plain reads are allowed.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Same read with no .claudeignore must also be denied (ignore file is not the reason)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_k1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of .env with no claudeignore; plain read allowed by owner decision.)"
+  },
+  {
+   "kind": "post",
+   "name": "If the read runs: value masked, key kept",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_k1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env",
+      "content": "API_KEY=FAKESECRET_k1\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k1"
+   ],
+   "must_see": [
+    "API_KEY",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

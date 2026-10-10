@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0922",
+ "title": "Percent-encoded password in DATABASE_URL bypasses exact harvest (service inspect over simulated remote)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated service inspect; percent-encoded harvested password must not appear; host, port, db visible",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_p@ss/w0rd!Zq\n",
+    "sim-service-inspect.sh": "printf '%s\\n' '[\"DATABASE_URL=postgres://renav:FAKESECRET_p%40ss%2Fw0rd%21Zq@db:5432/renav\"]'\n"
+   },
+   "command": "sh sim-service-inspect.sh",
+   "must_not_see": [
+    "FAKESECRET_p%40ss%2Fw0rd%21Zq"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "postgres://renav:",
+    "@db:5432/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1589",
+ "title": "Read replacement with bare string is ignored (e2e; post fixture also asserts Read object keys survive so a bare-string replacement fails)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Text Read keeps Read response object shape and redacts value",
+   "files": {
+    "notes.txt": "token FAKESECRET_xxx here\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "notes.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "notes.txt",
+      "content": "token FAKESECRET_xxx here\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xxx"
+   ],
+   "must_see": [
+    "numLines",
+    "filePath"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Read of notes.txt containing fake secret",
+   "files": {
+    "notes.txt": "token FAKESECRET_xxx here\n"
+   },
+   "prompt": "Read notes.txt and quote it verbatim.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_xxx"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

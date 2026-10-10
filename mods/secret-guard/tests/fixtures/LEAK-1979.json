@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1979",
+ "title": "smudge filter writes plaintext to the worktree with no tool output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of smudged plaintext secrets.enc is redacted",
+   "files": {
+    "secrets.enc": "KEY=FAKESECRET_KEY_8\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/fakeuser/proj/secrets.enc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/fakeuser/proj/secrets.enc",
+      "content": "KEY=FAKESECRET_KEY_8\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEY_8"
+   ],
+   "must_see": [
+    "KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1238",
+ "title": "ProxyCommand hidden behind ProxyJump precedence",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh -F with repo-local config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -F ./ssh_config bastion-prod"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ssh -F with a repo-local config and no secret source or transform; no item 4 rule covers ssh -F. FLAG: same spec gap as LEAK-1233#0.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

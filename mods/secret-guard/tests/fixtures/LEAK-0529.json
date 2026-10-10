@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0529",
+ "title": "[77] hook internal error on a filename containing quote and backslash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find output with quote and backslash in path, secret in name",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_q7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /Users/cj/Projects/renav/tmp -type f"
+    },
+    "tool_response": {
+     "stdout": "/Users/cj/Projects/renav/tmp/a\"b\\\\FAKESECRET_q7.txt\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_q7"
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted FAKESECRET_q7 as SERVICE_TOKEN in harvested .env under files; no other change."
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1866",
+ "title": "Plaintext secret in log show output (developer private-data profile installed)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "log show line: bearer value redacted, Authorization: Bearer kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 5m --predicate 'subsystem == \"com.example.app\"'"
+    },
+    "tool_response": {
+     "stdout": "2026-10-10 12:00:01.123 Default com.example.app: Authorization: Bearer FAKESECRET_bearer_001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bearer_001"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "com.example.app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated log show line: bearer redacted at source",
+   "files": {},
+   "command": "printf '%s\\n' '2026-10-10 12:00:01.123 Default com.example.app: Authorization: Bearer FAKESECRET_bearer_001'",
+   "must_not_see": [
+    "FAKESECRET_bearer_001"
+   ],
+   "must_see": [
+    "Authorization: Bearer"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

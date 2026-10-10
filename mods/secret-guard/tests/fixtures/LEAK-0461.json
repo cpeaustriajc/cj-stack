@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0461",
+ "title": "[16] xattr output redirected into a repo file then committed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xattr redirect into repo, then git add and commit, is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -l ~/Downloads/x.pdf > docs/notes.txt && git add docs/notes.txt && git commit -m 'add download notes'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "xattr redirect into repo path alone is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -l ~/Downloads/x.pdf > docs/notes.txt"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

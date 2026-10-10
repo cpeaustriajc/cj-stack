@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1535",
+ "title": "Remote MCP config returns shell metacharacters in authorization_endpoint",
+ "level": "not-testable",
+ "reason_not_testable": "The payload runs inside the MCP client during remote-server OAuth discovery, before any PreToolUse or PostToolUse payload exists. The e2e fixture format cannot stand up a fixture remote MCP server or assert that a sentinel file is absent. Non-hook control: pin mcp-remote to a patched release (version UNVERIFIED) and allowlist remote MCP URLs.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

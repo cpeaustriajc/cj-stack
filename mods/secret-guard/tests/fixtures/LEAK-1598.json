@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1598",
+ "title": "Base64 of harvested value at offset 1 evades aligned match (value after 3-byte prefix plus X; base64 literally contains FAKE)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of X+harvested value (offset 1)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n"
+   },
+   "command": "printf '\\024\\002\\204X%s' 'FAKESECRET_HARVESTED_0001' | base64",
+   "must_not_see": [
+    "FAKESECRET_HARVESTED_0001"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

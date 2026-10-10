@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1743",
+ "title": "Grep over .git/lost-found finds a multi-line PEM key with context",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "all PEM body lines replaced, not only the BEGIN line",
+   "files": {
+    ".git/lost-found/other/key": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_PEM_LINE_01\nFAKESECRET_PEM_LINE_02\nFAKESECRET_PEM_LINE_03\nFAKESECRET_PEM_LINE_04\n-----END OPENSSH PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "BEGIN (RSA|OPENSSH) PRIVATE KEY",
+     "path": ".git/lost-found",
+     "output_mode": "content",
+     "-A": 4
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_PEM_LINE_01\nFAKESECRET_PEM_LINE_02\nFAKESECRET_PEM_LINE_03\nFAKESECRET_PEM_LINE_04",
+     "numLines": 5,
+     "totalLines": 5
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PEM_LINE_01",
+    "FAKESECRET_PEM_LINE_02",
+    "FAKESECRET_PEM_LINE_03",
+    "FAKESECRET_PEM_LINE_04"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

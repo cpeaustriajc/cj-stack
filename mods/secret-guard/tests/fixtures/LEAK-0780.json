@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0780",
+ "title": "git log -p diff line with committed secret is redacted (post and file-sourced shell run)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -p diff +API_KEY line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -S 'API_KEY' --all"
+    },
+    "tool_response": {
+     "stdout": "commit 3f9c2ab71d0e5a6b8c4d9e0f1a2b3c4d5e6f7a8b\nAuthor: dev <dev@example.com>\n\n+API_KEY=FAKESECRET_old_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_old_1"
+   ],
+   "must_see": [
+    "commit 3f9c2ab71d0e5a6b8c4d9e0f1a2b3c4d5e6f7a8b",
+    "API_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "diff text from a file, redacted at source",
+   "files": {
+    "git-log.txt": "commit 3f9c2ab71d0e5a6b8c4d9e0f1a2b3c4d5e6f7a8b\n+API_KEY=FAKESECRET_old_1\n"
+   },
+   "command": "cat git-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_old_1"
+   ],
+   "must_see": [
+    "commit 3f9c2ab71d0e5a6b8c4d9e0f1a2b3c4d5e6f7a8b",
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

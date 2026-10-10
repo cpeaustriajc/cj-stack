@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0537",
+ "title": "Write puts a live token into a docs file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of sk_live token into docs file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "docs/debug-notes.md",
+     "content": "Used token sk_live_FAKESECRET_w3 to reproduce the 402 error"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

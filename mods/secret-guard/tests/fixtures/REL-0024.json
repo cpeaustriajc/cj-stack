@@ -1,0 +1,33 @@
+{
+ "case_id": "REL-0024",
+ "title": "Read result with a null data field: hook withholds the whole output and exits 0",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response with type image, data null and a string leaf carrying a fake secret",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_rel24\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/logo.bin"
+    },
+    "tool_response": {
+     "type": "image",
+     "data": null,
+     "caption": "FAKESECRET_rel24"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rel24"
+   ],
+   "must_see": [
+    "withheld"
+   ],
+   "policy_note": "R5: planted the value in a harvested .env file in files (SERVICE_TOKEN=<same value>) so it has a file source; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

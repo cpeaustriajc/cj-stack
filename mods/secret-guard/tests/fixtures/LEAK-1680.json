@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1680",
+ "title": "Read of a copied Electron profile inside the project",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of Local Storage segment inside project tree is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Projects/renav/debug/slack-profile-copy/Local Storage/leveldb/000005.ldb"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a single file, nothing combined. Owner allows this.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

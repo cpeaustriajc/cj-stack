@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-2052",
+ "title": "Agent sets NODE_OPTIONS or PYTHONSTARTUP inline to trigger a dump (deliberate workaround)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Inline NODE_OPTIONS --require is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "NODE_OPTIONS=--require=./dump_env.js node -e 'process.exit(0)'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Inline PYTHONSTARTUP is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "PYTHONSTARTUP=./dump.py python3 -i < /dev/null"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Backstop: if the dump runs, the registry value is redacted in stdout",
+   "files": {
+    ".env": "OPENAI_KEY=FAKESECRET_xxx_epsilon\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "node ./dump_env.js"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_OPENAI_KEY=FAKESECRET_xxx_epsilon\nok\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xxx_epsilon"
+   ],
+   "must_see": [
+    "FAKESECRET_OPENAI_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

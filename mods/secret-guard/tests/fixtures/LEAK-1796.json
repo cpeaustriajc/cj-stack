@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1796",
+ "title": "Vitest assertion failure prints actual Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing vitest assertion keeps Bearer test literal",
+   "files": {
+    "vitest-sim.sh": "echo \"AssertionError: expected { Authorization: 'Bearer FAKESECRET_ASSERT_01' } to equal { Authorization: 'Bearer test' }\"\necho \"- Expected\"\necho \"+ Received\"\necho \"+   Authorization: 'Bearer FAKESECRET_ASSERT_01'\"\nexit 1\n"
+   },
+   "command": "sh ./vitest-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_ASSERT_01"
+   ],
+   "must_see": [
+    "Bearer test",
+    "- Expected",
+    "+ Received"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

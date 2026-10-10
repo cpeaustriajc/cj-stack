@@ -1,0 +1,9 @@
+{
+ "case_id": "LEAK-0279",
+ "title": "@.dotfile mention attaches a secret without a PostToolUse event",
+ "level": "not-testable",
+ "fixtures": [],
+ "duplicate_of_dropped": false,
+ "gap_note": "An @-mention attaches the file to the prompt directly; no tool hook fires. Possible control: a UserPromptSubmit hook that refuses @-mentions of secret files (owner decision pending).",
+ "reason_not_testable": "An @-mention attaches the file to the prompt directly; no tool hook fires. Possible control: a UserPromptSubmit hook that refuses @-mentions of secret files (owner decision pending)."
+}

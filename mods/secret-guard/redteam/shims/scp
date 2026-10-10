@@ -1,0 +1,10 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+args=()
+while [ $# -gt 0 ]; do
+  case "$1" in -o|-i|-P|-F|-J|-S|-c|-l) shift 2;; -*) shift;; *) args+=("$1"); shift;; esac
+done
+src=${args[0]}; dst=${args[1]}
+case "$src" in *:*) src=$(printf '%s' "${src#*:}" | rt_map);; esac
+case "$dst" in *:*) dst=$(printf '%s' "${dst#*:}" | rt_map);; esac
+exec cp -r "$src" "$dst"

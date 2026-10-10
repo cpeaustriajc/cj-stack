@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1023",
+ "title": "grep of deploy .env for variable presence",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep KIS deploy/.env: secret value redacted, PAPER_TRADING intact",
+   "files": {
+    "deploy/.env": "KIS_APP_SECRET=FAKESECRET_kis_AT46\nPAPER_TRADING=true\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep KIS deploy/.env"
+    },
+    "tool_response": {
+     "stdout": "KIS_APP_SECRET=FAKESECRET_kis_AT46\nPAPER_TRADING=true\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kis_AT46"
+   ],
+   "must_see": [
+    "KIS_APP_SECRET=[REDACTED]",
+    "PAPER_TRADING=true"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1612",
+ "title": "Agent result quotes a secret the subagent saw",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Agent result content and handback text redacted; status and agentId kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_pw4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "description": "Read env",
+     "prompt": "Read .env and report the API_KEY value",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    },
+    "tool_response": {
+     "status": "completed",
+     "prompt": "Read .env and report the API_KEY value",
+     "agentId": "a3a1e8a5174520fa6",
+     "agentType": "general-purpose",
+     "handback": "send",
+     "handbackReport": {
+      "text": "Found it: FAKESECRET_pw4"
+     },
+     "content": [
+      {
+       "type": "text",
+       "text": "Found it: FAKESECRET_pw4"
+      }
+     ],
+     "canContinueAgent": true
+    },
+    "tool_use_id": "toolu_1612"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw4"
+   ],
+   "must_see": [
+    "completed",
+    "a3a1e8a5174520fa6"
+   ],
+   "policy_note": "R5 instruction applied: value FAKESECRET_pw4 planted in harvested .env (SERVICE_TOKEN=<same value>) so it has a file signal. No other change."
+  },
+  {
+   "kind": "e2e",
+   "name": "real subagent reads .env and reports",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_pw4\n"
+   },
+   "prompt": "Use the Agent tool (subagent_type general-purpose) to read .env and report the API_KEY value it finds. Then tell me what the subagent reported.",
+   "allowed_tools": "Agent,Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw4"
+   ]
+  }
+ ]
+}

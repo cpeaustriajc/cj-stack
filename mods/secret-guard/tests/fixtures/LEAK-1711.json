@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1711",
+ "title": "Read of GoogleService-Info.plist in DerivedData Products",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of DerivedData Products plist denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Developer/Xcode/DerivedData/Renav-abcdef0123/Build/Products/Debug-iphonesimulator/App.app/GoogleService-Info.plist"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of GoogleService-Info.plist; allowed by the owner's plain-read decision.)"
+  },
+  {
+   "kind": "post",
+   "name": "API_KEY string redacted if allowed",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Developer/Xcode/DerivedData/Renav-abcdef0123/Build/Products/Debug-iphonesimulator/App.app/GoogleService-Info.plist"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/Developer/Xcode/DerivedData/Renav-abcdef0123/Build/Products/Debug-iphonesimulator/App.app/GoogleService-Info.plist",
+      "content": "<plist version=\"1.0\">\n<dict>\n<key>API_KEY</key><string>FAKESECRET_GOOGLE_0001</string>\n</dict>\n</plist>\n",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_GOOGLE_0001"
+   ],
+   "must_see": [
+    "API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

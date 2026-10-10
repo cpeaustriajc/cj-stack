@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0265",
+ "title": "Stable marker lets Claude test equality across values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv with three secret env values: all replaced (two-run byte equality and marker-set size not expressible by runner)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv"
+    },
+    "tool_response": {
+     "stdout": "HOME=/home/fixture\nSECRET_A=FAKESECRET_same\nSECRET_B=FAKESECRET_same\nSECRET_C=FAKESECRET_diff\nLANG=en_GB.UTF-8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_same",
+    "FAKESECRET_diff"
+   ],
+   "must_see": [
+    "LANG=en_GB.UTF-8",
+    "HOME=/home/fixture"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

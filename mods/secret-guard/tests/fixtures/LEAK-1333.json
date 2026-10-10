@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1333",
+ "title": "Docker API container Config.Env DATABASE_PASSWORD (post + simulated pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker API container JSON stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s --unix-socket /var/run/docker.sock http://localhost/containers/web/json"
+    },
+    "tool_response": {
+     "stdout": "{\"Id\":\"c1f0a9\",\"Config\":{\"Env\":[\"DATABASE_PASSWORD=FAKESECRET_dbpw0052\",\"PATH=/usr/local/bin:/usr/bin\"]}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dbpw0052"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=",
+    "PATH=/usr/local/bin:/usr/bin"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for docker API curl",
+   "files": {},
+   "command": "printf '%s\\n' '{\"Id\":\"c1f0a9\",\"Config\":{\"Env\":[\"DATABASE_PASSWORD=FAKESECRET_dbpw0052\",\"PATH=/usr/local/bin:/usr/bin\"]}}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_dbpw0052"
+   ],
+   "must_see": [
+    "PATH=/usr/local/bin:/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

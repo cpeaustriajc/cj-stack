@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0824",
+ "title": "Plain-string updatedToolOutput for Bash API_KEY echo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash echo of API_KEY is redacted in the Bash object shape",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo 'API_KEY=FAKESECRET_api_1'"
+    },
+    "tool_response": {
+     "stdout": "API_KEY=FAKESECRET_api_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_api_1"
+   ],
+   "must_see": [
+    "stdout",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "echo of API_KEY is redacted at source",
+   "files": {},
+   "command": "echo 'API_KEY=FAKESECRET_api_1'",
+   "must_not_see": [
+    "FAKESECRET_api_1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

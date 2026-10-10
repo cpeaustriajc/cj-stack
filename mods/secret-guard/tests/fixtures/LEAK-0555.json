@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0555",
+ "title": "Validation error echoing sk_live key on stderr: value redacted, message intact (script simulates node)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "sk_live value inside quoted message redacted",
+   "files": {
+    "scripts/check-config.sh": "echo \"Error: invalid key 'sk_live_FAKESECRET19'\" >&2\n"
+   },
+   "command": "sh scripts/check-config.sh 2>&1",
+   "exit_code": 0,
+   "must_not_see": [
+    "sk_live_FAKESECRET19"
+   ],
+   "must_see": [
+    "Error: invalid key '[REDACTED]'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

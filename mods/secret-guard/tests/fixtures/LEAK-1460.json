@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1460",
+ "title": "Invalid UTF-8 bytes make the redactor throw",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "invalid UTF-8 bytes before the value",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n"
+   },
+   "command": "printf '\\377\\376FAKESECRET_ALPHA_9x\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ALPHA_9x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

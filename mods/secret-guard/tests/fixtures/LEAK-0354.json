@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0354",
+ "title": "K7 secret piped through base64",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 of keychain value withheld; the plaintext FAKESECRET_kc_1 is in the temp home file of this fixture, so the encoded string is derived from a FAKE string in the same fixture",
+   "files": {
+    "~/.fake-keychain/example-svc": "FAKESECRET_kc_1\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_kc_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"example-svc\" -w | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9rY18xCg==\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9rY18xCg=="
+   ],
+   "policy_note": "R5: planted FAKESECRET_kc_1 in harvested project file .env (SERVICE_TOKEN=FAKESECRET_kc_1) so it is a known secret value. Existing ~/.fake-keychain/example-svc kept. Whether the base64 of a harvested value is matched is the hook's job (UNVERIFIED here)."
+  }
+ ]
+}

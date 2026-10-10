@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2139",
+ "title": "OpenTelemetry tool spans capture original output before the hook runs",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry export happens inside Claude Code before PostToolUse runs and the hook runner cannot observe the OTLP collector. Non-hook control: a settings-scan asserting OTel tool-content export is off in every scope, plus a collector-side check that no raw tool output is stored.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

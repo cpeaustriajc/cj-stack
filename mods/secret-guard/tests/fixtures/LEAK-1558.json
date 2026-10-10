@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1558",
+ "title": "Read of bundled .dev.vars returns token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of plugin .dev.vars: line content value replaced, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.claude/plugins/formatter/.dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.claude/plugins/formatter/.dev.vars",
+      "content": "STRIPE_KEY=FAKESECRET_devvars\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_devvars"
+   ],
+   "must_see": [
+    "STRIPE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

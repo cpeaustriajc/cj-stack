@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0978",
+ "title": "CLI echoes Authorization header passed via --header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mcp add with literal Authorization --header is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude mcp add --transport http fake-srv https://mcp.example.test --header 'Authorization: Bearer FAKESECRET_tok_D3'"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R3: the literal Authorization value is written by the command into MCP config (a persistent file), so the command is denied. R3 allows a literal only when the command uses it and shows its output without persisting it (see LEAK-1019)."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "echoed Authorization header in stdout is masked, name and server intact",
+   "files": {
+    "fake-mcp-add.txt": "Added HTTP MCP server fake-srv with header Authorization: Bearer FAKESECRET_tok_D3\n"
+   },
+   "command": "cat fake-mcp-add.txt",
+   "must_not_see": [
+    "FAKESECRET_tok_D3"
+   ],
+   "must_see": [
+    "Added HTTP MCP server fake-srv",
+    "Authorization: Bearer [REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ]
+}

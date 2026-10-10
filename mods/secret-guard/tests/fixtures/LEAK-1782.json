@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1782",
+ "title": "Read package-lock.json with token in a resolved URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read package-lock.json slice, token= query value replaced, URL path kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/package-lock.json",
+     "offset": 0,
+     "limit": 400
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/package-lock.json",
+      "content": "    \"resolved\": \"https://npm.example.com/pkg/-/pkg-1.0.0.tgz?token=FAKESECRET_LOCK_01\",\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LOCK_01"
+   ],
+   "must_see": [
+    "https://npm.example.com/pkg/-/pkg-1.0.0.tgz?token=",
+    "pkg-1.0.0.tgz"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1038",
+ "title": "mise env prints computed [env]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mise env value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mise env"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_tok_BG69\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BG69"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints env line",
+   "files": {},
+   "command": "printf 'API_TOKEN=FAKESECRET_tok_BG69\\n'",
+   "must_not_see": [
+    "FAKESECRET_tok_BG69"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

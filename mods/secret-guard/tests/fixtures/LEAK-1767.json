@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1767",
+ "title": "Grep over .claude/ for Bearer|token=|password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep .claude for Bearer, token replaced, match line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Bearer|token=|password",
+     "path": "/Users/cj/Projects/renav/.claude",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".claude/settings.local.json:4:    \"allow\": [\"Bash(curl -H \\\"Authorization: Bearer FAKESECRET_APR_02\\\" https://api.example.com/v1/me)\"]",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_APR_02"
+   ],
+   "must_see": [
+    ".claude/settings.local.json:4:",
+    "https://api.example.com/v1/me)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

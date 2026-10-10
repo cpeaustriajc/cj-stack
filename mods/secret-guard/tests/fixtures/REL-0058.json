@@ -1,0 +1,35 @@
+{
+ "case_id": "REL-0058",
+ "title": "Editor or tool temp file with a secret survives after the command and is read later in a new session",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of a leftover temp file whose secret is still in the registry is redacted",
+   "files": {
+    ".env": "LEFTOVER_TOKEN=FAKESECRET_tok_F6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat \"$TMPDIR/tmp.Xk3j9a\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_tok_F6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_F6"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

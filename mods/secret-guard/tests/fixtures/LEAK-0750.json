@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0750",
+ "title": "Secret split across stdout and stderr fields of one Bash response (known gap if per-field only; asserts the stdout fragment)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stdout fragment FAKESECRET_ must not be shown; stderr pw5 is not a run of 8 chars",
+   "files": {
+    ".env": "TOK=FAKESECRET_pw5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host 'printf FAKESECRET_; printf pw5 >&2'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_",
+     "stderr": "pw5",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

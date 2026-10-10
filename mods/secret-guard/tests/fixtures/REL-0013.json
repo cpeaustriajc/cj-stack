@@ -1,0 +1,21 @@
+{
+ "case_id": "REL-0013",
+ "title": "Bash hook throws or prints invalid JSON on a regex timeout",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "simulated redactor failure via project settings (exit 1, no JSON); a real regex timeout cannot be injected by the spec",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_13\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"echo 'redactor threw' >&2; exit 1\"}]}]}}"
+   },
+   "prompt": "Run grep DB_PASSWORD .env and show the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_13"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1963",
+ "title": "Capture split across TCP segments in tshark -x output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bearer token split across two hex-dump lines is redacted in full stdout",
+   "files": {
+    ".env": "BEARER_TOKEN=FAKESECRET_BEARER_4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tshark -r /work/capture.pcap -x"
+    },
+    "tool_response": {
+     "stdout": "0000  41 75 74 68 6f 72 69 7a 61 74 69 6f 6e 3a 20 42 65 61   Authorization: Bea\n0012  72 65 72 20 46 41 4b 45 53 45 43 52 45 54 5f 42 45 41 52 45 52 5f 34   rer FAKESECRET_BEARER_4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_4"
+   ],
+   "must_see": [
+    "0012"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

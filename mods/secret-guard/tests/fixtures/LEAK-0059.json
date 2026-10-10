@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-0059",
+ "title": "Per-character spaced harvested value in Bash stdout (sed 's/./& /g')",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "per-character spaced harvested value is not released",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW1\n"
+   },
+   "command": "echo FAKESECRET_PW1 | sed 's/./& /g'",
+   "exit_code": 0,
+   "must_not_see": [
+    "F A K E S E C R E T _ P W 1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "successful spaced output of harvested value is redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_PW1 | sed 's/./& /g'"
+    },
+    "tool_response": {
+     "stdout": "F A K E S E C R E T _ P W 1 \n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "F A K E S E C R E T _ P W 1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

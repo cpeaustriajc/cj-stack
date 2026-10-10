@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1790",
+ "title": "Grep fixtures tree for Bearer or refresh_token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep fixtures authorization Bearer",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Bearer ",
+     "path": "tests/fixtures",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "tests/fixtures/login_response.json:3:  \"authorization\": \"Bearer FAKESECRET_FIX_03\"",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FIX_03"
+   ],
+   "must_see": [
+    "tests/fixtures/login_response.json:3:",
+    "authorization"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "REL-0062",
+ "title": "Oversized binary cache dump exceeds the PostToolUse timeout and passes through unredacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of QuickLook cache database files is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat \"$(getconf DARWIN_USER_CACHE_DIR)/com.apple.QuickLook.thumbnailcache/\"*.db"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat with nothing combined. The Goal says Claude may read anything; the QuickLook cache is not a secret source per item 4. Owner's decision text names secr)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "3 MB binary-style output with the secret at the end is redacted at source (hook timeout itself not forced)",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_ql_005\n"
+   },
+   "command": "head -c 3000000 /dev/zero | tr '\\0' 'x'; printf 'FAKESECRET_ql_005\\n'",
+   "must_not_see": [
+    "FAKESECRET_ql_005"
+   ],
+   "must_see": [],
+   "exit_code": 0,
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

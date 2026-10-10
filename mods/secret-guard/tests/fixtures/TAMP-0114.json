@@ -1,0 +1,51 @@
+{
+ "case_id": "TAMP-0114",
+ "title": "Edit of ~/.zshrc to add a recorder",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit adding recorder exec to zshrc denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/.zshrc",
+     "old_string": "export EDITOR=vim",
+     "new_string": "export EDITOR=vim\nexec script -q ~/shell.log",
+     "replace_all": false
+    }
+   }
+  },
+  {
+   "kind": "pre",
+   "name": "Write of recorder line to zshrc denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/.zshrc",
+     "content": "exec script -q ~/shell.log\n"
+    }
+   }
+  },
+  {
+   "kind": "pre",
+   "name": "Edit of ordinary project README allowed",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/README.md",
+     "old_string": "Draft",
+     "new_string": "Final",
+     "replace_all": false
+    }
+   }
+  }
+ ],
+ "duplicate_of_dropped": false
+}

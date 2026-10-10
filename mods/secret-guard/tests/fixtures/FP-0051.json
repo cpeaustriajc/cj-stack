@@ -1,0 +1,59 @@
+{
+ "case_id": "FP-0051",
+ "title": "False positive: grep TOKEN lines with TOKEN_EXPIRY_SECONDS and KEYMAP must pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -rn TOKEN output with two non-credential lines",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn TOKEN src/config.ts"
+    },
+    "tool_response": {
+     "stdout": "src/config.ts:12:export const TOKEN_EXPIRY_SECONDS = 3600;\nsrc/config.ts:13:const KEYMAP = { up: 'w' };\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "src/config.ts:12:export const TOKEN_EXPIRY_SECONDS = 3600;",
+    "src/config.ts:13:const KEYMAP = { up: 'w' };"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "guard allows grep of TOKEN in config",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn TOKEN src/config.ts"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real grep of the two lines through the filter wrapper",
+   "files": {
+    "src/config.ts": "export const TOKEN_EXPIRY_SECONDS = 3600;\nconst KEYMAP = { up: 'w' };\n"
+   },
+   "command": "grep -n -e TOKEN -e KEYMAP src/config.ts",
+   "must_not_see": [],
+   "must_see": [
+    "1:export const TOKEN_EXPIRY_SECONDS = 3600;",
+    "2:const KEYMAP = { up: 'w' };"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

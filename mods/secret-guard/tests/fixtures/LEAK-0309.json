@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0309",
+ "title": "Memory-disclosure script writes a PEM key to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "script output containing multi-line PEM block",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 heartbleed.py target.example.com"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN RSA PRIVATE KEY-----\nFAKESECRET_KEYLINE\n-----END RSA PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYLINE"
+   ],
+   "must_see": [],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf emitting PEM block: source-level redaction through filter",
+   "files": {},
+   "command": "printf '%s\\n' '-----BEGIN RSA PRIVATE KEY-----' 'FAKESECRET_KEYLINE' '-----END RSA PRIVATE KEY-----'",
+   "must_not_see": [
+    "FAKESECRET_KEYLINE"
+   ],
+   "exit_code": 0
+  }
+ ]
+}

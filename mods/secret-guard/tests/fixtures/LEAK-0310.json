@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0310",
+ "title": "op run injects env then server prints a value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "server output printing injected value (no .env in files; only command names it)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op run --env-file=.env -- node server.js"
+    },
+    "tool_response": {
+     "stdout": "server ready; key=FAKESECRET_OPKEY\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_OPKEY"
+   ],
+   "must_see": [
+    "server ready"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

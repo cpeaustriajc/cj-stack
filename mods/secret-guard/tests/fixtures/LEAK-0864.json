@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0864",
+ "title": "Background Bash output retrieved through an unhooked output tool",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "background output then retrieval",
+   "files": {
+    "emit.sh": "echo POSTGRES_PASSWORD=FAKESECRET_pg1"
+   },
+   "prompt": "Run sh emit.sh with Bash in the background, wait for it to finish, then retrieve its output with the background output tool and reply with the exact text.",
+   "allowed_tools": "Bash,Read,BashOutput",
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

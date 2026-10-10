@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1046",
+ "title": "Remote env sort after cd in ssh",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh env sort password in URL redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-1 'cd /srv/app && env | sort'"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw_BO76@db.internal/app\nHOME=/home/deploy\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_BO76"
+   ],
+   "must_see": [
+    "@db.internal/app",
+    "HOME=/home/deploy"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in remote env piped through sort",
+   "files": {},
+   "command": "printf 'DATABASE_URL=postgres://app:FAKESECRET_pw_BO76@db.internal/app\\nHOME=/home/deploy\\n' | sort",
+   "must_not_see": [
+    "FAKESECRET_pw_BO76"
+   ],
+   "must_see": [
+    "@db.internal/app",
+    "HOME=/home/deploy"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

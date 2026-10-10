@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1587",
+ "title": "Hook exception on image Read fails open (unit). Stand-in base64 is base64 of the FAKE secret text in .env, not a real PNG; image shape UNVERIFIED; placeholder text not specified by catalog.",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Image Read with no string content or stdout: image payload must not pass through",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_xxx\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "s.png"
+    },
+    "tool_response": {
+     "type": "image",
+     "file": {
+      "base64": "RkFLRVNFQ1JFVF94eHg=",
+      "type": "image/png"
+     }
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF94eHg="
+   ],
+   "exit_code": 0
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1563",
+ "title": "Plugin script ssh cat of remote .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh to remote cat .env stays allowed (rewritten through filter, not denied)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host 'cat /srv/app/.env'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote .env via local script (never real ssh); value replaced in Bash stdout",
+   "files": {
+    "fake-ssh.sh": "printf 'DB_PASSWORD=FAKESECRET_plugin_ssh\\n'\n"
+   },
+   "command": "sh fake-ssh.sh prod-host 'cat /srv/app/.env'",
+   "must_not_see": [
+    "FAKESECRET_plugin_ssh"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

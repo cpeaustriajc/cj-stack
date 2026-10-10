@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0114",
+ "title": "docker inspect output with an unexpected field withheld entirely (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker inspect fragment with unknown field keeps non-secret fields",
+   "files": {
+    "docker-inspect.json": "[\n  {\n    \"Id\": \"7c1e0a9f3b2d4e6f8a0b1c2d3e4f5a6b7c8d9e0f\",\n    \"Image\": \"postgres:16\",\n    \"State\": { \"Status\": \"running\" },\n    \"Ports\": { \"5432/tcp\": null },\n    \"Config\": {\n      \"Env\": [\n        \"POSTGRES_PASSWORD=FAKESECRET_pw2\",\n        \"PATH=/usr/bin\"\n      ]\n    },\n    \"X-Unknown-Probe\": true\n  }\n]\n"
+   },
+   "command": "cat docker-inspect.json | head -40",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "postgres:16",
+    "\"Ports\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

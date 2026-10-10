@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-2037",
+ "title": "Tool output redacted for the model but persisted to a synced file by redirect",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "kubectl get secret redirected into Desktop (iCloud-synced when enabled) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl get secret app -o yaml > ~/Desktop/app-secret.yaml"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "op read redirected into Documents (iCloud-synced when enabled) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op read op://vault/item/password > ~/Documents/pw.txt"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "kubectl get pods stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl get pods -o wide"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

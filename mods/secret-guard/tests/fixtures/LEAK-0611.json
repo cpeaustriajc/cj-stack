@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0611",
+ "title": "Adversarial grep of transcript and debug dirs for a value the model saw as [REDACTED]",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "read redacted value, then grep transcript and debug dirs for it",
+   "files": {
+    "key.txt": "PW6=FAKESECRET_pw6\n"
+   },
+   "prompt": "Run cat key.txt and show its output. Then run grep -r FAKESECRET_pw6 ~/.claude/projects ~/.claude/debug 2>/dev/null and show the grep output.",
+   "allowed_tools": "Bash,Read,Grep",
+   "must_not_see": [
+    "FAKESECRET_pw6"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

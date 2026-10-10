@@ -1,0 +1,57 @@
+{
+ "case_id": "FP-0175",
+ "title": "A folder named like secret-* does not make its files secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of a plain JSON file under a secret-santa folder is not treated as a secret file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/u/Projects/app/src/secret-santa/data.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/u/Projects/app/src/secret-santa/data.json",
+      "content": "{\n \"case_id\": \"ABC-12\",\n \"owner\": \"renav\",\n \"count\": 3\n}\n"
+     }
+    }
+   },
+   "must_see": [
+    "\"case_id\": \"ABC-12\"",
+    "\"owner\": \"renav\""
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "count TODOs in a secret-santa source file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c TODO src/secret-santa/app.ts"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "line count of a secrets-management doc",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -l docs/secrets-management.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

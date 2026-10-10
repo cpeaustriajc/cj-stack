@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0598",
+ "title": "Dgraph pprof cmdline returns admin token as separate argv item",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "NUL-separated argv after --admin redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_dg62\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://alpha-host:8080/debug/pprof/cmdline"
+    },
+    "tool_response": {
+     "stdout": "dgraph\u0000alpha\u0000--admin\u0000FAKESECRET_dg62\u0000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dg62"
+   ],
+   "must_see": [
+    "dgraph",
+    "--admin"
+   ],
+   "policy_note": "R5: planted FAKESECRET_dg62 as SERVICE_TOKEN in harvested .env under files; no other change. The pre_exec fixture is not a post fixture and is left verbatim."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated argv file redacted at source",
+   "files": {
+    "dgraph-cmdline.bin": "dgraph\u0000alpha\u0000--admin\u0000FAKESECRET_dg62\u0000",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_dg62\n"
+   },
+   "command": "cat dgraph-cmdline.bin",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_dg62"
+   ],
+   "must_see": [
+    "--admin"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ]
+}

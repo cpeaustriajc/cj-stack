@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1375",
+ "title": "Single-line concatenated env values from docker inspect template",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "one-line concatenated env output (no newlines); both values must be replaced",
+   "files": {},
+   "command": "printf 'NODE_ENV=productionDATABASE_URL=postgres://renav:FAKESECRET_PW@db/renav POLAR_TOKEN=polar_oat_FAKESECRET'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW",
+    "polar_oat_FAKESECRET"
+   ],
+   "must_see": [
+    "NODE_ENV=production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

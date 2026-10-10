@@ -1,0 +1,42 @@
+{
+ "case_id": "FP-0065",
+ "title": "False positive: SSH banner prose with password, key and token words must be byte-identical",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated SSH banner on stdout; prose unchanged",
+   "files": {
+    "sim-ssh-banner.sh": "printf 'Welcome to build-03. Password logins are disabled; use your key.\\nUnauthorized access prohibited. Token rotation runs on the 1st.\\n'\n"
+   },
+   "command": "sh sim-ssh-banner.sh",
+   "must_see": [
+    "Password logins are disabled; use your key.",
+    "Token rotation runs on the 1st."
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Bash ssh banner tool_response; stdout unchanged and no replacement needed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -o BatchMode=yes deploy@build-03 true"
+    },
+    "tool_response": {
+     "stdout": "Welcome to build-03. Password logins are disabled; use your key.\nUnauthorized access prohibited. Token rotation runs on the 1st.\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "Password logins are disabled; use your key.",
+    "Token rotation runs on the 1st."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1457",
+ "title": "Combining acute accent inside a harvested value (pre_exec). must_not_see is the AKESECRET tail, a substring of the FAKE value in .env, because the combining mark breaks any literal FAKE substring.",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf F + U+0301 + AKESECRET_ALPHA_9x",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n"
+   },
+   "command": "printf '%s\\n' 'F\u0301AKESECRET_ALPHA_9x'",
+   "exit_code": 0,
+   "must_not_see": [
+    "AKESECRET_ALPHA_9x"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

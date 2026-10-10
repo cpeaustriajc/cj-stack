@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1210",
+ "title": "recursive grep for KEY/SECRET names over /srv and /etc",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "staging grep over /srv/app and /etc/systemd stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh staging 'grep -rn \"API_KEY\\|SECRET\" /srv/app /etc/systemd 2>/dev/null'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "grep -n output: value after = redacted, file and line prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh staging 'grep -rn \"API_KEY\\|SECRET\" /srv/app /etc/systemd 2>/dev/null'"
+    },
+    "tool_response": {
+     "stdout": "/srv/app/.env:12:API_KEY=FAKESECRET_a7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a7"
+   ],
+   "must_see": [
+    "/srv/app/.env:12:API_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -rn output with API_KEY value (remote simulated with printf)",
+   "files": {},
+   "command": "printf '/srv/app/.env:12:API_KEY=FAKESECRET_a7\\n'",
+   "must_not_see": [
+    "FAKESECRET_a7"
+   ],
+   "must_see": [
+    "/srv/app/.env:12:API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

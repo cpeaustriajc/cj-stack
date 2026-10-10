@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0364",
+ "title": "K19 add-generic-password with literal value via -w",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "add-generic-password with literal -w value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security add-generic-password -a \"$USER\" -s \"myapp-api\" -w 'FAKESECRET_api_10'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Keychain add with a literal value. Item 4 has no rule for a literal in a Bash command; known-value checks apply only to Write/Edit. Flag as a gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "add-generic-password no-value form (prompt) stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security add-generic-password -a \"$USER\" -s \"myapp-api\" -w"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0234",
+ "title": "Bare name=value prefix from grep -o is rewritten by the name rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -o name=value prefix becomes STRIPE_SECRET_KEY=[REDACTED] (sk_live_ has no FAKE marker; runner may reject; guard may deny grep on .env per LEAK-0228 policy, so only the output rule is tested)",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKESECRET_0123456789\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -o '^STRIPE_SECRET_KEY=.\\{8\\}' .env"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_SECRET_KEY=sk_live_\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

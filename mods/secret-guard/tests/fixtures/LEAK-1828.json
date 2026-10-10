@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1828",
+ "title": "Grep stale worktree copies for DATABASE_URL or API_KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content of stale worktree .env; password replaced, file and line prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DATABASE_URL|API_KEY",
+     "path": "/Users/cj/Projects/renav/.claude/worktrees",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".claude/worktrees/old-run/.env:1:DATABASE_URL=postgres://app:FAKESECRET_STALE_01@db/x",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_STALE_01"
+   ],
+   "must_see": [
+    ".claude/worktrees/old-run/.env:1:",
+    "@db/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1821",
+ "title": "Edit CLAUDE.md with a staging password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit CLAUDE.md new_string containing a staging password; deny",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/CLAUDE.md",
+     "old_string": "## Staging",
+     "new_string": "## Staging\nStaging DB password: FAKESECRET_MEM_01"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

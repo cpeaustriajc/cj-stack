@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0665",
+ "title": "Resume from summary: compaction summary contains the value",
+ "level": "not-testable",
+ "reason_not_testable": "Resume from summary is an interactive UI choice after more than an hour idle and more than 100,000 tokens, and compaction is a model request rather than a tool call. The e2e runner cannot drive it and only sees tool_response and the final reply. Non-hook control: do not resume secret-touching sessions with Resume from summary; purge transcripts before resuming.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

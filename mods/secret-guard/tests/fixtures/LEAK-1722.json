@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1722",
+ "title": "Chrome screenshot image block showing a visible API key",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The leaking data is pixels in an image content block. Text rewriting via updatedToolOutput cannot inspect pixels, the runner has no image kind, and the catalog marks the text-hook outcome as a designed failure. The only hook-level action is a policy deny of the screenshot tool, which would also block legitimate screenshots and whose tool name is UNVERIFIED. Non-hook control: Chrome site and tool permissions, as listed in the catalog mitigation.",
+ "duplicate_of_dropped": false
+}

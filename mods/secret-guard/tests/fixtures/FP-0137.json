@@ -1,0 +1,22 @@
+{
+ "case_id": "FP-0137",
+ "title": "ssh grep -rl on build directories returns file names only",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote grep -rl returns only paths",
+   "files": {
+    "remote-sim.sh": "printf '/srv/app/dist/assets/index-4f2a9c.js\\n/srv/app/.next/static/chunks/main-8b1c0d.js\\n'\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "/srv/app/dist/assets/index-4f2a9c.js",
+    "/srv/app/.next/static/chunks/main-8b1c0d.js"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

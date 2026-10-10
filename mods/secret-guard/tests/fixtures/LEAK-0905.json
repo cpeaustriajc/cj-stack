@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-0905",
+ "title": "Offset base64 of an unharvested printenv value (cut -c5-)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of FAKESECRET_plain_0007 newline (22 bytes) with first 4 chars cut; expected string hand-computed as RVNFQ1JFVF9wbGFpbl8wMDA3Cg== and must be confirmed by runner against real output",
+   "command": "FOO_PLAIN=FAKESECRET_plain_0007 printenv FOO_PLAIN | base64 | cut -c5-",
+   "files": {},
+   "must_not_see": [
+    "RVNFQ1JFVF9wbGFpbl8wMDA3Cg=="
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

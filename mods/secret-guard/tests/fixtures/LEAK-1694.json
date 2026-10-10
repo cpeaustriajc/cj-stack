@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1694",
+ "title": "source ~/.zshrc then env grep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "source of zshrc denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "source ~/.zshrc && env | grep -i script"
+    }
+   }
+  },
+  {
+   "kind": "pre",
+   "name": "dot-execution of profile denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": ". ~/.profile && env | grep -i script"
+    }
+   }
+  }
+ ],
+ "duplicate_of_dropped": false
+}

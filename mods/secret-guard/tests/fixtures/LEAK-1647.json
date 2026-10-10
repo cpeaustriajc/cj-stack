@@ -1,0 +1,67 @@
+{
+ "case_id": "LEAK-1647",
+ "title": "Grep over Claude Code transcript store",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep under ~/.claude/projects is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "sk-ant-|ghp_",
+     "path": "~/.claude/projects",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep under ~/.claude/projects; no enumerated secret source piped to a transform. Owner allows Grep.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of a transcript .jsonl is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/projects/-Users-cj-Projects-renav/session.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a transcript file; owner allows Read on secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, sk-ant- value inside a JSON-wrapped line is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "sk-ant-|ghp_",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/cj/.claude/projects/-Users-cj-Projects-renav/session.jsonl:1:{\"type\":\"tool_result\",\"content\":\"export KEY=sk-ant-FAKESECRET_ANT_0001\"}",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "sk-ant-FAKESECRET_ANT_0001",
+    "FAKESECRET_ANT_0001"
+   ],
+   "must_see": [
+    "tool_result",
+    "session.jsonl"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

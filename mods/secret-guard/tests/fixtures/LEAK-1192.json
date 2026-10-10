@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-1192",
+ "title": "echo of an injected environment variable with head",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "head -c 4 of an injected ghp_ token prints only the prefix, which is redacted",
+   "files": {},
+   "command": "GITHUB_TOKEN=ghp_FAKESECRET_x1 sh -c 'echo \"$GITHUB_TOKEN\" | head -c 4'",
+   "must_not_see": [
+    "ghp_"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

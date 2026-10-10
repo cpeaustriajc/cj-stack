@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0863",
+ "title": "Secret written to a file via redirect, then read back with Read",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of inspect.json rewrites KEY=value inside JSON array",
+   "files": {
+    "inspect.json": "{\"Env\": [\"POSTGRES_PASSWORD=FAKESECRET_pg1\"]}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/app/inspect.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/app/inspect.json",
+      "content": "{\"Env\": [\"POSTGRES_PASSWORD=FAKESECRET_pg1\"]}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "write then read back",
+   "files": {
+    "inspect.json": "{\"Env\": [\"POSTGRES_PASSWORD=FAKESECRET_pg1\"]}"
+   },
+   "prompt": "Read inspect.json and reply with its exact contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

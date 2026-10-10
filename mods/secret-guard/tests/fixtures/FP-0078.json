@@ -1,0 +1,50 @@
+{
+ "case_id": "FP-0078",
+ "title": "Bash cat .env.defaults: KEYBOARD_LAYOUT, MONKEY_PATCH_ENABLED, TOKENIZER_MAX_LENGTH pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env.defaults stdout byte-identical",
+   "files": {
+    ".env.defaults": "KEYBOARD_LAYOUT=us\nMONKEY_PATCH_ENABLED=false\nTOKENIZER_MAX_LENGTH=4096\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.defaults"
+    },
+    "tool_response": {
+     "stdout": "KEYBOARD_LAYOUT=us\nMONKEY_PATCH_ENABLED=false\nTOKENIZER_MAX_LENGTH=4096\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "KEYBOARD_LAYOUT=us",
+    "MONKEY_PATCH_ENABLED=false",
+    "TOKENIZER_MAX_LENGTH=4096"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env.defaults through the guard wrapper is byte-identical",
+   "files": {
+    ".env.defaults": "KEYBOARD_LAYOUT=us\nMONKEY_PATCH_ENABLED=false\nTOKENIZER_MAX_LENGTH=4096\n"
+   },
+   "command": "cat .env.defaults",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "KEYBOARD_LAYOUT=us",
+    "MONKEY_PATCH_ENABLED=false",
+    "TOKENIZER_MAX_LENGTH=4096"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

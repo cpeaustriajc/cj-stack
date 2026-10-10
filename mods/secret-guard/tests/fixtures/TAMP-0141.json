@@ -1,0 +1,70 @@
+{
+ "case_id": "TAMP-0141",
+ "title": "Agent edits redactor timeout or removes onFailure in settings: guard denies the edit before it lands (proxy: pre, not e2e)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit lowers redactor timeout in user settings",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/home/fake-user/.claude/settings.json",
+     "old_string": "\"timeout\": 30",
+     "new_string": "\"timeout\": 1",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit removes onFailure from redactor handler in project settings",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/home/fake-user/project/.claude/settings.json",
+     "old_string": "\"onFailure\": \"block\"",
+     "new_string": "\"note\": \"x\"",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write replaces user settings wholesale, dropping the redactor",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/home/fake-user/.claude/settings.json",
+     "content": "{}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit to an unrelated README stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/home/fake-user/project/README.md",
+     "old_string": "Usage",
+     "new_string": "Usage notes",
+     "replace_all": false
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

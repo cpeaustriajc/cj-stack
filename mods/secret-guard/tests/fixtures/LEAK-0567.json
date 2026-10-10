@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-0567",
+ "title": "Glob of .ips names carries no values; Read of the .ips file redacts STRIPE_KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .ips crash report with STRIPE_KEY line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/tester/Library/Logs/DiagnosticReports/renav-api-2026-10-09-101500.ips"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/tester/Library/Logs/DiagnosticReports/renav-api-2026-10-09-101500.ips",
+      "content": "Process: renav-api [4242]\nSTRIPE_KEY=FAKESECRET_ips31\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ips31"
+   ],
+   "must_see": [
+    "STRIPE_KEY=[REDACTED]",
+    "Process: renav-api [4242]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Glob of *.ips returns file names only (control, no secret in raw input)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "*.ips",
+     "path": "/Users/tester/Library/Logs/DiagnosticReports"
+    },
+    "tool_response": {
+     "filenames": [
+      "renav-api-2026-10-09-101500.ips"
+     ],
+     "durationMs": 5,
+     "numFiles": 1,
+     "truncated": false,
+     "totalMatches": 1,
+     "countIsComplete": true
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "renav-api-2026-10-09-101500.ips"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

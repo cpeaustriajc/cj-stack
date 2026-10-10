@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0337",
+ "title": "ssh to a remote Mac running heap",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh remote string with heap denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh build-mac 'heap -addresses NSString $(pgrep -f api-server)'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ssh remote heap with $(pgrep); no secret source or transform in item 4. Flag as a spec gap.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote heap output redacted at source",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_REMOTE_MEM\n"
+   },
+   "command": "printf '0x600000 NSString \"FAKESECRET_REMOTE_MEM\"\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_REMOTE_MEM"
+   ],
+   "must_see": [
+    "0x600000 NSString"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

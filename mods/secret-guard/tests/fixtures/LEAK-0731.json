@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0731",
+ "title": "JSON-escaped secret does not match raw value (escaped form of the .env value appears in app.json stdout)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat app.json containing JSON-escaped password",
+   "files": {
+    ".env": "PASSWORD=FAKESECRET\"q\\bs\n",
+    "app.json": "{\"password\": \"FAKESECRET\\\"q\\\\bs\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.json"
+    },
+    "tool_response": {
+     "stdout": "{\"password\": \"FAKESECRET\\\"q\\\\bs\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET\\\"q\\\\bs"
+   ],
+   "must_see": [
+    "password"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

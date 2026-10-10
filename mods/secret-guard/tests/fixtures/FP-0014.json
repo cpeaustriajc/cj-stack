@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0014",
+ "title": "False positive: 40-hex commit SHAs must not be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "three 40-hex SHAs from rev-list unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git rev-list --all -n 3"
+    },
+    "tool_response": {
+     "stdout": "1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d\n9d07a1d3b2c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8\n4b8e2f1c9a7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d",
+    "9d07a1d3b2c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8",
+    "4b8e2f1c9a7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2141",
+ "title": "Teammate SendMessage carrying a known secret is denied before delivery; benign message stays allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "SendMessage to lead containing known value FAKESECRET_TOKEN_A is denied",
+   "files": {
+    ".env": "TOKEN_A=FAKESECRET_TOKEN_A\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "SendMessage",
+    "tool_input": {
+     "to": "lead",
+     "message": "use FAKESECRET_TOKEN_A"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "SendMessage to lead with a benign status message stays allowed",
+   "files": {
+    ".env": "TOKEN_A=FAKESECRET_TOKEN_A\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "SendMessage",
+    "tool_input": {
+     "to": "lead",
+     "message": "status: lint pass, no values needed"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

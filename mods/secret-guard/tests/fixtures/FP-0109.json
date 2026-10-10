@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0109",
+ "title": "Read of .env.example placeholders (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Placeholders, empty value and credential-free URL pass through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/fixture/project/.env.example"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/fixture/project/.env.example",
+      "content": "API_KEY=your_key_here\nSESSION_COOKIE=\nAUTH_TOKEN_URL=https://auth.example.com/token\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "API_KEY=your_key_here",
+    "SESSION_COOKIE=",
+    "AUTH_TOKEN_URL=https://auth.example.com/token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

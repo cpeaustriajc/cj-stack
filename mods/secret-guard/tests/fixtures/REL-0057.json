@@ -1,0 +1,36 @@
+{
+ "case_id": "REL-0057",
+ "title": "Go /debug/pprof/cmdline returns NUL-separated argv bytes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Secret between NUL separators is redacted, separators and neighbours kept",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_tok_9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:6060/debug/pprof/cmdline"
+    },
+    "tool_response": {
+     "stdout": "./server\u0000--token=FAKESECRET_tok_9\u0000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_9"
+   ],
+   "must_see": [
+    "./server",
+    "--token=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

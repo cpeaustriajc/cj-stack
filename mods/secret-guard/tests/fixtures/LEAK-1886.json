@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-1886",
+ "title": "bw get and bw unlock --raw are denied; session token output is redacted if the call is allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "bw get password denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bw get password FAKEITEM_bw"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare bw get password with no transform or oracle; not an item 4 deny. Flagged as a spec and fixture conflict.)"
+  },
+  {
+   "kind": "pre",
+   "name": "bw unlock --raw denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bw unlock --raw"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare bw unlock --raw with no combo; not an item 4 deny. Flagged: it prints a session credential, so review is recommended.)"
+  },
+  {
+   "kind": "post",
+   "name": "bw session token output redacted if allowed",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESESSION_BW_TOKEN_a81==\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bw unlock --raw"
+    },
+    "tool_response": {
+     "stdout": "FAKESESSION_BW_TOKEN_a81==\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESESSION_BW_TOKEN_a81=="
+   ],
+   "policy_note": "R5 instruction: planted FAKESESSION_BW_TOKEN_a81== as SERVICE_TOKEN in a harvested .env in files so the value has a file signal; no other change."
+  }
+ ]
+}

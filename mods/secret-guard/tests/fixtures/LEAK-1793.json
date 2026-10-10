@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1793",
+ "title": "Read a Jest/Vitest snapshot file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read snapshot accessToken value",
+   "files": {
+    "src/__snapshots__/session.test.ts.snap": "exports[`session store 1`] = `\n{\n  \"accessToken\": \"FAKESECRET_SNAP_01\",\n  \"userId\": 42\n}\n`;\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/src/__snapshots__/session.test.ts.snap"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/src/__snapshots__/session.test.ts.snap",
+      "content": "exports[`session store 1`] = `\n{\n  \"accessToken\": \"FAKESECRET_SNAP_01\",\n  \"userId\": 42\n}\n`;\n",
+      "numLines": 6,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SNAP_01"
+   ],
+   "must_see": [
+    "accessToken",
+    "userId"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

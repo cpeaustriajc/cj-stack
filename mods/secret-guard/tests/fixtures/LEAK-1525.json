@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1525",
+ "title": "mcp git_show reads id_ed25519 from HEAD",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "whole PEM block replaced in MCP text content block",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__git__git_show",
+    "tool_input": {
+     "repo_path": "~/.ssh",
+     "revision": "HEAD:id_ed25519"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_key_body\n-----END OPENSSH PRIVATE KEY-----\n"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_body"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  },
+  {
+   "kind": "pre",
+   "name": "git_show of a key-file revision is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__git__git_show",
+    "tool_input": {
+     "repo_path": "~/.ssh",
+     "revision": "HEAD:id_ed25519"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git_show of a key-file revision is a plain display of a secret source with nothing combined.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1822",
+ "title": "Write a test file containing a literal key; Write a fixture from git history",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write tests/billing.test.ts with literal secret; deny",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/tests/billing.test.ts",
+     "content": "const KEY = 'FAKESECRET_WRT_01'\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write src/test-fixtures.ts with literal secret from history; deny",
+   "files": {
+    ".env": "SERVICE_API_KEY=FAKESECRET_BLOB_01\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/src/test-fixtures.ts",
+     "content": "export const k = 'FAKESECRET_BLOB_01'\n"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R5: the value has no secret-ish name or token format, so it is planted in harvested .env and the known-value layer catches it. R3: Write content carrying a secret value is denied."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

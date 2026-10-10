@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0950",
+ "title": "Maven settings.xml password element read via Read is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of fake settings.xml with password element",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/fixtures/fake_settings.xml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/fixtures/fake_settings.xml",
+      "content": "<server><id>nexus</id><username>deploy</username><password>FAKESECRET_MAVEN_PW</password></server>",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_MAVEN_PW"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

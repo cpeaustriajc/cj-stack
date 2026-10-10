@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-0446",
+ "title": "[3] Grep tool content search of SQLite -wal files for ghp_ token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep for ghp_ token pattern under app-data directory is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "ghp_[A-Za-z0-9]{36}",
+     "path": "~/Library/Application Support/app/",
+     "glob": "*-wal",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: a Grep with output_mode content prints matching lines, which is plain display; allowed, and the printed output is redacted."
+  },
+  {
+   "kind": "post",
+   "name": "Grep result line with ghp_ token is replaced with [REDACTED]",
+   "files": {
+    ".env": "SERVICE_TOKEN=ghp_FAKESECRET03\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "ghp_[A-Za-z0-9]{36}",
+     "path": "~/Library/Application Support/app/",
+     "glob": "*-wal",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "app.db-wal:1: ghp_FAKESECRET03 followed by 36 fake alnum chars",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "ghp_FAKESECRET03"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: planted ghp_FAKESECRET03 in harvested project file .env (SERVICE_TOKEN=ghp_FAKESECRET03). No other change."
+  }
+ ]
+}

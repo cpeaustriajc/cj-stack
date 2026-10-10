@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1078",
+ "title": "Bash printenv DATABASE_URL | cut -c30-45: partial substring of password is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printenv DATABASE_URL: password replaced by whole-value match",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw_4411@db.internal:5432/renav\n"
+   },
+   "command": "export DATABASE_URL=postgres://app:FAKESECRET_pw_4411@db.internal:5432/renav; printenv DATABASE_URL",
+   "must_not_see": [
+    "FAKESECRET_pw_4411"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre",
+   "name": "printenv DATABASE_URL | cut -c30-45 is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw_4411@db.internal:5432/renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DATABASE_URL | cut -c30-45"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

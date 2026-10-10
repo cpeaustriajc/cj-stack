@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0184",
+ "title": "trufflehog docker scan prints matched secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "raw scanner result redacted, detector lines kept (simulated)",
+   "files": {
+    "scan.out": "Found verified result\nDetector Type: Generic\nRaw result: FAKESECRET_scan_23\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_scan_23\n"
+   },
+   "command": "cat scan.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_scan_23"
+   ],
+   "must_see": [
+    "Found verified result",
+    "Detector Type: Generic"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  },
+  {
+   "kind": "post",
+   "name": "trufflehog output via PostToolUse Bash",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_scan_23"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "trufflehog docker --image=myapp:latest --only-verified"
+    },
+    "tool_response": {
+     "stdout": "Found verified result\nDetector Type: Generic\nRaw result: FAKESECRET_scan_23\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_scan_23"
+   ],
+   "must_see": [
+    "Found verified result",
+    "Detector Type: Generic"
+   ],
+   "policy_note": "R5: planted the same value as SERVICE_TOKEN in harvested .env (files) so it has a file signal; no other change to this fixture."
+  }
+ ]
+}

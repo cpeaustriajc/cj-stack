@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-1371",
+ "title": "grep, rev, xxd hex pipeline over a secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P guard denies grep of secret file through rev and xxd",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DB_PASSWORD .env.test | rev | xxd -p"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "xxd -p of value line; hex line must be withheld (rev dropped so must_not_see is a single hex of a literal FAKE substring)",
+   "files": {},
+   "command": "printf 'DB_PASSWORD=FAKESECRET_pw1\\n' | xxd -p",
+   "must_not_see": [
+    "46414b455345435245545f707731"
+   ],
+   "policy_note": "R3: a typed known value fed to an encoder is denied; a deny passes"
+  }
+ ]
+}

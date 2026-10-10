@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1020",
+ "title": "Remote env grep for key-like names over SSH",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote env grep: STRIPE_SECRET redacted, HOSTNAME intact",
+   "files": {},
+   "command": "printf 'STRIPE_SECRET=FAKESECRET_st_AQ39\\nHOSTNAME=prod-host\\n'",
+   "must_not_see": [
+    "FAKESECRET_st_AQ39"
+   ],
+   "must_see": [
+    "STRIPE_SECRET=[REDACTED]",
+    "HOSTNAME=prod-host"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-2049",
+ "title": "Startup hook writes env dump to a temp file, later Read returns it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response of env dump file is redacted (on-disk residue is out of hook scope)",
+   "files": {
+    ".env": "DB_PW=FAKESECRET_xxx_beta\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/var/folders/xx/T/dump.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/var/folders/xx/T/dump.txt",
+      "content": "FAKESECRET_DB_PW=FAKESECRET_xxx_beta\nHOME=/Users/x\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xxx_beta"
+   ],
+   "must_see": [
+    "FAKESECRET_DB_PW=[REDACTED]",
+    "HOME=/Users/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

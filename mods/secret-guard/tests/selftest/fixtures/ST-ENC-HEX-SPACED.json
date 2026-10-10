@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-ENC-HEX-SPACED",
+ "title": "spaced hex caught",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "spaced hex caught",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "dump: 46 41 4b 45 53 45 43 52 45 54 5f 68 78 31 end"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hx1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

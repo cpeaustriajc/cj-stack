@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0260",
+ "title": "Edit multiple-match error reveals the occurrence count of a secret key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit on .dev.vars with a bare secret-value old_string is denied",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET=FAKESECRET_k9Lm\nAPI_KEY=FAKESECRET_t2Qv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": ".dev.vars",
+     "old_string": "=FAKESECRET_",
+     "new_string": "x"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit on .dev.vars with a name-only old_string is denied (path decides, not old_string)",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET=FAKESECRET_k9Lm\nAPI_KEY=FAKESECRET_t2Qv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": ".dev.vars",
+     "old_string": "STRIPE_SECRET",
+     "new_string": "x"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0637",
+ "title": "User pastes a secret into the prompt",
+ "level": "not-testable",
+ "reason_not_testable": "A user prompt is not a tool result, so no PostToolUse or PreToolUse event carries it and the hooks cannot see or rewrite it. Non-hook controls: user habit, and a separate UserPromptSubmit test (out of scope here).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

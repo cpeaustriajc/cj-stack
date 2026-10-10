@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1873",
+ "title": "open of a .command file and Write of a .command file are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "open FAKESECRET_dump.command denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "open /Users/cj/Projects/renav/FAKESECRET_dump.command"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write of a .command file denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/FAKESECRET_dump.command",
+     "content": "echo FAKESECRET_TOKEN_abc123\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

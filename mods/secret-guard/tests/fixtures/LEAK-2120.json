@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2120",
+ "title": "Block message echoes the original prompt, leaking the secret into the UI and transcript",
+ "level": "not-testable",
+ "reason_not_testable": "Depends on UserPromptSubmit decision output (decision:block, suppressOriginalPrompt) and Claude Code's transcript writer. test-spec.md defines no prompt-hook component and no fixture kind that can express these outputs; prompt text cannot be a must_not_see source. Non-hook control: rotate the credential, do not treat a block as scrubbing the transcript, and apply disk retention policy.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

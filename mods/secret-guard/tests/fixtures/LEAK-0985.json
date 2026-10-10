@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-0985",
+ "title": "env | grep -i key with secret-named variables",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "NAME=value lines masked for a name rule and for a value harvested from a project .env",
+   "files": {
+    "env.txt": "ANTHROPIC_API_KEY=FAKESECRET_an_K9\nSTRIPE_KEY_LIVE=FAKESECRET_st_K9b\n",
+    ".env": "STRIPE_KEY_LIVE=FAKESECRET_st_K9b\n"
+   },
+   "command": "grep -i key env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_an_K9",
+    "FAKESECRET_st_K9b"
+   ],
+   "must_see": [
+    "ANTHROPIC_API_KEY=[REDACTED]",
+    "STRIPE_KEY_LIVE=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

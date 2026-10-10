@@ -1,0 +1,76 @@
+{
+ "case_id": "LEAK-1114",
+ "title": "Bash grep of local shell history",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep of ~/.zsh_history is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -i 'token\\|key' ~/.zsh_history | tail -20"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Named shell history file, grep then tail. Plain display of a named file, no secret-source category listed.)"
+  },
+  {
+   "kind": "pre",
+   "name": "tail of absolute zsh history path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tail -50 /Users/cj/.zsh_history"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain tail of a named shell history file. Plain display.)"
+  },
+  {
+   "kind": "pre",
+   "name": "head of relative .bash_history is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "head -5 .bash_history"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain head of a named shell history file. Plain display.)"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, export assignment in history is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1114",
+    "tool_input": {
+     "command": "grep -i 'token\\|key' ~/.zsh_history | tail -20"
+    },
+    "tool_response": {
+     "stdout": "export API_KEY=FAKESECRET_hist\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hist"
+   ],
+   "must_see": [
+    "export API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

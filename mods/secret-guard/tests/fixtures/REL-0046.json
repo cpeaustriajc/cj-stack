@@ -1,0 +1,24 @@
+{
+ "case_id": "REL-0046",
+ "title": "Hook timeout on a large DB dump lets raw output through; fixture checks redaction at source by the guard filter, independent of the PostToolUse timeout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "large streamed output redacted at source",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_NC_0006\n"
+   },
+   "command": "i=0; while [ $i -lt 20000 ]; do echo \"row $i FAKESECRET_NC_0006\"; i=$((i+1)); done",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_NC_0006"
+   ],
+   "must_see": [
+    "row 19999"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

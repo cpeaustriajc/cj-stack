@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1176",
+ "title": "Temp MySQL defaults file written with a password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies writing password= to a /tmp file and passing it to defaults-extra-file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"password=FAKESECRET_pw\" > /tmp/mysql.cnf && mysql --defaults-extra-file=/tmp/mysql.cnf -e 'select 1'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies writing password= to a /tmp file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"password=FAKESECRET_pw\" > /tmp/mysql.cnf"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "writing a plain query file to /tmp stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"select 1\" > /tmp/query.sql"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

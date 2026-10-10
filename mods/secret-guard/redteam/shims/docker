@@ -1,0 +1,16 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+sub=$1; shift
+case "$sub" in
+  inspect) cat "$RT_DATA/docker_inspect.json";;
+  service) if [ "$1" = inspect ]; then cat "$RT_DATA/service_inspect.json"; else echo "ID NAME MODE REPLICAS"; echo "x1y2z3 app_web replicated 1/1"; fi;;
+  exec) while [[ "$1" == -* ]]; do shift; done; shift
+        case "$1" in env|printenv|"") cat "$RT_DATA/env.txt";;
+          printenv|sh|bash) if [ "$2" = -c ]; then cmd=$(printf '%s' "$3" | rt_map); cd "$RT_REMOTE"; exec bash -c "$cmd"; else cat "$RT_DATA/env.txt"; fi;;
+          cat) shift; for f in "$@"; do cat "$(printf '%s' "$f" | rt_map)"; done;;
+          *) cmd=$(printf '%s' "$*" | rt_map); cd "$RT_REMOTE"; exec bash -c "$cmd";; esac;;
+  compose) if [ "$1" = config ]; then cat "$RT_DATA/compose.yml"; else echo "compose: $*"; fi;;
+  logs) cat "$RT_DATA/logs.txt";;
+  ps) echo "CONTAINER ID   IMAGE        COMMAND   STATUS        NAMES"; echo "a1b2c3d4e5f6   app:latest   \"node\"    Up 3 hours   app";;
+  *) echo "docker: $sub: ok";;
+esac

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1499",
+ "title": "ssh ps auxww shows token on worker argv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-sim ps: --token argument value replaced, flag and columns kept",
+   "files": {},
+   "command": "printf 'deploy 4121 0.3 1.2 node worker.js --token FAKESECRET_argv\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_argv"
+   ],
+   "must_see": [
+    "node worker.js --token",
+    "deploy 4121"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

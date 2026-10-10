@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0743",
+ "title": "ssh docker inspect piped to head: userinfo and STRIPE value in Env (simulated remote)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh docker inspect piped to head is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host \"docker inspect app\" | head -40"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated Env lines with userinfo and STRIPE value: both secrets redacted",
+   "files": {
+    ".env": "DATABASE_URL=postgres://renav:FAKESECRET_pw3@db:5432/renav\nSTRIPE_SECRET_KEY=sk_live_FAKESECRET4\n"
+   },
+   "command": "printf '%s\\n' '[{\"Config\":{\"Env\":[' '\"DATABASE_URL=postgres://renav:FAKESECRET_pw3@db:5432/renav\",' '\"STRIPE_SECRET_KEY=sk_live_FAKESECRET4\"]}}]' | head -40",
+   "must_not_see": [
+    "FAKESECRET_pw3",
+    "sk_live_FAKESECRET4"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

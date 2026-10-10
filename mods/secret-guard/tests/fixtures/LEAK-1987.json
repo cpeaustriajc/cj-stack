@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1987",
+ "title": "ssh_config LocalCommand prints a registered secret value (redactor should rewrite it)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O rewrites LocalCommand echo in ssh output and keeps uptime line",
+   "files": {
+    ".env": "ALPHA=FAKESECRET_ALPHA_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh devhost 'uptime'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_ALPHA_123\n 10:02  up 3 days, load 1.20\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ALPHA_123"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "up 3 days, load 1.20"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

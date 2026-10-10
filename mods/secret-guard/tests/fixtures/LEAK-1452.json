@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1452",
+ "title": "quoted-printable form of a value containing equals",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "quopri of a value containing an equals sign",
+   "files": {
+    ".dev.vars": "EXAMPLE_API_KEY=FAKESECRET=ALPHA_9x\n"
+   },
+   "command": "python3 -c \"import quopri,sys; sys.stdout.write(quopri.encodestring(b'FAKESECRET=ALPHA_9x').decode())\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET=3DALPHA_9x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0405",
+ "title": "D2a defaults export to stdout as XML plist",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "XML plist apiToken string redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults export com.example.devtool - | head -50"
+    },
+    "tool_response": {
+     "stdout": "<key>apiToken</key>\\n<string>FAKESECRET_exp_51</string>\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_exp_51"
+   ],
+   "must_see": [
+    "apiToken"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated defaults export to stdout withheld at source",
+   "files": {},
+   "command": "defaults() { printf '<key>apiToken</key>\\n<string>FAKESECRET_exp_51</string>\\n'; }; defaults export com.example.devtool - | head -50",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_exp_51"
+   ],
+   "must_see": [
+    "apiToken"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2087",
+ "title": "Redirect to a temp file leaves a plaintext dump on disk",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "redirect of heap output into a temp file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap 4242 > \"$TMPDIR/h.txt\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the temp file returns [REDACTED]",
+   "files": {
+    ".env": "DUMP_TOKEN=FAKESECRET_FILE_0007\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/var/folders/example/T/h.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/var/folders/example/T/h.txt",
+      "content": "obj 0x1 data=FAKESECRET_FILE_0007\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FILE_0007"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

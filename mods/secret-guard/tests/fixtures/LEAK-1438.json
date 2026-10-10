@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1438",
+ "title": "printf %q escaping of a harvested .env value (value changed to FAKESECRET$ecret!7 to meet the FAKESECRET marker rule)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf %q of a harvested value",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET$ecret!7\n"
+   },
+   "command": "DB_PASSWORD='FAKESECRET$ecret!7'; printf '%q\\n' \"$DB_PASSWORD\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET",
+    "FAKESECRET\\$ecret"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

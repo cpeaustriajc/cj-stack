@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0702",
+ "title": "Bash updatedToolOutput is a plain string (printf secret)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash hook output must keep the object shape (stdout, stderr, interrupted, isImage)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_shape\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_pw_shape\\n'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pw_shape\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_shape"
+   ],
+   "must_see": [
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: printf-style secret via file, real hooks honour object shape",
+   "files": {
+    "secret.txt": "FAKESECRET_pw_shape\n"
+   },
+   "prompt": "Run cat secret.txt and show the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_shape"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

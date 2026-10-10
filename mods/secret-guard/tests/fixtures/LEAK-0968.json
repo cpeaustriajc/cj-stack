@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0968",
+ "title": "TOML lowercase password and auth_token with spaces and quotes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat config.toml via Bash: password and auth_token redacted, host and headers kept",
+   "files": {
+    ".config/app/config.toml": "[database]\nhost = \"db.internal\"\npassword = \"FAKESECRET_toml_1\"\n[smtp]\nauth_token = 'FAKESECRET_toml_2'\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.config/app/config.toml"
+    },
+    "tool_response": {
+     "stdout": "[database]\nhost = \"db.internal\"\npassword = \"FAKESECRET_toml_1\"\n[smtp]\nauth_token = 'FAKESECRET_toml_2'\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_toml_1",
+    "FAKESECRET_toml_2"
+   ],
+   "must_see": [
+    "[database]",
+    "host = ",
+    "db.internal",
+    "[smtp]",
+    "password = ",
+    "auth_token = '[REDACTED]'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

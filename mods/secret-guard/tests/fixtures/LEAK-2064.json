@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2064",
+ "title": "Tool leaves a plaintext secret in /tmp with a predictable name, then the agent greps for it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep hit on a /tmp file containing a registered token is redacted, path kept",
+   "files": {
+    ".env": "CLI_TOKEN=FAKESECRET_tok_E5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token",
+     "path": "/tmp"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/tmp/fake-cli-token.json:1:{\"token\":\"FAKESECRET_tok_E5\"}",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_E5"
+   ],
+   "must_see": [
+    "/tmp/fake-cli-token.json",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

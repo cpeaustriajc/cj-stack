@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1723",
+ "title": "Chrome save_to_disk screenshot then Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of a Chrome-saved screenshot PNG is denied [saved path is a stand-in; real path UNVERIFIED]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Desktop/chrome-screenshot-0001.png"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a screenshot PNG; allowed by the owner's plain-read decision (redactor covers display).)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of an ordinary project PNG stays allowed (false-positive control)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/docs/diagram.png"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

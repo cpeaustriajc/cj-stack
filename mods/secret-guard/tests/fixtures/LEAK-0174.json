@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-0174",
+ "title": "Read of extracted layer .env: DB_PASSWORD redacted; docker save and tar extraction of image tarballs denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PostToolUse Read of extracted layer .env",
+   "files": {
+    "img/layer/.env": "DB_PASSWORD=FAKESECRET_layer_13\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/work/proj/img/layer/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/work/proj/img/layer/.env",
+      "content": "DB_PASSWORD=FAKESECRET_layer_13\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_layer_13"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker save then tar -xf of image tarball is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker save myapp:latest -o img.tar && tar -xf img.tar -C img"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "tar -xf of image layer tarball is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tar -xf img/blobs/layer.tar -C img/layer"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0163",
+ "title": "ssh docker inspect .Config.Env JSON: STRIPE_KEY value removed, array still valid JSON (JSON validity checked only via must_see)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote docker inspect Env JSON array",
+   "files": {
+    "sim-inspect.txt": "[\"PATH=/usr/bin\",\"STRIPE_KEY=FAKESECRET_insp_2\",\"PORT=3000\"]\n"
+   },
+   "command": "cat sim-inspect.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_insp_2"
+   ],
+   "must_see": [
+    "PATH=/usr/bin",
+    "PORT=3000"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse ssh docker inspect Env JSON output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host \"docker inspect api --format '{{json .Config.Env}}'\""
+    },
+    "tool_response": {
+     "stdout": "[\"PATH=/usr/bin\",\"STRIPE_KEY=FAKESECRET_insp_2\",\"PORT=3000\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_insp_2"
+   ],
+   "must_see": [
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

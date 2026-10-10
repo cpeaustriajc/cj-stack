@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0124",
+ "title": "False positive: tuning values and prose in a notebook",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tuning values and prose stay unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/tune.ipynb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/tune.ipynb",
+      "content": "{\"cells\":[{\"cell_type\":\"markdown\",\"metadata\":{},\"source\":[\"Set API_KEY in your .env file, with no value.\"]},{\"cell_type\":\"code\",\"execution_count\":1,\"metadata\":{},\"outputs\":[{\"name\":\"stdout\",\"output_type\":\"stream\",\"text\":[\"max_tokens=512\\n\",\"tokenizer=bert-base\\n\",\"keyboard_layout=us\\n\",\"secret_santa_count=4\\n\"]}],\"source\":[\"pass\"]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_see": [
+    "max_tokens=512",
+    "tokenizer=bert-base",
+    "keyboard_layout=us",
+    "secret_santa_count=4",
+    "Set API_KEY in your .env file, with no value."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

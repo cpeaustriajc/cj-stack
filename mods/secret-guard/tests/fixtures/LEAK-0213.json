@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0213",
+ "title": "Adversarial: docker history piped through base64",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker history piped to base64 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

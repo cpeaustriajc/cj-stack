@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2095",
+ "title": "Grep across ~/.gradle returns credential lines with file and line prefixes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content line: value redacted, path and line number kept",
+   "files": {
+    ".gradle/gradle.properties": "mavenPassword=FAKESECRET_gradle_H8\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "password",
+     "path": "/Users/x/.gradle",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/x/.gradle/gradle.properties:2:mavenPassword=FAKESECRET_gradle_H8",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gradle_H8"
+   ],
+   "must_see": [
+    "/Users/x/.gradle/gradle.properties:2:mavenPassword=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

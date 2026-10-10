@@ -1,0 +1,85 @@
+{
+ "case_id": "LEAK-1101",
+ "title": "Read tool on a credential, rc, or project .env file (absolute, ~, $HOME, relative)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.aws/credentials by absolute path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.aws/credentials"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.aws/credentials with nothing combined; owner allows plain reads of secret sources (redactor hides values).)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of ~/.zshrc by tilde path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.zshrc"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.zshrc; plain read allowed by owner decision.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of project .env by absolute path",
+   "files": {
+    ".env": "SOME_API_TOKEN=FAKESECRET_tok1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of project .env; owner allows plain reads of secret sources.)"
+  },
+  {
+   "kind": "post",
+   "name": "If the read runs: key names kept, values redacted",
+   "files": {
+    "creds.txt": "aws_secret_access_key = FAKESECRET_aws1\nexport SOME_API_TOKEN=FAKESECRET_tok1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.aws/credentials"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.aws/credentials",
+      "content": "aws_secret_access_key = FAKESECRET_aws1\nexport SOME_API_TOKEN=FAKESECRET_tok1\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aws1",
+    "FAKESECRET_tok1"
+   ],
+   "must_see": [
+    "aws_secret_access_key",
+    "SOME_API_TOKEN",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

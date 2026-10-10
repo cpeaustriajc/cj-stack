@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1287",
+ "title": "PostToolUse hook pulls remote log over ssh to stderr with exit 2",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "edit-settings-hook-ssh-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.claude/settings.json",
+     "old_string": "{}",
+     "new_string": "\"command\": \"ssh prod-host 'tail -n 50 /var/log/app.log' >&2; exit 2\""
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

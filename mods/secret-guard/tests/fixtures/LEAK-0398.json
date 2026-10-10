@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0398",
+ "title": "L6b SSH systemctl show -p Environment",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "systemctl show Environment value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-app-01 'systemctl show -p Environment myapp.service'"
+    },
+    "tool_response": {
+     "stdout": "Environment=STRIPE_KEY=FAKESECRET_unit_44\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_unit_44"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated systemctl show value withheld at source",
+   "files": {},
+   "command": "ssh() { printf 'Environment=STRIPE_KEY=FAKESECRET_unit_44\\n'; }; ssh prod-app-01 'systemctl show -p Environment myapp.service'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_unit_44"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

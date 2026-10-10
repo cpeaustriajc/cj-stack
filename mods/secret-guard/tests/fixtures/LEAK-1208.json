@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-1208",
+ "title": "ssh for-loop printing env and config with echo headers",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo header kept, API_KEY value redacted (remote simulated with printf)",
+   "files": {
+    "hosts.txt": "h1\n"
+   },
+   "command": "for h in $(cat hosts.txt); do echo \"== $h\"; printf 'API_KEY=FAKESECRET_a6\\nPATH=/usr/bin\\n'; done",
+   "must_not_see": [
+    "FAKESECRET_a6"
+   ],
+   "must_see": [
+    "== h1",
+    "API_KEY=",
+    "PATH=/usr/bin"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "echo headers and PATH line survive PostToolUse redaction",
+   "files": {
+    "hosts.txt": "h1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "for h in $(cat hosts.txt); do echo \"== $h\"; ssh $h 'printenv; cat /srv/app/config.yml'; done"
+    },
+    "tool_response": {
+     "stdout": "== h1\nAPI_KEY=FAKESECRET_a6\nPATH=/usr/bin\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a6"
+   ],
+   "must_see": [
+    "== h1",
+    "PATH=/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

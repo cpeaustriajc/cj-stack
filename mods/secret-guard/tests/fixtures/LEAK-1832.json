@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-1832",
+ "title": "ssh git log -p over a remote repository",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote git log -p output with a removed DB value",
+   "files": {
+    "remote-sim.sh": "printf 'diff --git a/deploy/.env b/deploy/.env\\n-DB=FAKESECRET_SSH_01\\n'\n",
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_SSH_01\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SSH_01"
+   ],
+   "must_see": [
+    "deploy/.env",
+    "-DB="
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

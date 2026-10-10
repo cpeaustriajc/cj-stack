@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0894",
+ "title": "Remote API_TOKEN printed through rev",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "deny-ssh-docker-exec-printenv-rev",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh sd-mp 'docker exec app-web-1 printenv API_TOKEN | rev'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

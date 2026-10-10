@@ -1,0 +1,89 @@
+{
+ "case_id": "LEAK-1111",
+ "title": "Bash grep -n on a single secret-named file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -n on .dev.vars is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n CLOUDFLARE .dev.vars"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep on a named secret file (.dev.vars). Same as the Grep tool on a secret file, which owner allows.)"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -n curl on .dev.vars is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n curl .dev.vars"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep on a named secret file (.dev.vars). Same as the Grep tool on a secret file, which owner allows.)"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, CLOUDFLARE value is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1111a",
+    "tool_input": {
+     "command": "grep -n CLOUDFLARE .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "12:CLOUDFLARE_TOKEN=FAKESECRET_cf\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf"
+   ],
+   "must_see": [
+    "12:CLOUDFLARE_TOKEN=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "if reached, Bearer value on matching line is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1111b",
+    "tool_input": {
+     "command": "grep -n curl .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "7:curl -H \"Authorization: Bearer FAKESECRET_brr\" https://api.example.com\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_brr"
+   ],
+   "must_see": [
+    "curl -H",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

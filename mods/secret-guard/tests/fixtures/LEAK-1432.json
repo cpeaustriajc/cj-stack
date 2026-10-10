@@ -1,0 +1,68 @@
+{
+ "case_id": "LEAK-1432",
+ "title": "Bash: updatedToolOutput emitted as a bare string instead of the Bash object",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "emitted updatedToolOutput must be the Bash object and must not carry the stripe value",
+   "files": {
+    "fixture.env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c19-52 fixture.env"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_stripe_0123456789abcdef\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe_0123456789abcdef"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"stderr\"",
+    "\"interrupted\"",
+    "\"isImage\""
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "same shape check for FAKESECRET_SHAPE_08 value",
+   "files": {
+    "fixture.env": "APP_SHAPE_KEY=FAKESECRET_SHAPE_08\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -d= -f2 fixture.env"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_SHAPE_08\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SHAPE_08"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"stderr\"",
+    "\"interrupted\"",
+    "\"isImage\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

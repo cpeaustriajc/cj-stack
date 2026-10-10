@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1758",
+ "title": "Grep tool on NEXT_PUBLIC_ prefix finds a value with no known prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "value found by project .env registry replaced although it has no known prefix",
+   "files": {
+    ".env": "NEXT_PUBLIC_DB_PASS=FAKESECRET_NEXT_01\n",
+    ".next/static/chunk.js": "process.env.NEXT_PUBLIC_DB_PASS=\"FAKESECRET_NEXT_01\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "NEXT_PUBLIC_",
+     "path": ".next/static",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "chunk.js:1:process.env.NEXT_PUBLIC_DB_PASS=\"FAKESECRET_NEXT_01\"",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_NEXT_01"
+   ],
+   "must_see": [
+    "process.env.NEXT_PUBLIC_DB_PASS="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

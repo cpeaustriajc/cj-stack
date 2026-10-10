@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1029",
+ "title": "kubectl get secret -o yaml",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 Secret data value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl get secret app-creds -n prod -o yaml"
+    },
+    "tool_response": {
+     "stdout": "apiVersion: v1\nkind: Secret\nmetadata:\n  name: app-creds\n  namespace: prod\ntype: Opaque\ndata:\n  DB_PASSWORD: FAKERkFLRVNFQ1JFVF9BWDUz\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKERkFLRVNFQ1JFVF9BWDUz"
+   ],
+   "must_see": [
+    "DB_PASSWORD:",
+    "data:",
+    "name: app-creds"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints the Secret yaml",
+   "files": {
+    "kube-secret.yaml": "apiVersion: v1\nkind: Secret\nmetadata:\n  name: app-creds\n  namespace: prod\ntype: Opaque\ndata:\n  DB_PASSWORD: FAKERkFLRVNFQ1JFVF9BWDUz\n"
+   },
+   "command": "cat kube-secret.yaml",
+   "must_not_see": [
+    "FAKERkFLRVNFQ1JFVF9BWDUz"
+   ],
+   "must_see": [
+    "DB_PASSWORD:",
+    "data:"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

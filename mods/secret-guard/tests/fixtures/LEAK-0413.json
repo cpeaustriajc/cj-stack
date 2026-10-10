@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0413",
+ "title": "D11 find -exec plutil over all plists: secret line in bulk output must be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find -exec plutil bulk output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find ~/Library/Preferences -name '*.plist' -exec plutil -p {} \\;"
+    },
+    "tool_response": {
+     "stdout": "{\n  \"apiToken\" => \"FAKESECRET_find_60\"\n}\n{\n  \"theme\" => \"dark\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_find_60"
+   ],
+   "must_see": [
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

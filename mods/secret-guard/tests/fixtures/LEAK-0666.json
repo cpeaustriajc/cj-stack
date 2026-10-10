@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0666",
+ "title": "OpenTelemetry tool spans capture the pre-hook Bash output",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry is captured by the client before PostToolUse runs, and the e2e runner cannot read an OTLP collector file. Non-hook control: disable tool-content telemetry for secret-touching sessions and treat the collector as a secret-bearing store.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

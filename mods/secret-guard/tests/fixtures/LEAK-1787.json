@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1787",
+ "title": "Bash unzip -p of a Playwright trace archive",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "unzip -p trace JSON Cookie header",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "unzip -p test-results/trace.zip"
+    },
+    "tool_response": {
+     "stdout": "{\"requestHeaders\": {\"Cookie\": \"session=FAKESECRET_TRACE_01\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TRACE_01"
+   ],
+   "must_see": [
+    "Cookie",
+    "requestHeaders"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "source-level filter, cat stands in for unzip -p",
+   "files": {
+    "test-results/trace.json": "{\"requestHeaders\": {\"Cookie\": \"session=FAKESECRET_TRACE_01\"}}\n"
+   },
+   "command": "cat test-results/trace.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_TRACE_01"
+   ],
+   "must_see": [
+    "Cookie",
+    "requestHeaders"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

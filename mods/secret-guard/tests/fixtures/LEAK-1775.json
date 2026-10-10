@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-1775",
+ "title": "Read the project .env directly",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "If Read of .env is allowed, sk_live value replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env",
+      "content": "STRIPE_KEY=sk_live_FAKESECRET_ENV_01\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET_ENV_01"
+   ],
+   "must_see": [
+    "STRIPE_KEY="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Ignore-rule variant /project/.env: sk_live value replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/project/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/project/.env",
+      "content": "STRIPE_KEY=sk_live_FAKESECRET_ENV_01\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET_ENV_01"
+   ],
+   "must_see": [
+    "STRIPE_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

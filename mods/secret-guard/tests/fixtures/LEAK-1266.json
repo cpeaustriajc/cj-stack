@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1266",
+ "title": "Read of a local .env file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "read-env-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a secret file; the owner explicitly allows Read on secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "read-env-content-redacted",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a25\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env",
+      "content": "API_KEY=FAKESECRET_a25\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a25"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

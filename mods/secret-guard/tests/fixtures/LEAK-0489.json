@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0489",
+ "title": "kubectl config view --raw redirected to TMPDIR",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "kubectl config view --raw redirected to a file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl config view --raw > \"$TMPDIR/kc.yaml\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Grep of TMPDIR for client-key-data: value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "client-key-data",
+     "path": "$TMPDIR"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "kc.yaml:3:    client-key-data: FAKESECRET_kc43",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kc43"
+   ],
+   "must_see": [
+    "client-key-data"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

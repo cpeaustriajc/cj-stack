@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-2105",
+ "title": "Read output replacement shape is undocumented, so a plausible shape is silently dropped",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response object shape (from hook-payloads.json) keeps keys; string value redacted",
+   "files": {
+    "fixtures/creds.env": "API_KEY=FAKESECRET_key3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "fixtures/creds.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "fixtures/creds.env",
+      "content": "API_KEY=FAKESECRET_key3\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key3"
+   ],
+   "must_see": [
+    "API_KEY",
+    "[REDACTED]",
+    "numLines",
+    "totalLines"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

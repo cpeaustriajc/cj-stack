@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0034",
+ "title": "Precondition: no PostToolUse redactor entry is registered in the settings read",
+ "level": "not-testable",
+ "reason_not_testable": "Asserts on the user's live ~/.claude/settings.json, which no fixture kind reads. Non-hook control: pin the exact PostToolUse command and check the hook listing in a real session (mitigation in the case).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

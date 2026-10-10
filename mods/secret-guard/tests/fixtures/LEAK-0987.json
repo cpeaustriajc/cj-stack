@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0987",
+ "title": "launchctl print of a loaded service definition",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "=> separated EnvironmentVariables value masked, key and braces intact",
+   "files": {
+    "print.txt": "EnvironmentVariables => { API_TOKEN => FAKESECRET_tok_M11 }\n"
+   },
+   "command": "cat print.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok_M11"
+   ],
+   "must_see": [
+    "EnvironmentVariables => {",
+    "API_TOKEN => [REDACTED] }"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

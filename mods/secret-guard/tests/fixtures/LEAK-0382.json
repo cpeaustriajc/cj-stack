@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0382",
+ "title": "P7 pass -c then pbpaste",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "pbpaste after pass -c withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pass_29\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pass_29"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

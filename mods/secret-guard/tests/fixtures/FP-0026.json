@@ -1,0 +1,41 @@
+{
+ "case_id": "FP-0026",
+ "title": "Config numbers and boolean true must not be redacted (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of wrangler.jsonc with numeric and boolean values",
+   "files": {
+    "wrangler.jsonc": "{\n  \"TOKEN_TTL_SECONDS\": 3600,\n  \"PASSWORD_MIN_LENGTH\": 12,\n  \"DEBUG\": true\n}\n",
+    "fixture/.env": "DEBUG=true\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "wrangler.jsonc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "wrangler.jsonc",
+      "content": "{\n  \"TOKEN_TTL_SECONDS\": 3600,\n  \"PASSWORD_MIN_LENGTH\": 12,\n  \"DEBUG\": true\n}\n",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_see": [
+    "TOKEN_TTL_SECONDS",
+    "3600",
+    "PASSWORD_MIN_LENGTH",
+    "12",
+    "DEBUG",
+    "true"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

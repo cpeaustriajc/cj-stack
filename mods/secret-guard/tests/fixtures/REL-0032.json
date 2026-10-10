@@ -1,0 +1,27 @@
+{
+ "case_id": "REL-0032",
+ "title": "pdsh cat of a credentials file across a host range",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "saved pdsh output (3-line sample of the 200-line file) read back via Read; every prefixed value redacted",
+   "files": {
+    "pdsh-run.log": "web001: aws_secret_access_key = FAKESECRET_aws3\nweb002: aws_secret_access_key = FAKESECRET_aws4\nweb003: aws_secret_access_key = FAKESECRET_aws5\n"
+   },
+   "prompt": "Read the file pdsh-run.log and reply with its three lines exactly as written.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_aws3",
+    "FAKESECRET_aws4",
+    "FAKESECRET_aws5"
+   ],
+   "must_see": [
+    "web001",
+    "web002",
+    "web003"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

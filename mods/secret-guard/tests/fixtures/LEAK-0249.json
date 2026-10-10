@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0249",
+ "title": "git log -p diff: secret values on -/+ lines of a historical file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -p diff: both -/+ secret values replaced; markers, SHA and diff headers kept (detail uses FAKESECRET_new_tok4)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -- config/secrets.env"
+    },
+    "tool_response": {
+     "stdout": "commit 3c1e9a7b2d4e5f60718293a4b5c6d7e8f9012345\ndiff --git a/config/secrets.env b/config/secrets.env\n--- a/config/secrets.env\n+++ b/config/secrets.env\n@@ -1 +1 @@\n-API_TOKEN=FAKESECRET_old_tok3\n+API_TOKEN=FAKESECRET_new_tok4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_old_tok3",
+    "FAKESECRET_new_tok4"
+   ],
+   "must_see": [
+    "-API_TOKEN=",
+    "+API_TOKEN=",
+    "3c1e9a7b2d4e5f60718293a4b5c6d7e8f9012345",
+    "diff --git a/config/secrets.env b/config/secrets.env",
+    "@@ -1 +1 @@"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

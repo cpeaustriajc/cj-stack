@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1041",
+ "title": "mise exec printenv of a file-loaded secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv of _.file secret redacted via exact-value match",
+   "files": {
+    "prod.env": "STRIPE_SECRET_KEY=FAKESECRET_sk_BJ71\n",
+    "mise.toml": "[env]\n_.file = \"prod.env\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mise exec -- printenv STRIPE_SECRET_KEY"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_sk_BJ71\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_BJ71"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints value loaded from _.file target",
+   "files": {
+    "prod.env": "STRIPE_SECRET_KEY=FAKESECRET_sk_BJ71\n"
+   },
+   "command": ". ./prod.env; printf '%s\\n' \"$STRIPE_SECRET_KEY\"",
+   "must_not_see": [
+    "FAKESECRET_sk_BJ71"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

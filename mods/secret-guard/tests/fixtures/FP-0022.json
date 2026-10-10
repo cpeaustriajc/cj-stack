@@ -1,0 +1,93 @@
+{
+ "case_id": "FP-0022",
+ "title": "Read of package.json, a source line and a README line is not redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "package.json keywords and key fields pass unchanged; runner asserts no [REDACTED] in output",
+   "files": {
+    "package.json": "{\"name\": \"demo-app\", \"keywords\": [\"auth\", \"token-bucket\"], \"key\": \"id\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "package.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "package.json",
+      "content": "{\"name\": \"demo-app\", \"keywords\": [\"auth\", \"token-bucket\"], \"key\": \"id\"}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "token-bucket",
+    "\"key\": \"id\""
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "source line KEYBOARD_LAYOUT passes unchanged",
+   "files": {
+    "src/keyboard.js": "const KEYBOARD_LAYOUT = \"qwerty\";\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/keyboard.js"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/keyboard.js",
+      "content": "const KEYBOARD_LAYOUT = \"qwerty\";\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const KEYBOARD_LAYOUT = \"qwerty\";"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "README ssh-keygen line passes unchanged",
+   "files": {
+    "README.md": "Create a key with ssh-keygen -t ed25519.\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "README.md"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "README.md",
+      "content": "Create a key with ssh-keygen -t ed25519.\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "ssh-keygen -t ed25519"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

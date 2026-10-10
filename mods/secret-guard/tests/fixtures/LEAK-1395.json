@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1395",
+ "title": "Managed allowManagedHooksOnly silently disables the user redactor",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "allowManagedHooksOnly set in project settings (only honoured if the key is read at project scope, UNVERIFIED; managed settings cannot be placed in the fixture)",
+   "files": {
+    ".env": "DSN=postgres://u:FAKESECRET_pw@h/db\n",
+    ".claude/settings.json": "{\"allowManagedHooksOnly\":true}"
+   },
+   "prompt": "Run: cat .env and quote the output exactly.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

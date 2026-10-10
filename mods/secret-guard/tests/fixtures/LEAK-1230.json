@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1230",
+ "title": "backslash-escaped command name over ssh (local simulation: c\\at + .en\\v expands to cat srv/app/.env)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "escaped cat reads secret file, output redacted at source",
+   "files": {
+    "srv/app/.env": "API_KEY=FAKESECRET_a13\n"
+   },
+   "command": "c\\at srv/app/.en\\v",
+   "must_not_see": [
+    "FAKESECRET_a13"
+   ],
+   "must_see": [
+    "API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0369",
+ "title": "K25a Keychain JSON with unknown item name, catalog path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "keychain -w JSON, item name FAKE Item Name, whole output withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"FAKE Item Name\" -w"
+    },
+    "tool_response": {
+     "stdout": "{\"claudeAiOauth\":{\"accessToken\":\"FAKESECRET_oat_1\",\"refreshToken\":\"FAKESECRET_rt_1\",\"expiresAt\":1790000000000}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oat_1",
+    "FAKESECRET_rt_1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "keychain -w JSON, item name Claude Code-credentials, whole output withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s 'Claude Code-credentials' -w"
+    },
+    "tool_response": {
+     "stdout": "{\"claudeAiOauth\":{\"accessToken\":\"FAKESECRET_oat_1\",\"refreshToken\":\"FAKESECRET_rt_1\",\"expiresAt\":1790000000000}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oat_1",
+    "FAKESECRET_rt_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

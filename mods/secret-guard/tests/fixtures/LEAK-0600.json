@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0600",
+ "title": "expvar /debug/vars cmdline and config (flag and URL userinfo both redacted; JSON still valid)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "expvar cmdline flag and config URL userinfo redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://localhost:8080/debug/vars | jq '.cmdline, .config'"
+    },
+    "tool_response": {
+     "stdout": "[\n  \"svc\",\n  \"--password=FAKESECRET_ev64\"\n]\n\"postgres://u:FAKESECRET_ev64b@h/db\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ev64",
+    "FAKESECRET_ev64b"
+   ],
+   "must_see": [
+    "svc",
+    "@h/db"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated expvar lines redacted at source",
+   "files": {
+    "vars.txt": "[\"svc\",\"--password=FAKESECRET_ev64\"]\n\"postgres://u:FAKESECRET_ev64b@h/db\"\n"
+   },
+   "command": "cat vars.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ev64",
+    "FAKESECRET_ev64b"
+   ],
+   "must_see": [
+    "svc",
+    "@h/db"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1116",
+ "title": "ssh remote grep of history for token-like words",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh remote grep of history files is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host 'grep -i -E \"token|apikey|authorization\" ~/.bash_history ~/.zsh_history'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep over two named history files over ssh. Same as named-file grep and Grep tool, which owner allows.)"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh remote grep of zsh history is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host 'grep -i token ~/.zsh_history'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep over a named history file over ssh. Same as named-file grep, which owner allows.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote Bearer line is redacted at source",
+   "files": {
+    "remote/bearer.txt": "FAKESECRET_b\n"
+   },
+   "command": "printf 'curl -H Authorization: Bearer %s\\n' \"$(cat remote/bearer.txt)\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_b"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

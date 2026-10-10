@@ -1,0 +1,23 @@
+{
+ "case_id": "FP-0062",
+ "title": "False positive: innocent names in settings.env.example (cat) must pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat settings.env.example: five innocent lines survive",
+   "files": {
+    "settings.env.example": "AUTHOR_NAME=Jane Doe\nKEYBOARD_LAYOUT=us\nMONKEY_COUNT=3\nTOKENIZER_MODE=fast\nSECRET_SANTA_DATE=2026-12-01\n"
+   },
+   "command": "cat settings.env.example",
+   "must_see": [
+    "AUTHOR_NAME=Jane Doe",
+    "KEYBOARD_LAYOUT=us",
+    "MONKEY_COUNT=3",
+    "TOKENIZER_MODE=fast",
+    "SECRET_SANTA_DATE=2026-12-01"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

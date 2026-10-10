@@ -1,0 +1,65 @@
+{
+ "case_id": "LEAK-1643",
+ "title": "Read of MCP and agent config files with inline tokens",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.cursor/mcp.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.cursor/mcp.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.cursor/mcp.json. Read is allowed, and the redactor hides values.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of repo .mcp.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.mcp.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of repo .mcp.json. Read is allowed.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, GITHUB_TOKEN value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.mcp.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.mcp.json",
+      "content": "{\n  \"mcpServers\": {\n    \"github\": {\n      \"env\": {\n        \"GITHUB_TOKEN\": \"FAKESECRET_GH_0001\"\n      }\n    }\n  }\n}\n",
+      "numLines": 9,
+      "startLine": 1,
+      "totalLines": 9
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_GH_0001"
+   ],
+   "must_see": [
+    "mcpServers",
+    "GITHUB_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

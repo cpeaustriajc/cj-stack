@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1769",
+ "title": "Read ~/.claude/debug/latest",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read debug log, Bearer value replaced, request lines kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/debug/latest"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.claude/debug/latest",
+      "content": "2026-10-10T09:00:00.000Z [DEBUG] POST https://api.example.com/v1/me\n> Authorization: Bearer FAKESECRET_DBG_01\n> Content-Type: application/json\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DBG_01"
+   ],
+   "must_see": [
+    "POST https://api.example.com/v1/me",
+    "> Content-Type: application/json"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

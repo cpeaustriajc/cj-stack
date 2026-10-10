@@ -1,0 +1,76 @@
+{
+ "case_id": "FP-0043",
+ "title": "False positive: git SHAs and standard SSH warning on stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log --oneline -2: 8-hex SHAs kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --oneline -2"
+    },
+    "tool_response": {
+     "stdout": "00912aa4 docs: error-handling rule names what Biome enforces (#282)\n9d07a1d3 feat: Plan cards show one calm line and Try again when a load fails (#282)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "00912aa4",
+    "9d07a1d3"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ssh known-hosts warning on stderr kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host true"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "Warning: Permanently added '203.0.113.10' (ED25519) to the list of known hosts.\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Permanently added '203.0.113.10' (ED25519)",
+    "203.0.113.10"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "full 40-hex SHA kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git rev-parse HEAD"
+    },
+    "tool_response": {
+     "stdout": "00912aa4c1e5b7d9a0f3e2d1c4b5a6978890abcd\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "00912aa4c1e5b7d9a0f3e2d1c4b5a6978890abcd"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

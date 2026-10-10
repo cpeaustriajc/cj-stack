@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0760",
+ "title": "Command over ssh prints a PEM private key while the hook crashes or times out",
+ "level": "not-testable",
+ "reason_not_testable": "Fail-closed behaviour needs the PostToolUse hook to crash or exceed its timeout. No fixture kind injects a hook fault, and the normal-path output of a PEM block is not what the expected outcome asserts. Non-hook control: fail-closed wrapper with onFailure:\"block\" (UNVERIFIED for PostToolUse) and keeping PEM-printing commands out of sessions.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0791",
+ "title": "PostToolUseFailure: failed Bash that prints a DSN password to stderr (pre_exec; post hook cannot rewrite failure output)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command printing DSN from a file, exit 1; secret must not reach the model",
+   "files": {
+    "dsn.txt": "DATABASE_URL=postgres://app:FAKESECRET_pw_123@db.internal:5432/renav\n"
+   },
+   "command": "sh -c 'cat dsn.txt >&2; exit 1'",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "literal DSN password in echo-to-stderr command is allowed",
+   "files": {
+    "dsn.txt": "DATABASE_URL=postgres://app:FAKESECRET_pw_123@db.internal:5432/renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'echo \"DATABASE_URL=postgres://app:FAKESECRET_pw_123@db.internal:5432/renav\" >&2; exit 1'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into a command that only echoes it to stderr and shows output is allowed. No secret source or transform is present, so R2 does not apply. The filter redacts the output at source."
+  }
+ ]
+}

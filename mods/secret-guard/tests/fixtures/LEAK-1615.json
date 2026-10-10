@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1615",
+ "title": "Bash non-zero exit routes output to PostToolUseFailure (failure path via guard wrapper)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo secret then exit 3",
+   "files": {},
+   "command": "echo \"DB_PASSWORD=FAKESECRET_exit1\"; exit 3",
+   "exit_code": 3,
+   "must_not_see": [
+    "FAKESECRET_exit1"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env then exit 3",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_cap1\nDB_PASSWORD=FAKESECRET_cap2\n"
+   },
+   "command": "cat .env; exit 3",
+   "exit_code": 3,
+   "must_not_see": [
+    "FAKESECRET_cap1",
+    "FAKESECRET_cap2"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

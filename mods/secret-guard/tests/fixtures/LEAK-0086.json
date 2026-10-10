@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0086",
+ "title": "Guard bypass: docker inspect renav-web (plain)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker inspect renav-web is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect renav-web"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare docker inspect is a secret source with no transform. Plain display allowed; safe --format alternative is for combos.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

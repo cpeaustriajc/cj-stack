@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0986",
+ "title": "launchctl getenv for a named variable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "bare value matching a harvested .env value is masked",
+   "files": {
+    ".env": "OPENAI_API_KEY=FAKESECRET_oa_L10\n",
+    "getenv.txt": "FAKESECRET_oa_L10\n"
+   },
+   "command": "cat getenv.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oa_L10"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

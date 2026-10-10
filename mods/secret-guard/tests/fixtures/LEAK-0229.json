@@ -1,0 +1,65 @@
+{
+ "case_id": "LEAK-0229",
+ "title": "grep -q then echo $? exit-status oracle on a secret file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -q probe of DB_PASSWORD on .dev.vars followed by echo $? is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=FAKESECRET_a' .dev.vars; echo $?"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "bare 0 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=FAKESECRET_a' .dev.vars; echo $?"
+    },
+    "tool_response": {
+     "stdout": "0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "0"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "bare 1 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=FAKESECRET_a' .dev.vars; echo $?"
+    },
+    "tool_response": {
+     "stdout": "1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

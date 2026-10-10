@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-2115",
+ "title": "Grep over the Claude projects directory returns matched lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep match of JSON-encoded transcript line: raw and escaped forms redacted",
+   "files": {
+    "claude-projects/p/s.jsonl": "{\"type\":\"tool_result\",\"content\":\"DB_PASSWORD=FAKESECRET_DELTA\",\"value\":\"FAKESECRET_DELTA\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "FAKESECRET_DELTA",
+     "path": "claude-projects",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "claude-projects/p/s.jsonl:1:{\"type\":\"tool_result\",\"content\":\"DB_PASSWORD=FAKESECRET_DELTA\",\"value\":\"FAKESECRET_DELTA\"}",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DELTA",
+    "\\\"FAKESECRET_DELTA\\\""
+   ],
+   "must_see": [
+    "s.jsonl:1:",
+    "DB_PASSWORD="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Grep over ~/.claude/projects must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "FAKESECRET_DELTA",
+     "path": "/Users/cj/.claude/projects"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Grep tool call, which the owner explicitly allows; no listed deny combo.)"
+  }
+ ]
+}

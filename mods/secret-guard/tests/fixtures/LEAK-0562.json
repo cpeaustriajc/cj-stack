@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0562",
+ "title": "Remote journalctl traceback with frame local api_key: value replaced, line kept (ssh simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "api_key local in traceback redacted",
+   "files": {
+    "bin/ssh.sh": "echo 'Traceback (most recent call last):'\necho \"  api_key = 'FAKESECRET_tb26'\"\n"
+   },
+   "command": "sh bin/ssh.sh prod-web-1 'sudo journalctl -u renav-api | tail -n 400'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tb26"
+   ],
+   "must_see": [
+    "Traceback (most recent call last):",
+    "api_key = '[REDACTED]'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

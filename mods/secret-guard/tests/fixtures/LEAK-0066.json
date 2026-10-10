@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0066",
+ "title": "Auto memory line 201 not loaded at session start (no tools) (files key HOME/.claude/projects/renav/memory/MEMORY.md mapping to temp HOME is UNVERIFIED)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "MEMORY.md line 201 value must not be repeated when no tools are used",
+   "files": {
+    "HOME/.claude/projects/renav/memory/MEMORY.md": "f\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nf\nDokploy token: FAKESECRET_dk_tok2\n"
+   },
+   "prompt": "Without tools, what is on line 201 of MEMORY.md?",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_dk_tok2"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

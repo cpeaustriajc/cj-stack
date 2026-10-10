@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1228",
+ "title": "base64-decoded command piped to sh over ssh",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 -d piped into sh over ssh is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-1 \"echo Y2F0IC9zcnYvYXBwLy5lbnY= | base64 -d | sh\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "API_KEY value from the remote .env redacted at source (remote simulated with printf; registry holds FAKESECRET_a11 from .env)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a11\n"
+   },
+   "command": "printf 'API_KEY=FAKESECRET_a11\\n'",
+   "must_not_see": [
+    "FAKESECRET_a11"
+   ],
+   "must_see": [
+    "API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1755",
+ "title": "kubectl logs with DATABASE_URL in startup output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "DSN password replaced, host port and db name kept (kubectl output simulated)",
+   "files": {
+    "k8s-logs.out": "startup env DATABASE_URL=postgres://app:FAKESECRET_K8S_01@db:5432/renav\n"
+   },
+   "command": "cat k8s-logs.out | tail -300",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_K8S_01"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:[REDACTED]@db:5432/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

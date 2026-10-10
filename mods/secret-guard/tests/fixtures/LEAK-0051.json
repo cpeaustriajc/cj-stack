@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0051",
+ "title": "xxd hex dump of .npmrc token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xxd on secret file is a secret-source plus transform combo, denied",
+   "files": {
+    ".npmrc": "//registry.npmjs.org/:_authToken=FAKESECRET_npm_123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .npmrc"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "successful hex stdout of .npmrc is redacted (hex of FAKESECRET_npm_123 must not survive)",
+   "files": {
+    ".npmrc": "//registry.npmjs.org/:_authToken=FAKESECRET_npm_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .npmrc"
+    },
+    "tool_response": {
+     "stdout": "2f2f72656769737472792e6e706d6a732e6f72672f3a5f61757468546f6b656e3d46414b455345435245545f6e706d5f313233",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "46414b455345435245545f6e706d5f313233"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0054",
+ "title": "Redactor exception or timeout on huge output releases original text (unit covers malformed-shape fail-closed only; the 20MB output and 600s timeout variants are not covered by a unit fixture)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tool_response is a bare string with secret, redactor must not fall back to raw text",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 emit_db_config.py"
+    },
+    "tool_response": "DB_PASSWORD=FAKESECRET_db_55\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_db_55"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stdout given as a list containing the secret, redactor must not release it",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 emit_db_config.py"
+    },
+    "tool_response": {
+     "stdout": [
+      "DB_PASSWORD=FAKESECRET_db_55\n"
+     ],
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_55"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

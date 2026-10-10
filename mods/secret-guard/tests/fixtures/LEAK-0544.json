@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0544",
+ "title": "ssh /proc environ dump of a node process",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh prod /proc environ dump (API_KEY)",
+   "files": {},
+   "command": "ssh() { printf 'PATH=/usr/bin:/bin\\nNODE_ENV=production\\nAPI_KEY=FAKESECRET_env8\\n'; }; ssh prod 'cat /proc/$(pgrep -f node)/environ | tr \"\\0\" \"\\n\"'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_env8"
+   ],
+   "must_see": [
+    "PATH=/usr/bin:/bin",
+    "NODE_ENV=production",
+    "API_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh renav-worker-2 /proc environ dump (DB_PASSWORD)",
+   "files": {},
+   "command": "ssh() { printf 'NODE_ENV=production\\nDB_PASSWORD=FAKESECRET_env30\\nPORT=3000\\n'; }; ssh renav-worker-2 'cat /proc/$(pgrep -f renav-worker)/environ | tr \"\\0\" \"\\n\"'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_env30"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "DB_PASSWORD=",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

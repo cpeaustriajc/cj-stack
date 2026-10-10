@@ -1,0 +1,8 @@
+{
+ "case_id": "FP-0127",
+ "title": "Backtick-quoted @README is not an import (control)",
+ "level": "not-testable",
+ "reason_not_testable": "Control for the memory-file lint's handling of backtick-quoted @ tokens. The lint is not a hook component and has no fixture kind in test-spec.md. Non-hook control: the memory-file lint's own tests (outside this spec).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

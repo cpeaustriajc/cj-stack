@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0504",
+ "title": "[55] Read of an NFD-decomposed filename for a secret JSON",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of NFD secrets/Cle\u0301-prod.json: private_key value redacted",
+   "files": {
+    "secrets/Cle\u0301-prod.json": "{\"private_key\":\"FAKESECRET_nf55\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/app/secrets/Cle\u0301-prod.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/app/secrets/Cle\u0301-prod.json",
+      "content": "{\"private_key\":\"FAKESECRET_nf55\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_nf55"
+   ],
+   "must_see": [
+    "private_key"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

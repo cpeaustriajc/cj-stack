@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2045",
+ "title": "Elevated copy to a readable path evades the Read deny on the original",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo cp of a root-owned file plus chown into the project is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo cp /var/root/svc/creds.env /Users/cj/Projects/renav/tmp_copy.env && sudo chown $(id -un) /Users/cj/Projects/renav/tmp_copy.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "later Read of the copied file redacts the secret",
+   "files": {
+    "tmp_copy.env": "ROOT_TOKEN=FAKESECRET_root_0004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/tmp_copy.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/tmp_copy.env",
+      "content": "ROOT_TOKEN=FAKESECRET_root_0004\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_root_0004"
+   ],
+   "must_see": [
+    "ROOT_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

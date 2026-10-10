@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1917",
+ "title": "Read tool on Chromium Cookies file in Application Support; guard denies before any output exists",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of Slack Cookies file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "$HOME/Library/Application Support/Slack/Cookies"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Cookies file; no combo. Redactor covers output.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

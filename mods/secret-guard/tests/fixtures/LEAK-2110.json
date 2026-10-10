@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2110",
+ "title": "Replacement is applied to Claude's result but telemetry captures the original output",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry/OpenTelemetry capture of the original output happens outside the hook and outside the runner's observable surface (runner records only PostToolBatch tool_response and final reply, per test-spec.md). Content-export settings are UNVERIFIED. The model-visible half uses the same post mechanism as other post fixtures. Non-hook control: disable tool-content export in telemetry settings and keep values out of tool output at source; track as a separate exposure.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-2082",
+ "title": "leaks -fullContent hex column hides a secret the ASCII column would have matched",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ASCII column variant: the ASCII secret is redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_LEAKS_0002\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -fullContent 4242"
+    },
+    "tool_response": {
+     "stdout": "Leak: 0x7f8a1c004000 size(32)\n46 41 4b 45 53 45 43 52 45 54 5f 4c 45 41 4b 53 5f 30 30 30 32  FAKESECRET_LEAKS_0002\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LEAKS_0002"
+   ],
+   "must_see": [
+    "size(32)"
+   ],
+   "policy_note": "R5: planted FAKESECRET_LEAKS_0002 in a harvested .env in files (SERVICE_TOKEN=<same value>), so the value comes from a secret file. Nothing else changed."
+  },
+  {
+   "kind": "post",
+   "name": "hex-only variant: the hex bytes spell the secret; known miss, expected to fail until the encoded form is handled",
+   "files": {
+    "leak-ref.txt": "FAKESECRET_LEAKS_0002\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_LEAKS_0002\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -fullContent 4242"
+    },
+    "tool_response": {
+     "stdout": "Leak: 0x7f8a1c004000 size(32)\n46 41 4b 45 53 45 43 52 45 54 5f 4c 45 41 4b 53 5f 30 30 30 32\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "46 41 4b 45 53 45 43 52 45 54 5f 4c 45 41 4b 53 5f 30 30 30 32"
+   ],
+   "must_see": [
+    "size(32)"
+   ],
+   "policy_note": "R5: planted FAKESECRET_LEAKS_0002 in a harvested .env in files (SERVICE_TOKEN=<same value>), because this fixture's value also lacks a file or name signal. leak-ref.txt kept as it was. The hex form is still not matched by a literal redactor, so the known miss stays."
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1806",
+ "title": "bash -x deploy script traces expanded token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bash -x trace line on stderr",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bash -x ./scripts/deploy.sh staging"
+    },
+    "tool_response": {
+     "stdout": "deploying staging\n",
+     "stderr": "+ export DEPLOY_TOKEN=FAKESECRET_TRACE_01\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TRACE_01"
+   ],
+   "must_see": [
+    "deploying staging",
+    "export DEPLOY_TOKEN="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real bash -x trace of a local deploy script",
+   "files": {
+    "scripts/deploy.sh": "#!/bin/bash\nexport DEPLOY_TOKEN=FAKESECRET_TRACE_01\necho \"deploying $1\"\n"
+   },
+   "command": "bash -x ./scripts/deploy.sh staging",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_TRACE_01"
+   ],
+   "must_see": [
+    "deploying staging",
+    "export DEPLOY_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

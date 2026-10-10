@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-2147",
+ "title": "Task created with a secret: denied at the PreToolUse level on TaskCreate (TaskCreated hook stdin unverified, so the PreToolUse schema is used)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "TaskCreate with description containing known value FAKESECRET_TASK_F is denied",
+   "files": {
+    ".env": "TASK_API_TOKEN=FAKESECRET_TASK_F\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TaskCreate",
+    "tool_input": {
+     "subject": "rotate key",
+     "description": "rotate FAKESECRET_TASK_F"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "TaskCreate with a benign description stays allowed",
+   "files": {
+    ".env": "TASK_API_TOKEN=FAKESECRET_TASK_F\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TaskCreate",
+    "tool_input": {
+     "subject": "rotate key",
+     "description": "rotate the staging API key on schedule"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

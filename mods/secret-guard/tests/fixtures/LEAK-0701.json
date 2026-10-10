@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0701",
+ "title": "Hook prints a banner then exits 1 (Bash printf DB_PASSWORD)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "redactor stub prints banner and exits 1 via project settings; expected to fail under non-blocking default",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_crash\n",
+    "print_env.sh": "cat .env\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"echo 'redactor crashed'; exit 1\"}]}]}}"
+   },
+   "prompt": "Run sh print_env.sh and show the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_crash"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

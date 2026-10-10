@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0660",
+ "title": "Read of JSONL with JSON-escaped secret containing quote, ampersand and backslash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of session.jsonl with escaped value",
+   "files": {
+    "fixtures/session.jsonl": "{\"type\":\"user\",\"content\":\"password=FAKESECRET_ab\\\"c&d\\\\e\"}\n{\"type\":\"assistant\",\"content\":\"done\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "fixtures/session.jsonl"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "fixtures/session.jsonl",
+      "content": "{\"type\":\"user\",\"content\":\"password=FAKESECRET_ab\\\"c&d\\\\e\"}\n{\"type\":\"assistant\",\"content\":\"done\"}\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ab\\\"c&d\\\\e"
+   ],
+   "must_see": [
+    "assistant"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

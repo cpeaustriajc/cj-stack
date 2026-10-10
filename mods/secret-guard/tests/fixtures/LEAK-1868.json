@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1868",
+ "title": "Secret split across a line break in multi-line log entry",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret split at newline is redacted across the joined output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --info --last 5m"
+    },
+    "tool_response": {
+     "stdout": "refresh failed token=FAKESECRET_\nsplit_002 retry=3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "split_002",
+    "FAKESECRET_\\nsplit_002"
+   ],
+   "must_see": [
+    "refresh failed",
+    "retry=3"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated split secret: fragments redacted at source",
+   "files": {},
+   "command": "printf 'refresh failed token=FAKESECRET_\\nsplit_002 retry=3\\n'",
+   "must_not_see": [
+    "split_002"
+   ],
+   "must_see": [
+    "retry=3"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

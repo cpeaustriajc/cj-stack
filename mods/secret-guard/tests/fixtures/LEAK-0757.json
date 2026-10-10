@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0757",
+ "title": "Build output: secret in stderr only from sh -c >&2 (unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr DATABASE_URL userinfo redacted, stdout unchanged",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_db_2@db.internal:5432/app\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'echo build ok; echo DATABASE_URL=postgres://app:FAKESECRET_db_2@db.internal:5432/app 1>&2'"
+    },
+    "tool_response": {
+     "stdout": "build ok\n",
+     "stderr": "DATABASE_URL=postgres://app:FAKESECRET_db_2@db.internal:5432/app\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_2"
+   ],
+   "must_see": [
+    "build ok",
+    "DATABASE_URL=postgres://app:[REDACTED]@db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

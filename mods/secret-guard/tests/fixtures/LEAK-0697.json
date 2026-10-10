@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0697",
+ "title": "Bash loop prints secret lines with a hook that overruns a 2s timeout",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "source-level filter on secret loop output (reduced to 200 lines)",
+   "files": {},
+   "command": "for i in $(seq 1 200); do echo \"DB_PASSWORD=FAKESECRET_pw_known_$i\"; done",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_known_"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: 50000-line secret loop with a 2s hook timeout (stub sleep 5; cat); KNOWN GAP if raw output returns after cancel",
+   "files": {
+    "gen.sh": "for i in $(seq 1 50000); do echo \"DB_PASSWORD=FAKESECRET_pw_known_$i\"; done\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"sleep 5; cat\",\"timeout\":2}]}]}}"
+   },
+   "prompt": "Run sh gen.sh and show all of its output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_known_"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-1985",
+ "title": "/dev/fd reached through variable indirection avoids the literal path check (P gap recorded; O redaction asserted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O redacts registered value read through /dev/fd/3",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "f=secret.env; exec 3<$f; cat /dev/fd/3"
+    },
+    "tool_response": {
+     "stdout": "API_KEY=FAKESECRET_aaa111\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "filter redacts fd-indirected read at source",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "command": "f=secret.env; exec 3<$f; cat /dev/fd/3",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "guard does not block fd indirection (documented P gap)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "f=secret.env; exec 3<$f; cat /dev/fd/3"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

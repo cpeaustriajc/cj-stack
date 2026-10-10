@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1621",
+ "title": "base64 of remote container env blob (synthetic FAKE-marked blob, hand-encoded: decodes to ha@(@!DB_PASSWORD=FAKESECRET_enc7)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 blob printed by remote pipeline is withheld or redacted",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=aGFAKEAhREJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9lbmM3\n"
+   },
+   "command": "printf '%s\\n' 'aGFAKEAhREJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9lbmM3'",
+   "exit_code": 0,
+   "must_not_see": [
+    "aGFAKEAhREJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9lbmM3"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "decode call shows DB_PASSWORD=[REDACTED]",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_enc7\n"
+   },
+   "command": "printf '%s' 'aGFAKEAhREJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9lbmM3' | base64 -d",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_enc7"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0105",
+ "title": "Read file_path exposes a secret-file path to exporter (path only, no value) (i0)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .env: URL password redacted in model-visible tool_response (exporter half not testable)",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pg_pw@db.example/app\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".env",
+      "content": "DATABASE_URL=postgres://app:FAKESECRET_pg_pw@db.example/app\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db.example/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

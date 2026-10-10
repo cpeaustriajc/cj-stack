@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1209",
+ "title": "ssh sudo cat of every user's aws credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "aws access key and secret key values redacted (remote simulated with printf)",
+   "files": {},
+   "command": "printf '[default]\\naws_access_key_id=FAKESECRET_ak1\\naws_secret_access_key=FAKESECRET_sk1\\n'",
+   "must_not_see": [
+    "FAKESECRET_ak1",
+    "FAKESECRET_sk1"
+   ],
+   "must_see": [
+    "[default]",
+    "aws_access_key_id=",
+    "aws_secret_access_key="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "sudo cat of aws credentials redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh shared-01 'sudo cat /home/*/.aws/credentials'"
+    },
+    "tool_response": {
+     "stdout": "[default]\naws_access_key_id=FAKESECRET_ak1\naws_secret_access_key=FAKESECRET_sk1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ak1",
+    "FAKESECRET_sk1"
+   ],
+   "must_see": [
+    "[default]",
+    "aws_access_key_id=",
+    "aws_secret_access_key="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

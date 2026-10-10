@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1050",
+ "title": "pip install -e . with .pth import line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stdout 1 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pip install -e . && python3 -c 'print(1)'"
+    },
+    "tool_response": {
+     "stdout": "1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "1"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "pip install -e of local package is denied before run",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pip install -e . && python3 -c 'print(1)'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (pip install -e plus a print one-liner involves no secret source; interpreter one-liner rule needs a secret source. Spec gap; flagged for owner.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

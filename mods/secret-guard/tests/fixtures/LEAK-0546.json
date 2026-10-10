@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0546",
+ "title": "Connection failure prints DSN with password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated failing migrate prints DSN with password, exit 1",
+   "files": {},
+   "command": "printf 'Error: connect ECONNREFUSED\\ncould not connect to postgres://app:FAKESECRET_pg10@db.internal:5432/app\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pg10"
+   ],
+   "must_see": [
+    "ECONNREFUSED",
+    "postgres://app:",
+    "@db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

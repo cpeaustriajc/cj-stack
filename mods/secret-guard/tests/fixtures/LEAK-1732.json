@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1732",
+ "title": "alias output with inline TOKEN inside quotes (control)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "alias line with TOKEN= inside single quotes is redacted (positive control) [printf stands in for alias]",
+   "files": {},
+   "command": "printf '%s\\n' \"deploy='TOKEN=FAKESECRET_deploy_tok ./deploy.sh --env prod'\"",
+   "must_not_see": [
+    "FAKESECRET_deploy_tok"
+   ],
+   "must_see": [
+    "deploy='TOKEN=[REDACTED] ./deploy.sh --env prod'"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

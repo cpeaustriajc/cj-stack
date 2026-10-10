@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0715",
+ "title": "Stale value cache after .env rotation (single post with rotated .env; sequential two-call cache state not expressible)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo of rotated value V2 with .env holding V2",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_V2_NEW\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_V2_NEW"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_V2_NEW\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_V2_NEW"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

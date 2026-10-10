@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0266",
+ "title": "JSON type leak: marker replacing a numeric value reveals it was a number",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "numeric api_key in cat output (bare number is not FAKE-tagged; a FAKE-tagged label in the same fixture carries the same digits)",
+   "files": {
+    "fixtures/creds.json": "{\"api_key\": 4815162342, \"name\": \"svc\", \"fake_label\": \"FAKESECRET_4815162342\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./fixtures/creds.json"
+    },
+    "tool_response": {
+     "stdout": "{\"api_key\": 4815162342, \"name\": \"svc\", \"fake_label\": \"FAKESECRET_4815162342\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "4815162342"
+   ],
+   "must_see": [
+    "api_key",
+    "svc"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "source redaction of numeric api_key (same fixture)",
+   "files": {
+    "fixtures/creds.json": "{\"api_key\": 4815162342, \"name\": \"svc\", \"fake_label\": \"FAKESECRET_4815162342\"}\n"
+   },
+   "command": "cat ./fixtures/creds.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "4815162342"
+   ],
+   "must_see": [
+    "api_key",
+    "svc"
+   ]
+  }
+ ]
+}

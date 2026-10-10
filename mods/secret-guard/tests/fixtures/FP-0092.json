@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0092",
+ "title": "Harvested PORT=3000 and DEBUG=1 do not redact substrings of git log and package.json output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "git log stand-in plus head of package.json with harvested 3000 and 1",
+   "files": {
+    ".env": "PORT=3000\nDEBUG=1\n",
+    "package.json": "{\n  \"name\": \"renav\",\n  \"version\": \"1.0.0\",\n  \"port\": 3000\n}\n"
+   },
+   "command": "printf '3f2a9c1 chore: bump deps\\n1a2b3c4 fix: lint\\n' && head -5 package.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "3f2a9c1 chore: bump deps",
+    "1.0.0",
+    "3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

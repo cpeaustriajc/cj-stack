@@ -1,0 +1,7 @@
+{
+ "case_id": "REL-0037",
+ "title": "Hook receives non-JSON stdin (gap: stdin-level exception path is not expressible; covers numeric-only ord payload only)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-1416"
+}

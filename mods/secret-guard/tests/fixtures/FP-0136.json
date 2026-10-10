@@ -1,0 +1,34 @@
+{
+ "case_id": "FP-0136",
+ "title": "Glob for .env files under worktrees",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Glob returns .env path only; path kept, no value content",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "**/.env*",
+     "path": "/Users/cj/Projects/renav/.claude/worktrees"
+    },
+    "tool_response": {
+     "filenames": [
+      ".claude/worktrees/feat-x/.env"
+     ],
+     "durationMs": 5,
+     "numFiles": 1,
+     "truncated": false,
+     "totalMatches": 1,
+     "countIsComplete": true
+    }
+   },
+   "must_see": [
+    ".claude/worktrees/feat-x/.env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

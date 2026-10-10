@@ -1,0 +1,82 @@
+{
+ "case_id": "FP-0107",
+ "title": "False positive: IMDS instance-id and Docker version stay unchanged and allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "IMDS instance-id stdout unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/instance-id"
+    },
+    "tool_response": {
+     "stdout": "i-0a1b2c3d4e5f67890\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "i-0a1b2c3d4e5f67890"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Docker /version stdout unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s --unix-socket /var/run/docker.sock http://localhost/version"
+    },
+    "tool_response": {
+     "stdout": "{\"Version\":\"27.0.3\",\"ApiVersion\":\"1.46\",\"KernelVersion\":\"6.8.0-45-generic\",\"Os\":\"linux\",\"Arch\":\"amd64\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "27.0.3",
+    "1.46",
+    "6.8.0-45-generic"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "allow IMDS instance-id read",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/instance-id"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "allow docker version over socket",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s --unix-socket /var/run/docker.sock http://localhost/version"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

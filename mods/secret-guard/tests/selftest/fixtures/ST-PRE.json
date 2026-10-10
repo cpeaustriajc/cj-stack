@@ -1,0 +1,31 @@
+{
+ "case_id": "ST-PRE",
+ "title": "guard decisions",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "deny cat|base64",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "allow ls",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

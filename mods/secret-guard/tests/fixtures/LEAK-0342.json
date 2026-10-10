@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0342",
+ "title": "Unsandboxed ssh cat of remote .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh cat of env file with dangerouslyDisableSandbox denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-01 'cat /srv/app/.env'",
+     "dangerouslyDisableSandbox": true
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain ssh cat of a .env file: a read with no transform. The dangerouslyDisableSandbox flag is not an item-4 rule.)"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh cat of env file denied without the flag",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-01 'cat /srv/app/.env'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain ssh cat of a .env file with nothing combined. Matches the plain-read rule.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote DATABASE_URL credential redacted at source",
+   "files": {},
+   "command": "printf 'DATABASE_URL=postgres://app:FAKESECRET_REMOTE@db/app\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_REMOTE"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:",
+    "@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

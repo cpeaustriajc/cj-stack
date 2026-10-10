@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1899",
+ "title": "printenv of a loader variable with a neutral name leaks the bare value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv of a loader-set neutral name is replaced although the name matches no pattern",
+   "files": {
+    ".envrc": "export FAKE_BLOB=FAKESECRET_bbb222\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv FAKE_BLOB"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_bbb222\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bbb222"
+   ],
+   "must_see": [
+    "stdout",
+    "interrupted"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Bare loader value printed by a command is redacted at source",
+   "files": {
+    ".envrc": "export FAKE_BLOB=FAKESECRET_bbb222\n",
+    "blob-dump.txt": "FAKESECRET_bbb222\n"
+   },
+   "command": "cat blob-dump.txt",
+   "must_not_see": [
+    "FAKESECRET_bbb222"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1880",
+ "title": "script --log-in and --log-io are denied before running",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "script --log-in denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_b2 | script --log-in ./typescript.in -qc 'cat >/dev/null'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "script --log-io denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_b2 | script --log-io ./typescript.io -qc 'cat >/dev/null'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

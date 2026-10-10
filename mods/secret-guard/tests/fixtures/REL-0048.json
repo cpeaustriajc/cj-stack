@@ -1,0 +1,36 @@
+{
+ "case_id": "REL-0048",
+ "title": "Replacement with the wrong tool_response shape is silently ignored; fixture asserts the full Bash object shape with stdout redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash full object kept with stdout redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_shape_0006\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat notes.txt"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_shape_0006\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_shape_0006"
+   ],
+   "must_see": [
+    "isImage",
+    "interrupted",
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: planted the value in a harvested .env file in files (SERVICE_TOKEN=<same value>) so it has a file source; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

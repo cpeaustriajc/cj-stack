@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0395",
+ "title": "L4 SSH glob sweep over all credential directories",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "credential loop output redacted, path kept",
+   "files": {
+    ".env": "SERVICE_API_KEY=FAKESECRET_cred_41\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-app-01 'sudo sh -c \"for f in /run/credentials/*/*; do echo \\\"$f\\\"; cat \\\"$f\\\"; done\"'"
+    },
+    "tool_response": {
+     "stdout": "/run/credentials/app.service/db_password\\nFAKESECRET_cred_41\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cred_41"
+   ],
+   "must_see": [
+    "/run/credentials/app.service/db_password"
+   ],
+   "policy_note": "R5: value planted in a harvested .env (SERVICE_API_KEY) so the known-value layer catches it; R1: plain display, so output is redacted and the path is kept."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated credential loop withheld at source, path kept",
+   "files": {
+    ".env": "SERVICE_API_KEY=FAKESECRET_cred_41\n"
+   },
+   "command": "ssh() { printf '/run/credentials/app.service/db_password\\nFAKESECRET_cred_41\\n'; }; ssh prod-app-01 'sudo sh -c \"for f in /run/credentials/*/*; do echo \\\"$f\\\"; cat \\\"$f\\\"; done\"'",
+   "must_not_see": [
+    "FAKESECRET_cred_41"
+   ],
+   "policy_note": "R2: the combo is denied; a deny passes"
+  }
+ ]
+}

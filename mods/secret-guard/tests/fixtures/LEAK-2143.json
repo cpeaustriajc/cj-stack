@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-2143",
+ "title": "Positive control: Read of a mailbox JSON has the secret replaced and JSON keys/paths kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read teams/session-abcd1234/inboxes/lead.json containing FAKESECRET_MAIL_C",
+   "files": {
+    "teams/session-abcd1234/inboxes/lead.json": "[{\"from\":\"researcher\",\"text\":\"use FAKESECRET_MAIL_C\"}]\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_MAIL_C\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "teams/session-abcd1234/inboxes/lead.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "teams/session-abcd1234/inboxes/lead.json",
+      "content": "[{\"from\":\"researcher\",\"text\":\"use FAKESECRET_MAIL_C\"}]\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_FAKE2143"
+   },
+   "must_not_see": [
+    "FAKESECRET_MAIL_C"
+   ],
+   "must_see": [
+    "researcher",
+    "session-abcd1234"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

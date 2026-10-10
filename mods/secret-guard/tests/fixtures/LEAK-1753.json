@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1753",
+ "title": "Bash tail of application log with Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Bearer token replaced, timestamp and path kept",
+   "files": {
+    "logs/app.log": "2026-10-10T10:00:00Z GET /v1/me Authorization: Bearer FAKESECRET_LOG_01\n"
+   },
+   "command": "tail -n 500 logs/app.log",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_LOG_01"
+   ],
+   "must_see": [
+    "2026-10-10T10:00:00Z GET /v1/me Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

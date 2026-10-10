@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0906",
+ "title": "PEM head -n 2 of a key file: unmatched BEGIN and first body line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "head -n 2 output of key file: body line redacted (command path ~/keys shown as in case)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "head -n 2 ~/keys/deploy.pem"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_pem_line_one_AAAABBBBCCCCDDDD\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pem_line_one_AAAABBBBCCCCDDDD"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: head -n 2 of a project-relative key file (~ replaced by project path because runner temp HOME is not a project file)",
+   "command": "head -n 2 keys/deploy.pem",
+   "files": {
+    "keys/deploy.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_pem_line_one_AAAABBBBCCCCDDDD\nFAKESECRET_pem_line_two_EEEEFFFFGGGG\n-----END PRIVATE KEY-----\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_pem_line_one_AAAABBBBCCCCDDDD"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

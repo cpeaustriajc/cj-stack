@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1060",
+ "title": "argv-form secrets: mysql -p, --api-key, Bearer header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "three argv lines redacted, non-secret parts kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -axww -o pid,args"
+    },
+    "tool_response": {
+     "stdout": "5530 mysql -h127.0.0.1 -uroot -pFAKESECRET_dbpw_C3 renav\n5611 /opt/bin/worker --api-key FAKESECRET_key_D4 --queue default\n5702 curl -H Authorization: Bearer FAKESECRET_jwt_E5 https://api.example.test\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dbpw_C3",
+    "FAKESECRET_key_D4",
+    "FAKESECRET_jwt_E5"
+   ],
+   "must_see": [
+    "5530 mysql -h127.0.0.1 -uroot -p[REDACTED] renav",
+    "5611 /opt/bin/worker --api-key [REDACTED] --queue default",
+    "Bearer [REDACTED] https://api.example.test"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "argv lines redacted at source (printf stand-in)",
+   "files": {},
+   "command": "printf '5530 mysql -h127.0.0.1 -uroot -pFAKESECRET_dbpw_C3 renav\\n5611 /opt/bin/worker --api-key FAKESECRET_key_D4 --queue default\\n5702 curl -H Authorization: Bearer FAKESECRET_jwt_E5 https://api.example.test\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_dbpw_C3",
+    "FAKESECRET_key_D4",
+    "FAKESECRET_jwt_E5"
+   ],
+   "must_see": [
+    "5530 mysql -h127.0.0.1 -uroot -p[REDACTED] renav",
+    "5611 /opt/bin/worker --api-key [REDACTED] --queue default",
+    "Bearer [REDACTED] https://api.example.test"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0137",
+ "title": "printenv | grep -i token: values redacted, names kept; the filtered env dump is denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env dump values redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "TUNNEL_TOKEN=FAKESECRET_tt_1\nTS_AUTHKEY=tskey-auth-FAKESECRET_2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tt_1",
+    "tskey-auth-FAKESECRET_2"
+   ],
+   "must_see": [
+    "TUNNEL_TOKEN",
+    "TS_AUTHKEY"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "printenv filtered on token is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep -i token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: a grep that prints matching lines is plain display; allowed, output redacted by the filter."
+  }
+ ]
+}

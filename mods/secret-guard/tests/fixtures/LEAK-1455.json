@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1455",
+ "title": "HTML numeric and double-encoded entities via cat",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat page.html with &#70; and &amp;#70; forms",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n",
+    "fixtures/page.html": "<code>&#70;AKESECRET_ALPHA_9x</code>\n<code>&amp;#70;AKESECRET_ALPHA_9x</code>\n"
+   },
+   "command": "cat fixtures/page.html",
+   "exit_code": 0,
+   "must_not_see": [
+    "AKESECRET_ALPHA_9x"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "notes": "Both entity spellings were dropped because HTML entities are not in rule 2's list and contain no FAKE. 'AKESECRET_ALPHA_9x' is a substring of the FAKE value in .env and appears literally in both lines of the original cat output, so it covers both encoded lines. The entity text itself is not checked directly."
+}

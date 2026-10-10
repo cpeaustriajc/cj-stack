@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0098",
+ "title": "Read .env.example placeholders: key names and values remain readable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read .env.example placeholders, key names must remain",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.example"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env.example",
+      "content": "STRIPE_SECRET_KEY=sk_test_your_key_here\nAPI_TOKEN=changeme\nAPP_KEY=base64:REPLACE_ME_WITH_32_BYTE_KEY\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "STRIPE_SECRET_KEY=",
+    "API_TOKEN=",
+    "APP_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

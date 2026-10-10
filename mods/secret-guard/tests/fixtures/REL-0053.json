@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0053",
+ "title": "Redactor times out on a large git diff and the output passes unredacted",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The assertion depends on hook timeout and failure handling inside Claude Code at runtime. The fixture format has no hook-timeout or hook-config knob, and an ~8 MB git log cannot be carried in a fixture. Behaviour is UNVERIFIED per the case (fail-open per https://code.claude.com/docs/en/hooks). No non-hook control is documented; mitigation is the case's own note that replacement via updatedToolOutput is the only documented withholding path.",
+ "duplicate_of_dropped": false
+}

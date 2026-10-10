@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-0334",
+ "title": "heap or leaks targeted by process name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "heap by process name denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap ssh-agent"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (heap by process name; no item-4 rule covers memory inspection. Flag as a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "leaks by process name denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks Electron"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (leaks by process name; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "post",
+   "name": "heap by name output redacted if run",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_AGENT\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap ssh-agent"
+    },
+    "tool_response": {
+     "stdout": "0x600000 NSString \"FAKESECRET_AGENT\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_AGENT"
+   ],
+   "must_see": [
+    "0x600000 NSString"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0152",
+ "title": "base64 -d of a token line: decoded TOKEN line withheld in output (no secret source in command, so allowed)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "decoded token line redacted",
+   "files": {
+    ".dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_9z\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 -d <<< 'Q0xPVURGTEFSRV9BUElfVE9LRU49RkFLRVNFQ1JFVF9jZl90b2tfOXoK'"
+    },
+    "tool_response": {
+     "stdout": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_9z\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf_tok_9z"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "REL-0038",
+ "title": "Hook error when the harvest file is unreadable (gap: unreadable-file path is not expressible; fixture covers the normal harvest path only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "harvested value in Bash stdout is withheld when .env is readable",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_HOOKERR_07\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_HOOKERR_07\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HOOKERR_07"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,20 @@
+{
+ "case_id": "FP-0103",
+ "title": "Docker inspect Env array: AUTH_CALLBACK_URL and SSH_AUTH_SOCK entries pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "non-secret URL and socket-path Env entries pass byte-identical; simulated via printf",
+   "files": {},
+   "command": "printf '%s\\n' '[\"NODE_ENV=production\",\"AUTH_CALLBACK_URL=https://renav.app/api/auth/callback\",\"SSH_AUTH_SOCK=/tmp/ssh-FAKESECRET_a1/agent.123\"]'",
+   "exit_code": 0,
+   "must_see": [
+    "NODE_ENV=production",
+    "AUTH_CALLBACK_URL=https://renav.app/api/auth/callback",
+    "SSH_AUTH_SOCK=/tmp/ssh-FAKESECRET_a1/agent.123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

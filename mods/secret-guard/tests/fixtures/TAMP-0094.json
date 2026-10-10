@@ -1,0 +1,21 @@
+{
+ "case_id": "TAMP-0094",
+ "title": "Bash sed -i deletes a harvested value from the redactor store",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed -i on the redactor store is denied (store path UNVERIFIED, example path used)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '/FAKESECRET_pw_123/d' ~/.config/renav-redactor/harvested.txt"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

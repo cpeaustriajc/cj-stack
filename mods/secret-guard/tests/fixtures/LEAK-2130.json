@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2130",
+ "title": "Redactor error path: hook stderr and notice never contain FAKESECRET_ZETA (parse-failure path not forceable; normal path only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat fixture.env with FAKESECRET_ZETA on line 3: hook stderr and output clean",
+   "files": {
+    "fixture.env": "A=1\nB=2\nTOKEN=FAKESECRET_ZETA\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixture.env"
+    },
+    "tool_response": {
+     "stdout": "A=1\nB=2\nTOKEN=FAKESECRET_ZETA\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    },
+    "tool_use_id": "toolu_FAKE2130"
+   },
+   "must_not_see": [
+    "FAKESECRET_ZETA"
+   ],
+   "must_see": [
+    "A=1",
+    "TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

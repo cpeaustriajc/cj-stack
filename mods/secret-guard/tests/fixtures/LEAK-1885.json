@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1885",
+ "title": "op read on a vault secret reference is denied before execution",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "op read denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op read op://FAKEVAULT_xxx/FAKEITEM_xxx/password"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare op read with no transform or oracle; item 4 denies only combos with a secret source. Flagged: this is a credential CLI, so the spec and the fixture conflic)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

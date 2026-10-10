@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0248",
+ "title": "git show of a deleted .env in history: URL userinfo and key-named values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git show HEAD~7:.env with no harvested files: URL userinfo and STRIPE key values replaced; structure kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~7:.env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw_hist1@db.internal:5432/app\nSTRIPE_SECRET_KEY=FAKESECRET_sk_hist2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_hist1",
+    "FAKESECRET_sk_hist2"
+   ],
+   "must_see": [
+    "DATABASE_URL=",
+    "@db.internal:5432/app",
+    "STRIPE_SECRET_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

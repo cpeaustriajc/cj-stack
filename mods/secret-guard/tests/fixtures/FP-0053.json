@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0053",
+ "title": "False positives: grep for token or key with placeholders and name-only lines must pass verbatim",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep output with placeholders passes unchanged",
+   "files": {
+    ".env.example": "OPENAI_API_KEY=changeme",
+    "docs/readme.md": "DATABASE_URL=p"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn -i token src/ .env.example docs/"
+    },
+    "tool_response": {
+     "stdout": "src/auth.ts:12: const token = req.headers.authorization;\nsrc/config.ts:3: maxTokens: 4096,\nsrc/keys.ts:7: export const KEY_PREFIX = 'sk_';\n.env.example:2:OPENAI_API_KEY=changeme\ndocs/readme.md:9:DATABASE_URL=p",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "const token = req.headers.authorization;",
+    "maxTokens: 4096,",
+    "KEY_PREFIX = 'sk_';",
+    "OPENAI_API_KEY=changeme",
+    "DATABASE_URL=p"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

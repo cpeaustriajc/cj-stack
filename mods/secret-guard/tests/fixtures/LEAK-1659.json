@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1659",
+ "title": "MCP browser_evaluate reading an input value (MCP tool name UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "browser_evaluate reading a secret-named input .value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__browser__browser_evaluate",
+    "tool_input": {
+     "function": "() => document.querySelector('input[name=api_key]').value"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Reading a field value via browser_evaluate is a plain display with no item-4 transform on an enumerated source. Boundary: browser input is not an enumerated sou)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

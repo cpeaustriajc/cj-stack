@@ -1,0 +1,63 @@
+{
+ "case_id": "TAMP-0118",
+ "title": "git -C and -c wrappers around git log -p reflog walk",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "-C and -c before log -p --walk-reflogs piped to head",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -C /srv/app -c core.pager=cat log -p -g --walk-reflogs | head -50"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain git log display piped to head. No secret source is involved, so no item 4 combo applies.)"
+  },
+  {
+   "kind": "pre",
+   "name": "reordered -c and -C options before log -p -g",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -c core.pager=cat -C /srv/app log -p -g --walk-reflogs"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain git log display with reordered options. No secret source is involved, so no item 4 combo applies.)"
+  },
+  {
+   "kind": "post",
+   "name": "if run, the -DB value from reflog walk is replaced",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_WRAP_01\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -C /srv/app -c core.pager=cat log -p -g --walk-reflogs | head -50"
+    },
+    "tool_response": {
+     "stdout": "-DB=FAKESECRET_WRAP_01\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_WRAP_01"
+   ],
+   "must_see": [
+    "-DB="
+   ],
+   "policy_note": "R5: planted the value in a harvested .env file in files (SERVICE_TOKEN=<same value>) so it has a file source; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

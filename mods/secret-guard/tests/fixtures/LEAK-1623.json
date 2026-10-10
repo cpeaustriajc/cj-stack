@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1623",
+ "title": "Transcript Read exposes JSON-escaped harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "transcript line with JSON-escaped quote and backslash",
+   "files": {
+    ".env": "TOKEN=FAKESECRET\\\"quote\\\\back9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".claude/projects/p1/s1.jsonl"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".claude/projects/p1/s1.jsonl",
+      "content": "{\"type\":\"user\",\"text\":\"token FAKESECRET\\\"quote\\\\back9\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET\\\"quote\\\\back9"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

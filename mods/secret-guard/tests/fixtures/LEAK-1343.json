@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1343",
+ "title": "unzip -p JSON with api key matched by harvested .env value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON api value redacted, name and structure kept",
+   "files": {
+    ".env": "RENAV_API=FAKESECRET_zipapi0060\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "unzip -p bundle.zip config/app.json"
+    },
+    "tool_response": {
+     "stdout": "{\"api\":\"FAKESECRET_zipapi0060\",\"name\":\"renav\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_zipapi0060"
+   ],
+   "must_see": [
+    "renav",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

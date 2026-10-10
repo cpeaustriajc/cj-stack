@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0454",
+ "title": "[11] mdls prints kMDItemWhereFroms array with ?token=",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "mdls output (simulated) with token= in array string",
+   "files": {
+    "mdls-out.txt": "kMDItemWhereFroms = (\n    \"https://portal.example.com/inv?token=FAKESECRET_md11\",\n    \"https://portal.example.com/inv\"\n)\n"
+   },
+   "command": "cat mdls-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_md11"
+   ],
+   "must_see": [
+    "portal.example.com/inv"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

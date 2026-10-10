@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1190",
+ "title": "ssh printenv piped to grep with -E alternation",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -E key|token|secret|pass over printenv output",
+   "files": {},
+   "command": "printf 'PATH=/usr/bin\\nDB_PASSWORD=FAKESECRET_d1\\nLANG=C\\n' | grep -i -E \"key|token|secret|pass\"",
+   "must_not_see": [
+    "FAKESECRET_d1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

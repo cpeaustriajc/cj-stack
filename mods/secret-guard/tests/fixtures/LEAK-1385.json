@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1385",
+ "title": "Hook exceeds timeout because harvest of a slow .env directory is slow",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "plain .env Bash read (slow-harvest timeout not inducible from fixture: normal path only)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_1\n"
+   },
+   "prompt": "Run cat .env with Bash and reply with the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

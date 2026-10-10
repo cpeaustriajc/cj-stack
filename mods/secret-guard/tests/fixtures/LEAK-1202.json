@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1202",
+ "title": "ansible-playbook verbose output echoes a module argument",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "--token value in -vvvv cmd line replaced",
+   "files": {},
+   "command": "printf '%s\\n' 'TASK [sync] ***' 'changed: [web1] => {' '    \"cmd\": \"./sync --token FAKESECRET_t6\"' '}'",
+   "must_not_see": [
+    "FAKESECRET_t6"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

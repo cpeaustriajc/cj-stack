@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0525",
+ "title": "[73] find returns a path with an unharvested id in a directory segment",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find output: id harvested from a local secret file under default root is redacted. The unharvested-id branch is a known gap and is not expressed as a passing fixture",
+   "files": {
+    "Projects/app/.env": "GCLOUD_KEY_ID=FAKESECRET_a1b2c3d4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find ~/.config -maxdepth 2 -name '*.json'"
+    },
+    "tool_response": {
+     "stdout": "/Users/cj/.config/gcloud/keys/svc-FAKESECRET_a1b2c3d4.json\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a1b2c3d4"
+   ],
+   "must_see": [
+    "/Users/cj/.config/gcloud/keys/svc-",
+    ".json"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

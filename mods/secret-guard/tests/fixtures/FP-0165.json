@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0165",
+ "title": "False positive: listing the cache directory names must not be blocked or altered",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ls of the cache directory prints entry names; stdout unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la \"$(getconf DARWIN_USER_CACHE_DIR)\""
+    },
+    "tool_response": {
+     "stdout": "total 0\ndrwxr-xr-x  3 cj  staff  96 Oct 10 09:00 com.apple.QuickLook.thumbnailcache\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "com.apple.QuickLook.thumbnailcache",
+    "total 0"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "qlmanage -m listing of generators is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "qlmanage -m"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

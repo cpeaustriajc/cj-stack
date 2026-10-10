@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0636",
+ "title": "Secret typed inline in the Bash command text (curl Authorization header)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Inline Bearer token literal in the command is allowed (R3)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H 'Authorization: Bearer FAKESECRET_tok_6' https://api.example.com/v1/x"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a literal secret typed into a curl Authorization header that only calls an API and shows its output is allowed."
+  },
+  {
+   "kind": "pre",
+   "name": "Same curl with an environment-variable placeholder stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H 'Authorization: Bearer $RENAV_TOKEN' https://api.example.com/v1/x"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

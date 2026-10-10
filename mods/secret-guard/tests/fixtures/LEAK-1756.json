@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1756",
+ "title": "ssh journalctl prints app log with DSN over SSH",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "remote journal output (simulated, no real ssh) redacted at source",
+   "files": {
+    "ssh-journal-sim.out": "Oct 10 10:00:00 host app[812]: DATABASE_URL=postgres://app:FAKESECRET_JRN_01@db:5432/renav\n"
+   },
+   "command": "cat ssh-journal-sim.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_JRN_01"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:[REDACTED]@db:5432/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

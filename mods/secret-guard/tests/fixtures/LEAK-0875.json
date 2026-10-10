@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0875",
+ "title": "Read of .dev.vars with line-numbered output and unverified shape",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "read-dev-vars-real-shape",
+   "files": {
+    "work/app/.dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_1\nJWT_SECRET=FAKESECRET_jwt_2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/work/app/.dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/work/app/.dev.vars",
+      "content": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_1\nJWT_SECRET=FAKESECRET_jwt_2\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf_tok_1",
+    "FAKESECRET_jwt_2"
+   ],
+   "must_see": [
+    "CLOUDFLARE_API_TOKEN",
+    "JWT_SECRET",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "model-reads-dev-vars",
+   "files": {
+    "work/app/.dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_1\nJWT_SECRET=FAKESECRET_jwt_2\n"
+   },
+   "prompt": "Use the Read tool on work/app/.dev.vars and reply with the exact text you received.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_cf_tok_1",
+    "FAKESECRET_jwt_2"
+   ],
+   "must_see": [
+    "CLOUDFLARE_API_TOKEN",
+    "JWT_SECRET"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

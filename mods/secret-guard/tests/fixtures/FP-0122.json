@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0122",
+ "title": "False positive: harvested value 'true' under fold",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "fold output keeps prose 'true' unchanged",
+   "files": {
+    "CHANGELOG.md": "Cache is true.\nRetry on fail.\nDone.\n",
+    ".npmrc": "strict-ssl=true\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fold -w 20 CHANGELOG.md | head -n 3"
+    },
+    "tool_response": {
+     "stdout": "Cache is true.\nRetry on fail.\nDone.\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Cache is true.",
+    "Retry on fail."
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real fold pipeline output unchanged after guard rewrite",
+   "files": {
+    "CHANGELOG.md": "Cache is true.\nRetry on fail.\nDone.\n",
+    ".npmrc": "strict-ssl=true\n"
+   },
+   "command": "fold -w 20 CHANGELOG.md | head -n 3",
+   "exit_code": 0,
+   "must_see": [
+    "Cache is true.",
+    "Retry on fail."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

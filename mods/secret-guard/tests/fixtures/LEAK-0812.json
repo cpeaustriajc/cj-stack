@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-0812",
+ "title": "Plain-string updatedToolOutput for Bash echo with a secret",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "echo of token while hook emits plain-string updatedToolOutput",
+   "files": {},
+   "prompt": "Run exactly this Bash command and show me the output verbatim: echo FAKESECRET_tok_2",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_tok_2"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

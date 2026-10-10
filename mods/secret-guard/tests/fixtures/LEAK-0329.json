@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0329",
+ "title": "grep Environment= lines in systemd units",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "systemd Environment= token value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -i 'Environment=' /etc/systemd/system/*.service"
+    },
+    "tool_response": {
+     "stdout": "/etc/systemd/system/app.service:Environment=GITHUB_TOKEN=FAKESECRET_SYSD\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SYSD"
+   ],
+   "must_see": [
+    "Environment=GITHUB_TOKEN=",
+    "/etc/systemd/system/app.service"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "local grep over systemd unit redacted at source",
+   "files": {
+    "systemd/app.service": "[Service]\nEnvironment=GITHUB_TOKEN=FAKESECRET_SYSD\n"
+   },
+   "command": "grep -iH 'Environment=' systemd/*.service",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SYSD"
+   ],
+   "must_see": [
+    "GITHUB_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

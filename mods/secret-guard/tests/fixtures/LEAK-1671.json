@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1671",
+ "title": "Keychain read of Slack Safe Storage key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "security -w for Slack Safe Storage is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s 'Slack Safe Storage' -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (security -w is a keychain CLI display with nothing combined; item 4 lists keychain CLIs only as combo sources. Owner allows plain display.)"
+  },
+  {
+   "kind": "pre",
+   "name": "security -w for another service name is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -w -s 'Notion Safe Storage'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-1671#0 with reordered flags; plain keychain display, no transform.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

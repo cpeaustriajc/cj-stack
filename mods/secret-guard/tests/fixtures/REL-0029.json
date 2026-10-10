@@ -1,0 +1,18 @@
+{
+ "case_id": "REL-0029",
+ "title": "Grep over the repo returning about 40 MB: hook completes within its timeout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "40 MB stream through the filter with a secret at the start (engine proxy; the Grep hook and latency are not measured here)",
+   "files": {},
+   "command": "printf 'API_TOKEN=FAKESECRET_grep1\\n'; head -c 40000000 /dev/zero | tr '\\0' 'a'; echo",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_grep1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

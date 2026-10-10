@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1300",
+ "title": "Read of Gradle init.d script with repo password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.gradle/init.d/private-repo.gradle is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.gradle/init.d/private-repo.gradle"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a gradle init script in secret path; owner decision allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, the password literal is redacted and Groovy syntax remains",
+   "files": {
+    ".gradle/init.d/private-repo.gradle": "allprojects { repositories { maven { credentials { username 'ci-bot'; password 'FAKESECRET_initd0026' } } } }\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.gradle/init.d/private-repo.gradle"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.gradle/init.d/private-repo.gradle",
+      "content": "allprojects { repositories { maven { credentials { username 'ci-bot'; password 'FAKESECRET_initd0026' } } } }\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_fake_1300"
+   },
+   "must_not_see": [
+    "FAKESECRET_initd0026"
+   ],
+   "must_see": [
+    "allprojects { repositories",
+    "username 'ci-bot'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-1103",
+ "title": "Deny rule in settings.json not applied at session start",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of .env.local is denied by the path check with no settings file present (hook-level independence from permissions.deny)",
+   "files": {
+    ".env.local": "DATABASE_URL=postgres://app:FAKESECRET_db@h/x\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.local"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on a named secret file, nothing combined. Owner allows Read on secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "If the read runs: the URL secret is masked (session-start loading of permissions.deny is not covered)",
+   "files": {
+    ".env.local": "DATABASE_URL=postgres://app:FAKESECRET_db@h/x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.local"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env.local",
+      "content": "DATABASE_URL=postgres://app:FAKESECRET_db@h/x\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

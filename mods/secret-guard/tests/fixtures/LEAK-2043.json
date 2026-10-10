@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-2043",
+ "title": "sudo stderr channel carries the secret and is not redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret on the stderr channel is redacted in tool_response.stderr",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /var/root/svc/creds.env 2>&1 >/dev/null; sudo -n env >&2"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "DB_PASS=FAKESECRET_root_0002",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_root_0002"
+   ],
+   "must_see": [
+    "DB_PASS"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "secret written only to stderr is redacted at source by the guard wrapper",
+   "files": {
+    "creds.env": "DB_PASS=FAKESECRET_root_0002\n"
+   },
+   "command": "cat creds.env >&2",
+   "must_not_see": [
+    "DB_PASS=FAKESECRET_root_0002"
+   ],
+   "must_see": [
+    "DB_PASS"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

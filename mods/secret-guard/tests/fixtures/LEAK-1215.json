@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1215",
+ "title": "docker inspect full container output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker inspect JSON: DB_PASSWORD value redacted inside JSON string, PATH kept (remote simulated with printf)",
+   "files": {},
+   "command": "printf '{\\n  \"Name\": \"/api-container\",\\n  \"Config\": {\\n    \"Env\": [\"DB_PASSWORD=FAKESECRET_d4\", \"PATH=/usr/bin\"]\\n  }\\n}\\n'",
+   "must_not_see": [
+    "FAKESECRET_d4"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "PATH=/usr/bin"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "docker inspect JSON redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'docker inspect api-container'"
+    },
+    "tool_response": {
+     "stdout": "[\n  {\n    \"Name\": \"/api-container\",\n    \"Config\": {\n      \"Env\": [\"DB_PASSWORD=FAKESECRET_d4\", \"PATH=/usr/bin\"]\n    }\n  }\n]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_d4"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "PATH=/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0698",
+ "title": "Read of a file with 2000 long lines times out the Read hook",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "REDUCED: one secret line instead of 2000 x 50 KB lines (literal files cannot express it); long-line timeout not exercised",
+   "files": {
+    "long.env": "API_TOKEN=FAKESECRET_tok_1\n"
+   },
+   "prompt": "Use the Read tool on long.env and show the contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_tok_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

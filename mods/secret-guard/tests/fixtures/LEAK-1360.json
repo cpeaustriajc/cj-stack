@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1360",
+ "title": "Renamed harvest source, cat of new name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "mv .env then cat of .env.bak keeps RAW_VALUE redacted",
+   "files": {
+    ".env": "RAW_VALUE=FAKESECRET_plain_0004\n"
+   },
+   "command": "mv .env .env.bak && cat .env.bak",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_plain_0004"
+   ],
+   "must_see": [
+    "RAW_VALUE=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "post-output path: renamed file content shows RAW_VALUE as [REDACTED]",
+   "files": {
+    ".env.bak": "RAW_VALUE=FAKESECRET_plain_0004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mv .env .env.bak && cat .env.bak"
+    },
+    "tool_response": {
+     "stdout": "RAW_VALUE=FAKESECRET_plain_0004\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plain_0004"
+   ],
+   "must_see": [
+    "RAW_VALUE=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

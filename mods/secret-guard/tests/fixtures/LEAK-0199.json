@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0199",
+ "title": "kubectl get secret -l owner=helm -o yaml returns release blob",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Secret YAML release value redacted in the real session (cat stands in for kubectl)",
+   "files": {
+    "secret-list.yaml": "apiVersion: v1\ndata:\n  release: H4sIAFAKE_FAKESECRET_helm_release_33==\nkind: Secret\n"
+   },
+   "prompt": "Run `cat secret-list.yaml` with the Bash tool and reply with its exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "H4sIAFAKE_FAKESECRET_helm_release_33"
+   ],
+   "must_see": [
+    "apiVersion: v1",
+    "kind: Secret"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

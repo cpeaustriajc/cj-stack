@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1967",
+ "title": "Collector auth header in env printed by Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "OTEL headers Bearer token in env output is redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep OTEL"
+    },
+    "tool_response": {
+     "stdout": "OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer FAKESECRET_otel_hdr_001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_otel_hdr_001"
+   ],
+   "must_see": [
+    "OTEL_EXPORTER_OTLP_HEADERS"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

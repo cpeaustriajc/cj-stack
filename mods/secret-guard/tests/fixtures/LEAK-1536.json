@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1536",
+ "title": "CLAUDE.local.md holds literal staging DB URL",
+ "level": "not-testable",
+ "reason_not_testable": "Loaded at session start with no tool call, so no hook payload exists. The expected outcome is a repo lint over CLAUDE.md, CLAUDE.local.md and AGENTS.md. That lint is not one of the three hook components and has no fixture kind in test-spec.md. Non-hook control: pre-launch memory-file lint.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

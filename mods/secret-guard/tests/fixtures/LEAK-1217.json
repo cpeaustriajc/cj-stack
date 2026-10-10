@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1217",
+ "title": "compound docker inspect, systemctl cat and kubectl get secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "plain Environment value and base64 of registry value (from .env) both redacted (remote simulated with printf)",
+   "files": {
+    ".env": "KUBE_TOKEN=FAKESECRET_k9\nAPI_KEY=FAKESECRET_a9\n"
+   },
+   "command": "printf 'Environment=API_KEY=FAKESECRET_a9\\ndata:\\n  token: RkFLRVNFQ1JFVF9rOQ==\\n'",
+   "must_not_see": [
+    "FAKESECRET_a9",
+    "RkFLRVNFQ1JFVF9rOQ=="
+   ],
+   "must_see": [
+    "Environment=API_KEY=",
+    "data:"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "compound command output redacted by PostToolUse (base64 form of registry value)",
+   "files": {
+    ".env": "KUBE_TOKEN=FAKESECRET_k9\nAPI_KEY=FAKESECRET_a9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-1 'docker inspect myapp && systemctl cat myapp.service'; kubectl get secret app-creds -n prod -o yaml"
+    },
+    "tool_response": {
+     "stdout": "Environment=API_KEY=FAKESECRET_a9\ndata:\n  token: RkFLRVNFQ1JFVF9rOQ==\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a9",
+    "RkFLRVNFQ1JFVF9rOQ=="
+   ],
+   "must_see": [
+    "Environment=API_KEY=",
+    "data:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

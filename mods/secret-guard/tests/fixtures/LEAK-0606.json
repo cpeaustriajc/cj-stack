@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0606",
+ "title": "cat .env: hook must emit one JSON object with updatedToolOutput, no raw value in stdout, stderr or raw (exit code not asserted by post runner)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat /srv/app/.env with DB_PASSWORD line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /srv/app/.env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw1\nPORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

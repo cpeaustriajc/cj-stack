@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0318",
+ "title": "Host terminal holds Accessibility (TCC) consent",
+ "level": "not-testable",
+ "reason_not_testable": "TCC Accessibility consent is OS user state. No tool call or tool output exists for a hook to inspect. Non-hook control: the user audits System Settings > Privacy & Security > Accessibility and removes the host terminal or editor when not needed.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

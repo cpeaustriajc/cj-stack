@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0422",
+ "title": "Bash output in KEY=value form: four-key Bash shape kept, value redacted (variant input to be confirmed)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env | grep KEY=value line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep STRIPE_SECRET_KEY"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

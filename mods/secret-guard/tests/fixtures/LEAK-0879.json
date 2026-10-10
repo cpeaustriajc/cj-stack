@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0879",
+ "title": "curl -sv x-api-key header in stderr trace",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl-verbose-stderr-header",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sv https://api.example.test/v1/me -H 'x-api-key: FAKESECRET_xapi_991'"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "> GET /v1/me HTTP/2\n> x-api-key: FAKESECRET_xapi_991\n> Host: api.example.test\n",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xapi_991"
+   ],
+   "must_see": [
+    "Host: api.example.test",
+    "> GET /v1/me HTTP/2"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stderr-trace-through-wrapper",
+   "files": {},
+   "command": "printf '> GET /v1/me HTTP/2\\n> x-api-key: FAKESECRET_xapi_991\\n> Host: api.example.test\\n' >&2",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_xapi_991"
+   ],
+   "must_see": [
+    "Host: api.example.test"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

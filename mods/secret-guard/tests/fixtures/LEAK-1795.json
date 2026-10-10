@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1795",
+ "title": "Test setup prints loaded config at startup",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "vitest startup config dump",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx vitest run"
+    },
+    "tool_response": {
+     "stdout": "{ config: { STRIPE_SECRET_KEY: 'FAKESECRET_SETUP_01', PORT: 3000 } }\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SETUP_01"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY",
+    "PORT: 3000"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "source-level filter, local script stands in for vitest",
+   "files": {
+    "setup-dump.sh": "echo \"{ config: { STRIPE_SECRET_KEY: 'FAKESECRET_SETUP_01', PORT: 3000 } }\"\n"
+   },
+   "command": "sh ./setup-dump.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SETUP_01"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY",
+    "PORT: 3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

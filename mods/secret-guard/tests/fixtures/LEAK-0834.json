@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0834",
+ "title": "Stray warning text before the JSON object on stdout (warning injection not reproducible; clean-stdout path only)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0831"
+}

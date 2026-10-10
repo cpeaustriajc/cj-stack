@@ -1,0 +1,43 @@
+{
+ "case_id": "FP-0009",
+ "title": "False-positive check: non-secret build metadata lines pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "non-secret CREATED BY lines survive, ARG name without value survives",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    },
+    "tool_response": {
+     "stdout": "sha256:1c2d3e4f5a6b  4 days ago  /bin/sh -c #(nop)  ENV TOKEN_TTL_SECONDS=3600   0B\nsha256:7a8b9c0d1e2f  6 days ago  /bin/sh -c #(nop)  ARG GITHUB_TOKEN   0B\nsha256:3d4e5f6a7b8c  9 days ago  /bin/sh -c #(nop)  ENV NODE_ENV=production   0B\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "ARG GITHUB_TOKEN",
+    "ENV NODE_ENV=production"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker history stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

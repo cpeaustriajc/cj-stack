@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1566",
+ "title": "Broad Grep over ~/Library hits notification store",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep with search root ~/Library for OTP text denied (catalog allows deny or withholding; deny chosen). Spec gap: root-deny rule not in test-spec",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "verification code|OTP",
+     "path": "~/Library",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain keyword Grep with content output; the pattern is a text search, not a value-shape oracle. Broad root is a spec gap, not a listed deny.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Grep for the same text in project src stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "verification code",
+     "path": "src",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

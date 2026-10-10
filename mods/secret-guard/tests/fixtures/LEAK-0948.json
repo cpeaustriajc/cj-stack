@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0948",
+ "title": ".netrc password tokens on space-separated lines are redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of fake netrc with two password lines",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_netrc"
+    },
+    "tool_response": {
+     "stdout": "machine api.example.test login fakeuser password FAKESECRET_NETRC_PW\ndefault login anon password FAKESECRET_NETRC_DEFAULT\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_NETRC_PW",
+    "FAKESECRET_NETRC_DEFAULT"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

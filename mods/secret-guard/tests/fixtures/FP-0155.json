@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0155",
+ "title": "False positive: public certificate and Team ID are over-redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "CERTIFICATE block and TeamIdentifier pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security cms -D -i profile.mobileprovision"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN CERTIFICATE-----\nMIIFAKECERTBODY0001ABCDEFGHIJKLMNOP\n-----END CERTIFICATE-----\nTeamIdentifier: FAKETEAM01\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "-----BEGIN CERTIFICATE-----",
+    "MIIFAKECERTBODY0001ABCDEFGHIJKLMNOP",
+    "TeamIdentifier: FAKETEAM01"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

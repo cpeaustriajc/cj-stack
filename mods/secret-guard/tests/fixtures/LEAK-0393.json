@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0393",
+ "title": "L2 SSH enumeration of keyring descriptions",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "keyring descriptions returned unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-db-01 'cat /proc/keys; keyctl show @u'"
+    },
+    "tool_response": {
+     "stdout": "1a2b3c4d I--Q--- 1 perm 3f010000 0 0 user db_pass: 32\\n2b3c4d5e I--Q--- 1 perm 3f010000 0 0 user api_token: 40\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "user db_pass: 32",
+    "user api_token: 40"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "keyring enumeration command stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-db-01 'cat /proc/keys; keyctl show @u'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

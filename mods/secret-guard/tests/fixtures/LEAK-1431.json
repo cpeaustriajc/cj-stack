@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-1431",
+ "title": "docker inspect Env with PASSWORD renamed to PW by sed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies ssh docker inspect piped to sed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh swarm-1 \"docker inspect app --format '{{json .Config.Env}}'\" | sed 's/PASSWORD/PW/g'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "JSON Env array with renamed PW key is withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh swarm-1 \"docker inspect app --format '{{json .Config.Env}}'\" | sed 's/PASSWORD/PW/g'"
+    },
+    "tool_response": {
+     "stdout": "[\"PATH=/usr/bin:/bin\",\"PW=FAKESECRET_RENAME_06\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_RENAME_06"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

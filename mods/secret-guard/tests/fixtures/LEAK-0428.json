@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0428",
+ "title": "Hook exits 1 with no stdout (fault-injected: runner must inject the exit-1 fault)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0427"
+}

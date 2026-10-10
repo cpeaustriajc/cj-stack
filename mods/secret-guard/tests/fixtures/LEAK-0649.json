@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0649",
+ "title": "Debug log (--debug) records an MCP bearer token",
+ "level": "not-testable",
+ "reason_not_testable": "The bearer token lives in the MCP client's request headers, not in any tool_response a hook sees. The e2e runner asserts only recorded tool_response and the final reply, so it cannot grep debug/. Non-hook control: do not run --debug in secret-touching sessions; purge debug/ after sessions.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0878",
+ "title": "printenv SQL_CONN: Pwd key inside connection string leaks",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv-sql-conn-pwd",
+   "files": {
+    ".env": "SQL_CONN=Server=db.internal;Database=app;User Id=svc;Pwd=FAKESECRET_pwd_77;\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv SQL_CONN"
+    },
+    "tool_response": {
+     "stdout": "Server=db.internal;Database=app;User Id=svc;Pwd=FAKESECRET_pwd_77;\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pwd_77"
+   ],
+   "must_see": [
+    "Server=db.internal",
+    "Database=app",
+    "User Id=svc",
+    "Pwd=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

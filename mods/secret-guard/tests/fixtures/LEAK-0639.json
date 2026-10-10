@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0639",
+ "title": "psql error echoes DSN with password on stderr (post for the Bash object shape, pre_exec for the failed command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash object shape: stderr DSN password redacted, host and user kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "psql 'postgres://app:FAKESECRET_pw5@db-host:5432/app' -c 'select 1'"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "psql: error: connection to server at \"db-host\" failed. DSN postgres://app:FAKESECRET_pw5@db-host:5432/app",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw5"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db-host:5432/app",
+    "db-host"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Failed psql (exit 2) with the DSN echoed on stderr: stderr redacted at source",
+   "files": {},
+   "command": "psql() { printf '%s\\n' 'psql: error: connection to server at db-host failed. DSN postgres://app:FAKESECRET_pw5@db-host:5432/app' >&2; return 2; }; psql 'postgres://app:FAKESECRET_pw5@db-host:5432/app' -c 'select 1'",
+   "exit_code": 2,
+   "must_not_see": [
+    "FAKESECRET_pw5"
+   ],
+   "must_see": [
+    "psql: error: connection to server at",
+    "@db-host:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

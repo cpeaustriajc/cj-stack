@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1867",
+ "title": "Secret inside JSON-escaped log output (log show --style json)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON-escaped log message: access_token value redacted, JSON shape kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --style json --last 5m"
+    },
+    "tool_response": {
+     "stdout": "{\"eventMessage\":\"callback?access_token=FAKESECRET_json&state=1\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_json"
+   ],
+   "must_see": [
+    "eventMessage",
+    "state=1"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated JSON log line: secret redacted at source",
+   "files": {},
+   "command": "printf '%s\\n' '{\"eventMessage\":\"callback?access_token=FAKESECRET_json&state=1\"}'",
+   "must_not_see": [
+    "FAKESECRET_json"
+   ],
+   "must_see": [
+    "eventMessage"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

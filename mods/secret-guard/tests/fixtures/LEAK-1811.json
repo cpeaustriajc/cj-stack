@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1811",
+ "title": "Read an extracted image layer file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of extracted layer app/.env; value replaced in model-visible tool_response",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/layers/app/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/layers/app/.env",
+      "content": "STRIPE_KEY=FAKESECRET_LAYER_01\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LAYER_01"
+   ],
+   "must_see": [
+    "STRIPE_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

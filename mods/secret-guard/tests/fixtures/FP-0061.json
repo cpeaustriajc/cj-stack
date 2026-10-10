@@ -1,0 +1,38 @@
+{
+ "case_id": "FP-0061",
+ "title": "False positive: package.json config words (cat)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "package.json with name-like words must survive unchanged (must_see only)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat package.json"
+    },
+    "tool_response": {
+     "stdout": "{\n  \"name\": \"renav\",\n  \"keyboard\": \"us\",\n  \"tokenizer\": \"bpe\",\n  \"monkey-patch\": \"enabled\",\n  \"author\": \"Keyboard Team\",\n  \"author-auth-ui\": \"^2.1.0\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "keyboard",
+    "us",
+    "tokenizer",
+    "bpe",
+    "monkey-patch",
+    "enabled",
+    "Keyboard Team",
+    "author-auth-ui",
+    "^2.1.0"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

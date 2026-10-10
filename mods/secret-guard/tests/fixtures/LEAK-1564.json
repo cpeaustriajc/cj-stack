@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1564",
+ "title": "sqlite3 reads usernoted notification store",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sqlite3 on usernoted db denied (catalog allows deny or redaction; deny chosen for determinism). Spec gap: plain store read is not a spec combo",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"~/Library/Group Containers/group.com.apple.usernoted/db2/db\" \"select * from record order by rowid desc limit 20\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain sqlite3 SELECT with limit on a notification store, nothing combined; owner allows plain reads. Redaction of OTP-like codes is UNVERIFIED.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Ordinary sqlite3 query on an app database stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 app.db \"select count(*) from users\""
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

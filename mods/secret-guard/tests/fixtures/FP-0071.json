@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0071",
+ "title": "False positive: non-secret assignments with =>, := and ?= must stay unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat mixed file: all four non-secret lines unchanged",
+   "files": {
+    "config/mixed.txt": "'PASSWORD_MIN_LENGTH' => 8,\nMAX_TOKENS := 4096\napi_key_header = \"X-Api-Key\"\nSECRET_NAME_ENV ?= \"DB_SECRET_NAME\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat config/mixed.txt"
+    },
+    "tool_response": {
+     "stdout": "'PASSWORD_MIN_LENGTH' => 8,\nMAX_TOKENS := 4096\napi_key_header = \"X-Api-Key\"\nSECRET_NAME_ENV ?= \"DB_SECRET_NAME\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "PASSWORD_MIN_LENGTH' => 8,",
+    "MAX_TOKENS := 4096",
+    "api_key_header = ",
+    "X-Api-Key",
+    "SECRET_NAME_ENV ?= ",
+    "DB_SECRET_NAME"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

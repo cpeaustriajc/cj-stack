@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0253",
+ "title": "Unnamed secret in a historical file: no key name, URL, or token prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "documented gap: must_see includes the value, so this fixture passes while the value is visible and records the leak",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~2:notes/keys.txt"
+    },
+    "tool_response": {
+     "stdout": "staging box: FAKESECRET_xq8Lm2vT9pZ\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "staging box:",
+    "FAKESECRET_xq8Lm2vT9pZ"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

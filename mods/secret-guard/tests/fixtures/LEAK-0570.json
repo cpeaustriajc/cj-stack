@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0570",
+ "title": "DEBUG-style output with Authorization header: value redacted (debug format simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Authorization Bearer value redacted in piped output",
+   "files": {
+    "scripts/seed.sh": "echo 'Authorization: Bearer FAKESECRET_dbg35'\n"
+   },
+   "command": "DEBUG=renav sh scripts/seed.sh 2>&1 | tail -n 200",
+   "exit_code": 0,
+   "must_not_see": [
+    "Bearer FAKESECRET_dbg35"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

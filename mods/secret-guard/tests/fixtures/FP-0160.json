@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0160",
+ "title": "False positive: benign sudo status command must not be blocked or mangled",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo -n systemctl status nginx is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n systemctl status nginx"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "benign systemctl status output passes through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n systemctl status nginx"
+    },
+    "tool_response": {
+     "stdout": "nginx.service - A high performance web server and a reverse proxy server\n     Active: active (running) since Sat 2026-10-10 09:12:04 UTC\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "nginx.service",
+    "Active: active (running)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

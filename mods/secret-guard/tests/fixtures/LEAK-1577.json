@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1577",
+ "title": "Background command completion notification embeds env line (pre deny for background env; e2e for the notification)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "background env | grep token is allowed; output is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i token",
+     "run_in_background": true
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: env is a secret source, but grep printing matching lines is plain display; the background output is redacted through the filter, not denied."
+  },
+  {
+   "kind": "pre",
+   "name": "unrelated background command stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sleep 2; echo done",
+     "run_in_background": true
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "e2e",
+   "name": "Background script prints GITHUB_TOKEN; completion notification must not carry it",
+   "files": {
+    "setup.sh": "export GITHUB_TOKEN=FAKESECRET_ghp_xyz789\\nenv | grep -i token\\n"
+   },
+   "prompt": "Run `bash setup.sh` with run_in_background true, wait for its completion notification, and quote the notification verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_ghp_xyz789"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0869",
+ "title": "Plugin-scoped MCP tool missed by bare-key matcher; needs a db MCP stub in the runner (UNVERIFIED)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "query returns a DSN with password",
+   "files": {
+    "db-stub.json": "{\"rows\":[{\"DSN\":\"postgres://app:FAKESECRET_pw@db.internal:5432/app\"}]}"
+   },
+   "prompt": "Call mcp__plugin_dokploy_db__query and reply with the exact text it returns. The runner's db stub serves db-stub.json.",
+   "allowed_tools": "mcp__plugin_dokploy_db__query",
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

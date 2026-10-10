@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1716",
+ "title": "Read of Manifest.plist in a MobileSync backup",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of MobileSync/Backup Manifest.plist is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/MobileSync/Backup/FAKEUDID0001/Manifest.plist"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a backup Manifest.plist; allowed by the owner's plain-read decision.)"
+  },
+  {
+   "kind": "post",
+   "name": "if Read is allowed, Passcode string in Manifest.plist is redacted (Read shape from hook-payloads)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/MobileSync/Backup/FAKEUDID0001/Manifest.plist"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/Application Support/MobileSync/Backup/FAKEUDID0001/Manifest.plist",
+      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\">\n<dict>\n<key>Passcode</key><string>FAKESECRET_BACKUP_0001</string>\n</dict>\n</plist>\n",
+      "numLines": 6,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BACKUP_0001"
+   ],
+   "must_see": [
+    "<key>Passcode</key>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

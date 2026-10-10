@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0086",
+ "title": "Grep tool over src/ for token|primaryKey|keyboard: identifier lines pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep token|primaryKey|keyboard identifier lines",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token|primaryKey|keyboard",
+     "output_mode": "content",
+     "path": "src/"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "src/auth.ts:12:const tokenizer = new Tokenizer();\nsrc/auth.ts:15:  primaryKey: 'id',\nsrc/ui/keyboard.ts:3:export const keyboardMap = {};\nsrc/util/token.ts:2:export function parseToken(s) {",
+     "numLines": 4,
+     "totalLines": 4
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const tokenizer = new Tokenizer();",
+    "primaryKey: 'id',",
+    "keyboardMap = {};",
+    "parseToken(s)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

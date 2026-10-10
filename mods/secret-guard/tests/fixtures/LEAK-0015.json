@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0015",
+ "title": "Long-running process filter echoes blob content into git add -A output [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret on stderr of git add -A is redacted, stdout empty",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add -A"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "blob 1f2e3d: token FAKESECRET_PF_008\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": true
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PF_008"
+   ],
+   "must_see": [
+    "blob 1f2e3d",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "fake process-filter helper writes the blob to stderr; stderr is redacted at source",
+   "files": {
+    "pf-helper.sh": "echo 'blob 1f2e3d: token FAKESECRET_PF_008' >&2\n"
+   },
+   "command": "sh ./pf-helper.sh",
+   "must_not_see": [
+    "FAKESECRET_PF_008"
+   ],
+   "must_see": [
+    "blob 1f2e3d",
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1781",
+ "title": "npm config list -l prints resolved config (stubbed with printf)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Stubbed npm config list line: _authToken value replaced on stdout",
+   "files": {},
+   "command": "printf '//registry.npmjs.org/:_authToken = \"npm_FAKESECRET_CFG_01\"\\n'",
+   "must_not_see": [
+    "npm_FAKESECRET_CFG_01"
+   ],
+   "must_see": [
+    "registry.npmjs.org/:_authToken"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1892",
+ "title": "Rotated secret: old value from a restored snapshot is not in the redactor's current value list",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash cat of snapshot-mount config.yaml is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Volumes/com.apple.TimeMachine.localsnapshots/Users/fake/proj/config.yaml"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of config.yaml with nothing combined; item 4 lists only compose or service config dumps as sources and does not deny bare display. Flagged.)"
+  },
+  {
+   "kind": "post",
+   "name": "Retired GitHub-format token masked by pattern rule without a value list",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat config.yaml"
+    },
+    "tool_response": {
+     "stdout": "api_token: ghp_FAKERetiredA1b2C3d4E5f6G7h8I9j0K1l2m\nregion: eu-west-1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "ghp_FAKERetiredA1b2C3d4E5f6G7h8I9j0K1l2m"
+   ],
+   "must_see": [
+    "api_token:",
+    "region: eu-west-1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

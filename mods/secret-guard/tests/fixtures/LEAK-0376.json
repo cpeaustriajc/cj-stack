@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0376",
+ "title": "P1 op read prints 1Password secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "op read of Prod item withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op read \"op://Prod/stripe/credential\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_op_21\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_op_21"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "op read of Private item withheld (second item variant)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op read \"op://Private/Example/credential\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_op_9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_op_9"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

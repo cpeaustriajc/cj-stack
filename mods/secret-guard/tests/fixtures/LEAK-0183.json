@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0183",
+ "title": "dangling builder-stage image listed and its history read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Bearer token in history line redacted (simulated)",
+   "files": {
+    "history.out": "sha256:4f1a0c9d2b7e  2 days ago  /bin/sh -c curl -H 'Authorization: Bearer FAKESECRET_bld_22' https://api.example  0B\n"
+   },
+   "command": "cat history.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_bld_22"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "docker history line via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker image ls -a ; docker history --no-trunc 4f1a0c9d2b7e"
+    },
+    "tool_response": {
+     "stdout": "sha256:4f1a0c9d2b7e  2 days ago  /bin/sh -c curl -H 'Authorization: Bearer FAKESECRET_bld_22' https://api.example  0B\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bld_22"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

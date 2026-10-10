@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0538",
+ "title": "claude mcp add echoes bearer header on success",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp add success echoes Authorization bearer",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude mcp add --transport http billing https://mcp.example.test --header \"Authorization: Bearer FAKESECRET_mcp4\""
+    },
+    "tool_response": {
+     "stdout": "Added HTTP MCP server billing with URL: https://mcp.example.test\nAuthorization: Bearer FAKESECRET_mcp4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp4"
+   ],
+   "must_see": [
+    "Added HTTP MCP server billing",
+    "https://mcp.example.test",
+    "Authorization: Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

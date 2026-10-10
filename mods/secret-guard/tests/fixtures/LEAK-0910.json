@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0910",
+ "title": "ANSI escapes inside a harvested value (cat notes.txt)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ANSI codes split a harvested value; the FAKESECRET_ prefix and the raw split form must be absent (FAKESECRET_mid contiguous form is not in raw input)",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_midtail\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat notes.txt"
+    },
+    "tool_response": {
+     "stdout": "NOTES=FAKESECRET_\u001b[31mmid\u001b[0mtail\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_",
+    "FAKESECRET_\u001b[31mmid"
+   ],
+   "must_see": [],
+   "policy_note": "R5: added harvested .env with SERVICE_TOKEN=<same value as the fixture secret, FAKESECRET_midtail>; nothing else changed. The pre_exec fixture is unchanged."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: cat of notes.txt with harvested .env value split by ANSI codes",
+   "command": "cat notes.txt",
+   "files": {
+    ".env": "NOTES=FAKESECRET_midtail\n",
+    "notes.txt": "NOTES=FAKESECRET_\u001b[31mmid\u001b[0mtail\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_",
+    "FAKESECRET_\u001b[31mmid"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0847",
+ "title": "Failed git clone prints URL-userinfo password in stderr (non-zero exit, pre_exec; plus e2e)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated failing clone with password in URL, exit 128",
+   "files": {
+    ".env": "GIT_PASSWORD=FAKESECRET_pw2\n"
+   },
+   "command": "printf '%s\\n' \"fatal: unable to access 'https://deploy:FAKESECRET_pw2@git.example.com/x.git/': Could not resolve host\" >&2; exit 128",
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "git.example.com/x.git",
+    "Could not resolve host"
+   ],
+   "exit_code": 128
+  },
+  {
+   "kind": "e2e",
+   "name": "real Bash run of failing clone stderr with password from file",
+   "files": {
+    "clone.env": "GIT_PASSWORD=FAKESECRET_pw2\n"
+   },
+   "prompt": "Run this exact Bash command and return the stderr text verbatim: set -a; . ./clone.env; set +a; printf '%s\\n' \"fatal: unable to access 'https://deploy:$GIT_PASSWORD@git.example.com/x.git/': Could not resolve host\" >&2; exit 128",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

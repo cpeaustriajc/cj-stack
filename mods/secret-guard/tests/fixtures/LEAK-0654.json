@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0654",
+ "title": "MCP browser screenshot shows an API key",
+ "level": "not-testable",
+ "reason_not_testable": "Text value matching cannot inspect image pixels, and the e2e runner cannot read tool-results/ or image-cache/. Non-hook control: do not take screenshots of settings or secret pages; purge tool-results/ and image-cache/.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

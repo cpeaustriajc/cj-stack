@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0518",
+ "title": "[66] qlmanage renders PDF and Numbers files that contain credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "qlmanage on credential-named PDF and Numbers files denied (catalog: P)",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "qlmanage -t -o \"$TMPDIR/ql\" ./docs/server-onboarding.pdf ./docs/creds.numbers"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

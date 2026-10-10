@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0389",
+ "title": "P14 SSH with remote sudo sops decrypt piped to head",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sops -d inside ssh string, stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'sudo sops -d /etc/app/secrets.yaml | head -20'"
+    },
+    "tool_response": {
+     "stdout": "db_password: FAKESECRET_ssh_36\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ssh_36"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote sops output withheld at source",
+   "files": {},
+   "command": "ssh() { printf 'db_password: FAKESECRET_ssh_36\\n'; }; ssh prod 'sudo sops -d /etc/app/secrets.yaml | head -20'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ssh_36"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

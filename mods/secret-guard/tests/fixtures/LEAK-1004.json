@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1004",
+ "title": "grep -l for API_KEY in shell snapshot directory (Codex path)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -l API_KEY over snapshot dir is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -l 'API_KEY' ~/.codex/shell_snapshots/*.sh"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "filename-only grep output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -l 'API_KEY' ~/.codex/shell_snapshots/*.sh"
+    },
+    "tool_response": {
+     "stdout": "/Users/cj/.codex/shell_snapshots/snap-1.sh\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "/Users/cj/.codex/shell_snapshots/snap-1.sh"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "non-l grep of the same snapshot must print redacted value",
+   "files": {
+    ".codex/shell_snapshots/snap-1.sh": "export API_KEY=FAKESECRET_ka_AI04\n"
+   },
+   "command": "grep 'API_KEY' .codex/shell_snapshots/snap-1.sh",
+   "must_not_see": [
+    "FAKESECRET_ka_AI04"
+   ],
+   "must_see": [
+    "API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

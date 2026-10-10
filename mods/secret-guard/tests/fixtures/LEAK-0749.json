@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0749",
+ "title": "Reversed and character-spaced echo of a harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "rev and sed spacing of the value: neither reversed nor spaced form shown",
+   "files": {
+    ".env": "PW4=FAKESECRET_pw4\n"
+   },
+   "command": "echo FAKESECRET_pw4 | rev; echo FAKESECRET_pw4 | sed 's/./& /g'",
+   "must_not_see": [
+    "4wp_TERCESEKAF",
+    "F A K E S E C R E T _ p w 4"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

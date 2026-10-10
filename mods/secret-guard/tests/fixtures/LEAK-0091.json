@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0091",
+ "title": "Hex dump of .env via xxd",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "xxd .env hex dump with ASCII gutter",
+   "files": {
+    ".env": "APP_NAME=renav\nPOLAR_ORG=FAKESECRET_org_9f8e7d\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd .env"
+    },
+    "tool_response": {
+     "stdout": "00000000: 4150 505f 4e41 4d45 3d72 656e 6176 0a50  APP_NAME=renav.P\n00000010: 4f4c 4152 5f4f 5247 3d46 414b 4553 4543  OLAR_ORG=FAKESEC\n00000020: 5245 545f 6f72 675f 3966 3865 3764 0a    RET_org_9f8e7d.\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESEC",
+    "RET_org_9f8e7d",
+    "3d46 414b 4553 4543",
+    "5245 545f 6f72 675f 3966 3865 3764"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

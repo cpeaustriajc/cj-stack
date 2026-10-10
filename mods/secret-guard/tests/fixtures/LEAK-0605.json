@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0605",
+ "title": "Write creates monitoring script that saves actuator/env to a file: Write denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of script that curls actuator/env into a log file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "scripts/monitor.sh",
+     "content": "curl -s $HOST/actuator/env > logs/env-$(date +%s).json\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

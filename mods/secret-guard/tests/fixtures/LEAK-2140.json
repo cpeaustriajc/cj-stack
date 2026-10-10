@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2140",
+ "title": "Redactor error path writing stdin to stderr with exit 2: hook stderr and stdout clean (malformed-JSON input not expressible; normal path only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat app.env with FAKESECRET_hhh888: hook stderr and stdout carry no payload",
+   "files": {
+    "app.env": "SECRET=FAKESECRET_hhh888\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.env"
+    },
+    "tool_response": {
+     "stdout": "SECRET=FAKESECRET_hhh888\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    },
+    "tool_use_id": "toolu_FAKE2140"
+   },
+   "must_not_see": [
+    "FAKESECRET_hhh888"
+   ],
+   "must_see": [
+    "SECRET="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

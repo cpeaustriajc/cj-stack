@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1810",
+ "title": "docker run --entrypoint sh cat /app/.env inside an image",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "image /app/.env output simulated by cat; STRIPE_KEY value redacted in stdout",
+   "files": {
+    "app-env.txt": "STRIPE_KEY=FAKESECRET_IMG_03\nNODE_ENV=production\n"
+   },
+   "command": "cat app-env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_IMG_03"
+   ],
+   "must_see": [
+    "STRIPE_KEY",
+    "NODE_ENV=production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

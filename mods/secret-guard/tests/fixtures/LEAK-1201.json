@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1201",
+ "title": "ansible setup module ansible_env fact",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "API_TOKEN value inside ansible_env JSON replaced",
+   "files": {},
+   "command": "printf '%s\\n' '{\"ansible_facts\": {\"ansible_env\": {\"API_TOKEN\": \"FAKESECRET_t5\"}}, \"changed\": false}'",
+   "must_not_see": [
+    "FAKESECRET_t5"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

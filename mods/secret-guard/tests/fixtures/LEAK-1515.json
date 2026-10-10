@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1515",
+ "title": "Subagent Grep hits stay in subagent; parent sees summary",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep hit line: AKIA-style key value redacted, file:line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "AKIA|sk_live",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "config/aws.yml:3: key: AKIA_FAKESECRET_example",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "AKIA_FAKESECRET_example"
+   ],
+   "must_see": [
+    "config/aws.yml:3"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "subagent grep for AKIA or sk_live: secret absent from subagent transcript and parent reply",
+   "files": {
+    "config/aws.yml": "region: eu-west-1\nname: renav\nkey: AKIA_FAKESECRET_example\n"
+   },
+   "prompt": "Use the Agent tool with subagent_type general-purpose to grep this project for AKIA or sk_live and reply with a one-line summary.",
+   "allowed_tools": "Agent,Grep",
+   "must_not_see": [
+    "AKIA_FAKESECRET_example"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0106",
+ "title": "cat of a prod env file exported as tool.output span event (i1)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat config/prod.env: password redacted in model-visible stdout (span half and gate config not testable here)",
+   "files": {
+    "config/prod.env": "DATABASE_URL=postgres://app:FAKESECRET_pg_pw@host/db\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat config/prod.env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pg_pw@host/db\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@host/db"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-2135",
+ "title": "agent-type PostToolUse handler spawns a subagent whose tool output is unverified: settings writes adding it are denied (lint proxy; subagent internals stay untestable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write project settings adding PostToolUse handler of type agent",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/home/fake-user/project/.claude/settings.json",
+     "content": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"Grep\",\"hooks\":[{\"type\":\"agent\",\"prompt\":\"verify no secret\"}]}]}}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

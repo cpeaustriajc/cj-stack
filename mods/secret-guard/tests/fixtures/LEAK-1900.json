@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1900",
+ "title": "explicit mise env --json or direnv export json prints a credential-bearing URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Password segment of a postgres URL is masked; scheme, user, host and path stay",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mise env --json"
+    },
+    "tool_response": {
+     "stdout": "{\n  \"NODE_ENV\": \"development\",\n  \"DSN\": \"postgres://fakeuser:FAKESECRET_ccc333@db.example.invalid:5432/app\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ccc333"
+   ],
+   "must_see": [
+    "postgres://fakeuser:",
+    "@db.example.invalid:5432/app",
+    "NODE_ENV"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated mise env JSON with a credential URL, run through the guard wrapper",
+   "files": {
+    "mise-env.json": "{\n  \"NODE_ENV\": \"development\",\n  \"DSN\": \"postgres://fakeuser:FAKESECRET_ccc333@db.example.invalid:5432/app\"\n}\n"
+   },
+   "command": "cat mise-env.json",
+   "must_not_see": [
+    "FAKESECRET_ccc333"
+   ],
+   "must_see": [
+    "postgres://fakeuser:",
+    "@db.example.invalid:5432/app"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

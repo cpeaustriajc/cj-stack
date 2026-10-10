@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1750",
+ "title": "Read .git/config containing a clone URL with a token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "url userinfo password replaced, section header kept",
+   "files": {
+    ".git/config": "[remote \"origin\"]\n\turl = https://x-access-token:FAKESECRET_CFG_01@github.com/o/r.git\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.git/config"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.git/config",
+      "content": "[remote \"origin\"]\n\turl = https://x-access-token:FAKESECRET_CFG_01@github.com/o/r.git\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CFG_01"
+   ],
+   "must_see": [
+    "origin",
+    "url = https://x-access-token:[REDACTED]@github.com/o/r.git"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

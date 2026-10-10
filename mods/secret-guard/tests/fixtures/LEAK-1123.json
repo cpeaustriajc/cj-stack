@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1123",
+ "title": "env filtered by name (env | grep -i ...)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "env | grep -i token stays allowed (rewritten through filter)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i token"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "name-filtered env still shows GITHUB_TOKEN masked",
+   "files": {
+    "keys/gh.txt": "FAKESECRET_gh\n"
+   },
+   "command": "export GITHUB_TOKEN=\"$(cat keys/gh.txt)\"; env | grep -i -E \"token|auth|secret|key\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_gh"
+   ],
+   "must_see": [
+    "GITHUB_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1870",
+ "title": "log show piped to base64 or xxd is denied at PreToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "log show | base64 denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 1h --predicate 'eventMessage CONTAINS \"FAKESECRET\"' | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "log show | xxd denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 1h --predicate 'eventMessage CONTAINS \"FAKESECRET\"' | xxd"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

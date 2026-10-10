@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2125",
+ "title": "Redactor crashes with uncaught exception (exit 1) on Bash output with a secret",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real hooks: Bash cat of secret file; model-visible result must not contain value (crash fault not injectable by runner)",
+   "files": {
+    "fixtures/app.env": "API_TOKEN=FAKESECRET_ALPHA\n"
+   },
+   "prompt": "Run `cat fixtures/app.env` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_ALPHA"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Bash output filtered at source so a PostToolUse crash cannot leak",
+   "files": {
+    "fixtures/app.env": "API_TOKEN=FAKESECRET_ALPHA\n"
+   },
+   "command": "cat fixtures/app.env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ALPHA"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

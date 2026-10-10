@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-0021",
+ "title": "GIT_EXTERNAL_DIFF set inline in the Bash command runs an external diff program [catalog level unit]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "inline GIT_EXTERNAL_DIFF assignment is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "GIT_EXTERNAL_DIFF=./print-args.sh git diff HEAD~1 -- .env.production"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "plain git diff of a README stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git diff HEAD~1 -- README.md"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "backstop: external program output key=value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "GIT_EXTERNAL_DIFF=./print-args.sh git diff HEAD~1 -- .env.production"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_PASSWORD=FAKESECRET_EXT_014\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_EXT_014"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

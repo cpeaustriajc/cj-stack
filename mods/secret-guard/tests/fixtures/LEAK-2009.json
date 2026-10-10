@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-2009",
+ "title": "Second secret key in a WireGuard peer section (PresharedKey) must also be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PresharedKey line redacted via Read, PublicKey kept",
+   "files": {
+    "etc/wireguard/wg0.conf": "[Peer]\nPublicKey = FAKEPUB_WG_PEER_aaaa=\nPresharedKey = FAKESECRET_WG_PSK_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb=\nAllowedIPs = 10.8.0.0/24\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/etc/wireguard/wg0.conf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/etc/wireguard/wg0.conf",
+      "content": "[Peer]\nPublicKey = FAKEPUB_WG_PEER_aaaa=\nPresharedKey = FAKESECRET_WG_PSK_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb=\nAllowedIPs = 10.8.0.0/24\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_WG_PSK_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb="
+   ],
+   "must_see": [
+    "PresharedKey = [REDACTED]",
+    "PublicKey = FAKEPUB_WG_PEER_aaaa=",
+    "AllowedIPs = 10.8.0.0/24"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of wg config redacts PresharedKey at source",
+   "files": {
+    "wg0.conf": "[Peer]\nPublicKey = FAKEPUB_WG_PEER_aaaa=\nPresharedKey = FAKESECRET_WG_PSK_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb=\nAllowedIPs = 10.8.0.0/24\n"
+   },
+   "command": "cat wg0.conf",
+   "must_not_see": [
+    "FAKESECRET_WG_PSK_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb="
+   ],
+   "must_see": [
+    "PresharedKey = [REDACTED]",
+    "PublicKey = FAKEPUB_WG_PEER_aaaa="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

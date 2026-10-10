@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1931",
+ "title": "Skill-approved script reads a secret file, bypassing command-text checks",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "skill script invocation without secret path in command text is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "${CLAUDE_SKILL_DIR}/scripts/render.sh profile-a"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "skill script stdout with known fake netrc password is redacted",
+   "files": {
+    ".netrc": "machine fake.example login u password FAKESECRET_SKILL_SCRIPT_003\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "${CLAUDE_SKILL_DIR}/scripts/render.sh profile-a"
+    },
+    "tool_response": {
+     "stdout": "machine fake.example login u password FAKESECRET_SKILL_SCRIPT_003\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SKILL_SCRIPT_003"
+   ],
+   "must_see": [
+    "machine fake.example"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

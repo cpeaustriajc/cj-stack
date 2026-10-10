@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0542",
+ "title": "ssh tail of app access log with bearer and access_token query",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh tail of access log with bearer and access_token",
+   "files": {},
+   "command": "ssh() { printf 'GET /x Authorization: Bearer FAKESECRET_log7 200\\nGET /cb?access_token=FAKESECRET_q7 302\\n'; }; ssh prod 'tail -n 2000 /var/log/app/access.log'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_log7",
+    "FAKESECRET_q7"
+   ],
+   "must_see": [
+    "GET /x Authorization: Bearer",
+    "GET /cb?access_token=",
+    "200",
+    "302"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

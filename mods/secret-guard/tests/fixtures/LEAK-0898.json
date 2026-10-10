@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0898",
+ "title": "APIKEY_X name embeds KEY without a separator (env | grep)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "successful env|grep output: value redacted, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep APIKEY_X"
+    },
+    "tool_response": {
+     "stdout": "APIKEY_X=FAKESECRET_apikey_0001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_apikey_0001"
+   ],
+   "must_see": [
+    "APIKEY_X=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: export then env|grep, output redacted at source",
+   "command": "export APIKEY_X=FAKESECRET_apikey_0001; env | grep APIKEY_X",
+   "files": {},
+   "must_not_see": [
+    "FAKESECRET_apikey_0001"
+   ],
+   "must_see": [
+    "APIKEY_X=[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

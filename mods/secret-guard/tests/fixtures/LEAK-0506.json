@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0506",
+ "title": "[57] Read of .env. with trailing dot on a Windows-style share",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read /Volumes/NAS/app/.env. : API_KEY value redacted (SMB behaviour not testable locally)",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Volumes/NAS/app/.env."
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Volumes/NAS/app/.env.",
+      "content": "API_KEY=FAKESECRET_tr57\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tr57"
+   ],
+   "must_see": [
+    "API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

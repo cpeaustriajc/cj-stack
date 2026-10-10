@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0018",
+ "title": "Short harvested values redact unrelated numbers and booleans in TypeScript source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of config.ts with PORT=3000 harvested from .env stays unchanged",
+   "files": {
+    ".env": "PORT=3000\nDB_SSL=true\n",
+    "src/config.ts": "const TOKEN_TTL = 3600;\nexport const PORT = 3000;\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/config.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/config.ts",
+      "content": "const TOKEN_TTL = 3600;\nexport const PORT = 3000;\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_see": [
+    "TOKEN_TTL = 3600",
+    "export const PORT = 3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

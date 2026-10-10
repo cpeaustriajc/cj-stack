@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0935",
+ "title": "npm_ token under a renamed key in nested Read file.content is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read result with NPMX=npm_ token in file.content",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch.txt",
+      "content": "NPMX=npm_FAKESECRET0123456789abcdefABCDEF\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "npm_FAKESECRET0123456789abcdefABCDEF"
+   ],
+   "must_see": [
+    "NPMX=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

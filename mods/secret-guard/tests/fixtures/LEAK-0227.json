@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-0227",
+ "title": "Per-env-entry lengths from docker inspect over ssh to the Swarm host",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker inspect range-len template over ssh is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-swarm \"docker inspect app-web-1 --format '{{range .Config.Env}}{{println (len .)}}{{end}}'\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "four integer lengths pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-swarm \"docker inspect app-web-1 --format '{{range .Config.Env}}{{println (len .)}}{{end}}'\""
+    },
+    "tool_response": {
+     "stdout": "34\n58\n21\n17\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "34",
+    "58",
+    "21",
+    "17"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ssh printenv over the Swarm host is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-swarm printenv"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain printenv over ssh with nothing combined. The owner's decision allows plain display of a secret source over ssh.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

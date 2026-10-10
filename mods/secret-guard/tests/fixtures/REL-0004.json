@@ -1,0 +1,31 @@
+{
+ "case_id": "REL-0004",
+ "title": "Fail-closed: hook throws on unexpected tool_response shape",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "non-string stdout object still withholds the secret",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat notes.txt"
+    },
+    "tool_response": {
+     "stdout": {
+      "text": "sk_live_FAKESECRETFAKESECRET00"
+     },
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRETFAKESECRET00"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

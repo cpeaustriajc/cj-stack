@@ -1,0 +1,27 @@
+{
+ "case_id": "LEAK-2070",
+ "title": "Hook's own stderr echoes the matched secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "malformed tool_response containing a secret forces the redactor's parse-error branch; no secret in stdout, stderr or model-visible output",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_parse_0070\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat notes.txt"
+    },
+    "tool_response": "{\"stdout\": \"FAKESECRET_parse_0070"
+   },
+   "must_not_see": [
+    "FAKESECRET_parse_0070"
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted the same secret value in harvested .env as SERVICE_TOKEN=<same value>; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

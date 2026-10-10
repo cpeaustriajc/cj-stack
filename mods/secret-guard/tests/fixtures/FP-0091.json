@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0091",
+ "title": "Harvested short values true and 1 do not redact package.json output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat package.json with harvested true and 1",
+   "files": {
+    ".env": "FEATURE_FLAG=true\nPORT=1\n",
+    "package.json": "{\"name\":\"renav\",\"version\":\"1.0.0\",\"private\":true}"
+   },
+   "command": "cat package.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "renav",
+    "1.0.0",
+    "private"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

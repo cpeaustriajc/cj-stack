@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1323",
+ "title": "curl -v Proxy-Authorization Basic base64 of FAKEUSER:FAKESECRET_curlproxy0047 (encodes a fake marker)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl -v stderr Basic header",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -v -x http://FAKEUSER:FAKESECRET_curlproxy0047@proxy.corp.example:8080 https://example.com"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "> Proxy-Authorization: Basic RkFLRVVTRVI6RkFLRVNFQ1JFVF9jdXJscHJveHkwMDQ3\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVVTRVI6RkFLRVNFQ1JFVF9jdXJscHJveHkwMDQ3",
+    "FAKESECRET_curlproxy0047"
+   ],
+   "must_see": [
+    "Proxy-Authorization:"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for curl -v stderr",
+   "files": {},
+   "command": "printf '> Proxy-Authorization: Basic RkFLRVVTRVI6RkFLRVNFQ1JFVF9jdXJscHJveHkwMDQ3\\n' >&2 # source credential: FAKEUSER:FAKESECRET_curlproxy0047",
+   "exit_code": 0,
+   "must_not_see": [
+    "RkFLRVVTRVI6RkFLRVNFQ1JFVF9jdXJscHJveHkwMDQ3"
+   ],
+   "must_see": [
+    "Proxy-Authorization:"
+   ]
+  }
+ ]
+}

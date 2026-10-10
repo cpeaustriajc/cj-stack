@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0211",
+ "title": "docker history line with BuildKit |2 build-arg prefix on RUN",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "|2 build-arg value redacted, prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    },
+    "tool_response": {
+     "stdout": "sha256:9be0d7aa41c2  5 days ago  |2 NPM_TOKEN=FAKESECRET_npm_48 /bin/sh -c npm ci --no-audit  18.2MB\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET"
+   ],
+   "must_see": [
+    "|2 NPM_TOKEN=[REDACTED]",
+    "/bin/sh -c npm ci --no-audit"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

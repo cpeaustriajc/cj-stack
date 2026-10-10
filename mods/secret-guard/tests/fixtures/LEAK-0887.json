@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0887",
+ "title": "Truncated PEM with no END line (head -n 3)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "truncated-pem-via-printf-standin",
+   "files": {},
+   "command": "printf '%s\\n' '-----BEGIN PRIVATE KEY-----' 'FAKESECRET_PEM_LINE1xxxx' 'FAKESECRET_PEM_LINE2yyyy'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PEM_LINE1xxxx",
+    "FAKESECRET_PEM_LINE2yyyy"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  },
+  {
+   "kind": "post",
+   "name": "ssh-head-pem-object",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh sd-mp 'head -n 3 /opt/app/certs/signing.pem'"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_PEM_LINE1xxxx\nFAKESECRET_PEM_LINE2yyyy\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PEM_LINE1xxxx",
+    "FAKESECRET_PEM_LINE2yyyy"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,31 @@
+{
+ "case_id": "FP-0067",
+ "title": "False positive: sudo password prompt (no trailing newline, no value) and sudo -n error stay verbatim",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "step 1: sudo prompt with no trailing newline and no assigned value; text unchanged",
+   "files": {
+    "sim-sudo-prompt.sh": "printf '[sudo] password for deploy: ' >&2\n"
+   },
+   "command": "sh sim-sudo-prompt.sh",
+   "must_see": [
+    "[sudo] password for deploy:"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "step 2: sudo -n error shown verbatim",
+   "files": {
+    "sim-sudo-n.sh": "printf 'sudo: a password is required\\n' >&2\nexit 1\n"
+   },
+   "command": "sh sim-sudo-n.sh",
+   "must_see": [
+    "sudo: a password is required"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

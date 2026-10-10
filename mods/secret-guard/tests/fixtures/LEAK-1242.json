@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1242",
+ "title": "model copies an earlier secret into a git commit message",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "commit message contains a registry value (deny)",
+   "files": {
+    "~/Projects/app/.env": "DEPLOY_TOKEN=FAKESECRET_t9\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m 'deploy with FAKESECRET_t9'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary commit message stays allowed",
+   "files": {
+    "~/Projects/app/.env": "DEPLOY_TOKEN=FAKESECRET_t9\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m 'fix typo in README'"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

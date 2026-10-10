@@ -1,0 +1,29 @@
+{
+ "case_id": "LEAK-0926",
+ "title": "Hook throws on secret-bearing output (throw forced by lone surrogate); original must not fall through; withheld form UNVERIFIED",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "redactor error on POSTGRES_PASSWORD stdout; original value must not be returned",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo POSTGRES_PASSWORD=FAKESECRET_pg_7f3kQ9wZ2mXa"
+    },
+    "tool_response": {
+     "stdout": "POSTGRES_PASSWORD=FAKESECRET_pg_7f3kQ9wZ2mXa\n\ud800",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_7f3kQ9wZ2mXa"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

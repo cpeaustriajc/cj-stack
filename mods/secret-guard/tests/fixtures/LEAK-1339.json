@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1339",
+ "title": "Redactor failure path on IMDS Bash output (catalog e2e; unit via malformed stdout shape)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout as array so a naive redactor throws; secret must still be absent",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/app-role"
+    },
+    "tool_response": {
+     "stdout": [
+      "{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_crash0058\"}"
+     ],
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_crash0058"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

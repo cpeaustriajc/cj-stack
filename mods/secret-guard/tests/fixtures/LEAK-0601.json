@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0601",
+ "title": "Rails info properties HTML row: password segment redacted, tags kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "rails info HTML row via curl",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://localhost:3000/rails/info/properties"
+    },
+    "tool_response": {
+     "stdout": "<tr><td>DATABASE_URL</td><td>postgres://u:FAKESECRET_rails65@h/db</td></tr>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rails65"
+   ],
+   "must_see": [
+    "<td>DATABASE_URL</td>",
+    "@h/db</td>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

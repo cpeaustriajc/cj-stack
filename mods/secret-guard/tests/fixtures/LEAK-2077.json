@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2077",
+ "title": "Bash strings of QuickLook thumbnail cache prints a plaintext secret that the redactor must replace",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "strings of cache index prints pasted token; token replaced, shape keys kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_ql_001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings \"$(getconf DARWIN_USER_CACHE_DIR)/com.apple.QuickLook.thumbnailcache/index.sqlite\""
+    },
+    "tool_response": {
+     "stdout": "title: notes.txt\nFAKESECRET_ql_001 pasted token\nsize: 12\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ql_001"
+   ],
+   "must_see": [
+    "title: notes.txt",
+    "pasted token",
+    "size: 12"
+   ],
+   "policy_note": "R5: planted FAKESECRET_ql_001 in a harvested .env in files (SERVICE_TOKEN=<same value>), so the value comes from a secret file. Nothing else changed."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

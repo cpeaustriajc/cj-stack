@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1008",
+ "title": "Read of ~/.claude/settings.json env block",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read settings.json: env value redacted, key name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/settings.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.claude/settings.json",
+      "content": "{\n  \"env\": {\n    \"ANTHROPIC_API_KEY\": \"FAKESECRET_an_AF29\"\n  }\n}\n",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_an_AF29"
+   ],
+   "must_see": [
+    "ANTHROPIC_API_KEY",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

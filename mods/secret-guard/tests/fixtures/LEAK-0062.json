@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0062",
+ "title": "OpenTelemetry tool span records unredacted output of echo command",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry is listed in test-spec.md as not-testable. The e2e format asserts only recorded tool_response values and the final reply, so exported OTel span attributes cannot be checked. (The batch asked for 1-4 fixtures; the spec restricts fixtures to testable cases, so none are given.) Non-hook control: keep OTel tool-span export disabled when secrets are in scope, per the catalog mitigation.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,69 @@
+{
+ "case_id": "LEAK-0240",
+ "title": "Length via printf of a variable piped to wc -c",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printf of STRIPE_SECRET_KEY piped to wc -c is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$STRIPE_SECRET_KEY\" | wc -c"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "expr length of STRIPE_SECRET_KEY is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "expr length \"$STRIPE_SECRET_KEY\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "parameter-length of STRIPE_SECRET_KEY is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo ${#STRIPE_SECRET_KEY}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "wc -c number passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$STRIPE_SECRET_KEY\" | wc -c"
+    },
+    "tool_response": {
+     "stdout": "  41\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "41"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

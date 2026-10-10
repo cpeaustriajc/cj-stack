@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0692",
+ "title": "Secret typed as a command: echoed in stderr, tool_input keeps it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "zsh command-not-found echo of harvested value is redacted in stderr",
+   "files": {
+    ".env": "PG_PASSWORD=FAKESECRET_pg_pass_9f2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "FAKESECRET_pg_pass_9f2 --version"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "zsh: command not found: FAKESECRET_pg_pass_9f2",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_pass_9f2"
+   ],
+   "must_see": [
+    "zsh: command not found: [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

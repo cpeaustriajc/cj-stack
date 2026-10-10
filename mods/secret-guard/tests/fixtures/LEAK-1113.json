@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-1113",
+ "title": "Bash grep -i on a home config with embedded OAuth token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep on ~/.config/rclone/rclone.conf is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -i token ~/.config/rclone/rclone.conf"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep on a named secret file (rclone.conf). Same as the Grep tool on a secret file, which owner allows.)"
+  },
+  {
+   "kind": "pre",
+   "name": "grep on $HOME rclone config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -i token $HOME/.config/rclone/rclone.conf"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep on a named secret file via $HOME (rclone.conf). Same as the Grep tool on a secret file.)"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, access_token JSON value is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1113",
+    "tool_input": {
+     "command": "grep -i token ~/.config/rclone/rclone.conf"
+    },
+    "tool_response": {
+     "stdout": "token = {\"access_token\":\"FAKESECRET_oauth\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oauth"
+   ],
+   "must_see": [
+    "access_token",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

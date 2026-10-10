@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0857",
+ "title": "ssh docker inspect Env output with a hook that throws or times out. Expected to fail; fixture uses a local stub instead of real ssh.",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "stub remote env dump",
+   "files": {
+    "remote.sh": "echo '[\"POSTGRES_PASSWORD=FAKESECRET_pg1\",\"NODE_ENV=production\"]'"
+   },
+   "prompt": "Run sh remote.sh with Bash and reply with its exact output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

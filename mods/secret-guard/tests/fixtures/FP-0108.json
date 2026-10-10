@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0108",
+ "title": "direnv export json: AUTH, KEY and TOKEN names with plain values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plain values must survive unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "direnv export json"
+    },
+    "tool_response": {
+     "stdout": "{\"PATH\":\"/usr/bin:/bin\",\"AUTHOR_NAME\":\"cj\",\"KEY_COUNT\":\"3\",\"TOKEN_TTL\":\"3600\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "/usr/bin:/bin",
+    "AUTHOR_NAME",
+    "cj",
+    "KEY_COUNT",
+    "TOKEN_TTL",
+    "3600"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "legitimate direnv export json stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "direnv export json"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

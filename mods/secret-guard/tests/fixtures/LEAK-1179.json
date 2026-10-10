@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1179",
+ "title": "ssh cat of .env plus JSON config",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O masks STRIPE_KEY value and JSON password value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-1 'cat /srv/app/.env /srv/app/config/production.json'"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_KEY=FAKESECRET_s1\n{\"db\": {\"password\": \"FAKESECRET_j1\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_s1",
+    "FAKESECRET_j1"
+   ],
+   "must_see": [
+    "STRIPE_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote .env and JSON config redacted at source",
+   "files": {},
+   "command": "ssh() { printf 'STRIPE_KEY=FAKESECRET_s1\\n{\"db\": {\"password\": \"FAKESECRET_j1\"}}\\n'; }; ssh deploy@prod-1 'cat /srv/app/.env /srv/app/config/production.json'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_s1",
+    "FAKESECRET_j1"
+   ],
+   "must_see": [
+    "STRIPE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

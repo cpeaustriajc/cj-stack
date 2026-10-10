@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0299",
+ "title": "Hook stderr echoes the raw tool_response into stream-json",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "stream-json: hook error path must not echo tool_response (error path is test-induced by runner, not expressible in fixture; regex-compile failure must be injected by runner)",
+   "files": {
+    ".env": "DEMO_TOKEN=FAKESECRET_abc123\n",
+    "print.sh": "set -a; . ./.env; set +a\nprintenv DEMO_TOKEN\n"
+   },
+   "prompt": "Run: sh print.sh",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

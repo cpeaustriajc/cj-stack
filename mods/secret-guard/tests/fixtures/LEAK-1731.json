@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1731",
+ "title": "tmux capture-pane with space-separated aws configure line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "space-separated aws_secret_access_key line in shell output is redacted [printf stands in for tmux capture-pane]",
+   "files": {},
+   "command": "printf '%s\\n' '$ aws configure set aws_secret_access_key FAKESECRET_aws_sk_0001'",
+   "must_not_see": [
+    "FAKESECRET_aws_sk_0001"
+   ],
+   "must_see": [
+    "$ aws configure set aws_secret_access_key",
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

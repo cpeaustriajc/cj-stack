@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0045",
+ "title": "False positive check: KEY names with non-secret numeric values stay unchanged (post and pre allow)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env.example keeps numeric config values visible",
+   "files": {
+    ".env.example": "PASSWORD_MIN_LENGTH=8\nTOKEN_TTL_SECONDS=3600\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.example"
+    },
+    "tool_response": {
+     "stdout": "PASSWORD_MIN_LENGTH=8\nTOKEN_TTL_SECONDS=3600\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "PASSWORD_MIN_LENGTH=8",
+    "TOKEN_TTL_SECONDS=3600"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "cat .env.example is allowed",
+   "files": {
+    ".env.example": "PASSWORD_MIN_LENGTH=8\nTOKEN_TTL_SECONDS=3600\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.example"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

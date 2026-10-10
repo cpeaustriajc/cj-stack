@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0773",
+ "title": "curl with literal Bearer token in Authorization header is denied by the guard",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "literal Bearer token in curl command is denied",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_c\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sH 'Authorization: Bearer FAKESECRET_tok_c' https://api.example.com/v1/me"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into a curl call that calls an API and shows its output is allowed."
+  }
+ ]
+}

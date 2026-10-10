@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2069",
+ "title": "Cancelled or interrupted tool streams secret before any hook runs",
+ "level": "not-testable",
+ "reason_not_testable": "No hook fires when a running Bash command is cancelled by the user or harness, so partial output cannot be rewritten by any hook, and the spec runner has no deterministic way to cancel a command mid-stream and observe the transcript. Non-hook control: bound log-follow output at source (sandbox) and keep log-follow commands out of agent use.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

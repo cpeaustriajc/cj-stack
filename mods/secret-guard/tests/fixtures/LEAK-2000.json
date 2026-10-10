@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2000",
+ "title": "Fan-out per-host prefixes and interleaving do not break matching",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret redacted under per-host prefixes",
+   "files": {
+    ".env": "APP_TOKEN=FAKESECRET_tok7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pdsh -w web[1-20] 'cat /etc/app/app.env'"
+    },
+    "tool_response": {
+     "stdout": "web7: APP_TOKEN=FAKESECRET_tok7\nweb8: APP_TOKEN=FAKESECRET_tok7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok7"
+   ],
+   "must_see": [
+    "web7:",
+    "web8:",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

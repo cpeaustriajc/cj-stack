@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-0375",
+ "title": "K29 SSH cat of remote dotenv file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh simulated by a local shell function printing dotenv lines; output must be redacted at source",
+   "files": {},
+   "command": "ssh(){ printf 'DATABASE_URL=postgres://u:FAKESECRET_db_19@db/x\\nSTRIPE_KEY=FAKESECRET_stripe_20\\n'; }; ssh prod-host 'cat /srv/app/.env'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_db_19",
+    "FAKESECRET_stripe_20"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

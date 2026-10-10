@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0150",
+ "title": "ssh docker inspect Env dump: simulated with a local stub script; /export half is not covered by the runner (interactive command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh docker inspect Env output redacted at source",
+   "files": {
+    "bin/fake-ssh": "#!/bin/sh\nprintf '%s\\n' '[\"STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\",\"NODE_ENV=production\"]'\n"
+   },
+   "command": "sh ./bin/fake-ssh swarm-host 'docker inspect app_web | jq .[0].Config.Env'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY",
+    "NODE_ENV"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

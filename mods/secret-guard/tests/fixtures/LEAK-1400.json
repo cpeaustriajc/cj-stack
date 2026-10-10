@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1400",
+ "title": "MCP alias tool bypasses the Bash matcher",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Output of an mcp__acp__Bash-named tool is redacted (MCP response shape assumed Bash-like, UNVERIFIED; matcher coverage not tested here)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__acp__Bash",
+    "tool_input": {
+     "command": "cat .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_12345\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_12345"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

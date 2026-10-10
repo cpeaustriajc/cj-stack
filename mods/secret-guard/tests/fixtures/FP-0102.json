@@ -1,0 +1,20 @@
+{
+ "case_id": "FP-0102",
+ "title": "Bash cat of a known_hosts line: ssh-ed25519 public key passes unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "known_hosts first line passes byte-identical",
+   "files": {
+    "known_hosts": "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFAKEKEYBODY\n"
+   },
+   "command": "cat known_hosts | head -1",
+   "exit_code": 0,
+   "must_see": [
+    "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFAKEKEYBODY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

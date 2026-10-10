@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-0330",
+ "title": "leaks on a live PID with default content",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "leaks on PID without -noContent allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: leaks on a PID is plain display of process memory, not a secret source, transform or oracle from hooks-build-spec item 4; allowed, and PostToolUse redacts the output."
+  },
+  {
+   "kind": "pre",
+   "name": "leaks -noContent allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -noContent 4242"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "leaked heap content redacted if run",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_HEAP\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks 4242"
+    },
+    "tool_response": {
+     "stdout": "Process 4242: 1 leak for 48 total leaked bytes.\nLeak of 48 bytes\n  content: \"FAKESECRET_HEAP\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HEAP"
+   ],
+   "must_see": [
+    "Leak of 48 bytes"
+   ]
+  }
+ ]
+}

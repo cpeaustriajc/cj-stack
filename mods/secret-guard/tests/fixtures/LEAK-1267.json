@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1267",
+ "title": "Grep for an API key name in the project tree",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep-api-key-line-redacted",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a26\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY",
+     "path": ".",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "./.env:1:API_KEY=FAKESECRET_a26",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a26"
+   ],
+   "must_see": [
+    "./.env:1:API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

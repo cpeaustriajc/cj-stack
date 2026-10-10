@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1748",
+ "title": "git add -f of an ignored .env then git diff --cached",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git add -f of a secret-pattern path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add -f .env && git diff --cached"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "backstop: if staged, the diff + value is replaced",
+   "files": {
+    "force-diff.out": "diff --git a/.env b/.env\n+API_KEY=FAKESECRET_FORCE_01\n"
+   },
+   "command": "cat force-diff.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_FORCE_01"
+   ],
+   "must_see": [
+    "diff --git a/.env b/.env",
+    "+API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

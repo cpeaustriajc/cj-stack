@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0066",
+ "title": "False positive: SSH host-key confirmation prompt on stderr must be verbatim (fingerprint given a FAKE marker; otherwise catalog text)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated first-connection host-key prompt on stderr; verbatim incl. trailing space",
+   "files": {
+    "sim-ssh-hostkey.sh": "printf \"The authenticity of host 'build-03 (10.0.0.5)' can't be established.\\nED25519 key fingerprint is SHA256:FAKEQm9ja2VkRmFrZUZpbmdlcnByaW50MDAxMjM0NTY3ODk\\nAre you sure you want to continue connecting (yes/no/[fingerprint])? \" >&2\n"
+   },
+   "command": "sh sim-ssh-hostkey.sh",
+   "must_see": [
+    "The authenticity of host 'build-03 (10.0.0.5)' can't be established.",
+    "ED25519 key fingerprint is SHA256:FAKEQm9ja2VkRmFrZUZpbmdlcnByaW50MDAxMjM0NTY3ODk",
+    "Are you sure you want to continue connecting (yes/no/[fingerprint])? "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1444",
+ "title": "Notebook text array splits a secret across two elements",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret split across two text array elements",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_ab\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/dsn.ipynb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/dsn.ipynb",
+      "content": "{\"cells\":[{\"cell_type\":\"code\",\"execution_count\":1,\"metadata\":{},\"outputs\":[{\"name\":\"stdout\",\"output_type\":\"stream\",\"text\":[\"DATABASE_URL=postgres://app:FAKESECRET_ab\",\"cd@db.internal:5432/app\\n\"]}],\"source\":[\"pass\"]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ab"
+   ],
+   "must_see": [
+    "DATABASE_URL="
+   ],
+   "policy_note": "R5 instruction applied: value FAKESECRET_ab planted in harvested .env (SERVICE_TOKEN=<same value>) so it has a file signal. No other change."
+  }
+ ]
+}

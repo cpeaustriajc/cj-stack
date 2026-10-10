@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0957",
+ "title": "export-syntax line in .envrc read via Bash (PATH line is a positive control)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .envrc via Bash: salt redacted, PATH line intact",
+   "files": {
+    ".envrc": "export RENAV_FEATURE_SALT=FAKESECRET_salt_19pz\nexport PATH=\"$PWD/bin:$PATH\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/Projects/renav/.envrc"
+    },
+    "tool_response": {
+     "stdout": "export RENAV_FEATURE_SALT=FAKESECRET_salt_19pz\nexport PATH=\"$PWD/bin:$PATH\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_salt_19pz"
+   ],
+   "must_see": [
+    "export RENAV_FEATURE_SALT=",
+    "export PATH=",
+    "$PWD/bin:$PATH"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .envrc at source: salt redacted, PATH line intact",
+   "files": {
+    ".envrc": "export RENAV_FEATURE_SALT=FAKESECRET_salt_19pz\nexport PATH=\"$PWD/bin:$PATH\"\n"
+   },
+   "command": "cat .envrc",
+   "must_not_see": [
+    "FAKESECRET_salt_19pz"
+   ],
+   "must_see": [
+    "export PATH=",
+    "$PWD/bin:$PATH"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

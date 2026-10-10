@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0712",
+ "title": "Truncated cache file mid-write must not pass raw output (cache path UNVERIFIED; covers re-harvest from .env only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env output with .env present for re-harvest",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW_1A\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_PW_1A\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PW_1A"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

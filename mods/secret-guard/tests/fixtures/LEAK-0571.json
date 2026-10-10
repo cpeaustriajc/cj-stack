@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0571",
+ "title": "WebFetch result with traceback containing api_key: value redacted in the result returned to the model",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "WebFetch result api_key line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://staging.example.test/api/orders/",
+     "prompt": "show the full error page including the traceback"
+    },
+    "tool_response": {
+     "bytes": 412,
+     "code": 500,
+     "codeText": "Internal Server Error",
+     "result": "Traceback (most recent call last):\n  File \"orders/views.py\", line 88, in create\n    api_key='FAKESECRET_dj36'\nKeyError: 'items'",
+     "durationMs": 900,
+     "url": "https://staging.example.test/api/orders/"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dj36"
+   ],
+   "must_see": [
+    "api_key='[REDACTED]'",
+    "Traceback (most recent call last):"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

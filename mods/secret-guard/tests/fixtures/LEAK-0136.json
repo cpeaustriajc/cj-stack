@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0136",
+ "title": "docker compose config: TUNNEL_TOKEN value redacted, service names kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "compose config output redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker compose config"
+    },
+    "tool_response": {
+     "stdout": "services:\n  tunnel:\n    environment:\n      TUNNEL_TOKEN: FAKESECRET_tt_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tt_1"
+   ],
+   "must_see": [
+    "services:",
+    "tunnel:",
+    "TUNNEL_TOKEN:"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "compose-style output redacted at source",
+   "files": {},
+   "command": "printf 'services:\\n  tunnel:\\n    environment:\\n      TUNNEL_TOKEN: FAKESECRET_tt_1\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tt_1"
+   ],
+   "must_see": [
+    "tunnel:",
+    "TUNNEL_TOKEN:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

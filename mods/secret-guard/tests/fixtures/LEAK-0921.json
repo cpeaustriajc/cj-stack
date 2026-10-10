@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0921",
+ "title": "KNOWN GAP: server-generated SESSION_SIGNING absent locally; ideal SESSION_SIGNING=[REDACTED]; fixture fails until a SIGNING name rule or entropy detector exists",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker exec env line with SESSION_SIGNING value; must be redacted (expected to FAIL under name-only design)",
+   "files": {
+    "sim-docker-exec-env.sh": "printf 'SESSION_SIGNING=FAKESECRET_sess_Lr8vQ2nP5tYw0Zk3Hd9Bx7Cs\\n'\n"
+   },
+   "command": "sh sim-docker-exec-env.sh",
+   "must_not_see": [
+    "FAKESECRET_sess_Lr8vQ2nP5tYw0Zk3Hd9Bx7Cs"
+   ],
+   "must_see": [
+    "SESSION_SIGNING="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

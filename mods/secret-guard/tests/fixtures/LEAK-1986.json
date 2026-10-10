@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1986",
+ "title": "Hardlink staged by git so the secret enters the object store",
+ "level": "not-testable",
+ "reason_not_testable": "The commit blob and any pushed copy sit outside the output stream. A hook can only redact later output that prints the blob (covered by LEAK-1985-style O checks), so the persistence of the leaked value cannot be asserted by a hook fixture. Non-hook controls: pre-commit or CI secret scanning, rotation, and history rewrite before push.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

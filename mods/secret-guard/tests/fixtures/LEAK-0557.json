@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0557",
+ "title": "grep over the transcript store is denied; ordinary project grep stays allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep under ~/.claude/projects denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rE 'ghp_|sk_live_' ~/.claude/projects/"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain grep for token prefixes over transcripts; no literal value and no secret source path.)"
+  },
+  {
+   "kind": "pre",
+   "name": "project source grep stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn 'TODO' src/"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

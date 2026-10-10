@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0264",
+ "title": "Width-preserving redaction leaks the secret length",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "short token value redacted with constant marker (catalog's 8chr literal used as given; length equality across files not expressible)",
+   "files": {
+    "fixtures/tok-short.env": "TOKEN=FAKESECRET_8chr\n"
+   },
+   "command": "cat ./fixtures/tok-short.env",
+   "must_not_see": [
+    "FAKESECRET_8chr"
+   ],
+   "must_see": [
+    "TOKEN="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "long token value redacted with constant marker",
+   "files": {
+    "fixtures/tok-long.env": "TOKEN=FAKESECRET_40charsvaluexxxxxxxxxxxxxxxxxxxxxxxx\n"
+   },
+   "command": "cat ./fixtures/tok-long.env",
+   "must_not_see": [
+    "FAKESECRET_40charsvaluexxxxxxxxxxxxxxxxxxxxxxxx"
+   ],
+   "must_see": [
+    "TOKEN="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

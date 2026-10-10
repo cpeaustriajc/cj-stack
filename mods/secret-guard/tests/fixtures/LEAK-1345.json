@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1345",
+ "title": "base64 of value preceded by pad bytes (value starts at byte 3 of the stream)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of printf pad plus value, produced by the real pipeline",
+   "files": {
+    ".env": "\n\nRENAV_API=FAKESECRET_offapi0062\n"
+   },
+   "command": "(printf 'pad'; grep '^RENAV_API=' .env | cut -d= -f2) | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9vZmZhcGkwMDYy"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

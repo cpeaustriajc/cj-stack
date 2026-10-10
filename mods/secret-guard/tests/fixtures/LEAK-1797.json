@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1797",
+ "title": "npm test failure prints Authorization in the diff",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing npm test diff, local script stands in",
+   "files": {
+    "npm-test-sim.sh": "echo \"Expected Authorization: Bearer FAKESECRET_CLIENT_01, Received Authorization: Bearer null\"\nexit 1\n"
+   },
+   "command": "sh ./npm-test-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_CLIENT_01"
+   ],
+   "must_see": [
+    "Expected Authorization: Bearer ",
+    "Received Authorization"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

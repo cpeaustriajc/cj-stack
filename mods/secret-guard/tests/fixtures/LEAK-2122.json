@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2122",
+ "title": "Cross-session or scheduled message carrying a secret bypasses user-only assumptions",
+ "level": "not-testable",
+ "reason_not_testable": "Requires injecting cross-session or scheduled messages into UserPromptSubmit. The runner has no such injection and test-spec.md defines no prompt component. Non-hook control: sending agents must not embed secret values in messages; rotate any exposed value.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

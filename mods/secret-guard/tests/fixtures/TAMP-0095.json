@@ -1,0 +1,49 @@
+{
+ "case_id": "TAMP-0095",
+ "title": "Bash printf truncates the harvest list, then Read of .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printf truncating the harvest list is denied (path UNVERIFIED, example path used)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '' > ~/.config/renav-redactor/harvest.list"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of .env after list truncation leaks no raw value (integrity-failed marker text UNVERIFIED, so must_see empty)",
+   "files": {
+    ".env": "API_BASE=FAKESECRET_api_0005\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/work/proj/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/work/proj/.env",
+      "content": "API_BASE=FAKESECRET_api_0005\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_api_0005"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

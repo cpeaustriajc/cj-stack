@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1506",
+ "title": "Browser get_cookies returns session cookie value (catalog test_level e2e; hook logic is unit-testable, so level set to unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cookie value redacted, cookie name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleBrowser__get_cookies",
+    "tool_input": {
+     "domain": "app.example.com"
+    },
+    "tool_response": [
+     {
+      "name": "session",
+      "value": "FAKESECRET_cookie"
+     }
+    ]
+   },
+   "must_not_see": [
+    "FAKESECRET_cookie"
+   ],
+   "must_see": [
+    "session"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "get_cookies is denied by default",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__exampleBrowser__get_cookies",
+    "tool_input": {
+     "domain": "app.example.com"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain read of browser cookies with no combo; not a spec deny rule, so owner's plain-read allowance applies.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

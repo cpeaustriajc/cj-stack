@@ -1,0 +1,22 @@
+(version 1)
+(deny default)
+(allow process-exec)
+(allow process-fork)
+(allow signal (target self))
+(allow sysctl-read)
+(allow file-read-metadata)
+(allow file-read*
+  (literal "/")
+  (subpath "/bin") (subpath "/sbin") (subpath "/usr") (subpath "/System")
+  (subpath "/Library") (subpath "/private/etc") (subpath "/private/var/db")
+  (subpath "/dev") (subpath "/opt/homebrew") (subpath "/Library/Preferences")
+  (subpath (param "PYFW"))
+  (subpath (param "HOOKS"))
+  (subpath (param "TMP")))
+(allow file-write*
+  (subpath (param "TMP")))
+(allow file-write-data
+  (regex #"^/dev/fd/[0-9]+$") (literal "/dev/null") (literal "/dev/tty") (literal "/dev/dtracehelper"))
+(allow file-ioctl)
+(allow pseudo-tty)
+(deny network*)

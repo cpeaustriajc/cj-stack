@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0597",
+ "title": "pprof cmdline on localhost shows preshared key flag (NUL separators kept)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "NUL-separated argv flag value redacted at source",
+   "files": {
+    "pprof-cmdline.bin": "spicedb\u0000serve\u0000--grpc-preshared-key=FAKESECRET_pk61\u0000"
+   },
+   "command": "cat pprof-cmdline.bin",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pk61"
+   ],
+   "must_see": [
+    "spicedb",
+    "serve",
+    "--grpc-preshared-key=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "pprof cmdline Bash stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://localhost:9090/debug/pprof/cmdline"
+    },
+    "tool_response": {
+     "stdout": "spicedb\u0000serve\u0000--grpc-preshared-key=FAKESECRET_pk61\u0000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pk61"
+   ],
+   "must_see": [
+    "--grpc-preshared-key=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

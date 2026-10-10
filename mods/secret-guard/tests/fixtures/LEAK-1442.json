@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1442",
+ "title": "Read .ipynb: plain secret in a stream output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "notebook stream output with DATABASE_PASSWORD",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/check.ipynb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/check.ipynb",
+      "content": "{\"cells\":[{\"cell_type\":\"code\",\"execution_count\":1,\"metadata\":{},\"outputs\":[{\"name\":\"stdout\",\"output_type\":\"stream\",\"text\":[\"DATABASE_PASSWORD=FAKESECRET_pw1\\n\",\"done\\n\"]}],\"source\":[\"print('x')\"]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=",
+    "done"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

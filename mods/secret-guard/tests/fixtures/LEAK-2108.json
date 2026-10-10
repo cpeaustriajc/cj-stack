@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-2108",
+ "title": "Malformed hook JSON or schema-invalid hookSpecificOutput fails open as a non-blocking error",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real hooks: Bash cat of secret file; secret absent from every recorded tool_response and reply (hook-error notice not expressible in runner)",
+   "files": {
+    "fixtures/token.txt": "token=FAKESECRET_jx2\n"
+   },
+   "prompt": "Run `cat fixtures/token.txt` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_jx2"
+   ],
+   "must_see": [
+    "token="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Bash stdout redaction: hook must emit one valid JSON object containing the replacement",
+   "files": {
+    "fixtures/token.txt": "token=FAKESECRET_jx2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixtures/token.txt"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_jx2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_jx2"
+   ],
+   "must_see": [
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

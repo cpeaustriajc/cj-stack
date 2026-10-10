@@ -1,0 +1,66 @@
+{
+ "case_id": "LEAK-0013",
+ "title": "git checkout -- file re-runs a smudge filter that writes plaintext to disk [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of a smudge-decrypted secrets.yml is redacted",
+   "files": {
+    "config/secrets.yml": "token: FAKESECRET_SMUDGE_004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "config/secrets.yml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "config/secrets.yml",
+      "content": "token: FAKESECRET_SMUDGE_004\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SMUDGE_004"
+   ],
+   "must_see": [
+    "token:",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Grep hit on the smudged value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "config/secrets.yml:1:token: FAKESECRET_SMUDGE_004",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SMUDGE_004"
+   ],
+   "must_see": [
+    "config/secrets.yml:1:token:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

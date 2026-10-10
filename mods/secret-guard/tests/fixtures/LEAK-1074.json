@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1074",
+ "title": "Bash xxd -p .env | tr -d newline: hex dump of file holding harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xxd -p of .env is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_77aa\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .env | tr -d '\\n'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

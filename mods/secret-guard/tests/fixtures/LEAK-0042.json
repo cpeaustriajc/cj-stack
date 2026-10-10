@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0042",
+ "title": "git commit message carries Slack token then push",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "commit and push whose message has xoxb- literal is denied as a whole",
+   "files": {
+    "~/Projects/app/.env": "SLACK_BOT_TOKEN=xoxb-FAKESECRET15\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m \"fix: use key xoxb-FAKESECRET15 for the bot\" && git push origin HEAD"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "control: commit and push with no literal stays allowed",
+   "files": {
+    "~/Projects/app/.env": "SLACK_BOT_TOKEN=xoxb-FAKESECRET15\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m \"fix: rotate bot key\" && git push origin HEAD"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1854",
+ "title": "Model repeats a recalled key in its final prose reply (no hook can prevent it)",
+ "level": "not-testable",
+ "reason_not_testable": "No tool runs, so PreToolUse and PostToolUse never fire on the model's final prose. Per the hooks docs cited in the catalog, Stop receives last_assistant_message only after the reply is produced, and MessageDisplay changes only displayed text while the transcript keeps the original. Prevention is not hookable; only Stop-time detection could be asserted, and that is not a fixture kind. Non-hook control: rotate any key that appears in output and add a Stop-hook detector that alerts without claiming prevention.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

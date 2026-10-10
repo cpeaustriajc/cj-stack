@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1849",
+ "title": "Remote host runs ssh-add through forwarded agent",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh devbox with no forwarding flag in the call stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh devbox 'ssh-add -l; echo $SSH_AUTH_SOCK'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "e2e",
+   "name": "simulated remote ssh-add -l output reaches the model unaltered",
+   "files": {
+    "remote-sim.sh": "printf '256 SHA256:FAKESECRET_fp user@laptop (ED25519)\\n/tmp/ssh-FAKE/agent.1234\\n'\n"
+   },
+   "prompt": "Run exactly one Bash command: sh remote-sim.sh . Print its output verbatim in your reply. Do not run any other command.",
+   "allowed_tools": "Bash",
+   "must_not_see": [],
+   "must_see": [
+    "256 SHA256:FAKESECRET_fp user@laptop (ED25519)",
+    "/tmp/ssh-FAKE/agent.1234"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

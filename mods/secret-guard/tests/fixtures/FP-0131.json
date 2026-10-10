@@ -1,0 +1,25 @@
+{
+ "case_id": "FP-0131",
+ "title": "grep for KEY or TOKEN returns innocuous lines (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -Ein KEY|TOKEN keeps innocuous lines",
+   "files": {
+    "src/app.py": "MONKEY_COUNT=3\nmax_tokens=4096\nprimary_key_column=id\n",
+    "config/app.yml": "TOKEN_LIMIT: 512\ntokenizer: bpe\nkeyboard_layout=us\nAUTHOR=cj\n"
+   },
+   "command": "grep -Ein 'KEY|TOKEN' src/app.py config/app.yml",
+   "must_see": [
+    "MONKEY_COUNT=3",
+    "max_tokens=4096",
+    "primary_key_column=id",
+    "TOKEN_LIMIT: 512",
+    "tokenizer: bpe",
+    "keyboard_layout=us"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

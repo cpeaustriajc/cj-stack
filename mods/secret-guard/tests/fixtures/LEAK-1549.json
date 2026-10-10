@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1549",
+ "title": "Plugin SessionStart hook runs env grep and cats .env",
+ "level": "not-testable",
+ "reason_not_testable": "Plugin SessionStart hooks run at load time, outside the three hook components. The expected outcome is a lint of plugin hooks.json before install, which has no fixture kind. Non-hook control: that lint, run before install.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

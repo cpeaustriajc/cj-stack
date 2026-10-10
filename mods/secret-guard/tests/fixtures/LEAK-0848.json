@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0848",
+ "title": "docker inspect redirected to a file, then Read of that file must be rewritten",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response of env.json containing STRIPE_SECRET_KEY",
+   "files": {
+    "env.json": "[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\",\"PORT=3000\"]\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/env.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/env.json",
+      "content": "[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\",\"PORT=3000\"]\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_FAKE02"
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]",
+    "NODE_ENV=production",
+    "PORT=3000"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "copy env template to env.json then Read it",
+   "files": {
+    "env-template.json": "[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\",\"PORT=3000\"]\n"
+   },
+   "prompt": "Run Bash: cp env-template.json env.json. Then use the Read tool on env.json and return its content verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

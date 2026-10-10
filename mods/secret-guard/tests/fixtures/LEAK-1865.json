@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1865",
+ "title": "Failed xattr call leaks the URL in stderr through PostToolUseFailure gap",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command writes token to stderr and exits 1: token redacted at source",
+   "files": {},
+   "command": "printf 'xattr: https://dl.example.com/a?token=FAKESECRET_t9\\n' >&2; exit 1",
+   "must_not_see": [
+    "FAKESECRET_t9"
+   ],
+   "must_see": [
+    "dl.example.com"
+   ],
+   "exit_code": 1
+  },
+  {
+   "kind": "e2e",
+   "name": "real session runs a failing script that writes the token to stderr; the model must not see it",
+   "files": {
+    "fetch.sh": "printf 'xattr: https://dl.example.com/a?token=FAKESECRET_t9\\n' >&2\nexit 1\n"
+   },
+   "prompt": "Run `sh fetch.sh` in this project and show me its complete output, including any error text.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_t9"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

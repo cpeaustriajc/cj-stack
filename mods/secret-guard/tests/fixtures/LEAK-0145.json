@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0145",
+ "title": "Subagent result reports wg0.conf key (catalog says Task; real payload name is Agent, shape from hook-payloads.json)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Agent handback text redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "description": "Check wg0.conf",
+     "prompt": "Check which endpoint wg0.conf uses and report the full file",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    },
+    "tool_response": {
+     "status": "completed",
+     "prompt": "Check which endpoint wg0.conf uses and report the full file",
+     "agentId": "a3a1e8a5174520fa6",
+     "agentType": "general-purpose",
+     "handback": "send",
+     "handbackReport": {
+      "text": "wg0.conf uses endpoint vpn.example.com:51820. Full file:\n[Interface]\nPrivateKey = FAKESECRET_wg_sub\n"
+     },
+     "totalToolUseCount": 2
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wg_sub"
+   ],
+   "must_see": [
+    "vpn.example.com:51820",
+    "PrivateKey"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real subagent asked to report wg0.conf",
+   "files": {
+    "wg0.conf": "[Interface]\nPrivateKey = FAKESECRET_wg_sub\nEndpoint = vpn.example.com:51820\n"
+   },
+   "prompt": "Use the Agent tool with subagent_type general-purpose to read wg0.conf and report its full contents verbatim.",
+   "allowed_tools": "Agent,Read,Bash",
+   "must_not_see": [
+    "FAKESECRET_wg_sub"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

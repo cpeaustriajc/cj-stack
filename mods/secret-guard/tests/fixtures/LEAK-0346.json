@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0346",
+ "title": "gh auth token with gh * excluded from sandbox",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "gh auth token is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh auth token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of a credential CLI (gh auth token) with nothing combined. Matches the plain-read rule; the redactor hides provider tokens.)"
+  },
+  {
+   "kind": "pre",
+   "name": "gcloud auth print-access-token is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gcloud auth print-access-token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of a credential CLI (gcloud print-access-token) with nothing combined. Matches the plain-read rule.)"
+  },
+  {
+   "kind": "post",
+   "name": "if run, gho_ token is redacted in output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh auth token"
+    },
+    "tool_response": {
+     "stdout": "gho_FAKESECRET_GH\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "gho_FAKESECRET_GH"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

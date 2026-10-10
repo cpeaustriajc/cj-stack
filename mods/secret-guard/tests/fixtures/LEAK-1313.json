@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1313",
+ "title": "Read of ~/.zshrc with exported proxy credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Userinfo password in exported proxy line of ~/.zshrc is redacted (path blocking is policy, not asserted)",
+   "files": {
+    ".zshrc": "export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_zshrc0037@proxy.corp.example:8080\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.zshrc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.zshrc",
+      "content": "export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_zshrc0037@proxy.corp.example:8080\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_fake_1313"
+   },
+   "must_not_see": [
+    "FAKESECRET_zshrc0037"
+   ],
+   "must_see": [
+    "export HTTPS_PROXY=http://FAKEUSER:",
+    "@proxy.corp.example:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

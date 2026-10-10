@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0634",
+ "title": "ssh docker inspect with Env array in a full JSON array (Dokploy/Swarm shape)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "BETTER_AUTH_SECRET value redacted inside the quoted Env string; other Env entries kept",
+   "files": {
+    "inspect.json": "[\n  {\n    \"Id\": \"3f1c9a0b7d2e4f58a1b6c9d0\",\n    \"Name\": \"/renav-web\",\n    \"State\": {\"Status\": \"running\"},\n    \"Config\": {\n      \"Image\": \"renav-web:latest\",\n      \"Env\": [\"NODE_ENV=production\", \"BETTER_AUTH_SECRET=FAKESECRET_auth_9f8e\", \"PATH=/usr/bin\"],\n      \"Cmd\": [\"node\", \"server.js\"]\n    }\n  }\n]\n"
+   },
+   "command": "ssh() { cat inspect.json; }; ssh swarm-host docker inspect renav-web",
+   "must_not_see": [
+    "FAKESECRET_auth_9f8e"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "PATH=/usr/bin",
+    "BETTER_AUTH_SECRET=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

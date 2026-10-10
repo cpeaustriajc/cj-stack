@@ -1,0 +1,43 @@
+{
+ "case_id": "FP-0008",
+ "title": "False positive: source grep for the word KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "source grep lines pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn \"KEY\" src/"
+    },
+    "tool_response": {
+     "stdout": "src/auth.ts:12:const API_KEY_HEADER = \"x-api-key\";\nsrc/db.ts:3:  password: process.env.DB_PASSWORD,\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "src/auth.ts:12:const API_KEY_HEADER",
+    "src/db.ts:3:  password: process.env.DB_PASSWORD,"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "source grep for KEY stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn \"KEY\" src/"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

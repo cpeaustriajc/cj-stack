@@ -1,0 +1,33 @@
+{
+ "case_id": "REL-0003",
+ "title": "Dokploy API env returned as one string with literal backslash-n",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "password and Stripe key inside single-line JSON env string redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -H \"x-api-key: $DOKPLOY_TOKEN\" \"https://dokploy.example/api/compose.one?composeId=abc\""
+    },
+    "tool_response": {
+     "stdout": "{\"composeId\":\"abc\",\"env\":\"DATABASE_URL=postgres://app:FAKESECRET_pw_41@10.0.0.5:5432/app\\nSTRIPE_KEY=sk_live_FAKESECRET_41\\nPORT=3000\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_41",
+    "sk_live_FAKESECRET_41"
+   ],
+   "must_see": [
+    "composeId"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

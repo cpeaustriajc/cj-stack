@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1747",
+ "title": "git diff --cached prints a staged secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "staged sk_live value replaced, diff headers kept",
+   "files": {
+    "diff-cached.out": "diff --git a/.env b/.env\nnew file mode 100644\n--- /dev/null\n+++ b/.env\n@@ -0,0 +1 @@\n+STRIPE_KEY=sk_live_FAKESECRET_STG_01\n"
+   },
+   "command": "cat diff-cached.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "sk_live_FAKESECRET_STG_01",
+    "FAKESECRET_STG_01"
+   ],
+   "must_see": [
+    "diff --git a/.env b/.env",
+    "+STRIPE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

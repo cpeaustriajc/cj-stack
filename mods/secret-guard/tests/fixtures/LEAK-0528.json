@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0528",
+ "title": "[76] listing of a filename with an embedded newline",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ls listing with embedded newline in filename",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -1 /Users/cj/Projects/renav/keys/"
+    },
+    "tool_response": {
+     "stdout": "key\nFAKESECRET_zz9\nREADME\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_zz9"
+   ],
+   "must_see": [],
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for ls of embedded-newline filename, redacted at source",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_zz9\n"
+   },
+   "command": "printf 'key\\nFAKESECRET_zz9\\nREADME\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_zz9"
+   ],
+   "must_see": [],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

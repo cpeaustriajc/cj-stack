@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-2030",
+ "title": "Agent copies a secret with pbcopy and a clipboard manager records it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pbcopy of a secret-pattern value is denied",
+   "files": {
+    ".env": "SERVICE_API_KEY=FAKESECRET_pq000111"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_pq000111' | pbcopy"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R5: bare value planted in harvested .env so the known-value layer identifies it; deny kept under R3 (secret literal written to clipboard, a persistent store, with no output shown)."
+  },
+  {
+   "kind": "pre",
+   "name": "pbcopy of ordinary text stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'hello world' | pbcopy"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "pbpaste output carrying a secret is redacted",
+   "files": {
+    ".env": "SERVICE_API_KEY=FAKESECRET_pq000111"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pq000111\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pq000111"
+   ],
+   "must_see": [],
+   "policy_note": "R5: bare value planted in harvested .env so the known-value layer redacts it from the pbpaste output."
+  }
+ ]
+}

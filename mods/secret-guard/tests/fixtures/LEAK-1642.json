@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1642",
+ "title": "Bash read of /proc/<pid>/environ via pgrep chain or /proc/self (plus pgrep alone allowed)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat /proc/<pid>/environ via pgrep chain",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /proc/$(pgrep -f my-api)/environ | tr '\\0' '\\n'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: cat of /proc environ is a plain read and allowed for every source; the output is redacted by the *_KEY name rule. tr is a character translation not listed in item 4, so R2 does not deny. Boundary flag for owner on tr."
+  },
+  {
+   "kind": "pre",
+   "name": "tr over /proc/self/environ",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tr '\\0' '\\n' < /proc/self/environ"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: plain read of /proc/self/environ is allowed for every source; the output is redacted by the name rule. tr is a character translation not listed in item 4, so R2 does not deny. Boundary flag for owner on tr."
+  },
+  {
+   "kind": "pre",
+   "name": "pgrep alone stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pgrep -f my-api"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

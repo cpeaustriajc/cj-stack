@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2093",
+ "title": "Bundler config prints a gem-server token inside a URL userinfo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bundle config: password in URL userinfo redacted, host kept",
+   "files": {
+    ".bundle/config": "BUNDLE_GEMS__EXAMPLE__IO: \"https://fakeuser:FAKESECRET_bundle_F6@gems.example.io\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bundle config"
+    },
+    "tool_response": {
+     "stdout": "BUNDLE_GEMS__EXAMPLE__IO: \"https://fakeuser:FAKESECRET_bundle_F6@gems.example.io\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bundle_F6"
+   ],
+   "must_see": [
+    "gems.example.io",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

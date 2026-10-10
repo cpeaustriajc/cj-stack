@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0185",
+ "title": "Read of terraform.tfstate",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tfstate password attribute redacted",
+   "files": {
+    "infra/terraform.tfstate": "{\"resources\":[{\"type\":\"aws_db_instance\",\"instances\":[{\"attributes\":{\"password\":\"FAKESECRET_tf_24\"}}]}]}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "infra/terraform.tfstate"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "infra/terraform.tfstate",
+      "content": "{\"resources\":[{\"type\":\"aws_db_instance\",\"instances\":[{\"attributes\":{\"password\":\"FAKESECRET_tf_24\"}}]}]}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tf_24"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

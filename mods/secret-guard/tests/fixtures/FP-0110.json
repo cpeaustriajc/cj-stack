@@ -1,0 +1,35 @@
+{
+ "case_id": "FP-0110",
+ "title": "Read of source code that names a secret env var (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Source names STRIPE_SECRET_KEY and a Bearer template with no literal value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/fixture/project/src/auth.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/fixture/project/src/auth.ts",
+      "content": "const key = process.env.STRIPE_SECRET_KEY;\nheaders = { Authorization: 'Bearer ${token}' };\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const key = process.env.STRIPE_SECRET_KEY;",
+    "Authorization: 'Bearer ${token}'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

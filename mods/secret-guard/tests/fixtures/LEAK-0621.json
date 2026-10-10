@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0621",
+ "title": "plutil -p arrow form: value redacted keyed on name, other lines byte-identical (post with simulated plutil output, since plutil is macOS only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plutil -p plist with DATABASE_PASSWORD arrow line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -p com.cj.fakeworker.plist"
+    },
+    "tool_response": {
+     "stdout": "{\n  \"DATABASE_PASSWORD\" => \"FAKESECRET_pw_plist_001\"\n  \"PATH\" => \"/usr/bin:/bin\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_plist_001"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD",
+    "=> ",
+    "[REDACTED]",
+    "/usr/bin:/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

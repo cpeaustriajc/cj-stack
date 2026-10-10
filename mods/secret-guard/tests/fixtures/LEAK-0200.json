@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0200",
+ "title": "Read of prod.auto.tfvars",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tfvars db_password replaced, region kept",
+   "files": {
+    "infra/prod.auto.tfvars": "region = \"us-east-1\"\ndb_password = \"FAKESECRET_tfvars_34\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "infra/prod.auto.tfvars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "infra/prod.auto.tfvars",
+      "content": "region = \"us-east-1\"\ndb_password = \"FAKESECRET_tfvars_34\"\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tfvars_34"
+   ],
+   "must_see": [
+    "us-east-1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

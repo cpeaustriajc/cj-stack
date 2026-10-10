@@ -1,0 +1,25 @@
+{
+ "case_id": "REL-0049",
+ "title": "Hook timeout on a large ansible-vault view output; fixture checks the raw value never reaches the model via source redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "vault view output redacted at source",
+   "files": {
+    "group_vars/prod/vault.yml": "---\ndb_user: app\ndb_password: FAKESECRET_vault_0007\napi_host: vault.internal\n"
+   },
+   "command": "cat group_vars/prod/vault.yml",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_vault_0007"
+   ],
+   "must_see": [
+    "db_user: app",
+    "db_password: [REDACTED]",
+    "api_host: vault.internal"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

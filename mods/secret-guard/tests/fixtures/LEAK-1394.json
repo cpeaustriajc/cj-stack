@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1394",
+ "title": "Bash tool_response replaced with a plain string instead of the Bash object",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout DB_PASSWORD keeps the Bash object keys",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DB_PASSWORD=FAKESECRET_pw3\\n'"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw3"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Bash stdout holds a DSN with a password",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DSN=postgres://app:FAKESECRET_pw@db.internal/x\\n'"
+    },
+    "tool_response": {
+     "stdout": "DSN=postgres://app:FAKESECRET_pw@db.internal/x\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw@db.internal"
+   ],
+   "must_see": [
+    "db.internal",
+    "stdout"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

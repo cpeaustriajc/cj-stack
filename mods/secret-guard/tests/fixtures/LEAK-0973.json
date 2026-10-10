@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0973",
+ "title": "sed-spaced substitution of a secret variable is denied by the guard",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "command substitution piping a secret variable through sed is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"API_TOKEN := $(echo $API_TOKEN | sed 's/./& /g')\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed on a non-secret variable stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo $HOME | sed 's/./& /g'"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1844",
+ "title": "git grep over all revisions with head truncation",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git grep rev-list piped to head prints a live key line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git grep -n 'sk_live' $(git rev-list --all) | head"
+    },
+    "tool_response": {
+     "stdout": "9d07a1d3aa11bb22cc33dd44ee55ff6677889900:config/payments.ts:4:export const KEY = \"sk_live_FAKESECRET_0006\";\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_0006"
+   ],
+   "must_see": [
+    "9d07a1d3aa11bb22cc33dd44ee55ff6677889900:config/payments.ts:4:export const KEY = "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

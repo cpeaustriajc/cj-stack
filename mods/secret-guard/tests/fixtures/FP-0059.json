@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0059",
+ "title": "False positive: TOKEN_LIMIT=500 in a config file (Read)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "TOKEN_LIMIT=500 must survive",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/config/limits.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/config/limits.env",
+      "content": "TOKEN_LIMIT=500\nMAX_RETRIES=3\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_see": [
+    "TOKEN_LIMIT=500"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

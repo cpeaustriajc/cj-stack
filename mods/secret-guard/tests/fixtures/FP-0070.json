@@ -1,0 +1,49 @@
+{
+ "case_id": "FP-0070",
+ "title": "False positive: directory listing withheld because an optional harvest file is absent",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ls -la of the project with .envrc and .env.local absent: full listing shown",
+   "files": {
+    "Makefile": "all:\n\t@echo build\n",
+    "README.md": "# renav\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la /Users/cj/Projects/renav"
+    },
+    "tool_response": {
+     "stdout": "total 40\ndrwxr-xr-x  12 cj  staff  384 Oct 10 09:12 .\n-rw-r--r--   1 cj  staff  212 Oct 10 09:00 Makefile\n-rw-r--r--   1 cj  staff   41 Oct  9 17:40 README.md\ndrwxr-xr-x   4 cj  staff  128 Oct  9 18:01 infra\ndrwxr-xr-x   6 cj  staff  192 Oct  9 18:01 src\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Makefile",
+    "README.md",
+    "infra",
+    "src"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ls -la of the project stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la /Users/cj/Projects/renav"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

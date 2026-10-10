@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0226",
+ "title": "ls -l on two secret files reveals size, mode and owner",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ls -l on .dev.vars and .env.production is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -l .dev.vars .env.production"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "ls -l lines pass unchanged with paths intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -l .dev.vars .env.production"
+    },
+    "tool_response": {
+     "stdout": "-rw-------  1 cj  staff   42 Oct 10 12:00 .dev.vars\n-rw-------  1 cj  staff  118 Oct 10 12:00 .env.production\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    ".dev.vars",
+    ".env.production",
+    "118"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ls -l on a normal README stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -l README.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

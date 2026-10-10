@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0044",
+ "title": "WebFetch URL api_key query parameter with recalled key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "WebFetch URL with non-empty api_key query parameter is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://api.example.com/v1/status?api_key=FAKESECRET_key_17",
+     "prompt": "summarize"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "control: WebFetch of same URL without key parameter stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://api.example.com/v1/status",
+     "prompt": "summarize"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

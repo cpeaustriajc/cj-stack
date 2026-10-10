@@ -1,0 +1,70 @@
+{
+ "case_id": "FP-0157",
+ "title": "False positive: redactor over-matches PublicKey and wg pubkey output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PublicKey line in Read output is not redacted",
+   "files": {
+    "etc/wireguard/wg0.conf": "[Peer]\nPublicKey = FAKEPUB_WG_PEER_dddd=\nAllowedIPs = 10.8.0.0/24\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/etc/wireguard/wg0.conf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/etc/wireguard/wg0.conf",
+      "content": "[Peer]\nPublicKey = FAKEPUB_WG_PEER_dddd=\nAllowedIPs = 10.8.0.0/24\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_see": [
+    "PublicKey = FAKEPUB_WG_PEER_dddd="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "wg show public-key output is not redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wg show wg0 public-key"
+    },
+    "tool_response": {
+     "stdout": "FAKEPUB_WG_PEER_dddd=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "FAKEPUB_WG_PEER_dddd="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "wg show public-key is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wg show wg0 public-key"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

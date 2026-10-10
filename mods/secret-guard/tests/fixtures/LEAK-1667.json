@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1667",
+ "title": "Read of Slack Electron Local Storage LevelDB log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of Slack Local Storage leveldb log is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Library/Application Support/Slack/Local Storage/leveldb/000003.log"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Slack leveldb log; owner allows Read on secret files, no transform.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

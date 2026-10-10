@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0622",
+ "title": "plutil xml1 splits key and value across lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plutil xml1 DATABASE_PASSWORD value on its own line is redacted, PATH pair unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -convert xml1 -o - fixture.plist"
+    },
+    "tool_response": {
+     "stdout": "<dict>\n  <key>DATABASE_PASSWORD</key>\n  <string>FAKESECRET_pw_plist_002</string>\n  <key>PATH</key>\n  <string>/usr/bin:/bin</string>\n</dict>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_plist_002"
+   ],
+   "must_see": [
+    "<key>DATABASE_PASSWORD</key>",
+    "<string>[REDACTED]</string>",
+    "<key>PATH</key>",
+    "<string>/usr/bin:/bin</string>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

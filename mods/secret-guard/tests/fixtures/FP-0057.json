@@ -1,0 +1,43 @@
+{
+ "case_id": "FP-0057",
+ "title": "False positive: NODE_ENV and PORT printed by Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env-grep-node-env-port",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -E '^(NODE_ENV|PORT)='"
+    },
+    "tool_response": {
+     "stdout": "NODE_ENV=production\nPORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "NODE_ENV=production",
+    "PORT=3000"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf-node-env-port",
+   "files": {},
+   "command": "printf 'NODE_ENV=production\\nPORT=3000\\n'",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "NODE_ENV=production",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

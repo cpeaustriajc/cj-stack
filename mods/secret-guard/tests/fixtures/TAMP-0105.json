@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0105",
+ "title": "Managed-level redactor still runs while user settings disable hooks",
+ "level": "not-testable",
+ "reason_not_testable": "The managed settings path is UNVERIFIED for v2.1.296 (test-spec.md gives no path), so a fixture cannot place a managed-level redactor in the temp HOME or project without guessing. Non-hook control: confirm the managed-settings location from the Claude Code docs and check that the managed config defines the PostToolUse redactor and does not allow disableAllHooks, then add an e2e fixture.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

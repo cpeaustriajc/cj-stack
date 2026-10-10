@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1419",
+ "title": "Bash: jq select then rev on a docker inspect Env line (reversed name and value)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies docker inspect pipeline ending in rev",
+   "files": {
+    "notes.txt": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh swarm-mgr 'docker inspect app' | jq -r '.[0].Config.Env[]|select(test(\"PASSWORD\"))' | rev"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "reversed PASSWORD name and reversed value are withheld in output",
+   "files": {
+    "notes.txt": "DB_PASSWORD=FAKESECRET_zz9\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh swarm-mgr 'docker inspect app' | jq -r '.[0].Config.Env[]|select(test(\"PASSWORD\"))' | rev"
+    },
+    "tool_response": {
+     "stdout": "9zz_TERCESEKAF=DROWSSAP_BD\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "9zz_TERCESEKAF",
+    "DROWSSAP_BD"
+   ],
+   "must_see": [],
+   "policy_note": "R5 (owner instruction): planted FAKESECRET_zz9 as SERVICE_TOKEN in harvested .env so the value has a file signal (notes.txt is not harvested and is kept). Only this post fixture changed."
+  }
+ ]
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0511",
+ "title": "[61] Read of .Env on a case-sensitive APFS volume",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read /Volumes/Work/proj/.Env : API_KEY value redacted (catalog test_level is e2e; modelled as unit because value redaction does not need a session or a case-sensitive volume)",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Volumes/Work/proj/.Env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Volumes/Work/proj/.Env",
+      "content": "API_KEY=FAKESECRET_cs61\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cs61"
+   ],
+   "must_see": [
+    "API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

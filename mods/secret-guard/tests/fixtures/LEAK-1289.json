@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1289",
+ "title": "apiKeyHelper failure path writes secret to stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "edit-settings-apikeyhelper-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.claude/settings.json",
+     "old_string": "{}",
+     "new_string": "\"apiKeyHelper\": \"sh -c 'echo FAKESECRET_helperr0017 >&2; exit 1'\""
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

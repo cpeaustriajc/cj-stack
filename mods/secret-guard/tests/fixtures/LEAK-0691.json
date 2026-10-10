@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0691",
+ "title": "WebFetch URL with userinfo password stays in tool_input",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "WebFetch 503 response clean and unchanged; URL password stays in tool_input (catalog expected outcome; no must_not_see because the response never holds the secret)",
+   "files": {
+    ".env": "CI_DEPLOY_PASSWORD=FAKESECRET_pw_77\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://deploy:FAKESECRET_pw_77@ci.example.com/status",
+     "prompt": "summarize"
+    },
+    "tool_response": {
+     "bytes": 0,
+     "code": 503,
+     "codeText": "Service Unavailable",
+     "result": "upstream unavailable",
+     "durationMs": 120,
+     "url": "https://ci.example.com/status"
+    }
+   },
+   "must_see": [
+    "upstream unavailable",
+    "Service Unavailable"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "WebFetch URL with userinfo password: guard denies the fetch (catalog mitigation; PostToolUse cannot rewrite tool_input, so the leak is only killable on the PreToolUse side)",
+   "files": {
+    ".env": "CI_DEPLOY_PASSWORD=FAKESECRET_pw_77\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://deploy:FAKESECRET_pw_77@ci.example.com/status",
+     "prompt": "summarize"
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

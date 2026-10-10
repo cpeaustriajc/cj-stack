@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1255",
+ "title": "scp of a remote .dev.vars file into the project tmp directory",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "scp of .dev.vars (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp prod:/srv/app/.dev.vars /Users/cj/Projects/renav/tmp/"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "scp of an ordinary remote file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp prod:/srv/app/README.md /Users/cj/Projects/renav/tmp/"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the copied .dev.vars is redacted if it exists",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/tmp/.dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/tmp/.dev.vars",
+      "content": "API_KEY=FAKESECRET_a21\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a21"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

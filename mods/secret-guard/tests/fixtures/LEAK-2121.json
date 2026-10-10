@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2121",
+ "title": "Pasted-content wrapper lines break an anchored secret pattern (false negative)",
+ "level": "not-testable",
+ "reason_not_testable": "Requires a UserPromptSubmit detector and an expanded pasted_content prompt. Neither is defined in test-spec.md, and the runner cannot feed prompt wrapper lines. Non-hook control: do not paste credentials; rotate any exposed value.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

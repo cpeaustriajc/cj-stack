@@ -1,0 +1,6 @@
+#!/bin/bash
+case "$*" in
+  *"configure get"*) head -1 "$RT_DATA/aws_creds.txt" | sed 's/^[^=]*=//';;
+  *secretsmanager*|*ssm*) cat "$RT_DATA/aws_secret.json";;
+  *) cat "$RT_DATA/aws_sts.json";;
+esac

@@ -1,0 +1,83 @@
+{
+ "case_id": "FP-0172",
+ "title": "Key-name presence checks and display greps stay allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "count a key name",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEq8Zr2mV9xKp4Lw7NtY3bHc\nDB_PASSWORD=FAKEhunter2Wq9zP\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c '^DB_PASSWORD' .env"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "test a key name without anchor",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEq8Zr2mV9xKp4Lw7NtY3bHc\nDB_PASSWORD=FAKEhunter2Wq9zP\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q STRIPE_SECRET_KEY .env && echo set"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "key name with trailing equals",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEq8Zr2mV9xKp4Lw7NtY3bHc\nDB_PASSWORD=FAKEhunter2Wq9zP\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c 'APP_NAME=' .env"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "display grep is redacted, not denied",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEq8Zr2mV9xKp4Lw7NtY3bHc\nDB_PASSWORD=FAKEhunter2Wq9zP\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep hunter2 .env"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "count in a non-secret file",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=sk_live_FAKEq8Zr2mV9xKp4Lw7NtY3bHc\nDB_PASSWORD=FAKEhunter2Wq9zP\nAPP_NAME=renav\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c hunter2 src/notes.txt"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0130",
+ "title": "Non-secret numeric values under secret-ish names (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read .env.example keeps numeric and short values",
+   "files": {
+    ".env.example": "TOKEN_LIMIT=4096\nKEYBOARD_LAYOUT=us\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".env.example"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".env.example",
+      "content": "TOKEN_LIMIT=4096\nKEYBOARD_LAYOUT=us\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    },
+    "tool_use_id": "toolu_fp0130"
+   },
+   "must_see": [
+    "TOKEN_LIMIT=4096",
+    "KEYBOARD_LAYOUT=us"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

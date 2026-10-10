@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0495",
+ "title": "bash -x trace with DB_PASSWORD written to a temp log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "bash -x with stderr redirected to a temp file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "DB_PASSWORD=FAKESECRET_mg47 bash -x ./scripts/migrate.sh 2> \"$TMPDIR/migrate.log\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of trace log: DB_PASSWORD value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "$TMPDIR/migrate.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "$TMPDIR/migrate.log",
+      "content": "+ export DB_PASSWORD=FAKESECRET_mg47",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mg47"
+   ],
+   "must_see": [
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

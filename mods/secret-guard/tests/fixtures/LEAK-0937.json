@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0937",
+ "title": "hf_ token in a Python stderr traceback is redacted and exit 1 stays visible",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "hf_ token raised as SystemExit message",
+   "files": {},
+   "command": "python3 -c \"raise SystemExit('auth failed: hf_FAKESECRET0123456789abcdefABCDEFGH')\"",
+   "must_not_see": [
+    "hf_FAKESECRET0123456789abcdefABCDEFGH"
+   ],
+   "must_see": [
+    "auth failed: [REDACTED]"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

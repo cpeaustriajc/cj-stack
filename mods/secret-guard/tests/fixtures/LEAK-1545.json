@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1545",
+ "title": "Project-root CLAUDE.md re-injected after /compact",
+ "level": "not-testable",
+ "reason_not_testable": "The harness re-injects project-root CLAUDE.md after /compact, which is not a tool_response, and the fixture format cannot drive /compact. The expected outcome is a lint of project-root CLAUDE.md. Non-hook control: pre-launch lint.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

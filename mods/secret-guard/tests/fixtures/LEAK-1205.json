@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1205",
+ "title": "salt cmd.run cat of an env file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "API_KEY value replaced in each minion block",
+   "files": {},
+   "command": "printf '%s\\n' 'minion1:' '    API_KEY=FAKESECRET_a5' 'minion2:' '    API_KEY=FAKESECRET_a6'",
+   "must_not_see": [
+    "FAKESECRET_a5",
+    "FAKESECRET_a6"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

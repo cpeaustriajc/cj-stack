@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0278",
+ "title": "additionalContext note used in place of redaction on the prompt channel",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0277"
+}

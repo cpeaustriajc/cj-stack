@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0516",
+ "title": "[65a] Read of QuickLook thumbnails.data binary blob",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of thumbnails.data under thumbnailcache with offset and limit denied (catalog: P; pixels not text-matchable)",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/Library/Caches/<user>/com.apple.QuickLook.thumbnailcache/thumbnails.data",
+     "offset": 1000,
+     "limit": 4096
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read with offset and limit on a cache file; slicing needs a secret source, which is absent.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

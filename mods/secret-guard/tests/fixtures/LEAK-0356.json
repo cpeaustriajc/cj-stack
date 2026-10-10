@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-0356",
+ "title": "K9 secret revealed in chunks across two Bash calls",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "first cut chunk withheld; FAKESEC contains FAKE",
+   "files": {
+    "~/.fake-keychain/example-svc": "FAKESECRET_kc_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"example-svc\" -w | cut -c1-6"
+    },
+    "tool_response": {
+     "stdout": "FAKESEC\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESEC"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "second cut chunk withheld (per call, not accumulated); RET_kc_1 is a substring of FAKESECRET_kc_1 in this fixture's temp home file",
+   "files": {
+    "~/.fake-keychain/example-svc": "FAKESECRET_kc_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"example-svc\" -w | cut -c7-"
+    },
+    "tool_response": {
+     "stdout": "RET_kc_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RET_kc_1"
+   ]
+  }
+ ]
+}

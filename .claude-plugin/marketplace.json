@@ -112,6 +112,12 @@
       "source": "./mods/hone-nudge",
       "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run.",
       "category": "productivity"
+    },
+    {
+      "name": "secret-guard",
+      "source": "./mods/secret-guard",
+      "description": "Keeps secret values out of Claude's context: redacts tool output, filters Bash streams, and denies commands that would encode, test or exfiltrate a secret.",
+      "category": "security"
     }
   ]
 }

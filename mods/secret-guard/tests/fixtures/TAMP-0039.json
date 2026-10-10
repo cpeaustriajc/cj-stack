@@ -1,0 +1,23 @@
+{
+ "case_id": "TAMP-0039",
+ "title": "Poisoned cache written by Bash, then secret read in same command (real cache path UNVERIFIED; stand-in path used, so this does not prove the real cache is safe)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "poison stand-in cache then cat .env",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW_1A\n"
+   },
+   "command": "printf '{\"values\":[]}' > redactor-cache.json; cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PW_1A"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0566",
+ "title": "Read of Erlang crash dump fixture with config tuple: value replaced, term structure kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read crash dump line with DB_PASSWORD tuple",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/opt/renav/erl_crash.dump"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/opt/renav/erl_crash.dump",
+      "content": "=erl_crash_dump:0.3\n=proc_dictionary\n{\"DB_PASSWORD\",\"FAKESECRET_erl29\"}\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_erl29"
+   ],
+   "must_see": [
+    "=erl_crash_dump:0.3",
+    "=proc_dictionary",
+    "DB_PASSWORD",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

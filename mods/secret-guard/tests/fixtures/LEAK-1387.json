@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1387",
+ "title": "Hook crashes with exit 1 before writing JSON on a secret-bearing Bash output",
+ "level": "not-testable",
+ "reason_not_testable": "The crash is an internal fault of the real hook (traceback, or a 40 MB log). No fixture kind can inject it. Non-hook control: the hook's trap on ERR and EXIT (mitigation in the case), plus the fail-closed unit fixtures in LEAK-1388 and LEAK-1391.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

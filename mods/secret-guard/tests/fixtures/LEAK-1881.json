@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-1881",
+ "title": "Read of a typescript recorder file is denied at its start; partial secret prefix in a Read result is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of typescript recorder file denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "typescript",
+     "offset": 0,
+     "limit": 4096
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a file with nothing combined; item 4 has no deny for plain reads and names reading the file normally as the safe alternative. Flagged: the file is)"
+  },
+  {
+   "kind": "post",
+   "name": "partial FAKESECRET_ prefix at chunk end redacted",
+   "files": {
+    "typescript": "password=FAKESECRET_c3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "typescript",
+     "offset": 0,
+     "limit": 4096
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "typescript",
+      "content": "password=FAKESECRET_",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_"
+   ],
+   "must_see": [
+    "password="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

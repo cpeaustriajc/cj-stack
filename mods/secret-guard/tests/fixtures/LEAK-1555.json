@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1555",
+ "title": "Plugin .mcp.json interpolates GITHUB_TOKEN into server env",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The expected outcome is a lint of plugin .mcp.json files for secret-named variable interpolation. The lint is not a hook component in test-spec and no fixture kind covers static file checks. Non-hook control: do not export secrets for plugin MCP servers, and lint plugin .mcp.json files.",
+ "duplicate_of_dropped": false
+}

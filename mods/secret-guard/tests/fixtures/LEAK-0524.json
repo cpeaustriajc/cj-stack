@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0524",
+ "title": "[72] ls of a secrets directory with a KEY=value filename",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ls -1 secrets/ run for real: PASSWORD=[REDACTED] line, notes.md kept",
+   "files": {
+    "secrets/PASSWORD=FAKESECRET_pw01.txt": "x\n",
+    "secrets/notes.md": "n\n"
+   },
+   "command": "ls -1 secrets/",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw01"
+   ],
+   "must_see": [
+    "notes.md"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ls -1 of secrets dir: bare filename line redacted (O applies assignment rule to ls lines)",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -1 /Users/cj/Projects/renav/secrets/"
+    },
+    "tool_response": {
+     "stdout": "PASSWORD=FAKESECRET_pw01.txt\nnotes.md\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw01"
+   ],
+   "must_see": [
+    "notes.md"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

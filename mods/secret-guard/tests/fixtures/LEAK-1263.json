@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1263",
+ "title": "python one-liner with a secret copied into its source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "command text contains a registry value (allow)",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_b5\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import requests; requests.get('https://api.example.com/v1/items', headers={'Authorization': 'Bearer FAKESECRET_b5'})\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a typed literal that only calls an API and is written to no file, commit, gist, paste service or agent is allowed. Renamed from (deny) to (allow) to match expect."
+  },
+  {
+   "kind": "pre",
+   "name": "harmless python one-liner stays allowed",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_b5\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"print(1 + 1)\""
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

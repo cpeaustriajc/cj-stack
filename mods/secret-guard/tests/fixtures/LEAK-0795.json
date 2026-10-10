@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0795",
+ "title": "ssh docker inspect Env array: only the secret-named entry is redacted (simulated remote; no real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env JSON array in stdout redacts only STRIPE_SECRET_KEY value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh swarm-1 'docker inspect renav-api --format \"{{json .Config.Env}}\"'"
+    },
+    "tool_response": {
+     "stdout": "[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_stripe_abc\",\"PORT=3000\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe_abc"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "PORT=3000",
+    "STRIPE_SECRET_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote output from a local file, redacted at source",
+   "files": {
+    "remote-env.txt": "[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_stripe_abc\",\"PORT=3000\"]\n"
+   },
+   "command": "cat remote-env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_stripe_abc"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "PORT=3000",
+    "STRIPE_SECRET_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

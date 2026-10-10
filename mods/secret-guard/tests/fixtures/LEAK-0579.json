@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0579",
+ "title": "ssh to remote Mac runs log show (remote simulated with local file, never real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout of ssh command redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-mac 'log show --last 30m --predicate \"subsystem == \\\"com.example.api\\\"\" --info'"
+    },
+    "tool_response": {
+     "stdout": "2026-10-10 10:01:02.123 api[412]: Authorization: Bearer FAKESECRET_rmac44\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rmac44"
+   ],
+   "must_see": [
+    "api[412]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote stdout via local file",
+   "files": {
+    "remote-log.txt": "2026-10-10 10:01:02.123 api[412]: Authorization: Bearer FAKESECRET_rmac44\n"
+   },
+   "command": "cat remote-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rmac44"
+   ],
+   "must_see": [
+    "api[412]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

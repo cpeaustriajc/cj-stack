@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0006",
+ "title": "Withheld placeholder must not encode original output size",
+ "level": "not-testable",
+ "reason_not_testable": "Two gaps in the fixture format: (1) no way to force the hook to fail or withhold, and (2) no assertion that two model-visible strings are byte-identical across fixtures. The seq 1 12000 stdout (about 58 KB) would also have to be a literal in the fixture file. Non-hook control: none defined in the spec (UNVERIFIED); needs a runner feature for forced-withhold and cross-fixture equality.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-1185",
+ "title": "ssh env or grep of env for a keyword",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "env | grep -i JIRA variant",
+   "files": {},
+   "command": "printf 'HOME=/root\\nJIRA_TOKEN=FAKESECRET_j1\\n' | grep -i JIRA",
+   "must_not_see": [
+    "FAKESECRET_j1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "env | grep -i key variant",
+   "files": {},
+   "command": "printf 'PATH=/usr/bin\\nSTRIPE_KEY=FAKESECRET_s2\\n' | grep -i key",
+   "must_not_see": [
+    "FAKESECRET_s2"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1244",
+ "title": "AGENTS.md written with a secret value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "AGENTS.md content with KEY=secret shape (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "AGENTS.md",
+     "content": "TOKEN=FAKESECRET_t10"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary AGENTS.md instruction stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "AGENTS.md",
+     "content": "Run `pnpm test` before committing."
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

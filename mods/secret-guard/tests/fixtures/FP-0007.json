@@ -1,0 +1,58 @@
+{
+ "case_id": "FP-0007",
+ "title": "wrangler secret list names-only output passes unchanged; command allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "names-and-types table passes unchanged",
+   "files": {
+    "sim-list.txt": "Name           Type\nSTRIPE_KEY     secret_text\nDB_PASSWORD    secret_text\n"
+   },
+   "command": "cat sim-list.txt",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "STRIPE_KEY     secret_text",
+    "DB_PASSWORD    secret_text"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse wrangler secret list output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wrangler secret list"
+    },
+    "tool_response": {
+     "stdout": "Name           Type\nSTRIPE_KEY     secret_text\nDB_PASSWORD    secret_text\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "STRIPE_KEY     secret_text"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "wrangler secret list stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wrangler secret list"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

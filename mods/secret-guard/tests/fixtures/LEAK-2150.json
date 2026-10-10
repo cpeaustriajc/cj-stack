@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2150",
+ "title": "Replacement with the wrong shape silently falls back to the original output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash object shape kept and stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'keyctl print 612345678'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_KEYRING_a1b2c3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Model sees [REDACTED] for a real Bash call",
+   "files": {
+    "keyring.txt": "FAKESECRET_KEYRING_a1b2c3\n"
+   },
+   "prompt": "Run Bash: cat keyring.txt and return the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

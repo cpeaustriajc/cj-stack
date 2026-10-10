@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1784",
+ "title": "Read pip.conf with index URL user:password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read pip.conf index-url password",
+   "files": {
+    ".config/pip/pip.conf": "[global]\nindex-url = https://cj:FAKESECRET_PIP_01@pypi.example.com/simple\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.config/pip/pip.conf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.config/pip/pip.conf",
+      "content": "[global]\nindex-url = https://cj:FAKESECRET_PIP_01@pypi.example.com/simple\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PIP_01"
+   ],
+   "must_see": [
+    "https://cj:",
+    "@pypi.example.com/simple",
+    "index-url"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

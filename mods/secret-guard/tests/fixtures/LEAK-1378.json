@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1378",
+ "title": "Env array from docker inspect (positive case, name-anchored)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect Env JSON array; only the secret value replaced",
+   "files": {},
+   "command": "printf '%s\\n' '[\"PATH=/usr/bin:/bin\",\"DB_PASSWORD=FAKESECRET_pw_1\",\"NODE_ENV=production\"]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_1"
+   ],
+   "must_see": [
+    "PATH=/usr/bin:/bin",
+    "NODE_ENV=production",
+    "DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

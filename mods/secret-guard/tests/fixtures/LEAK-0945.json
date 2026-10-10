@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0945",
+ "title": "age secret key line with no keyword is redacted; age1 public key line stays",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat of fake age key file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_age_keys.txt"
+    },
+    "tool_response": {
+     "stdout": "# created: 2026-01-01T00:00:00Z\n# public key: age1FAKEPUBLICKEYONLY0123\nAGE-SECRET-KEY-1FAKESECRETAGE0123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "AGE-SECRET-KEY-1FAKESECRETAGE0123"
+   ],
+   "must_see": [
+    "# public key: age1FAKEPUBLICKEYONLY0123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

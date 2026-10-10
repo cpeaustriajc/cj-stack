@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2081",
+ "title": "Plain-ASCII secret in heap object dump is rewritten before the model sees it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "heap output with a plain-ASCII secret object; that object redacted, other object lines kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_HEAP_0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap 4242"
+    },
+    "tool_response": {
+     "stdout": "0x7f8a1c001000  __NSCFString  hello world\n0x7f8a1c004000  __NSCFString  FAKESECRET_HEAP_0001\n0x7f8a1c005000  NSData  <48656c6c6f>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HEAP_0001"
+   ],
+   "must_see": [
+    "0x7f8a1c001000",
+    "0x7f8a1c005000",
+    "NSData"
+   ],
+   "policy_note": "R5: planted FAKESECRET_HEAP_0001 in a harvested .env in files (SERVICE_TOKEN=<same value>), so the value comes from a secret file. Nothing else changed."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

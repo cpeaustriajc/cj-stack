@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0979",
+ "title": "Linux procfs environ read piped through grep API_KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "NUL-separated environ piped through tr and grep is masked on stdout",
+   "files": {
+    "environ.bin": "PATH=/usr/bin\u0000OPENAI_API_KEY=FAKESECRET_oa_E4\u0000"
+   },
+   "command": "cat environ.bin | tr '\\0' '\\n' | grep API_KEY",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oa_E4"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

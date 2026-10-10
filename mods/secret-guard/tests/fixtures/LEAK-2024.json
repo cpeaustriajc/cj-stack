@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-2024",
+ "title": "Proxy URL echoed inside verbose tool logs (curl -v, stack traces)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl -v stderr proxy password redacted, surrounding lines intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -v https://api.example.internal/health"
+    },
+    "tool_response": {
+     "stdout": "HTTP/2 200\ncontent-type: application/json\n",
+     "stderr": "*   Trying 10.0.0.5:3128...\n* Uses proxy env variable https_proxy == 'http://FAKEUSER_e:FAKESECRET_curl@proxy.example.internal:3128'\n* Connected to proxy.example.internal port 3128\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_curl"
+   ],
+   "must_see": [
+    "HTTP/2 200",
+    "content-type: application/json",
+    "Connected to proxy.example.internal port 3128",
+    "* Uses proxy env variable https_proxy == 'http://FAKEUSER_e:[REDACTED]@proxy.example.internal:3128'"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "proxy URL inside a JSON string in a log is redacted at source",
+   "files": {
+    "curl-verbose.log": "{\"log\": \"* Uses proxy env variable https_proxy == 'http://FAKEUSER_e:FAKESECRET_curl@proxy.example.internal:3128'\", \"status\": 200}\n"
+   },
+   "command": "cat curl-verbose.log",
+   "must_not_see": [
+    "FAKESECRET_curl"
+   ],
+   "must_see": [
+    "status",
+    "@proxy.example.internal:3128"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

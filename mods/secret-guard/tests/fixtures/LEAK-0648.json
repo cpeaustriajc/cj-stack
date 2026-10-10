@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0648",
+ "title": "User-typed secret persists in history.jsonl",
+ "level": "not-testable",
+ "reason_not_testable": "Typed prompt text is not a tool result, so no PostToolUse or PreToolUse hook sees it, and the e2e runner asserts only tool_response and the final reply, not history.jsonl. Non-hook control: do not type secrets into the prompt box, including '!' shell prompts; purge history.jsonl after sessions.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

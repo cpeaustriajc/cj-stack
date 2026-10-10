@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0468",
+ "title": "[23] locate and plocate list secret-named files across the disk",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "locate and plocate with secret-name patterns are denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "locate -i -b '\\.env' ; plocate -i 'secret'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain locate and plocate filename listings; names only, no content or transform.)"
+  },
+  {
+   "kind": "pre",
+   "name": "plocate with secret pattern alone is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plocate -i 'secret'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain plocate filename listing; names only, no content or transform.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

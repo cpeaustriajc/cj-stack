@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1989",
+ "title": "`ssh -G` prints effective config with an inline bearer token in a ProxyCommand",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O rewrites bearer value and keeps surrounding config readable",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -G devhost"
+    },
+    "tool_response": {
+     "stdout": "hostname devhost\nproxycommand curl -H 'Authorization: Bearer FAKESECRET_BEARER_555' https://proxy.example.invalid\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_555"
+   ],
+   "must_see": [
+    "hostname devhost",
+    "https://proxy.example.invalid",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,73 @@
+{
+ "case_id": "LEAK-0630",
+ "title": "Bash cat of a plain KEY=value credential file: model view (unit) and real-session view (e2e); transcript grep is NOT assertable by this schema",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat deploy/.env: STRIPE value redacted, PORT kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat deploy/.env"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\nPORT=3000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "PORT=3000",
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "cat ~/.aws/credentials: aws_secret_access_key value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.aws/credentials"
+    },
+    "tool_response": {
+     "stdout": "[default]\naws_secret_access_key=FAKESECRET_aws_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aws_1"
+   ],
+   "must_see": [
+    "[default]",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Real session cats deploy/.env; recorded tool_response and reply must not contain the value",
+   "files": {
+    "deploy/.env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\nPORT=3000\n"
+   },
+   "prompt": "Run `cat deploy/.env` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

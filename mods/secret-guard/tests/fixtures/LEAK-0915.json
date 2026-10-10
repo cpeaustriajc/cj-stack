@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0915",
+ "title": "Bash echo PASSWORD: redactor throws, output must still be withheld (throw forced by lone surrogate; exit-0 not assertable in post fixtures)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "redactor throws on lone surrogate in stdout; secret must not reach model",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo PASSWORD=FAKESECRET_crash"
+    },
+    "tool_response": {
+     "stdout": "PASSWORD=FAKESECRET_crash\n\ud800",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_crash"
+   ],
+   "must_see": [
+    "REDACTED"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

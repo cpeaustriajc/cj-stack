@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0263",
+ "title": "Multi-line PEM block: per-line marker replacement leaks body line count",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "long PEM (27 body lines): no body line visible (one-marker-per-block equality not expressible by runner)",
+   "files": {
+    "fixtures/key-long.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET01\nFAKESECRET02\nFAKESECRET03\nFAKESECRET04\nFAKESECRET05\nFAKESECRET06\nFAKESECRET07\nFAKESECRET08\nFAKESECRET09\nFAKESECRET10\nFAKESECRET11\nFAKESECRET12\nFAKESECRET13\nFAKESECRET14\nFAKESECRET15\nFAKESECRET16\nFAKESECRET17\nFAKESECRET18\nFAKESECRET19\nFAKESECRET20\nFAKESECRET21\nFAKESECRET22\nFAKESECRET23\nFAKESECRET24\nFAKESECRET25\nFAKESECRET26\nFAKESECRET27\n-----END PRIVATE KEY-----\n"
+   },
+   "command": "cat ./fixtures/key-long.pem",
+   "must_not_see": [
+    "FAKESECRET01",
+    "FAKESECRET27"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "short PEM (13 body lines): no body line visible",
+   "files": {
+    "fixtures/key-short.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET01\nFAKESECRET02\nFAKESECRET03\nFAKESECRET04\nFAKESECRET05\nFAKESECRET06\nFAKESECRET07\nFAKESECRET08\nFAKESECRET09\nFAKESECRET10\nFAKESECRET11\nFAKESECRET12\nFAKESECRET13\n-----END PRIVATE KEY-----\n"
+   },
+   "command": "cat ./fixtures/key-short.pem",
+   "must_not_see": [
+    "FAKESECRET01",
+    "FAKESECRET13"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

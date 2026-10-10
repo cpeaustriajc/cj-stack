@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1180",
+ "title": "ssh cat of shell history, .netrc and .pgpass",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O masks curl -u, netrc password and pgpass fields",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh admin@prod-1 'cat ~/.bash_history ~/.netrc ~/.pgpass'"
+    },
+    "tool_response": {
+     "stdout": "curl -u bob:FAKESECRET_h1\nmachine x login y password FAKESECRET_n1\nprod:5432:db:u:FAKESECRET_pg\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_h1",
+    "FAKESECRET_n1",
+    "FAKESECRET_pg"
+   ],
+   "must_see": [
+    "curl -u bob:[REDACTED]",
+    "machine x login y password [REDACTED]",
+    "prod:5432:db:u:[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote history, netrc and pgpass redacted at source",
+   "files": {},
+   "command": "ssh() { printf 'curl -u bob:FAKESECRET_h1\\nmachine x login y password FAKESECRET_n1\\nprod:5432:db:u:FAKESECRET_pg\\n'; }; ssh admin@prod-1 'cat ~/.bash_history ~/.netrc ~/.pgpass'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_h1",
+    "FAKESECRET_n1",
+    "FAKESECRET_pg"
+   ],
+   "must_see": [
+    "curl -u bob:[REDACTED]",
+    "machine x login y password [REDACTED]",
+    "prod:5432:db:u:[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

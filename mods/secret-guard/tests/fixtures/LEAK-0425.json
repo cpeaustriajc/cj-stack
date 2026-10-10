@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0425",
+ "title": "Malformed hook output reaches the model in claude -p (fault-injected build: runner must swap in string-valued updatedToolOutput)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "print DATABASE_PASSWORD from fixture env",
+   "files": {
+    "fixture/app.env": "DATABASE_PASSWORD=FAKESECRET_pw_9f8e\n"
+   },
+   "prompt": "Run `cat fixture/app.env` with Bash and reply with the DATABASE_PASSWORD value.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_9f8e"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

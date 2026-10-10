@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1317",
+ "title": "Read of .npmrc proxy line with userinfo password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read fixture HOME .npmrc",
+   "files": {
+    ".npmrc": "proxy=http://FAKEUSER:FAKESECRET_npmrc0041@host.example:8080\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.npmrc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.npmrc",
+      "content": "proxy=http://FAKEUSER:FAKESECRET_npmrc0041@host.example:8080",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npmrc0041"
+   ],
+   "must_see": [
+    "proxy=http://",
+    "@host.example:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

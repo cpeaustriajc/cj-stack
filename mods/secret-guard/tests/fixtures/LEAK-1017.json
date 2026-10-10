@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1017",
+ "title": "echo of key variable in quotes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo of quoted key variable: harvested exact value becomes [REDACTED]",
+   "files": {
+    ".env": "ANTHROPIC_API_KEY=FAKESECRET_an_AN36\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"$ANTHROPIC_API_KEY\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_an_AN36\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_an_AN36"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

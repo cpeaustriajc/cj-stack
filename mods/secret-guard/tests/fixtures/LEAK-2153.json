@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-2153",
+ "title": "systemd credential file read with sudo and no recognisable prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Exact value from known-secret registry redacted in Bash output",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_plainpw_9x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'sudo cat /run/credentials/app.service/db_pass'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_plainpw_9x\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plainpw_9x"
+   ],
+   "must_see": [
+    "stdout",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Registry value redacted at source for a real shell command",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_plainpw_9x\n"
+   },
+   "command": "printf 'FAKESECRET_plainpw_9x\\n'",
+   "must_not_see": [
+    "FAKESECRET_plainpw_9x"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

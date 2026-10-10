@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0282",
+ "title": "Compaction summary restates a secret that entered the transcript",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "No hook sees the compaction summary (PreCompact can only block, PostCompact has no decision control, per b013 mitigation). The covering control is the prompt-entry block in LEAK-0277, which keeps the value out of the transcript. That control is itself a UserPromptSubmit hook, so this is a partial non-hook gap; the compaction block option is UNVERIFIED.",
+ "duplicate_of_dropped": false
+}

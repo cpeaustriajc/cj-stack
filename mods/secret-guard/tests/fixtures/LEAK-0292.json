@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0292",
+ "title": "Read redactor fails to read its harvest file and raw output passes",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "runner chmod 000 on harvest source .env; Read of .dev.vars must not show the value",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\n",
+    ".dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok\n"
+   },
+   "prompt": "Read .dev.vars and show me the contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_cf_tok"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

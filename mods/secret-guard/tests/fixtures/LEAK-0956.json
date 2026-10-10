@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0956",
+ "title": "Read of .env.local with an unharvested non-secret name (RENAV_MAPS_TILE)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read .env.local: value must not reach the model",
+   "files": {
+    ".env.local": "RENAV_MAPS_TILE=FAKESECRET_maps_77xq\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.local"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env.local",
+      "content": "RENAV_MAPS_TILE=FAKESECRET_maps_77xq\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_maps_77xq"
+   ],
+   "must_see": [
+    "RENAV_MAPS_TILE"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

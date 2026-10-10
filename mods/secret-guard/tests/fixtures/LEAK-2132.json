@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2132",
+ "title": "Two parallel PostToolUse hooks, one hangs and times out: secret absent in both orderings (e2e, real parallel run)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Order A: redactor first, hanging hook second",
+   "files": {
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"\",\"hooks\":[{\"type\":\"command\",\"command\":\"python3 $HOME/.claude/hooks/secret_redact.py\"},{\"type\":\"command\",\"command\":\"sleep 60\",\"timeout\":2}]}]}}\n",
+    "fixture.env": "TOKEN=FAKESECRET_THETA\n"
+   },
+   "prompt": "Run Bash: cat fixture.env and print the output verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_THETA"
+   ],
+   "must_see": [
+    "TOKEN="
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Order B: hanging hook first, redactor second",
+   "files": {
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"\",\"hooks\":[{\"type\":\"command\",\"command\":\"sleep 60\",\"timeout\":2},{\"type\":\"command\",\"command\":\"python3 $HOME/.claude/hooks/secret_redact.py\"}]}]}}\n",
+    "fixture.env": "TOKEN=FAKESECRET_THETA\n"
+   },
+   "prompt": "Run Bash: cat fixture.env and print the output verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_THETA"
+   ],
+   "must_see": [
+    "TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

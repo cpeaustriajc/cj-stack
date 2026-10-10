@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1347",
+ "title": "Malformed updatedToolOutput string instead of object",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat .env through real hooks; runner must inject the malformed-string hook under test (runner support UNVERIFIED)",
+   "files": {
+    ".env": "RENAV_API=FAKESECRET_shape0064\n"
+   },
+   "prompt": "Run `cat .env` with the Bash tool and print its output exactly.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_shape0064"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

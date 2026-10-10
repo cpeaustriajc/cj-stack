@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1423",
+ "title": "Bash: 3 MB base64 blob exceeds the hook timeout",
+ "level": "not-testable",
+ "reason_not_testable": "The fixture format is static JSON with no size-generation field, so a roughly 3 MB stdout blob cannot be shipped, and the timeout behaviour depends on runtime. Non-hook control: none in-tree; behaviour of timed-out command output is UNVERIFIED (see mitigation text).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

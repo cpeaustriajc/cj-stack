@@ -1,0 +1,36 @@
+{
+ "case_id": "TAMP-0090",
+ "title": "Edit user settings to insert disableAllHooks true before the hooks block",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf of API_KEY line is redacted by name rule",
+   "files": {},
+   "command": "printf \"API_KEY=FAKESECRET_key\\n\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_key"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "variant: cat of .env with DATABASE_PASSWORD is redacted",
+   "files": {
+    ".env": "DATABASE_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

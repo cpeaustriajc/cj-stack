@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1194",
+ "title": "ssh ps with pid and args",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "mysqld -p value and curl -u user:pass in ps -eo output",
+   "files": {},
+   "command": "printf '%s\\n' '  812 mysqld --datadir=/var/lib/mysql -p FAKESECRET_my1' '  913 curl -u svc:FAKESECRET_c1 https://x' | grep -v grep",
+   "must_not_see": [
+    "FAKESECRET_my1",
+    "FAKESECRET_c1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

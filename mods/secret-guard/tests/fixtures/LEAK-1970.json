@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1970",
+ "title": "Bash command text with inline Authorization header logged as tool detail",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl with literal Bearer token in command text is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: Bearer FAKESECRET_cmd_005\" https://api.example.test"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a typed Authorization header that only calls an API and shows its output is allowed."
+  }
+ ]
+}

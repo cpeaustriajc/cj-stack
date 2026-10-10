@@ -1,0 +1,27 @@
+{
+ "case_id": "LEAK-1834",
+ "title": "ssh git diff then cat .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote diff plus cat of .env",
+   "files": {
+    "remote-sim.sh": "printf 'diff --git a/.env b/.env\\n+STRIPE=FAKESECRET_SSH_03\\nAPI=FAKESECRET_SSH_04\\n'\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_SSH_03\nPLANTED_SERVICE_SECRET_1=FAKESECRET_SSH_04\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SSH_03",
+    "FAKESECRET_SSH_04"
+   ],
+   "must_see": [
+    "+STRIPE=",
+    "API="
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

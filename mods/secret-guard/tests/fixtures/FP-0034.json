@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0034",
+ "title": "False positive: unified-log lines with KEY and TOKEN substrings",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Keyboard and keychain log lines are not redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --predicate 'subsystem == \"com.apple.keyboard\"' --last 2m"
+    },
+    "tool_response": {
+     "stdout": "keyCode=36 keyboardLayout=US\ntokenCount=512 authorizationRight=system.privilege.admin\nkeychain lock state=locked\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "keyCode=36 keyboardLayout=US",
+    "tokenCount=512 authorizationRight=system.privilege.admin",
+    "keychain lock state=locked"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "The log show command itself must stay allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --predicate 'subsystem == \"com.apple.keyboard\"' --last 2m"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,94 @@
+{
+ "case_id": "FP-0096",
+ "title": "Read PEM PUBLIC KEY blocks: unchanged in a key file and in a source file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read keys/deploy.pub PUBLIC KEY block",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/keys/deploy.pub"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/keys/deploy.pub",
+      "content": "-----BEGIN PUBLIC KEY-----\nFAKESECRET_PUBKEY_BODY\n-----END PUBLIC KEY-----\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "-----BEGIN PUBLIC KEY-----",
+    "FAKESECRET_PUBKEY_BODY",
+    "-----END PUBLIC KEY-----"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Read src/crypto/jwks.ts PUBLIC KEY block with base64 lines",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/src/crypto/jwks.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/src/crypto/jwks.ts",
+      "content": "export const jwks = `\n-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAFAKEfixture0001\nAQABFAKEfixture0002\n-----END PUBLIC KEY-----\n`;\n",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "-----BEGIN PUBLIC KEY-----",
+    "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAFAKEfixture0001",
+    "AQABFAKEfixture0002",
+    "-----END PUBLIC KEY-----"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Paired control: Read PRIVATE KEY block must be redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/keys/deploy.pem"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/keys/deploy.pem",
+      "content": "-----BEGIN PRIVATE KEY-----\nFAKESECRETPRIVBODY\n-----END PRIVATE KEY-----\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETPRIVBODY"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

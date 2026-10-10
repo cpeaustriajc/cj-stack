@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1189",
+ "title": "ssh printenv piped to grep for token (remote)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -i token over printenv output",
+   "files": {},
+   "command": "printf 'PATH=/usr/bin\\nSESSION_TOKEN=FAKESECRET_t3\\nLANG=C\\n' | grep -i token",
+   "must_not_see": [
+    "FAKESECRET_t3"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

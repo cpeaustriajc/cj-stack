@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0789",
+ "title": "Unterminated secret value cut mid-value at end of output is redacted (post and real cut run)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cut -c1-32 output ending mid-value is redacted",
+   "files": {
+    "env.json": "[\"POSTGRES_PASSWORD=FAKESECRET_pw7\",\"PORT=3000\"]\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect renav-api --format '{{json .Config.Env}}' | cut -c1-32"
+    },
+    "tool_response": {
+     "stdout": "[\"POSTGRES_PASSWORD=FAKESECRET_p\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real cut -c1-32 of a file, unterminated value redacted at source",
+   "files": {
+    "env.json": "[\"POSTGRES_PASSWORD=FAKESECRET_pw7\",\"PORT=3000\"]\n"
+   },
+   "command": "cut -c1-32 env.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_p"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

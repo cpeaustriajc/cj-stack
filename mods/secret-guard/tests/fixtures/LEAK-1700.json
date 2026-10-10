@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1700",
+ "title": "Credential piped into pbcopy",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "generic password piped to pbcopy denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s example-service -w | pbcopy"
+    }
+   }
+  },
+  {
+   "kind": "pre",
+   "name": "internet password piped to pbcopy denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-internet-password -s example.com -w | pbcopy"
+    }
+   }
+  }
+ ],
+ "duplicate_of_dropped": false
+}

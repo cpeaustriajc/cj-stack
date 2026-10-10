@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0416",
+ "title": "D14 ssh to a Mac running defaults read: post redaction plus source-side simulated remote",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh defaults read output line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh buildbot@mac-build.example.internal 'defaults read com.example.ci'"
+    },
+    "tool_response": {
+     "stdout": "ciToken = \"FAKESECRET_ci_63\";\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ci_63"
+   ],
+   "must_see": [
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote defaults read via local script (no real ssh)",
+   "files": {
+    "fake-remote/defaults-read.sh": "#!/bin/sh\n# stands in for: ssh buildbot@mac-build.example.internal 'defaults read com.example.ci'\nprintf 'ciToken = \"FAKESECRET_ci_63\";\\n'\n"
+   },
+   "command": "sh fake-remote/defaults-read.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ci_63"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

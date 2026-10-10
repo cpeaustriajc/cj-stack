@@ -1,0 +1,16 @@
+{
+ "case_id": "REL-0016",
+ "title": "Regex backtracking on one 60 KB line (no secret); elapsed-time (<30s) assertion is not expressible in the runner, only the no-raw-line check is covered",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "one 60 KB line with api_token= and no secret is withheld, not shown raw",
+   "files": {},
+   "command": "printf 'api_token=FAKE_'; head -c 60000 /dev/zero | tr '\\0' A; printf '!\\n'",
+   "must_not_see": [
+    "api_token=FAKE_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   ]
+  }
+ ]
+}

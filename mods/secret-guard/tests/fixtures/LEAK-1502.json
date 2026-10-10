@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-1502",
+ "title": "git stash show -p prints stashed secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git stash show -p stdout: value redacted, diff marker kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git stash show -p",
+     "description": "Show stashed diff"
+    },
+    "tool_response": {
+     "stdout": "diff --git a/.env b/.env\n+STRIPE_KEY=FAKESECRET_stash\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stash"
+   ],
+   "must_see": [
+    "diff --git a/.env b/.env",
+    "+STRIPE_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stash diff output redacted at source (cat stands in for git stash show -p)",
+   "files": {
+    "stash.diff": "diff --git a/.env b/.env\n+STRIPE_KEY=FAKESECRET_stash\n"
+   },
+   "command": "cat stash.diff",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_stash"
+   ],
+   "must_see": [
+    "diff --git a/.env b/.env",
+    "+STRIPE_KEY="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git stash show -p is a legitimate command and stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git stash show -p"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

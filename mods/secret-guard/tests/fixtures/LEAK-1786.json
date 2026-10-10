@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1786",
+ "title": "Read Playwright storageState file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read storageState cookie value",
+   "files": {
+    "playwright/.auth/user.json": "{\"cookies\":[{\"name\":\"session\",\"value\":\"FAKESECRET_SESS_01\"}]}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/playwright/.auth/user.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/playwright/.auth/user.json",
+      "content": "{\"cookies\":[{\"name\":\"session\",\"value\":\"FAKESECRET_SESS_01\"}]}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SESS_01"
+   ],
+   "must_see": [
+    "session",
+    "cookies"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

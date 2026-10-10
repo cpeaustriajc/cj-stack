@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0102",
+ "title": "V0879 ps eww on a detached dev server prints TOKEN=value from its environment",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ps eww output: mid-line TOKEN value redacted, PORT kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps eww -o command -p 4242"
+    },
+    "tool_response": {
+     "stdout": "node dev.js TOKEN=FAKESECRET_PSTOK PORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PSTOK"
+   ],
+   "must_see": [
+    "node dev.js TOKEN=[REDACTED] PORT=3000"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ps -E variant (separate command string): same mid-line redaction",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -E -p 4242"
+    },
+    "tool_response": {
+     "stdout": "node dev.js TOKEN=FAKESECRET_PSTOK PORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PSTOK"
+   ],
+   "must_see": [
+    "node dev.js TOKEN=[REDACTED] PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

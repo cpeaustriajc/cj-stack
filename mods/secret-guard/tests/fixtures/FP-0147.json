@@ -1,0 +1,70 @@
+{
+ "case_id": "FP-0147",
+ "title": "False positive: list commands for password managers must still work and output must be unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "op item list allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op item list --format json"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "pass ls allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pass ls"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "bw list items allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bw list items --search Stripe"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "op item list metadata output unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op item list --format json"
+    },
+    "tool_response": {
+     "stdout": "[{\"title\":\"Stripe\",\"id\":\"FAKE_ID_0008\"}]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "Stripe",
+    "FAKE_ID_0008"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

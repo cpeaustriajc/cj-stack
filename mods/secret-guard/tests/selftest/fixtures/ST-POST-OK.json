@@ -1,0 +1,29 @@
+{
+ "case_id": "ST-POST-OK",
+ "title": "top-level stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stdout string",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "a FAKESECRET_toy1 b",
+     "stderr": "",
+     "interrupted": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_toy1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

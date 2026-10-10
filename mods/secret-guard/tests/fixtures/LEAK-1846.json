@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1846",
+ "title": "git tag -n prints a secret in an annotated tag message",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tag annotation first and continuation lines hold fake secrets",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git tag -n99 | head"
+    },
+    "tool_response": {
+     "stdout": "v1.4.0           deploy token sk_live_FAKESECRET_0004\n                 second annotation line password=FAKESECRET_0005\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_0004",
+    "FAKESECRET_0005"
+   ],
+   "must_see": [
+    "v1.4.0",
+    "deploy token ",
+    "second annotation line password="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

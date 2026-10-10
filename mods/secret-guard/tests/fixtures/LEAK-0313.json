@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0313",
+ "title": "AXUIElement read via python ApplicationServices or ctypes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python -c importing ApplicationServices and AXValue is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import ctypes,ApplicationServices as AS; print('AXValue', AS.AXValue)\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "AX read output if it ran",
+   "files": {
+    "~/Projects/app/.env": "API_TOKEN=FAKESECRET_AXVAL\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import ctypes,ApplicationServices as AS; print('AXValue', AS.AXValue)\""
+    },
+    "tool_response": {
+     "stdout": "AXValue: FAKESECRET_AXVAL\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_AXVAL"
+   ]
+  }
+ ]
+}

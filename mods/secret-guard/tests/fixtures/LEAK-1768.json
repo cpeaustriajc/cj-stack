@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1768",
+ "title": "Grep over ~/.claude/projects transcript store (disk transcript content not testable from the hook; Grep output part tested)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep transcript store, AKIA value in matched JSONL line replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "AKIA|ghp_|sk-ant-",
+     "path": "/Users/cj/.claude/projects/"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/cj/.claude/projects/-Users-cj-Projects-renav/807a23fe.jsonl:3:{\"type\":\"tool_result\",\"content\":\"AKIAFAKESECRET01\"}",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "AKIAFAKESECRET01"
+   ],
+   "must_see": [
+    "tool_result",
+    "807a23fe.jsonl:3:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

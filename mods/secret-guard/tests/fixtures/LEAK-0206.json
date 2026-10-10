@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0206",
+ "title": "dotenv value with spaces and quotes cut at first space",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "whole quoted DB_PASSWORD line redacted, neighbours kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vps \"cat /etc/dokploy/compose/renav/.env\""
+    },
+    "tool_response": {
+     "stdout": "APP_NAME=renav\nDB_PASSWORD=\"pa ss'w\\\"ord FAKESECRET_tail\"\nPORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tail",
+    "pa ss'w"
+   ],
+   "must_see": [
+    "APP_NAME=renav",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

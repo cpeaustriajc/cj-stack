@@ -1,0 +1,6 @@
+{
+  "name": "secret-guard",
+  "version": "0.1.0",
+  "description": "Keeps secret values out of Claude's context: redacts tool output, filters Bash streams, and denies commands that would encode, test or exfiltrate a secret",
+  "author": { "name": "CJ" }
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0173",
+ "title": "local docker inspect Env JSON: SECRET_KEY value removed, PATH kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated local docker inspect Env JSON",
+   "files": {
+    "sim-inspect.txt": "[\"PATH=/usr/bin\",\"SECRET_KEY=FAKESECRET_env_12\"]\n"
+   },
+   "command": "cat sim-inspect.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_env_12"
+   ],
+   "must_see": [
+    "PATH=/usr/bin"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse local docker inspect Env JSON output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect --format '{{json .Config.Env}}' myapp-container"
+    },
+    "tool_response": {
+     "stdout": "[\"PATH=/usr/bin\",\"SECRET_KEY=FAKESECRET_env_12\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_env_12"
+   ],
+   "must_see": [
+    "PATH=/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

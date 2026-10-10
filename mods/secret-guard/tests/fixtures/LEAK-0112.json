@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0112",
+ "title": "PEM private key straddles the 61440-unit export truncation point (i7)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat of PEM file with BEGIN and no END: body withheld from BEGIN onward (filler shortened from 61000 units; truncation is telemetry-side)",
+   "files": {
+    "fixtures/pem-70k.txt": "filler unit 00001\nfiller unit 00002\n-----BEGIN PRIVATE KEY-----\nFAKESECRET_pem_body_part1\nfiller unit 00003\nfiller unit 00004\n"
+   },
+   "command": "cat fixtures/pem-70k.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pem_body_part1"
+   ],
+   "must_see": [
+    "filler unit 00001"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

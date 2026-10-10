@@ -1,0 +1,63 @@
+{
+ "case_id": "FP-0140",
+ "title": "Fixture or documentation placeholder key blocks legitimate work (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep for placeholder (AKIA-shaped, FAKESECRET_ marker, EXAMPLE) is allowed; deviation: the published AWS example AKIAIOSFODNN7EXAMPLE lacks a FAKE marker, so the runner would reject it; this marker-bearing placeholder is used instead",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r 'AKIAFAKESECRET_EXAMPLE' tests/"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "grep for non-placeholder AKIA-shaped value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r 'AKIAFAKE0000000000' tests/"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (No secret source; a literal grep over tests/ matches no item 4 deny rule. Note the pattern contains FAKE, so the fixture's 'non-placeholder' premise is doubtful)"
+  },
+  {
+   "kind": "post",
+   "name": "Read of AWS-key-shaped assignment is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "tests/fixtures/aws.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "tests/fixtures/aws.txt",
+      "content": "aws_access_key_id = AKIAFAKESECRET_EXAMPLE\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "AKIAFAKESECRET_EXAMPLE"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R6: the FAKESECRET-marked value may not be required to stay visible, so it is now a must_not_see; R1: plain Read is allowed and the value is redacted."
+  }
+ ]
+}

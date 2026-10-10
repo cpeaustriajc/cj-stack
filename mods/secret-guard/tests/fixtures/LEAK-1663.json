@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1663",
+ "title": "screencapture with region flag",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "screencapture -R region is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "screencapture -R0,0,1200,800 -x /tmp/term.png"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "Owner decision: screencapture in any form (local or over ssh) is DENIED because an image cannot be redacted. Expect changed from allow to deny; old owner-policy note removed."
+  },
+  {
+   "kind": "pre",
+   "name": "screencapture -l window id is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "screencapture -l 4242 /tmp/term.png"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "Owner decision: screencapture in any form (local or over ssh) is DENIED because an image cannot be redacted. Expect changed from allow to deny; old owner-policy note removed."
+  },
+  {
+   "kind": "pre",
+   "name": "screencapture with no flags is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "screencapture /tmp/term.png"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "Owner decision: screencapture in any form (local or over ssh) is DENIED because an image cannot be redacted. Expect changed from allow to deny; old owner-policy note removed."
+  }
+ ]
+}

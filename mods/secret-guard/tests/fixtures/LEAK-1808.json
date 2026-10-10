@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1808",
+ "title": "docker history --no-trunc shows ENV and RUN lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker history rows simulated by cat; ENV value redacted, size and created-by kept",
+   "files": {
+    "history.txt": "IMAGE          CREATED        CREATED BY                                      SIZE      COMMENT\n<missing>      2 weeks ago    /bin/sh -c #(nop)  ENV API_KEY=FAKESECRET_IMG_01   0B\n<missing>      2 weeks ago    /bin/sh -c #(nop)  CMD node   0B\n"
+   },
+   "command": "cat history.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_IMG_01"
+   ],
+   "must_see": [
+    "CREATED BY",
+    "0B",
+    "ENV API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

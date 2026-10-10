@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0530",
+ "title": "[78] od -c spells a secret listing one character per field",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "od -c on secrets listing is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls /Users/cj/Projects/renav/secrets/ | od -An -c"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

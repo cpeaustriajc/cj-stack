@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0031",
+ "title": "ssh remote cat of .env and log tail returns secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh cat .env plus tail output: KEY=value redacted, log line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web 'cat /etc/app/.env; tail -n 200 /var/log/app/error.log'"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=FAKESECRET_db_4\n2026-10-09T12:00:01Z ERROR webhook timeout after 30s\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_4"
+   ],
+   "must_see": [
+    "DATABASE_URL=",
+    "2026-10-09T12:00:01Z ERROR webhook timeout after 30s"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf simulates remote cat and tail; name rule redacts value at source",
+   "files": {},
+   "command": "printf 'DATABASE_URL=FAKESECRET_db_4\\n2026-10-09T12:00:01Z ERROR webhook timeout after 30s\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_db_4"
+   ],
+   "must_see": [
+    "DATABASE_URL=",
+    "2026-10-09T12:00:01Z ERROR webhook timeout after 30s"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

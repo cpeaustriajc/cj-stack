@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1959",
+ "title": "tcpdump -A prints Bearer token from a pcap read by Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Authorization Bearer token in tcpdump ASCII dump is redacted; other lines kept",
+   "files": {
+    ".env": "BEARER_TOKEN=FAKESECRET_BEARER_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tcpdump -r /work/capture.pcap -A"
+    },
+    "tool_response": {
+     "stdout": "GET /health HTTP/1.1\nHost: api.example.invalid\nAuthorization: Bearer FAKESECRET_BEARER_1\n\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_1"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]",
+    "GET /health HTTP/1.1",
+    "Host: api.example.invalid"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

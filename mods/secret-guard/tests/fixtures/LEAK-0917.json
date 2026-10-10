@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0917",
+ "title": "Secret on stderr of a failing Bash command (PostToolUseFailure not rewritable; tested via guard wrapper)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat missing file; secret on stderr; exit 1 preserved; secret absent from output",
+   "files": {},
+   "command": "cat /nonexistent/file; echo PASSWORD=FAKESECRET_fail >&2; exit 1",
+   "must_not_see": [
+    "FAKESECRET_fail"
+   ],
+   "must_see": [
+    "No such file or directory"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

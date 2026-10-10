@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1024",
+ "title": "echo of DATABASE_URL without braces",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo $DATABASE_URL: password in URL redacted, host kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo $DATABASE_URL"
+    },
+    "tool_response": {
+     "stdout": "postgres://app:FAKESECRET_pw_AU47@db.internal/renav\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_AU47"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db.internal/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

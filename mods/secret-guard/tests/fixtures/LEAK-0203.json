@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0203",
+ "title": "psql aligned table: secret in a value column with no name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Stripe-format value in psql table redacted, table furniture kept (simulated)",
+   "files": {
+    "psql.out": "            value\n--------------------------\n sk_live_FAKESECRET_36\n(1 row)\n"
+   },
+   "command": "cat psql.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "sk_live_FAKESECRET_36",
+    "sk_live_FAKESECRET"
+   ],
+   "must_see": [
+    "value",
+    "--------------------------",
+    "(1 row)"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ssh docker exec psql table via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vps \"docker exec pg psql -U app -d app -c \\\"select value from settings where name='stripe'\\\"\""
+    },
+    "tool_response": {
+     "stdout": "            value\n--------------------------\n sk_live_FAKESECRET_36\n(1 row)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET_36",
+    "sk_live_FAKESECRET"
+   ],
+   "must_see": [
+    "value",
+    "--------------------------",
+    "(1 row)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

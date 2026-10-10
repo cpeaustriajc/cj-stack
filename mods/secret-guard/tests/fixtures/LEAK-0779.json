@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0779",
+ "title": "bash -x trace of an exported secret is redacted on stderr (post and real shell run)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bash -x trace line in stderr redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bash -x ./deploy.sh"
+    },
+    "tool_response": {
+     "stdout": "deployed\n",
+     "stderr": "+ export DB_PASSWORD=FAKESECRET_pw_x\n+ echo deployed\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_x"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "deployed"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real bash -x run of deploy.sh, trace redacted at source",
+   "files": {
+    "deploy.sh": "export DB_PASSWORD=FAKESECRET_pw_x\necho deployed\n",
+    ".env": "DB_PASSWORD=FAKESECRET_pw_x\n"
+   },
+   "command": "bash -x ./deploy.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_x"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "deployed"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

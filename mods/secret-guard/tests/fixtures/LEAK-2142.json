@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-2142",
+ "title": "Teammate final answer reaching lead via idle notification: only the teammate's own Read redaction is testable (notification path not expressible)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Teammate Read of config/app.json containing FAKESECRET_FINAL_B: model-visible output clean",
+   "files": {
+    "config/app.json": "{\"key\": \"FAKESECRET_FINAL_B\"}\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_FINAL_B\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "config/app.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "config/app.json",
+      "content": "{\"key\": \"FAKESECRET_FINAL_B\"}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_FAKE2142"
+   },
+   "must_not_see": [
+    "FAKESECRET_FINAL_B"
+   ],
+   "must_see": [
+    "config/app.json"
+   ],
+   "policy_note": "R5: a bare \"key\" is too generic a name; value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

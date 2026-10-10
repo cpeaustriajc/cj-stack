@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0056",
+ "title": "MCP text block contains secret in search result (updatedToolOutput versus updatedMCPToolOutput field name is UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP text block with DB_PASSWORD value is redacted, key name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__docs__search",
+    "tool_input": {
+     "query": "db password example"
+    },
+    "tool_response": [
+     {
+      "type": "text",
+      "text": "Config example: DB_PASSWORD=FAKESECRET_db_57"
+     }
+    ]
+   },
+   "must_not_see": [
+    "FAKESECRET_db_57"
+   ],
+   "must_see": [
+    "Config example",
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

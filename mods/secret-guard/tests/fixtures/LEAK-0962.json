@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0962",
+ "title": "Secret line inside a vim swap file (name rule must not need a line-start anchor)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "swap-file text with a printable prefix before the secret name",
+   "files": {
+    ".env.swp": "b0VIM 8.2 swap\nxK9RENAV_GEO_TOKEN_V2=FAKESECRET_geo_v2_3Hx\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings /Users/cj/Projects/renav/.env.swp"
+    },
+    "tool_response": {
+     "stdout": "xK9RENAV_GEO_TOKEN_V2=FAKESECRET_geo_v2_3Hx\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_geo_v2_3Hx"
+   ],
+   "must_see": [
+    "RENAV_GEO_TOKEN_V2="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env.swp at source (cat stands in for strings to avoid a tool dependency)",
+   "files": {
+    ".env.swp": "b0VIM 8.2 swap\nxK9RENAV_GEO_TOKEN_V2=FAKESECRET_geo_v2_3Hx\n"
+   },
+   "command": "cat .env.swp",
+   "must_not_see": [
+    "FAKESECRET_geo_v2_3Hx"
+   ],
+   "must_see": [
+    "RENAV_GEO_TOKEN_V2="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0010",
+ "title": "False-positive guard: key-existence check with no value must still run",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "key-existence grep without value stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=' .env && echo present || echo absent"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "key-existence check runs and prints present",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_50\n"
+   },
+   "command": "grep -q '^DB_PASSWORD=' .env && echo present || echo absent",
+   "must_see": [
+    "present"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

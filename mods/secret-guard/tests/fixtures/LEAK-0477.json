@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0477",
+ "title": "[32] Python os.link creates a hardlink without the ln command",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python3 -c with os.link is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import os; os.link('.env', 'notes.txt')\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the linked notes.txt redacts API_KEY value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "notes.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "notes.txt",
+      "content": "API_KEY=FAKESECRET_py32\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_py32"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0852",
+ "title": "Plain-string updatedToolOutput shape for Bash printf TOKEN (post and pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash tool_response stdout with TOKEN line",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_t4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'TOKEN=FAKESECRET_t4\\n'"
+    },
+    "tool_response": {
+     "stdout": "TOKEN=FAKESECRET_t4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_t4"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real printf of TOKEN line through the guard wrapper",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_t4\n"
+   },
+   "command": "printf 'TOKEN=FAKESECRET_t4\\n'",
+   "must_not_see": [
+    "FAKESECRET_t4"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

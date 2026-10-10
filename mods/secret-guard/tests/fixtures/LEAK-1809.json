@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1809",
+ "title": "docker inspect Config.Env JSON",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Config.Env JSON array simulated by cat; NPM_TOKEN value redacted, PATH kept",
+   "files": {
+    "inspect-env.json": "[\"PATH=/usr/bin\",\"NPM_TOKEN=FAKESECRET_IMG_02\"]\n"
+   },
+   "command": "cat inspect-env.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_IMG_02"
+   ],
+   "must_see": [
+    "PATH=/usr/bin",
+    "NPM_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

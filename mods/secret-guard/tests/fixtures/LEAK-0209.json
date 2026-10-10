@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0209",
+ "title": "kubectl secret jsonpath decoded value (step 2)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "decoded Stripe value in Bash output not visible",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl -n renav get secret app-env -o jsonpath='{.data.STRIPE_KEY}' | base64 -d"
+    },
+    "tool_response": {
+     "stdout": "sk_live_FAKESECRET_42\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET_42"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "decoded value redacted at source by guard pipe",
+   "files": {},
+   "command": "printf 'sk_live_FAKESECRET_42\\n'",
+   "must_not_see": [
+    "sk_live_FAKESECRET_42"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

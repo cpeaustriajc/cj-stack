@@ -1,0 +1,35 @@
+{
+ "case_id": "TAMP-0140",
+ "title": "Redactor returns a mismatched output shape for an image tool result and the original is used",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of a thumbnail PNG under a scratch path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/scratch/thumbnail.png"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a PNG file; owner allows reads, and no secret source or transform is involved.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of an ordinary project text file is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Projects/renav/README.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

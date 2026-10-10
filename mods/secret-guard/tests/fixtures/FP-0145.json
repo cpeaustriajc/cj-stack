@@ -1,0 +1,32 @@
+{
+ "case_id": "FP-0145",
+ "title": "benign PATH and NODE_ENV output is not blanked (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PATH and NODE_ENV echo output passes through unchanged",
+   "files": {
+    ".envrc": "PATH_add ./bin\nexport NODE_ENV=development\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"$PATH\"; echo \"$NODE_ENV\""
+    },
+    "tool_response": {
+     "stdout": "/Users/fake/proj/bin:/usr/bin:/bin\ndevelopment\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "/Users/fake/proj/bin:/usr/bin:/bin",
+    "development"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

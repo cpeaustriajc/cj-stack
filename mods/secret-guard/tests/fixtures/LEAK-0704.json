@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0704",
+ "title": "Hook stdout is not one JSON value (banner line or two JSON lines)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "single-JSON hook stdout yields DB_PASSWORD=[REDACTED] (banner variant is hook-internal and not injectable via post)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

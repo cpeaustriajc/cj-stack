@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0944",
+ "title": "OpenPGP armored private key via cat: body and CRC line are redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat of fake PGP private key block",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_pgp.asc"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PGP PRIVATE KEY BLOCK-----\nVersion: FAKEVERSION\n\nFAKESECRETPGPAAAA0123\nFAKESECRETPGPBBBB0123\n=FAKE\n-----END PGP PRIVATE KEY BLOCK-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETPGPAAAA",
+    "FAKESECRETPGPBBBB",
+    "=FAKE"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

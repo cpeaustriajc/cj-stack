@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1537",
+ "title": "Project CLAUDE.md imports @.env",
+ "level": "not-testable",
+ "reason_not_testable": "@-imports expand at launch with no tool call. The expected outcome is a lint flag on @-imports of secret-named paths, which is not a hook component and has no fixture kind. Non-hook control: pre-launch memory-file lint.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

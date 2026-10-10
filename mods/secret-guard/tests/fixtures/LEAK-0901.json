@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0901",
+ "title": "Lowercase JSON key api_key in config/app.json (cat)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "quoted lowercase api_key value redacted, key and JSON structure kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat config/app.json"
+    },
+    "tool_response": {
+     "stdout": "{\"name\":\"renav\",\"api_key\":\"FAKESECRET_lower_0004\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_lower_0004"
+   ],
+   "must_see": [
+    "renav",
+    "api_key",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: cat of config/app.json, output redacted at source",
+   "command": "cat config/app.json",
+   "files": {
+    "config/app.json": "{\"name\":\"renav\",\"api_key\":\"FAKESECRET_lower_0004\"}"
+   },
+   "must_not_see": [
+    "FAKESECRET_lower_0004"
+   ],
+   "must_see": [
+    "renav",
+    "api_key",
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

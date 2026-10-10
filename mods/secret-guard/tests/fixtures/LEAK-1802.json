@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1802",
+ "title": "Dev server startup logs dotenv-resolved DATABASE_URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "dev server dotenv DATABASE_URL line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm run dev 2>&1 | head -50"
+    },
+    "tool_response": {
+     "stdout": "[dotenv] DATABASE_URL=postgres://app:FAKESECRET_DEV_01@db/renav\nready - started server on 0.0.0.0:3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DEV_01"
+   ],
+   "must_see": [
+    "[dotenv] DATABASE_URL=postgres://app:",
+    "@db/renav",
+    "ready - started server"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "dev server source-level filter through pipe to head",
+   "files": {
+    "dev-sim.sh": "echo \"[dotenv] DATABASE_URL=postgres://app:FAKESECRET_DEV_01@db/renav\"\necho \"ready - started server on 0.0.0.0:3000\"\n"
+   },
+   "command": "sh ./dev-sim.sh 2>&1 | head -50",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DEV_01"
+   ],
+   "must_see": [
+    "[dotenv] DATABASE_URL=postgres://app:",
+    "@db/renav",
+    "ready - started server"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

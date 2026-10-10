@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0156",
+ "title": "Positive control: echo endpoint returns .env; output values redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echoed .env values redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_1\nSTRIPE_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -X POST http://127.0.0.1:8787/echo --data-binary @/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_1\nSTRIPE_KEY=FAKESECRET_sk_live_abc\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_1",
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]",
+    "STRIPE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

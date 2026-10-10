@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0884",
+ "title": "printenv of a value piped to base64 (plaintext value added as whole-file content so the base64 marker is derivable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64-of-harvested-value",
+   "files": {
+    ".env": "TELEGRAM_API_ID=FAKESECRET_tg_12345\n",
+    "tg_value.txt": "FAKESECRET_tg_12345\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv TELEGRAM_API_ID | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF90Z18xMjM0NQo=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF90Z18xMjM0NQo="
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

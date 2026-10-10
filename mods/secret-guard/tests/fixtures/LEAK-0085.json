@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0085",
+ "title": "Guard bypass: printenv POLAR_ORG",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printenv POLAR_ORG is denied (case allows deny or redaction; deny is the mitigation and is what is asserted)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv POLAR_ORG"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain printenv of one named variable with no transform. Owner decision allows plain display.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

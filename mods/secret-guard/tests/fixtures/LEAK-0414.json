@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0414",
+ "title": "D12 defaults write with literal secret in argv: PreToolUse must deny",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "defaults write literal secret value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults write com.example.devtool apiToken \"FAKESECRET_wr_61\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (defaults write with a literal value. Item 4 covers Write/Edit tools, not Bash. Flag as a gap.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

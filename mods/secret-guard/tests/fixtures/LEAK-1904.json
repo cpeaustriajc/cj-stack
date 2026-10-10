@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1904",
+ "title": "defaults export to stdout dumps an XML plist with a nested session cookie",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Multi-line XML plist: cookie string on its own line is masked, key names kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults export com.example.FAKEAPP -"
+    },
+    "tool_response": {
+     "stdout": "<dict>\n    <key>session</key>\n    <dict>\n        <key>cookie</key>\n        <string>FAKESECRET_sess_0002</string>\n    </dict>\n</dict>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sess_0002"
+   ],
+   "must_see": [
+    "<key>session</key>",
+    "<key>cookie</key>",
+    "</dict>"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated plist export run through the guard wrapper",
+   "files": {
+    "app-export.plist": "<dict>\n    <key>session</key>\n    <dict>\n        <key>cookie</key>\n        <string>FAKESECRET_sess_0002</string>\n    </dict>\n</dict>\n"
+   },
+   "command": "cat app-export.plist",
+   "must_not_see": [
+    "FAKESECRET_sess_0002"
+   ],
+   "must_see": [
+    "<key>cookie</key>"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

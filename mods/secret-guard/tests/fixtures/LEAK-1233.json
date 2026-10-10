@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1233",
+ "title": "ProxyCommand in a repo-committed -F config",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh -F with repo-local config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -F ./deploy/ssh_config web1 uptime"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ssh -F with a repo-local config running uptime; no secret source, transform or known value, and no item 4 rule covers ssh -F. FLAG: spec gap, since a config can)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stderr carrying AWS secret is redacted at source (cat simulates ProxyCommand stderr)",
+   "files": {
+    "aws/credentials": "AWS_SECRET=FAKESECRET_aws4\n"
+   },
+   "command": "cat aws/credentials >&2",
+   "must_not_see": [
+    "FAKESECRET_aws4"
+   ],
+   "must_see": [
+    "AWS_SECRET="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

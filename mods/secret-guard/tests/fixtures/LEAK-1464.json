@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1464",
+ "title": "cut then fold -w 8 splits the value across lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cut -c19-52 | fold -w 8",
+   "files": {
+    "fixture.env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n"
+   },
+   "command": "cut -c19-52 fixture.env | fold -w 8",
+   "must_not_see": [
+    "FAKESECR",
+    "ET_strip",
+    "e_012345",
+    "6789abcd"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

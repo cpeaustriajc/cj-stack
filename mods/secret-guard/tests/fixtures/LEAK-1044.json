@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1044",
+ "title": "Parent .envrc loads token into unrelated repo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "GITHUB_TOKEN line redacted via parent .envrc harvest",
+   "files": {
+    ".envrc": "export GITHUB_TOKEN=FAKESECRET_gh_BM74\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cd ~/Downloads/unknown-repo && env | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "GITHUB_TOKEN=FAKESECRET_gh_BM74\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gh_BM74"
+   ],
+   "must_see": [
+    "GITHUB_TOKEN="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in greps env dump for token",
+   "files": {
+    ".envrc": "export GITHUB_TOKEN=FAKESECRET_gh_BM74\n"
+   },
+   "command": "printf 'GITHUB_TOKEN=FAKESECRET_gh_BM74\\nHOME=/Users/cj\\n' | grep -i token",
+   "must_not_see": [
+    "FAKESECRET_gh_BM74"
+   ],
+   "must_see": [
+    "GITHUB_TOKEN="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

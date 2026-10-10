@@ -1,0 +1,66 @@
+{
+ "case_id": "LEAK-0239",
+ "title": "sort -c disorder oracle reveals ordering of a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sort -c over GH_TOKEN and a guess is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s\\n' \"$GH_TOKEN\" \"ghp_m\" | sort -c 2>&1; echo \"exit=$?\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "disorder line with guess ghp_m passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s\\n' \"$GH_TOKEN\" \"ghp_m\" | sort -c 2>&1; echo \"exit=$?\""
+    },
+    "tool_response": {
+     "stdout": "sort: -:2: disorder: ghp_m\nexit=1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "disorder: ghp_m",
+    "exit=1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "sub-variant exit=0 with no disorder line passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s\\n' \"$GH_TOKEN\" \"ghp_z\" | sort -c 2>&1; echo \"exit=$?\""
+    },
+    "tool_response": {
+     "stdout": "exit=0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "exit=0"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

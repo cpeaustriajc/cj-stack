@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0204",
+ "title": "docker inspect -f single label template prints bare value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "bare label value output redacted or withheld (simulated)",
+   "files": {
+    "label.out": "FAKESECRET_label_value_0123\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_label_value_0123\n"
+   },
+   "command": "cat label.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_label_value_0123"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  },
+  {
+   "kind": "post",
+   "name": "ssh docker inspect -f label via PostToolUse Bash",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_label_value_0123"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vps \"docker inspect -f '{{index .Config.Labels \\\"app.secret\\\"}}' renav_web_1\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_label_value_0123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_label_value_0123"
+   ],
+   "policy_note": "R5: planted the same value as SERVICE_TOKEN in harvested .env (files) so it has a file signal; no other change to this fixture."
+  }
+ ]
+}

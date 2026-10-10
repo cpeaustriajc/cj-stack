@@ -1,0 +1,60 @@
+{
+ "case_id": "FP-0162",
+ "title": "False-positive check: health and info stay allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "actuator/health stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:8080/actuator/health"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "actuator/info stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:8080/actuator/info"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "actuator/health output is not altered",
+   "files": {
+    ".env": "APP_TOKEN=FAKESECRET_other_3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:8080/actuator/health"
+    },
+    "tool_response": {
+     "stdout": "{\"status\":\"UP\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "status",
+    "UP"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

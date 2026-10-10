@@ -1,0 +1,58 @@
+{
+ "case_id": "FP-0138",
+ "title": "Socket enumeration with find, ls and lsof",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find socket listing keeps paths intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /private/tmp /var/folders -type s -name 'agent*' 2>/dev/null"
+    },
+    "tool_response": {
+     "stdout": "/private/tmp/com.apple.launchd.FAKE/Listeners\n/var/folders/FAKE/agent.sock\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "/private/tmp/com.apple.launchd.FAKE/Listeners",
+    "/var/folders/FAKE/agent.sock"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "find socket listing is not blocked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /private/tmp /var/folders -type s -name 'agent*' 2>/dev/null"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "lsof socket listing piped to grep is not blocked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "lsof -U | grep -i agent"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1907",
+ "title": "base64 pipe hides the secret from a value-based redactor",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "defaults read piped to base64 is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read com.example.FAKEAPP apiToken | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

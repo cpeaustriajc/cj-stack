@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1392",
+ "title": "Malformed stdout: debug text before the JSON object on a Read",
+ "level": "not-testable",
+ "reason_not_testable": "Malformed stdout is produced by the hook's own output path. No input forces it, so a fixture would only test the normal path. Non-hook control: hook logs go to stderr only and the JSON is validated before exit (mitigation in the case).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

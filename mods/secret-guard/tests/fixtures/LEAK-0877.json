@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0877",
+ "title": "Bash cat .env: innocuous name TELEGRAM_API_ID leaks its value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat-env-harvested-telegram-id",
+   "files": {
+    ".env": "TELEGRAM_API_ID=FAKESECRET_tg_12345\nAPP_PORT=3000\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "TELEGRAM_API_ID=FAKESECRET_tg_12345\nAPP_PORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tg_12345"
+   ],
+   "must_see": [
+    "APP_PORT=3000",
+    "TELEGRAM_API_ID",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

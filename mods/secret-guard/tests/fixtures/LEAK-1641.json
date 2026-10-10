@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1641",
+ "title": "Runtime auto-load of project .env at Claude Code startup (proxy password in HTTP_PROXY)",
+ "level": "not-testable",
+ "reason_not_testable": "No hook runs and no tool_response exists: the project .env is loaded by the CLI at process startup before any tool call, so no PreToolUse, PostToolUse or PostToolBatch event fires. Non-hook controls: E (keep proxy and other credentials out of project .env files; use an OS secret store or user-level env) and N (vendor fix).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

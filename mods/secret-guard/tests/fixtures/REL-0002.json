@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0002",
+ "title": "Status note: web search budget exhausted, vectors 20-35 UNVERIFIED (i19)",
+ "level": "not-testable",
+ "reason_not_testable": "Source status note with no tool call, not a leak vector. Verification debt is covered by a non-hook control: live verification of the listed UNVERIFIED paths and tool names before relying on the tests.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

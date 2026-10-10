@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1370",
+ "title": "base64 of a grep-extracted secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies grep of .env.test piped to base64 (secret source + transform)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DB_PASSWORD .env.test | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of grep-style line; encoded line must be redacted (encoding hand-computed, not executed)",
+   "files": {
+    ".env.test": "DB_PASSWORD=FAKESECRET_pw_1\n"
+   },
+   "command": "printf 'DB_PASSWORD=FAKESECRET_pw_1\\n' | base64",
+   "must_not_see": [
+    "REJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd18xCg=="
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

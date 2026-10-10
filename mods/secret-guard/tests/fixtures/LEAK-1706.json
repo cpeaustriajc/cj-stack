@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1706",
+ "title": "Grep over CoreSimulator Devices for bearer and live keys",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep rooted at CoreSimulator Devices denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Bearer |sk_live|eyJhbGci",
+     "path": "/Users/cj/Library/Developer/CoreSimulator/Devices",
+     "output_mode": "content"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep search on a secret-bearing directory; the owner's decision allows Grep on secret files and the redactor hides values.)"
+  },
+  {
+   "kind": "post",
+   "name": "Grep match Bearer value redacted if allowed",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Bearer |sk_live|eyJhbGci",
+     "path": "/Users/cj/Library/Developer/CoreSimulator/Devices",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "Devices/A1B2C3D4-0000-4000-8000-000000000001/data/Library/Preferences/prefs.plist:Bearer FAKESECRET_SIM_0001",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SIM_0001"
+   ],
+   "must_see": [
+    "prefs.plist"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

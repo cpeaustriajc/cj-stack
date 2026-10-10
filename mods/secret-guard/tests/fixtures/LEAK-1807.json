@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1807",
+ "title": "docker build --progress=plain echoes build-arg token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker build plain progress lines with _authToken and build-arg",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker build --progress=plain --build-arg NPM_TOKEN=$NPM_TOKEN -t app . 2>&1 | tail -200"
+    },
+    "tool_response": {
+     "stdout": "#4 [2/5] RUN npm config set //registry.npmjs.org/:_authToken=FAKESECRET_BLD_01\n--build-arg NPM_TOKEN=FAKESECRET_BLD_01\n#4 DONE 0.4s\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BLD_01"
+   ],
+   "must_see": [
+    "#4 [2/5] RUN npm config set",
+    "_authToken=",
+    "NPM_TOKEN="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "docker build output at source, local script stands in",
+   "files": {
+    "docker-sim.sh": "export NPM_TOKEN=FAKESECRET_BLD_01\necho \"#4 [2/5] RUN npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN\"\necho \"--build-arg NPM_TOKEN=$NPM_TOKEN\"\necho \"#4 DONE 0.4s\"\n"
+   },
+   "command": "sh ./docker-sim.sh 2>&1 | tail -200",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_BLD_01"
+   ],
+   "must_see": [
+    "#4 [2/5] RUN npm config set",
+    "_authToken=",
+    "NPM_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

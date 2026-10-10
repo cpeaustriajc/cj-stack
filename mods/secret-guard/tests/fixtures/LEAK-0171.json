@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0171",
+ "title": "Bare secret value from grep|cut on .env is denied locally and over ssh",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "local grep AWS_SECRET from .env with cut -d= -f2",
+   "files": {
+    ".env": "AWS_SECRET=FAKESECRET_aws_10\n"
+   },
+   "command": "grep AWS_SECRET .env | cut -d= -f2",
+   "must_not_see": [
+    "FAKESECRET_aws_10"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh grep AWS_SECRET .env | cut is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh app-host \"grep AWS_SECRET /srv/app/.env | cut -d= -f2\""
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

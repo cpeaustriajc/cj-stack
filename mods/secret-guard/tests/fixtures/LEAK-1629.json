@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1629",
+ "title": "Read Firefox logins.json (tilde and absolute forms)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read Firefox profile logins.json via tilde",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/Library/Application Support/Firefox/Profiles/a1b2c3.default-release/logins.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Firefox logins.json via tilde path. Read on secret paths is allowed.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read Firefox profile logins.json via absolute path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/Firefox/Profiles/x9y8.dev-edition/logins.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Firefox logins.json via absolute path. Read on secret paths is allowed.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

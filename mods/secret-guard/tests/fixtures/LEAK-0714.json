@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0714",
+ "title": "CPU-saturated machine: hook timed out while cat .env runs",
+ "level": "not-testable",
+ "reason_not_testable": "Needs eight CPU burners and a test-only hook timeout of about 5s; the fixture format has no load or timeout settings and the result depends on machine speed. No non-hook control covers it; the internal deadline is covered only by code review.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

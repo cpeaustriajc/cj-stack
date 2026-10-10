@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0088",
+ "title": "Exact harvested value in plain stdout of cat .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env stdout with harvested value",
+   "files": {
+    ".env": "APP_NAME=renav\nPOLAR_ORG=FAKESECRET_org_9f8e7d\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "APP_NAME=renav\nPOLAR_ORG=FAKESECRET_org_9f8e7d\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_org_9f8e7d"
+   ],
+   "must_see": [
+    "APP_NAME=renav",
+    "POLAR_ORG=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

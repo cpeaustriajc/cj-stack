@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1509",
+ "title": "WebFetch of gist returns pasted live token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "WebFetch result token redacted (WebFetch PostToolUse shape captured in hook-payloads.json)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://gist.example.com/abc123",
+     "prompt": "return the config"
+    },
+    "tool_response": {
+     "bytes": 60,
+     "code": 200,
+     "codeText": "OK",
+     "result": "config: token = FAKESECRET_gist_tok",
+     "durationMs": 900,
+     "url": "https://gist.example.com/abc123"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gist_tok"
+   ],
+   "must_see": [
+    "config: token =",
+    "https://gist.example.com/abc123"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "WebFetch of the gist URL is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://gist.example.com/abc123",
+     "prompt": "return the config"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-0009",
+ "title": "git stash show -p prints a stashed secret edit [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git stash show -p is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git stash show -p stash@{0}"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git stash show is a plain display with no secret source named and no transform.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git status stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git status --short"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "stashed key=value added line is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git stash show -p stash@{0}"
+    },
+    "tool_response": {
+     "stdout": "diff --git a/.env b/.env\n--- a/.env\n+++ b/.env\n@@ -0,0 +1 @@\n+DB_PASS=FAKESECRET_STASH_003\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_STASH_003"
+   ],
+   "must_see": [
+    "DB_PASS=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

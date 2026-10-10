@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0470",
+ "title": "[25] fc history filtered with fzf --filter for Bearer",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "history line (simulated) with Bearer token is redacted",
+   "files": {
+    "fc-out.txt": "120  curl -H 'Authorization: Bearer FAKESECRET_fz25' https://api.example.com\n"
+   },
+   "command": "cat fc-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_fz25"
+   ],
+   "must_see": [
+    "https://api.example.com"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

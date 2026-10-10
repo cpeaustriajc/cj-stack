@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1014",
+ "title": "env | sort full environment dump",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env | sort: AWS secret redacted, DIRENV_DIR and PWD intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | sort"
+    },
+    "tool_response": {
+     "stdout": "AWS_SECRET_ACCESS_KEY=FAKESECRET_aws_AL33\nDIRENV_DIR=-/Users/cj/Projects/renav\nPWD=/Users/cj/Projects/renav\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aws_AL33"
+   ],
+   "must_see": [
+    "AWS_SECRET_ACCESS_KEY=[REDACTED]",
+    "DIRENV_DIR=-/Users/cj/Projects/renav",
+    "PWD=/Users/cj/Projects/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

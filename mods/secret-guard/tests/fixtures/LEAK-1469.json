@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1469",
+ "title": "Redactor exceeds the hook timeout on docker inspect output",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "docker inspect over stubbed ssh with Env secret",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n",
+    "bin/ssh": "#!/bin/sh\necho '[{\"Config\":{\"Env\":[\"STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\"]}}]'\n"
+   },
+   "prompt": "Run exactly this Bash command in the project and report its stdout verbatim: sh bin/ssh sd-mp 'docker inspect app'",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_stripe_0123456789abcdef"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

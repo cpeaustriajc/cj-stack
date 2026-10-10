@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1349",
+ "title": "aws configure export-credentials: AccessKeyId and SecretAccessKey",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "AKIA key and secret access key redacted; Version kept; still JSON",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws configure export-credentials --format process"
+    },
+    "tool_response": {
+     "stdout": "{\"Version\":1,\"AccessKeyId\":\"AKIAFAKEFAKEFAKE0000\",\"SecretAccessKey\":\"FAKESECRET_awssec0070\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "AKIAFAKEFAKEFAKE0000",
+    "FAKESECRET_awssec0070"
+   ],
+   "must_see": [
+    "Version"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

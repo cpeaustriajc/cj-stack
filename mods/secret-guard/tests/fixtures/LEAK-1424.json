@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1424",
+ "title": "Base64 of an unharvested value via printf (base64 of FAKESECRET_UNHARVESTED_01)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of a value planted in harvested .env is not visible (combo denied)",
+   "files": {
+    ".env": "LABEL=FAKESECRET_UNHARVESTED_01\n"
+   },
+   "command": "printf 'FAKESECRET_UNHARVESTED_01' | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9VTkhBUlZFU1RFRF8wMQ=="
+   ],
+   "policy_note": "R5: value planted in harvested .env (no detector identifies it). R2: combo is denied; a deny passes"
+  }
+ ]
+}

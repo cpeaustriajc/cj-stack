@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0070",
+ "title": "Commit subject with secret appears in environment block at session start (unit covers only the commit deny; the session-start environment block is not testable by this runner)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git commit with secret in the message is denied before it runs",
+   "files": {
+    "~/Projects/app/.env": "CI_TOKEN=FAKESECRET_ci_tok4\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit --allow-empty -m \"fix: rotate FAKESECRET_ci_tok4 in deploy\""
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R3: a typed secret written into a git commit message is DENIED. Expect changed from allow to deny; old owner-policy note removed."
+  },
+  {
+   "kind": "pre",
+   "name": "git commit with a clean message stays allowed",
+   "files": {
+    "~/Projects/app/.env": "CI_TOKEN=FAKESECRET_ci_tok4\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit --allow-empty -m \"fix: rotate deploy token\""
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

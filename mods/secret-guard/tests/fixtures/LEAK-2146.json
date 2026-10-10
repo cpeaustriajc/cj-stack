@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-2146",
+ "title": "Agent spawn prompt carrying a known secret is denied; benign spawn prompt stays allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Agent spawn with prompt containing FAKESECRET_SPAWN_E is denied",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_SPAWN_E\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "name": "researcher",
+     "description": "Audit auth",
+     "prompt": "Audit auth using key FAKESECRET_SPAWN_E",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Agent spawn with a benign audit prompt stays allowed",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_SPAWN_E\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "name": "researcher",
+     "description": "Audit auth",
+     "prompt": "Audit auth flow in src/auth and list risky functions",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

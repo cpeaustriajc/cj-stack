@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1957",
+ "title": "Secret value with no recognisable shape in an indexed snippet (known-value branch only; unknown-value pass-through is a documented gap and not asserted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Known plain value in a note line is redacted",
+   "files": {
+    ".env": "STAGING_PASSWORD=FAKESECRET_PLAIN_005\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/example/notes/staging.md"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/example/notes/staging.md",
+      "content": "staging box login is ops with FAKESECRET_PLAIN_005 today\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PLAIN_005"
+   ],
+   "must_see": [
+    "staging box login is ops with [REDACTED] today"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

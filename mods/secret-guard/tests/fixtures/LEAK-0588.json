@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0588",
+ "title": "Background mitmdump addon log read via BashOutput (e2e for the real background task; pre_exec covers background output at source)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "background subshell output redacted at source",
+   "files": {
+    "bg-out.txt": "Authorization: Bearer FAKESECRET_bg53\n"
+   },
+   "command": "(sleep 0.2; cat bg-out.txt) & wait",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_bg53"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "BashOutput of background task returns redacted line",
+   "files": {
+    "emit.sh": "sleep 1\necho 'Authorization: Bearer FAKESECRET_bg53'\n"
+   },
+   "prompt": "Start `sh emit.sh` with the Bash tool and run_in_background set to true. Wait about 3 seconds, then call BashOutput for that task and reply with its exact output.",
+   "allowed_tools": "Bash,BashOutput",
+   "must_not_see": [
+    "FAKESECRET_bg53"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

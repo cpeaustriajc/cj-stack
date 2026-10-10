@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1344",
+ "title": "base64 of harvested value via grep, cut and base64 pipeline",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of value plus newline, produced by the real pipeline",
+   "files": {
+    ".env": "\n\nRENAV_API=FAKESECRET_b64api0061\n"
+   },
+   "command": "grep '^RENAV_API=' .env | cut -d= -f2 | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9iNjRhcGkwMDYx"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0500",
+ "title": "large tool output spilled to a temp file and re-read",
+ "level": "not-testable",
+ "reason_not_testable": "Whether Claude Code spills large tool output to a temp file is UNVERIFIED, and the trigger size and path are unknown. The spill is done by the harness, so no PreToolUse or PostToolUse hook sees it, and no deterministic fixture can force it. Non-hook control: do not cat credential files (the case's own mitigation). Verify the spill behaviour from Claude Code docs before relying on the O layer.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

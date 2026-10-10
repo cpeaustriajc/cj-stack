@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1379",
+ "title": "Read of ~/.claude/settings.json whose env block holds an API key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of settings.json with env API key and hook block (<HOME> placeholder for the temp HOME path)",
+   "files": {
+    ".claude/settings.json": "{\"env\": {\"OPENAI_API_KEY\": \"FAKESECRET_openai_abcd\"}, \"hooks\": {\"PostToolUse\": [{\"matcher\": \"\", \"hooks\": [{\"type\": \"command\", \"command\": \"python3 ~/.claude/hooks/secret_redact.py\"}]}]}}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<HOME>/.claude/settings.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<HOME>/.claude/settings.json",
+      "content": "{\"env\": {\"OPENAI_API_KEY\": \"FAKESECRET_openai_abcd\"}, \"hooks\": {\"PostToolUse\": [{\"matcher\": \"\", \"hooks\": [{\"type\": \"command\", \"command\": \"python3 ~/.claude/hooks/secret_redact.py\"}]}]}}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_openai_abcd"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY",
+    "secret_redact.py"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

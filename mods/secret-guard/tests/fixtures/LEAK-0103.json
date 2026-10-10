@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0103",
+ "title": "V0880 remote nohup job over ssh writes an API key to a server log; later ssh cat returns it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh remote nohup background job is denied (policy: background job in ssh, catalog allows deny or flag)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-1 'nohup ./sync.sh > /var/log/sync.log 2>&1 &'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ssh remote nohup background job is not in item 4's deny list and has no secret source. Disputed fixture.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "ssh cat output simulated with printf: API_KEY line redacted at source",
+   "files": {},
+   "command": "printf 'API_KEY=FAKESECRET_SYNCKEY\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SYNCKEY"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

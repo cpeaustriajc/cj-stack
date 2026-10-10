@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1906",
+ "title": "PlistBuddy prints a bare value with no key name in the output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "PlistBuddy Print on a Preferences plist is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/libexec/PlistBuddy -c \"Print :ApiToken\" ~/Library/Preferences/com.example.FAKEAPP.plist"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (PlistBuddy Print is a plain display of one key; no transform or oracle.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

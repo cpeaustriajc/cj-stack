@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0559",
+ "title": "Remote journalctl over ssh with DATABASE_URL password: password redacted, URL parts kept (ssh simulated by local script)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "DATABASE_URL password segment redacted",
+   "files": {
+    "bin/ssh.sh": "echo 'Jun 01 10:00:00 prod api[1]: starting'\necho 'DATABASE_URL=postgres://renav:FAKESECRET_db23@db.internal/app'\n"
+   },
+   "command": "sh bin/ssh.sh prod 'journalctl -u api | tail -200'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_db23"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://renav:",
+    "@db.internal/app",
+    "starting"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

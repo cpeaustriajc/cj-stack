@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0815",
+ "title": "Grep content-mode match of API_TOKEN in a .dev.vars file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content-mode result using the captured real Grep shape",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_TOKEN",
+     "path": "/work/app",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".dev.vars:1:API_TOKEN=FAKESECRET_tok_6",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_6"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

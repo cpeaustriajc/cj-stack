@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1075",
+ "title": "Bash xxd -p .env.local | tr -d newline: hex of harvested value is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xxd -p of .env.local is a secret-source plus transform combo: deny",
+   "files": {
+    ".env.local": "V=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .env.local | tr -d '\\n'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

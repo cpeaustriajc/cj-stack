@@ -1,0 +1,21 @@
+{
+ "case_id": "TAMP-0033",
+ "title": "PreToolUse guard denies Bash rm of the settings file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash rm -f of test-HOME settings.json",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "rm -f /private/tmp/secret-hooks-fixture-home/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

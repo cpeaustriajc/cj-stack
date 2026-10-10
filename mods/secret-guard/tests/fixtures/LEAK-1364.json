@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1364",
+ "title": "Delete a harvested .env line, then surface the value through a name-matched docker inspect",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "sed -i .env then simulated docker inspect Env line (printf stands in for ssh): name rule redacts the value",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0001\n"
+   },
+   "command": "sed -i '' '/STRIPE_SECRET_KEY/d' .env && printf '\"Env\": [\"STRIPE_SECRET_KEY=FAKESECRET_stripe_0001\"]\\n'",
+   "must_not_see": [
+    "FAKESECRET_stripe_0001"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  },
+  {
+   "kind": "post",
+   "name": "post-output path: Env line from remote docker inspect redacted by name rule with no harvest file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '/STRIPE_SECRET_KEY/d' .env && ssh dokploy-host 'docker inspect renav-app | grep -i stripe'"
+    },
+    "tool_response": {
+     "stdout": "\"Env\": [\"STRIPE_SECRET_KEY=FAKESECRET_stripe_0001\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe_0001"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

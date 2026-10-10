@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1069",
+ "title": "Bash printenv API_TOKEN | xxd -p: hex of harvested value is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printenv API_TOKEN | xxd -p is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_77aa\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv API_TOKEN | xxd -p"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

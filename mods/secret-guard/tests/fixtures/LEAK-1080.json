@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1080",
+ "title": "Bash cut -c12-30 .env: single-call partial of harvested value is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cut of secret .env: deny",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_4411\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c12-30 .env"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

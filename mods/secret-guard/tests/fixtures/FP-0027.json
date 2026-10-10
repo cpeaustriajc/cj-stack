@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0027",
+ "title": "Non-secret config lines in a .env.example Bash output (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env.example output is unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.example"
+    },
+    "tool_response": {
+     "stdout": "TOKEN_LIMIT=4096\nPASSWORD_MIN_LENGTH=8\nCOOKIE_DOMAIN=localhost\nAUTH_PROVIDER=github\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "TOKEN_LIMIT=4096",
+    "PASSWORD_MIN_LENGTH=8",
+    "COOKIE_DOMAIN=localhost",
+    "AUTH_PROVIDER=github"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "cat .env.example stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env.example"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

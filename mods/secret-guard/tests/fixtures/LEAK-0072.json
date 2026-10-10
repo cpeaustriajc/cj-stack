@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0072",
+ "title": "MCP tool result containing the secret is redacted for the model",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "get_config tool result (surrounding text invented, source truncated)",
+   "files": {
+    "server.py": "# tool get_config returns: service token: FAKESECRET_mcp_tok5 (rotate monthly)\n",
+    "mcp_tool_result.txt": "service token: FAKESECRET_mcp_tok5 (rotate monthly)\n"
+   },
+   "prompt": "Call the get_config tool on the fixture MCP server and print its result verbatim.",
+   "allowed_tools": "mcp__fixture__get_config",
+   "must_not_see": [
+    "FAKESECRET_mcp_tok5"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

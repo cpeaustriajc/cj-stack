@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1062",
+ "title": "ps env output sliced with cut",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "harvested bare value in cut chunk redacted, partial key kept",
+   "files": {
+    ".env": "ACCESS_TOKEN=FAKESECRET_tok_F6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps eww -p 4121 -o command= | cut -c 180-260"
+    },
+    "tool_response": {
+     "stdout": "ACCESS_TOK\nbare FAKESECRET_tok_F6 end\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_F6"
+   ],
+   "must_see": [
+    "ACCESS_TOK",
+    "bare [REDACTED] end"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ps env listing piped to cut is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps eww -p 4121 -o command= | cut -c 180-260"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

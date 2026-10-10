@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0628",
+ "title": "Secret only in stderr of log show",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr field is scanned and the value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --predicate 'process == \"fakeworker\"' --last 1m"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "log: warning: env DATABASE_PASSWORD=FAKESECRET_log_err_008 ignored",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_log_err_008"
+   ],
+   "must_see": [
+    "log: warning: env DATABASE_PASSWORD=[REDACTED] ignored"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

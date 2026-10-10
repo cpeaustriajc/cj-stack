@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1791",
+ "title": "Read a recorded HTTP cassette",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read cassette YAML Authorization Bearer",
+   "files": {
+    "tests/cassettes/orders_list.yml": "interactions:\n- request:\n    method: GET\n    headers:\n      Authorization:\n      - Bearer FAKESECRET_CASS_01\n  response:\n    status: 200\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/tests/cassettes/orders_list.yml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/tests/cassettes/orders_list.yml",
+      "content": "interactions:\n- request:\n    method: GET\n    headers:\n      Authorization:\n      - Bearer FAKESECRET_CASS_01\n  response:\n    status: 200\n",
+      "numLines": 8,
+      "startLine": 1,
+      "totalLines": 8
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CASS_01"
+   ],
+   "must_see": [
+    "interactions:",
+    "Authorization:",
+    "method: GET"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

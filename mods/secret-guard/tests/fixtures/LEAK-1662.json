@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1662",
+ "title": "ssh-wrapped tmux capture-pane on remote maintenance host",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh whose remote body runs capture-pane is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'tmux capture-pane -p -S -5000 -t maint:1'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-1661#0 run over ssh; plain display, no enumerated source combined with a transform.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote capture output has OPENAI_API_KEY redacted at source",
+   "files": {},
+   "command": "printf 'export OPENAI_API_KEY=FAKESECRET_TMUX_0002\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_TMUX_0002"
+   ],
+   "must_see": [
+    "export OPENAI_API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

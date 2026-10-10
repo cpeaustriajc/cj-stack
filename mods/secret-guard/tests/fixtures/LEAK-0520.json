@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0520",
+ "title": "[68] qlmanage on an SMB-mounted server secrets file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "qlmanage on /Volumes mount secrets.env denied (catalog: P)",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "qlmanage -t -o \"$TMPDIR/ql\" /Volumes/prod-server/etc/app/secrets.env"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

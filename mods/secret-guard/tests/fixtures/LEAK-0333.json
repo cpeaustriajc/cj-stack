@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-0333",
+ "title": "heap -addresses NSString with content",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "heap without -noContent denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap -addresses NSString 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (heap is a memory inspector; item 4 has no rule for it. Fixture expects deny, so flag as a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "heap with -noContent allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap -noContent -addresses NSString 4242"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "NSString content redacted if run",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_NS\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap -addresses NSString 4242"
+    },
+    "tool_response": {
+     "stdout": "0x600000 NSString \"FAKESECRET_NS\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_NS"
+   ],
+   "must_see": [
+    "0x600000 NSString"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

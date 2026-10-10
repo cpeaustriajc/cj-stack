@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1198",
+ "title": "ssh sudo cat of a process environ via gunicorn pgrep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "DJANGO_SECRET_KEY in NUL-converted environ output",
+   "files": {},
+   "command": "printf 'DJANGO_SECRET_KEY=FAKESECRET_d2\\000' | tr '\\000' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_d2"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

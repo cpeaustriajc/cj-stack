@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1911",
+ "title": "Read tool on the notification DB or its -wal file returns raw binary",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of usernoted db-wal is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/fake/Library/Group Containers/group.com.apple.usernoted/db2/db-wal"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a db-wal file; no combo.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

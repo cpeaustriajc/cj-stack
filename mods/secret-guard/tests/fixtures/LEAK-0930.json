@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0930",
+ "title": "Remote /etc/app/.env over ssh with a string replacement from the hook (buggy shape; Bash object must keep its fields)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh cat of remote .env; replacement must keep the full Bash object and hide the value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@build-03 'cat /etc/app/.env'"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_env_5d2e\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_env_5d2e"
+   ],
+   "must_see": [
+    "API_TOKEN=",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote .env cat; value redacted at source",
+   "files": {
+    "sim-remote-env.sh": "printf 'API_TOKEN=FAKESECRET_env_5d2e\\n'\n"
+   },
+   "command": "sh sim-remote-env.sh",
+   "must_not_see": [
+    "FAKESECRET_env_5d2e"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

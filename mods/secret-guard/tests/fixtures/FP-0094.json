@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0094",
+ "title": "Harvested local: Read of config/app.php keeps driver and env lines, and Edit matches",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Read config/app.php then Edit driver line, harvested APP_ENV=local",
+   "files": {
+    ".env": "APP_ENV=local\n",
+    "config/app.php": "<?php\n\nreturn [\n    'env' => env('APP_ENV', 'local'),\n    'driver' => 'local',\n];\n"
+   },
+   "prompt": "Read config/app.php. Then use the Edit tool to change the line 'driver' => 'local', to 'driver' => 'file', in config/app.php. Reply with the two config lines you read before editing.",
+   "allowed_tools": "Read,Edit",
+   "must_not_see": [],
+   "must_see": [
+    "'env' => env('APP_ENV', 'local'),",
+    "'driver' => 'local',",
+    "'driver' => 'file',"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

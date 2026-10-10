@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-1765",
+ "title": "Grep DATABASE_URL= in cache directories",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep .vercel/ for DATABASE_URL=, password in DSN replaced, key and prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DATABASE_URL=",
+     "path": ".vercel/"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".vercel/.env.production.local:1:DATABASE_URL=postgres://app:FAKESECRET_VCL_01@db/x",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_VCL_01"
+   ],
+   "must_see": [
+    ".vercel/.env.production.local:1:DATABASE_URL=",
+    "@db/x"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Grep node_modules/.cache/ for DATABASE_URL=, same DSN password",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DATABASE_URL=",
+     "path": "node_modules/.cache/"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "node_modules/.cache/prisma/schema.log:2:DATABASE_URL=postgres://app:FAKESECRET_VCL_01@db/x",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_VCL_01"
+   ],
+   "must_see": [
+    "node_modules/.cache/prisma/schema.log:2:DATABASE_URL=",
+    "@db/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

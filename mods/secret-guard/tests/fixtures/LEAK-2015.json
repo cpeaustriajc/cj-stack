@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-2015",
+ "title": "NFD filename on APFS evades NFC-spelled deny rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "NFC spelling of an NFD-stored .env name is denied",
+   "files": {
+    "cafe\u0301.env": "API_TOKEN=FAKESECRET_nfd_0002\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "./caf\u00e9.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on the .env path (NFC spelling) is a plain read; the owner allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "if read runs, NFC-spelled read output is redacted by value",
+   "files": {
+    "cafe\u0301.env": "API_TOKEN=FAKESECRET_nfd_0002\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "./caf\u00e9.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "./caf\u00e9.env",
+      "content": "API_TOKEN=FAKESECRET_nfd_0002\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_nfd_0002"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,77 @@
+{
+ "case_id": "LEAK-1776",
+ "title": "Glob then Read of a backup copy .env.bak",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of .env.bak is denied (backup-suffix pattern)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.bak"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of .env.bak; allowed by the owner's plain-read decision.)"
+  },
+  {
+   "kind": "post",
+   "name": "If Read of .env.bak is allowed, API_KEY value replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env.bak"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env.bak",
+      "content": "API_KEY=FAKESECRET_BAK_01\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BAK_01"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Glob of **/.env* returns names only; .env.bak name survives",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "**/.env*"
+    },
+    "tool_response": {
+     "filenames": [
+      ".env",
+      ".env.bak"
+     ],
+     "durationMs": 4,
+     "numFiles": 2,
+     "truncated": false,
+     "totalMatches": 2,
+     "countIsComplete": true
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    ".env.bak"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

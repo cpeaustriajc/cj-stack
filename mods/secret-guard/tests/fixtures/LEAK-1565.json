@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1565",
+ "title": "Grep -a on usernoted db file returns raw fragments",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep on usernoted db path denied. Spec gap: Grep on a secret store path is not a spec combo",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "[0-9]{6}",
+     "path": "~/Library/Group Containers/group.com.apple.usernoted/db2/db",
+     "-a": true
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Grep of project source stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "TODO",
+     "path": "src",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

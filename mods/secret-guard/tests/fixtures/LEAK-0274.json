@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0274",
+ "title": "Control: diff of KEY=value lines is caught by the name rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "diff '<' line with DB_TOKEN secret redacted, key kept",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n",
+    "scratchpad/guess.env": "DB_TOKEN=x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "diff .env scratchpad/guess.env"
+    },
+    "tool_response": {
+     "stdout": "1c1\n< DB_TOKEN=FAKESECRET_9fQ2\n---\n> DB_TOKEN=x\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_9fQ2"
+   ],
+   "must_see": [
+    "1c1",
+    "DB_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

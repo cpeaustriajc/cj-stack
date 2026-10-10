@@ -1,0 +1,52 @@
+{
+ "case_id": "FP-0047",
+ "title": "False positive: grep KEY on package.json and config.ts",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -in KEY output is unchanged",
+   "files": {
+    "package.json": "{\n  \"name\": \"app\",\n  \"version\": \"1.0.0\",\n  \"keyboardLayout\": \"en-US\"\n}\n",
+    "src/config.ts": "const x = 1;\nconst MONKEY_MODE = \"off\";\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -in KEY package.json src/config.ts"
+    },
+    "tool_response": {
+     "stdout": "package.json:4:  \"keyboardLayout\": \"en-US\"\nsrc/config.ts:2:const MONKEY_MODE = \"off\";\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "keyboardLayout",
+    "en-US",
+    "MONKEY_MODE",
+    "off"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -in KEY real output is unchanged",
+   "files": {
+    "package.json": "{\n  \"name\": \"app\",\n  \"version\": \"1.0.0\",\n  \"keyboardLayout\": \"en-US\"\n}\n",
+    "src/config.ts": "const x = 1;\nconst MONKEY_MODE = \"off\";\n"
+   },
+   "command": "grep -in KEY package.json src/config.ts",
+   "must_not_see": [],
+   "must_see": [
+    "keyboardLayout",
+    "en-US",
+    "MONKEY_MODE",
+    "off"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

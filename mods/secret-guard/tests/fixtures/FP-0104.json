@@ -1,0 +1,25 @@
+{
+ "case_id": "FP-0104",
+ "title": "Ssh docker service inspect Env array: only the URL password is replaced",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "DATABASE_URL password replaced, host/port/user/db kept; simulated remote output via printf",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw_4411@db.internal:5432/renav\n"
+   },
+   "command": "printf '%s\\n' '[\"NODE_ENV=production\",\"DATABASE_URL=postgres://app:FAKESECRET_pw_4411@db.internal:5432/renav\"]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_4411"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "DATABASE_URL=postgres://app:",
+    "@db.internal:5432/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-1350",
+ "title": "gcloud ya29 access token is redacted from PostToolUse stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ya29 access token in stdout is replaced with [REDACTED]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gcloud auth print-access-token"
+    },
+    "tool_response": {
+     "stdout": "ya29.FAKESECRET_gcptok0071\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "ya29.FAKESECRET_gcptok0071"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

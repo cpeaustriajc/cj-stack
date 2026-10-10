@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1570",
+ "title": "log show captures UserNotifications subsystem",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "log show with UserNotifications predicate denied. Spec gap: not in test-spec Guard(a)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 5m --predicate 'subsystem == \"com.apple.UserNotifications\"' --info"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain log show display command with nothing combined; owner allows plain display commands.)"
+  },
+  {
+   "kind": "pre",
+   "name": "log show for a different subsystem stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 5m --predicate 'subsystem == \"com.apple.Finder\"'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

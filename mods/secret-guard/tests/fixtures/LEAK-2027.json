@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-2027",
+ "title": "Replacement shape mismatch on a built-in tool returns the original output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash env line with fake proxy password is redacted in the exact stdout/stderr object shape",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep HTTPS_PROXY"
+    },
+    "tool_response": {
+     "stdout": "HTTPS_PROXY=http://FAKEUSER_s:FAKESECRET_shape@proxy.example.internal:3128\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_shape"
+   ],
+   "must_see": [
+    "stdout",
+    "HTTPS_PROXY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

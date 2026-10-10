@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0721",
+ "title": "PostToolUseFailure: secret in stderr of a failed sh -c command (pre_exec; failure path not redactable by PostToolUse)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed sh -c writes PASSWORD to stderr",
+   "files": {
+    ".env": "PASSWORD=FAKESECRET_pw9\n"
+   },
+   "command": "sh -c 'echo \"PASSWORD=FAKESECRET_pw9\" >&2; exit 1'",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw9"
+   ],
+   "must_see": [
+    "PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

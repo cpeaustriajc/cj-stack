@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1410",
+ "title": "Bash over ssh: decimal od -tu1 dump of a container secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh printenv DB_PASSWORD piped to od -tu1 is denied (decimal forms are not a must_not_see encoding, so the case is proven at the guard)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh sd-mp 'docker exec app printenv DB_PASSWORD | od -An -tu1'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "local printenv DB_PASSWORD piped to od -tu1 is denied",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_ab12\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD | od -An -tu1"
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

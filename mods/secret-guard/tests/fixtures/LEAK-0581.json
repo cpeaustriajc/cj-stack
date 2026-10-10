@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0581",
+ "title": "tcpdump -A on pcap prints ASCII Authorization header (committed fixture pcap; file names must survive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "dump-style Authorization line redacted",
+   "files": {
+    "dump.txt": "10:01:02.123456 IP 10.0.0.5.51422 > 10.0.0.9.8080: Flags [P.], length 300\nAuthorization: Bearer FAKESECRET_pcap46\n"
+   },
+   "command": "cat dump.txt | grep -i authorization",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pcap46"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "committed fixture pcap dump redacted (name not used for detection)",
+   "files": {
+    "tests/fixtures/login_flow.pcap": "Authorization: Bearer FAKESECRET_pcap46b\n"
+   },
+   "command": "cat tests/fixtures/login_flow.pcap | grep -i authorization",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pcap46b"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "git ls-files style file-name listing is not redacted",
+   "files": {
+    "git-ls.txt": "tests/fixtures/login_flow.pcap\nREADME.md\n"
+   },
+   "command": "cat git-ls.txt | grep pcap",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "tests/fixtures/login_flow.pcap"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

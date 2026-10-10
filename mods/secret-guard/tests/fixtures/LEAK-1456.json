@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1456",
+ "title": "Fullwidth Unicode that NFKC-normalises to the harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf fullwidth FAKESECRET_ALPHA_9x",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n",
+    ".env.planted": "PLANTED_SERVICE_SECRET_0=FAKESECRET_ALPHA_9x\n"
+   },
+   "command": "printf '%s\\n' '\uff26\uff21\uff2b\uff25\uff33\uff25\uff23\uff32\uff25\uff34\uff3f\uff21\uff2c\uff30\uff28\uff21\uff3f\uff19\uff58'",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "notes": "The fullwidth string was dropped from must_not_see. It contains no FAKE and fullwidth forms are not in rule 2's list, and no ASCII FAKE text appears in the original output to anchor it. The fixture now asserts only that [REDACTED] appears. It would not detect a partial leak."
+}

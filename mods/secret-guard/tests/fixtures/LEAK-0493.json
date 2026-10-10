@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0493",
+ "title": "terraform show -json renders sensitive variable values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "terraform show -json of a plan written to /tmp is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "terraform plan -out=/tmp/tfplan && terraform show -json /tmp/tfplan | head -c 20000"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated terraform JSON output: db_password value redacted at source",
+   "files": {
+    "show.json": "{\"values\":{\"db_password\":{\"value\":\"FAKESECRET_tf46\"}}}\n"
+   },
+   "command": "cat show.json | head -c 20000",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tf46"
+   ],
+   "must_see": [
+    "db_password"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0892",
+ "title": "cut -c truncation leaves STRIPE_SECRET_KEY with short fragment",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cut-env-short-stripe-value",
+   "files": {
+    "some-service.env": "APP_ENV=prod\nLOG_LEVEL=info\nSTRIPE_SECRET_KEY=sk_live_FAKESECRET\nDB_HOST=db.internal\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c1-40 some-service.env"
+    },
+    "tool_response": {
+     "stdout": "APP_ENV=prod\nLOG_LEVEL=info\nSTRIPE_SECRET_KEY=sk_live_FAKESECRET\nDB_HOST=db.internal\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET"
+   ],
+   "must_see": [
+    "DB_HOST=db.internal",
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

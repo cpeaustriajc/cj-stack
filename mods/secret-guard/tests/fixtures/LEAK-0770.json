@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0770",
+ "title": "Bash grep of DATABASE_URL from .env.production prints a URL with password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep of DATABASE_URL line: userinfo password redacted, host kept",
+   "files": {
+    ".env.production": "DATABASE_URL=postgres://app:FAKESECRET_pw_p@db.internal:5432/app\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -E '^DATABASE_URL' .env.production"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw_p@db.internal:5432/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_p"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:[REDACTED]@db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

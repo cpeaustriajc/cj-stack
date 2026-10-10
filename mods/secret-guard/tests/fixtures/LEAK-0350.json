@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0350",
+ "title": "K2 find-generic-password -w returns Claude Code credential JSON bundle",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Claude Code-credentials -w JSON bundle withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"Claude Code-credentials\" -w"
+    },
+    "tool_response": {
+     "stdout": "{\"claudeAiOauth\":{\"accessToken\":\"FAKESECRET_oat_2\",\"refreshToken\":\"FAKESECRET_rt_2\",\"expiresAt\":1790000000000}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oat_2",
+    "FAKESECRET_rt_2"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "same bundle with -a $USER added still withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"Claude Code-credentials\" -a \"$USER\" -w"
+    },
+    "tool_response": {
+     "stdout": "{\"claudeAiOauth\":{\"accessToken\":\"FAKESECRET_oat_2\",\"refreshToken\":\"FAKESECRET_rt_2\",\"expiresAt\":1790000000000}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oat_2",
+    "FAKESECRET_rt_2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

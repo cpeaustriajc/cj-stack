@@ -1,0 +1,19 @@
+{
+ "case_id": "ST-DENY-PASS",
+ "title": "deny without must_see passes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "files": {
+    ".env": "K=FAKESECRET_den1\n"
+   },
+   "command": "cat .env | base64",
+   "must_not_see": [
+    "FAKESECRET_den1"
+   ],
+   "policy_note": "deny is the intended outcome",
+   "name": "denied, nothing reaches the model"
+  }
+ ]
+}

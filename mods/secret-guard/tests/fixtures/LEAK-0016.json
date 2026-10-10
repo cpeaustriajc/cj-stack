@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0016",
+ "title": "Failing clean filter returns file content in stderr during git commit [catalog level e2e; fixtures are unit per spec] [r2: secret planted in ~/Projects/app/.env]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr clean-filter fatal line has its secret replaced, message kept",
+   "files": {
+    "~/Projects/app/.env": "API_TOKEN=FAKESECRET_CF_009\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m 'update config'"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "fatal: clean filter failed: FAKESECRET_CF_009\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CF_009"
+   ],
+   "must_see": [
+    "fatal: clean filter failed:",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failing helper exits 128 with the secret on stderr; exit code and redaction both preserved",
+   "files": {
+    "~/Projects/app/.env": "API_TOKEN=FAKESECRET_CF_009\n",
+    "cf-helper.sh": "echo 'fatal: clean filter failed: FAKESECRET_CF_009' >&2\nexit 128\n"
+   },
+   "command": "sh ./cf-helper.sh",
+   "must_not_see": [
+    "FAKESECRET_CF_009"
+   ],
+   "must_see": [
+    "fatal: clean filter failed:",
+    "[REDACTED]"
+   ],
+   "exit_code": 128
+  }
+ ]
+}

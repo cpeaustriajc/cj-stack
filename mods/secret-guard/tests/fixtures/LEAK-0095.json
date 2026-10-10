@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0095",
+ "title": "Secret only on stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command: secret on stderr is redacted at source (exit 1)",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_pw_1\n"
+   },
+   "command": "sh -c 'echo FAKESECRET_pw_1 >&2; exit 1'",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw_1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

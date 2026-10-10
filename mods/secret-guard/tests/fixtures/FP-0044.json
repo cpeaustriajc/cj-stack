@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0044",
+ "title": "False positive: Env names with secret-ish words but non-secret values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker inspect Env lines with secret-ish names but non-secret values stay unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect app"
+    },
+    "tool_response": {
+     "stdout": "[{\"Id\":\"5c1e0a7d9b2f\",\"Name\":\"/app\",\"Config\":{\"Env\":[\"TOKEN_BUCKET_SIZE=10\",\"KEY_VAULT_NAME=renav-kv\",\"AUTH_PROVIDER=github\",\"COOKIE_DOMAIN=.renav.app\"]}}]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "TOKEN_BUCKET_SIZE=10",
+    "KEY_VAULT_NAME=renav-kv",
+    "AUTH_PROVIDER=github",
+    "COOKIE_DOMAIN=.renav.app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

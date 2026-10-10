@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0023",
+ "title": "Bash git log output with token and key words in prose is unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git log --oneline -5 is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --oneline -5"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "git log stdout with prose token line passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --oneline -5"
+    },
+    "tool_response": {
+     "stdout": "3f9a1c2 Fix token refresh (#NNN)\na1b2c3d Add key rotation docs\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "3f9a1c2 Fix token refresh (#NNN)",
+    "a1b2c3d Add key rotation docs"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

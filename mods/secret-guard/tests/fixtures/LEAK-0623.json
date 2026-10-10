@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-0623",
+ "title": "Read of .ips crash report with --api-key in procCmdLine (Read-shaped and raw-string inputs)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read-shaped tool_response: --api-key value redacted, --port 3000 kept",
+   "files": {
+    "node-2026-10-09-1.ips": "Process: node [4121]\n\"procCmdLine\" : \"node /srv/app/server.js --api-key FAKESECRET_crash_003 --port 3000\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "node-2026-10-09-1.ips"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "node-2026-10-09-1.ips",
+      "content": "     1\tProcess: node [4121]\n     2\t\"procCmdLine\" : \"node /srv/app/server.js --api-key FAKESECRET_crash_003 --port 3000\"\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_crash_003"
+   ],
+   "must_see": [
+    "--port 3000",
+    "procCmdLine",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Read raw-string tool_response: same rule on a plain string",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "node-2026-10-09-1.ips"
+    },
+    "tool_response": "     1\tProcess: node [4121]\n     2\t\"procCmdLine\" : \"node /srv/app/server.js --api-key FAKESECRET_crash_003 --port 3000\"\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_crash_003"
+   ],
+   "must_see": [
+    "--port 3000",
+    "procCmdLine"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

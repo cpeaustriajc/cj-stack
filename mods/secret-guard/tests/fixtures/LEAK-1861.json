@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1861",
+ "title": "Hex dump of the xattr bypasses URL patterns",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "xattr -px hex dump of FAKESECRET_x: hex run of the token must not reach the model (withhold or decode-and-redact both acceptable)",
+   "files": {
+    "source.txt": "https://dl.example.com/a?token=FAKESECRET_x\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -px com.apple.metadata:kMDItemWhereFroms ~/Downloads/FAKESECRET_report.pdf"
+    },
+    "tool_response": {
+     "stdout": "68 74 74 70 73 3a 2f 2f 64 6c 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d 2f 61 3f 74 6f 6b 65 6e 3d 46 41 4b 45 53 45 43 52 45 54 5f 78\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "46 41 4b 45 53 45 43 52 45 54 5f 78"
+   ],
+   "policy_note": "R5 (per instruction): planted FAKESECRET_x in harvested .env as SERVICE_TOKEN, so it comes from a secret file; source.txt kept as it was. Unverified: whether the harvester accepts a value this short. No other change; pre_exec fixture kept verbatim."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated hex dump of FAKESECRET_x: token hex run must not reach the model",
+   "files": {
+    "source.txt": "https://dl.example.com/a?token=FAKESECRET_x\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_x\n"
+   },
+   "command": "printf '68 74 74 70 73 3a 2f 2f 64 6c 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d 2f 61 3f 74 6f 6b 65 6e 3d 46 41 4b 45 53 45 43 52 45 54 5f 78\\n'",
+   "must_not_see": [
+    "46 41 4b 45 53 45 43 52 45 54 5f 78"
+   ],
+   "exit_code": 0,
+   "policy_note": "R5: hex-decoded value planted in a harvested file"
+  }
+ ]
+}

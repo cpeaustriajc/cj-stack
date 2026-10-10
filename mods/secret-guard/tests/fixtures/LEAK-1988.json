@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1988",
+ "title": "ssh ProxyCommand stderr emits an unregistered key=value token (value-list redactor misses it)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "key=value pattern rewrites unregistered token on stderr",
+   "files": {
+    "fixture_ssh.conf": "Host devhost\n  ProxyCommand sh -c 'echo token=FAKESECRET_UNREGISTERED_9f3a >&2; nc %h %p'\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -F ./fixture_ssh.conf devhost true"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "token=FAKESECRET_UNREGISTERED_9f3a\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_UNREGISTERED_9f3a"
+   ],
+   "must_see": [
+    "token=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

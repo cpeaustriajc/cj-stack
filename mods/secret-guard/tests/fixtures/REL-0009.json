@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0009",
+ "title": "Research limits: no incidents verified",
+ "level": "not-testable",
+ "reason_not_testable": "Research note with no tool call and no runtime path, so no hook can be exercised. Non-hook control: verify primary sources before citing any incident (N).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

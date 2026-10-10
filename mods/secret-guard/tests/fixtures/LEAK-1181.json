@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1181",
+ "title": "ssh cat of a private key (PEM block)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "PEM block body lines with no KEY= marker are replaced",
+   "files": {},
+   "command": "printf '%s\\n' '-----BEGIN OPENSSH PRIVATE KEY-----' 'FAKESECRETKEYLINE1' 'FAKESECRETKEYLINE2' '-----END OPENSSH PRIVATE KEY-----'",
+   "must_not_see": [
+    "FAKESECRETKEYLINE1",
+    "FAKESECRETKEYLINE2"
+   ],
+   "must_see": [],
+   "exit_code": 0,
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

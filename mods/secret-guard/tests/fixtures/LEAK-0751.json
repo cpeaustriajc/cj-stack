@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0751",
+ "title": "Parallel Bash calls: secret reaches model through serialized batch result",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "two parallel Bash calls: secret call redacted in every recorded tool_response, other call intact",
+   "files": {
+    ".env": "PW6=FAKESECRET_pw6\n"
+   },
+   "prompt": "In one response, make two Bash tool calls in parallel: first cat .env, second echo ok. Then reply with both outputs verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw6"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

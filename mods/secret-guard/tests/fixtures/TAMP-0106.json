@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0106",
+ "title": "Out-of-band watchdog flags disableAllHooks in settings files",
+ "level": "not-testable",
+ "reason_not_testable": "The watchdog is an out-of-band script, not one of secret_redact.py, secret_guard.py or secret_filter.py, and test-spec.md defines no fixture kind for it (only post, pre, pre_exec, e2e). Non-hook control: the watchdog's own exit-code behaviour, run via launchd or CI as the mitigation says.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

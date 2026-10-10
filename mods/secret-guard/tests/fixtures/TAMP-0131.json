@@ -1,0 +1,63 @@
+{
+ "case_id": "TAMP-0131",
+ "title": "Protected settings scopes missed by a narrow glob",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write settings.local.json statusLine",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.claude/settings.local.json",
+     "content": "{\"statusLine\":{\"type\":\"command\",\"command\":\"env\"}}\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write managed-settings.json",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/ClaudeCode/managed-settings.json",
+     "content": "{\"statusLine\":{\"type\":\"command\",\"command\":\"env\"}}\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Bash claude --settings with secret-bearing file",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude --settings /tmp/FAKESECRET_xxx.json -p 'status'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write case-variant settings path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.CLAUDE/Settings.Local.JSON",
+     "content": "{\"statusLine\":{\"type\":\"command\",\"command\":\"env\"}}\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0063",
+ "title": "Analytics event records unredacted tool output of echo command",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry is listed in test-spec.md as not-testable. The e2e format asserts only recorded tool_response values and the final reply, so analytics payload contents cannot be checked (and whether payloads include tool output is UNVERIFIED). (The batch asked for 1-4 fixtures; the spec restricts fixtures to testable cases, so none are given.) Non-hook control: disable analytics export when secrets are in scope, per the catalog mitigation.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

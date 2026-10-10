@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1754",
+ "title": "Grep for Authorization Bearer in logs directory",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bearer token replaced, file:line prefix kept",
+   "files": {
+    "logs/app.log": "2026-10-10T10:00:00Z GET /v1/me Authorization: Bearer FAKESECRET_LOG_02\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Authorization: Bearer",
+     "path": "logs/",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "logs/app.log:12:2026-10-10T10:00:00Z GET /v1/me Authorization: Bearer FAKESECRET_LOG_02",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LOG_02"
+   ],
+   "must_see": [
+    "logs/app.log:12:",
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

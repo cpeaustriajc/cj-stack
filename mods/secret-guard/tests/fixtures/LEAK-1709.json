@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1709",
+ "title": "Read of session.json in simulator app container",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of simulator container session.json denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Developer/CoreSimulator/Devices/A1B2C3D4-0000-4000-8000-000000000001/data/Containers/Data/Application/E5F6A7B8-0000-4000-8000-000000000002/Library/Caches/session.json"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a simulator session.json; allowed by the owner's plain-read decision.)"
+  },
+  {
+   "kind": "post",
+   "name": "accessToken redacted if allowed",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Developer/CoreSimulator/Devices/A1B2C3D4-0000-4000-8000-000000000001/data/Containers/Data/Application/E5F6A7B8-0000-4000-8000-000000000002/Library/Caches/session.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/Developer/CoreSimulator/Devices/A1B2C3D4-0000-4000-8000-000000000001/data/Containers/Data/Application/E5F6A7B8-0000-4000-8000-000000000002/Library/Caches/session.json",
+      "content": "{\"accessToken\": \"FAKESECRET_SIM_SESSION_0001\"}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SIM_SESSION_0001"
+   ],
+   "must_see": [
+    "accessToken"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

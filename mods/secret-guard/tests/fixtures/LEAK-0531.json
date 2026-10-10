@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0531",
+ "title": "[79] base64 of a secrets listing with an unharvested name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 on secrets listing is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls /Users/cj/Projects/renav/secrets/ | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "base64 string of secrets listing in output (known gap if it passes)",
+   "files": {
+    "secrets/PASSWORD=FAKESECRET_pw01.txt": "FAKESECRET_pw01\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_pw01\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls /Users/cj/Projects/renav/secrets/ | base64"
+    },
+    "tool_response": {
+     "stdout": "UEFTU1dPUkQ9RkFLRVNFQ1JFVF9wdzAxLnR4dAo=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "UEFTU1dPUkQ9RkFLRVNFQ1JFVF9wdzAxLnR4dAo="
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted the underlying secret FAKESECRET_pw01 (the value the base64 decodes to) as SERVICE_TOKEN in harvested .env under files; no other change. The must_not_see base64 is unchanged."
+  }
+ ]
+}

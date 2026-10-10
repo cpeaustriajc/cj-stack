@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0335",
+ "title": "leaks -atExit wraps a command launched with env secrets",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "leaks -atExit wrapper denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -atExit -- node server.js"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (leaks -atExit wrapper; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "post",
+   "name": "env secret in exit output redacted if run",
+   "files": {
+    ".env": "OPENAI_API_KEY=FAKESECRET_OPENV\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -atExit -- node server.js"
+    },
+    "tool_response": {
+     "stdout": "Leaked value at exit: \"FAKESECRET_OPENV\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_OPENV"
+   ],
+   "must_see": [
+    "Leaked value at exit"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

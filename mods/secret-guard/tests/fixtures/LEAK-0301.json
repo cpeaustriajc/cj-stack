@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0301",
+ "title": "Subagent Bash output is forwarded to the stream",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "stream-json with --forward-subagent-text: subagent Bash output (runner must pass --forward-subagent-text; no schema field)",
+   "files": {
+    ".env": "DEMO_TOKEN=FAKESECRET_abc123\n",
+    "print.sh": "set -a; . ./.env; set +a\nprintenv DEMO_TOKEN\n"
+   },
+   "prompt": "Use a subagent to run: sh print.sh and return its output verbatim.",
+   "allowed_tools": "Bash,Agent",
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

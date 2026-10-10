@@ -1,0 +1,66 @@
+{
+ "case_id": "LEAK-1142",
+ "title": "ssh remote cat of credential or dotenv file: deny the ssh text; redact simulated remote output at source, including failed exit",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh cat of aws credentials and kube config denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web-1 'cat ~/.aws/credentials; cat ~/.kube/config'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Two plain cat displays over ssh (aws credentials, kube config) with nothing transformed; owner allows plain display over ssh.)"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh cat of remote .env denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-host 'cat /srv/renav/current/.env'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a remote .env over ssh with nothing combined; owner allows this.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote aws credentials line redacted at source",
+   "files": {
+    ".aws/credentials": "[default]\naws_secret_access_key = FAKESECRET_aws\n"
+   },
+   "command": "printf '%s\\n' 'aws_secret_access_key = FAKESECRET_aws'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_aws"
+   ],
+   "must_see": [
+    "aws_secret_access_key"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failed simulated remote output (exit 3) redacted at source",
+   "files": {
+    ".aws/credentials": "[default]\naws_secret_access_key = FAKESECRET_aws\n"
+   },
+   "command": "printf '%s\\n' 'aws_secret_access_key = FAKESECRET_aws'; exit 3",
+   "exit_code": 3,
+   "must_not_see": [
+    "FAKESECRET_aws"
+   ],
+   "must_see": [
+    "aws_secret_access_key"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

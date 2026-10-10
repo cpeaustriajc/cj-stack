@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0039",
+ "title": "Search budget note is not a secret channel",
+ "level": "not-testable",
+ "reason_not_testable": "WebSearch budget-used-up text carries no secret value; there is nothing for the redaction hooks to assert.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

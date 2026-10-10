@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1270",
+ "title": "Read of an mcp-remote v1 OAuth token file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "read-mcp-tokens-json-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.mcp-auth/mcp-remote-v1/tokens.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a tokens.json secret file; the owner allows plain reads.)"
+  },
+  {
+   "kind": "post",
+   "name": "read-mcp-tokens-json-values-redacted",
+   "files": {
+    "mcp-remote-v1/tokens.json": "{\"access_token\":\"FAKESECRET_mcpaccess0001\",\"refresh_token\":\"FAKESECRET_mcprefresh0002\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.mcp-auth/mcp-remote-v1/tokens.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.mcp-auth/mcp-remote-v1/tokens.json",
+      "content": "{\"access_token\":\"FAKESECRET_mcpaccess0001\",\"refresh_token\":\"FAKESECRET_mcprefresh0002\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcpaccess0001",
+    "FAKESECRET_mcprefresh0002"
+   ],
+   "must_see": [
+    "access_token",
+    "refresh_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

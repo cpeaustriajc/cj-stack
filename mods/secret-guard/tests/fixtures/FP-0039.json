@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0039",
+ "title": "Benign lines stay byte-identical while AUTH_TOKEN secret is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "benign near-miss lines plus AUTH_TOKEN secret",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat config.txt"
+    },
+    "tool_response": {
+     "stdout": "TOKEN_LIMIT=4096\n\"keywords\": [\"auth\", \"key\"]\ncookie_name: session\ntokenExpiry = 3600\nkeyboardLayout = \"qwerty\"\nPASSWORD_MIN_LENGTH = 12;\nkeyboardKey: \"Enter\"\npassword_policy: strict\nmaxTokens: 4096\ncacheKey = buildKey(id)\nTOKEN_CACHE_DIR: .cache/tokens\nAUTH_PROVIDER=github\nCSRF_TOKEN_NAME=csrftoken\nAUTH_TOKEN=FAKESECRET_t9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_t9"
+   ],
+   "must_see": [
+    "TOKEN_LIMIT=4096",
+    "cookie_name: session",
+    "tokenExpiry = 3600",
+    "keyboardLayout",
+    "PASSWORD_MIN_LENGTH = 12;",
+    "keyboardKey",
+    "password_policy: strict",
+    "maxTokens: 4096",
+    "cacheKey = buildKey(id)",
+    "TOKEN_CACHE_DIR: .cache/tokens",
+    "AUTH_PROVIDER=github",
+    "CSRF_TOKEN_NAME=csrftoken",
+    "AUTH_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

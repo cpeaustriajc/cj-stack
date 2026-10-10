@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1448",
+ "title": "base64 of a notebook file at a non-zero byte alignment",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of a file with the secret at byte offset 1 (must_not_see is base64 of the FAKE-containing substring {FAKESECRET_pw1)",
+   "files": {
+    "scratch/check.ipynb": "{FAKESECRET_pw1}\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_pw1\n"
+   },
+   "command": "base64 < scratch/check.ipynb",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ]
+}

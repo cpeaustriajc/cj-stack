@@ -1,0 +1,47 @@
+{
+ "case_id": "TAMP-0133",
+ "title": "CLAUDE_CONFIG_DIR redirect to an attacker-controlled config",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash sets CLAUDE_CONFIG_DIR to a non-default path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "CLAUDE_CONFIG_DIR=/Users/cj/Projects/renav/.cfg claude -p 'status'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Bash claude --settings override",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude --settings /Users/cj/Projects/renav/.cfg/settings.json -p 'status'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Bash claude --setting-sources override",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude --setting-sources user -p 'status'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

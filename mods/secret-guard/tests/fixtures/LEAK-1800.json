@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1800",
+ "title": "Seed script prints ECONNREFUSED with DSN password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "seed stderr ECONNREFUSED DSN, local script stands in",
+   "files": {
+    "seed-sim.sh": "echo \"Error: connect ECONNREFUSED postgres://app:FAKESECRET_SEED_01@db.internal:5432/renav\" >&2\nexit 1\n"
+   },
+   "command": "sh ./seed-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_SEED_01"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "db.internal:5432/renav",
+    "ECONNREFUSED"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

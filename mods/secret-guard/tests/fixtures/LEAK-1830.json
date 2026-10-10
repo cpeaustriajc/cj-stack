@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1830",
+ "title": "Worktree session reads the main checkout .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read main checkout .env from a worktree cwd; deny",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "cwd": "/Users/cj/Projects/renav/.claude/worktrees/feature-x",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of the main checkout .env; allowed by the owner's plain-read decision regardless of cwd.)"
+  },
+  {
+   "kind": "post",
+   "name": "Same Read if allowed; value replaced (O backstop)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "cwd": "/Users/cj/Projects/renav/.claude/worktrees/feature-x",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/.env",
+      "content": "STRIPE=FAKESECRET_MAIN_01\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_MAIN_01"
+   ],
+   "must_see": [
+    "STRIPE"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

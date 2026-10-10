@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0806",
+ "title": "Read tool with a nested or unknown response shape containing the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read response in nested content-array shape instead of file object",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "app/.env"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "DATABASE_PASSWORD=FAKESECRET_pw1"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

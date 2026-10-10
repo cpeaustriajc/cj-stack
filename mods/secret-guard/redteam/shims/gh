@@ -1,0 +1,7 @@
+#!/bin/bash
+case "$1 $2" in
+  "auth token") cat "$RT_DATA/gh_token.txt";;
+  "auth status") cat "$RT_DATA/gh_status.txt";;
+  "secret list"|"secret set") echo "STRIPE_KEY  Updated 2026-01-01";;
+  *) cat "$RT_DATA/gh_api.json";;
+esac

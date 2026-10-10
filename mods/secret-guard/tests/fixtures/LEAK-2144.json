@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2144",
+ "title": "Unknown-shape secret in mailbox passes value-based redaction (documented gap; no fixture can prove a pass)",
+ "level": "not-testable",
+ "reason_not_testable": "Value and pattern redaction cannot catch an unlisted shape, and the case's expected outcome is pass-through. A fixture would need the value in must_see (forbidden, since must_see is non-secret text) or a must_not_see that always fails, so it cannot prove a pass. Non-hook control: keep secrets out of agent-visible messages (the no-value rule).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

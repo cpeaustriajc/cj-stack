@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0349",
+ "title": "K1 security find-generic-password -w, plain value on stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "find-generic-password -w stdout withheld or redacted, value has no pattern",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"example-svc\" -a \"cj\" -w"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_kc_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kc_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

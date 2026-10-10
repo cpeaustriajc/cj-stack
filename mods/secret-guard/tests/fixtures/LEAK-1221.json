@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1221",
+ "title": "journalctl plus cat of bash history",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "journalctl plus bash_history output redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'journalctl -u myapp -n 500; cat ~/.bash_history'"
+    },
+    "tool_response": {
+     "stdout": "Authorization: Bearer FAKESECRET_b4\ncurl -H token:FAKESECRET_h5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_b4",
+    "FAKESECRET_h5"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "curl -H token:"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Bearer and header token values redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'Authorization: Bearer FAKESECRET_b4\\ncurl -H token:FAKESECRET_h5\\n'",
+   "must_not_see": [
+    "FAKESECRET_b4",
+    "FAKESECRET_h5"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "curl -H token:"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

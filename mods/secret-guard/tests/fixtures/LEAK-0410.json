@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0410",
+ "title": "D8 defaults read -currentHost for ByHost domain",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "-currentHost apiToken line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read -currentHost com.example.devtool"
+    },
+    "tool_response": {
+     "stdout": "apiToken = \\\"FAKESECRET_host_57\\\";\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_host_57"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated defaults read -currentHost value withheld at source",
+   "files": {},
+   "command": "defaults() { printf 'apiToken = \"FAKESECRET_host_57\";\\n'; }; defaults read -currentHost com.example.devtool",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_host_57"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1207",
+ "title": "ssh shell for-loop grepping /etc for PASSWORD",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "loop over hosts printing PASSWORD line (remote simulated with printf)",
+   "files": {
+    "hosts.txt": "h1\n"
+   },
+   "command": "for h in $(cat hosts.txt); do printf '%s: /etc/app/x.conf:PASSWORD=FAKESECRET_p6\\n' \"$h\"; done",
+   "must_not_see": [
+    "FAKESECRET_p6"
+   ],
+   "must_see": [
+    "h1: /etc/app/x.conf:PASSWORD="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "ssh for-loop grep output redacted by PostToolUse",
+   "files": {
+    "hosts.txt": "h1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "for h in $(cat hosts.txt); do ssh \"$h\" 'grep -r PASSWORD /etc/'; done"
+    },
+    "tool_response": {
+     "stdout": "h1: /etc/app/x.conf:PASSWORD=FAKESECRET_p6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p6"
+   ],
+   "must_see": [
+    "h1: /etc/app/x.conf:PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

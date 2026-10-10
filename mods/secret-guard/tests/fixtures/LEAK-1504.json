@@ -1,0 +1,73 @@
+{
+ "case_id": "LEAK-1504",
+ "title": "MCP get_project returns settings apiKey",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "get_project apiKey redacted inside MCP text content block (content-block shape assumed, not captured in hook-payloads.json)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleHost__get_project",
+    "tool_input": {
+     "id": "prj_FAKE"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "{\"settings\":{\"apiKey\":\"FAKESECRET_proj_key\"}}"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_proj_key"
+   ],
+   "must_see": [
+    "settings",
+    "apiKey"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "get_project apiKey redacted in bare JSON object, settings structure and sibling name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleHost__get_project",
+    "tool_input": {
+     "id": "prj_FAKE"
+    },
+    "tool_response": {
+     "settings": {
+      "apiKey": "FAKESECRET_proj_key",
+      "name": "renav-web"
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_proj_key"
+   ],
+   "must_see": [
+    "renav-web",
+    "settings"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "get_project read is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__exampleHost__get_project",
+    "tool_input": {
+     "id": "prj_FAKE"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

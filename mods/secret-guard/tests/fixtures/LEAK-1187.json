@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1187",
+ "title": "ssh printenv with or without sort",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printenv variant",
+   "files": {},
+   "command": "printf 'GITHUB_TOKEN=FAKESECRET_g1\\nDATABASE_URL=postgres://u:FAKESECRET_p1@h/db\\n'",
+   "must_not_see": [
+    "FAKESECRET_g1",
+    "FAKESECRET_p1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printenv | sort variant",
+   "files": {},
+   "command": "printf 'GITHUB_TOKEN=FAKESECRET_g1\\nDATABASE_URL=postgres://u:FAKESECRET_p1@h/db\\n' | sort",
+   "must_not_see": [
+    "FAKESECRET_g1",
+    "FAKESECRET_p1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

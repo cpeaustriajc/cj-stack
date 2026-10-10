@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-1028",
+ "title": "curl with token from gh auth token in command substitution",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl Authorization header from gh auth token substitution is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: token $(gh auth token)\" https://api.github.com/user"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "login response with no secret passes through intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: token $(gh auth token)\" https://api.github.com/user"
+    },
+    "tool_response": {
+     "stdout": "{\"login\":\"fake-user\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "fake-user"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

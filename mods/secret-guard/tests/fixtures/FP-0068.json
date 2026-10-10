@@ -1,0 +1,31 @@
+{
+ "case_id": "FP-0068",
+ "title": "False positive: benign ASG.ready and ISG.v2 text in grep output is returned unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep output with ASG. and ISG. substrings",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn 'ASG' docs/"
+    },
+    "tool_response": {
+     "stdout": "docs/notes.md:3:see ASG.ready and ISG.v2 in docs\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "see ASG.ready and ISG.v2 in docs"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

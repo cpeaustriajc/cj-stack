@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0843",
+ "title": "fold -w 6 splits the secret across lines so no single pattern matches",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "fold output of FAKESECRET_pw1 split over three lines",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_pw1 | fold -w 6"
+    },
+    "tool_response": {
+     "stdout": "FAKESE\nCRET_p\nw1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESE\nCRET_p\nw1"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real fold -w 6 output of FAKESECRET_pw1",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "echo FAKESECRET_pw1 | fold -w 6",
+   "must_not_see": [
+    "FAKESE\nCRET_p\nw1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1402",
+ "title": "Hooks disabled via settings.local.json, then base64 of a docker inspect dump",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash write of disableAllHooks true into settings.local.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '{\"disableAllHooks\": true}' > .claude/settings.local.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of a docker inspect fragment with hooks active is withheld",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg9\n"
+   },
+   "command": "printf 'POSTGRES_PASSWORD=FAKESECRET_pg9' | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9wZzk="
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

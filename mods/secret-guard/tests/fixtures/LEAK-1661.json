@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1661",
+ "title": "Local tmux capture-pane scrollback",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "tmux capture-pane is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tmux capture-pane -p -S -5000 -t maint:1"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (tmux capture-pane is a plain display of terminal scrollback; not an enumerated secret source and no transform.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated capture-pane output has OPENAI_API_KEY redacted at source",
+   "files": {},
+   "command": "printf '$ export OPENAI_API_KEY=FAKESECRET_TMUX_0001\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_TMUX_0001"
+   ],
+   "must_see": [
+    "export OPENAI_API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

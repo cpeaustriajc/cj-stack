@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-1254",
+ "title": "scp of a remote secret then Read of the copy",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "scp of remote .env into tmp-check (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp prod-1:/srv/app/.env ./tmp-check/.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "scp of shared .env to .env.prod (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp deploy@app1.example.com:/srv/myapp/shared/.env ./.env.prod"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the copied .env is redacted if it exists",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "./tmp-check/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "./tmp-check/.env",
+      "content": "DB_PASSWORD=FAKESECRET_d6\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_d6"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

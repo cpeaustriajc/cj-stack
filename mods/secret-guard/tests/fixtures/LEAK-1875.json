@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-1875",
+ "title": "osascript do shell script is denied, and an unregistered shape-matching value is redacted from output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "osascript do shell script denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "osascript -e 'do shell script \"printf FAKESECRET_ZZ9_unregistered\"'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "unregistered FAKESECRET_ value redacted by shape scanner",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "osascript -e 'do shell script \"printf FAKESECRET_ZZ9_unregistered\"'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_ZZ9_unregistered\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ZZ9_unregistered"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,27 @@
+{
+ "case_id": "LEAK-2032",
+ "title": "Hook output shape mismatch silently leaves the original output in place",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash tool_response in a malformed bare-string shape still must not pass the secret through",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_shape999\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "clip-history --last 1"
+    },
+    "tool_response": "FAKESECRET_shape999 from clipboard history\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_shape999"
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted the same secret value in harvested .env as SERVICE_TOKEN=<same value>; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

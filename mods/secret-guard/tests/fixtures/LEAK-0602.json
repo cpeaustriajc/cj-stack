@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0602",
+ "title": "Remote actuator env over ssh: value redacted in Bash stdout (ssh simulated with printf, never real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote actuator/env JSON with password value",
+   "files": {},
+   "command": "printf '%s\\n' '{\"activeProfiles\":[\"prod\"],\"propertySources\":[{\"name\":\"applicationConfig\",\"properties\":{\"spring.datasource.password\":{\"value\":\"FAKESECRET_ssh66\"}}}]}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ssh66"
+   ],
+   "must_see": [
+    "spring.datasource.password",
+    "activeProfiles"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0026",
+ "title": "ssh maintenance host runs git log -p whose textconv prints a remote .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "canned ssh Bash output with remote-only DATABASE_URL userinfo",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app-01 'cd /srv/app && git status && git log -p -- config/'"
+    },
+    "tool_response": {
+     "stdout": "On branch main\nDATABASE_URL=postgres://app:FAKESECRET_SSH_017@db/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SSH_017"
+   ],
+   "must_see": [
+    "On branch main",
+    "DATABASE_URL=postgres://app:",
+    "@db/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf simulates remote output; remote-only value absent from local files",
+   "files": {},
+   "command": "printf 'On branch main\\nDATABASE_URL=postgres://app:FAKESECRET_SSH_017@db/app\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SSH_017"
+   ],
+   "must_see": [
+    "On branch main",
+    "DATABASE_URL=postgres://app:",
+    "@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

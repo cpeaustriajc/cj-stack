@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2106",
+ "title": "Grep output replacement shape is undocumented, so match content is silently dropped from redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep tool_response object shape (from hook-payloads.json) with content string redacted",
+   "files": {
+    "config/app.env": "TOKEN=FAKESECRET_gr7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "FAKESECRET_",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "config/app.env:3:TOKEN=FAKESECRET_gr7",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gr7"
+   ],
+   "must_see": [
+    "config/app.env:3:TOKEN=",
+    "numLines"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

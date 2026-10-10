@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1876",
+ "title": "Computer Use drives Finder to open a .command file via GUI, bypassing Bash hooks",
+ "level": "not-testable",
+ "reason_not_testable": "No Bash, Read or Grep PostToolUse payload is produced for GUI automation, so no hook can be fed a fixture. Non-hook control: keep Claude Code at or above 2.1.243 (check with claude --version), disable Computer Use for sessions that can see secrets, and keep secret files out of Finder-reachable paths.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

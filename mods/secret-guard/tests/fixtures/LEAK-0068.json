@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0068",
+ "title": "Read tool on topic file deploy.md returns DOKPLOY_TOKEN value redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of deploy.md redacts the DOKPLOY_TOKEN value, keeps the key name",
+   "files": {
+    "deploy.md": "DOKPLOY_TOKEN=FAKESECRET_dk_tok2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "deploy.md"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "deploy.md",
+      "content": "DOKPLOY_TOKEN=FAKESECRET_dk_tok2",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dk_tok2"
+   ],
+   "must_see": [
+    "DOKPLOY_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

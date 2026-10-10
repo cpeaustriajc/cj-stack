@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0205",
+ "title": "Go template println splits a multi-line PEM key across Env lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PEM block from println Env lines is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vps \"docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' renav_api_1\""
+    },
+    "tool_response": {
+     "stdout": "PATH=/usr/local/bin:/usr/bin\nJWT_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nFAKESECRETLINE1FAKESECRETLINE1\nFAKESECRETLINE2==\n-----END PRIVATE KEY-----\nPORT=3000\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETLINE1FAKESECRETLINE1",
+    "FAKESECRETLINE2==",
+    "JWT_PRIVATE_KEY=-----BEGIN"
+   ],
+   "must_see": [
+    "PATH=/usr/local/bin:/usr/bin",
+    "PORT=3000"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

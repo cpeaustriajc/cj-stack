@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1857",
+ "title": "Indirect read of token cache via find/grep without naming the file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -r over token cache dir: matched access_token value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r access_token ~/.mcp-auth"
+    },
+    "tool_response": {
+     "stdout": "~/.mcp-auth/FAKESECRET_hash_tokens.json:{\"access_token\":\"FAKESECRET_ACCESS_xxx\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ACCESS_xxx"
+   ],
+   "must_see": [
+    "access_token"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "recursive grep over ~/.mcp-auth is denied by the guard",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r access_token ~/.mcp-auth"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

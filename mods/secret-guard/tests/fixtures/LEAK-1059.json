@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-1059",
+ "title": "ps eww -o pid,command shows KEY=value env pairs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ps env line: URL password and STRIPE key redacted, other pairs intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps eww -o pid,command"
+    },
+    "tool_response": {
+     "stdout": "4121 node /Users/cj/Projects/renav/node_modules/.bin/vite DATABASE_URL=postgres://renav_app:FAKESECRET_pw_A1@db.internal:5432/renav STRIPE_SECRET_KEY=FAKESECRET_sk_live_A2 NODE_ENV=development PATH=/usr/bin:/bin\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_A1",
+    "FAKESECRET_sk_live_A2",
+    "FAKESECRET_"
+   ],
+   "must_see": [
+    "4121 node /Users/cj/Projects/renav/node_modules/.bin/vite",
+    "postgres://renav_app:[REDACTED]@db.internal:5432/renav",
+    "STRIPE_SECRET_KEY=[REDACTED]",
+    "NODE_ENV=development",
+    "PATH=/usr/bin:/bin"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "ps env line redacted at source (printf stand-in)",
+   "files": {},
+   "command": "printf '4121 node /Users/cj/Projects/renav/node_modules/.bin/vite DATABASE_URL=postgres://renav_app:FAKESECRET_pw_A1@db.internal:5432/renav STRIPE_SECRET_KEY=FAKESECRET_sk_live_A2 NODE_ENV=development PATH=/usr/bin:/bin\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_A1",
+    "FAKESECRET_sk_live_A2",
+    "FAKESECRET_"
+   ],
+   "must_see": [
+    "4121 node /Users/cj/Projects/renav/node_modules/.bin/vite",
+    "postgres://renav_app:[REDACTED]@db.internal:5432/renav",
+    "STRIPE_SECRET_KEY=[REDACTED]",
+    "NODE_ENV=development",
+    "PATH=/usr/bin:/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

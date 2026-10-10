@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0165",
+ "title": "docker-credential get and git credential fill: Secret field redacted, ServerURL visible; both commands denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker-credential-desktop get JSON",
+   "files": {
+    "sim-cred.txt": "{\"ServerURL\":\"https://index.docker.io/v1/\",\"Username\":\"<token>\",\"Secret\":\"FAKESECRET_reg_4\"}\n"
+   },
+   "command": "cat sim-cred.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_reg_4"
+   ],
+   "must_see": [
+    "https://index.docker.io/v1/"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker-credential-desktop get is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo https://index.docker.io/v1/ | docker-credential-desktop get"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Credential-helper get with only an echo feeding it; item 4 names credential CLIs as sources but denies only with a transform or oracle.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git credential fill is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git credential fill"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain git credential fill with no transform; a plain read of a credential source.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

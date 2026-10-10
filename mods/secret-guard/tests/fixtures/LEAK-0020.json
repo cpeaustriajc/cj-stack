@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0020",
+ "title": "git diff with diff.external hands the secret file to an external program [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git diff of a .env.production path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git diff -- .env.production"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git diff of .env.production is a plain display of a secret source with nothing combined; owner allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "external-diff key=value line is redacted",
+   "files": {
+    ".env.production": "DATABASE_PASSWORD=FAKESECRET_EXT_013\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git diff -- .env.production"
+    },
+    "tool_response": {
+     "stdout": "diff --git a/.env.production b/.env.production\n+DATABASE_PASSWORD=FAKESECRET_EXT_013\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_EXT_013"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

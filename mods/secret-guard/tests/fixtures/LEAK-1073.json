@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1073",
+ "title": "Bash grep DATABASE_URL .env | base64: value inside base64 line is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep of .env piped to base64 is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "DATABASE_URL=postgres://renav:FAKESECRET_db@host/db\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DATABASE_URL .env | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

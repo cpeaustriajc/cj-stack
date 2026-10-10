@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0927",
+ "title": "Read of dokploy-export.json with plain-string replacement (structured Read object must be preserved)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read JSON export with DB_PASSWORD; model-visible result keeps file object fields and hides value",
+   "files": {
+    "deploy/dokploy-export.json": "{\"DB_PASSWORD\":\"FAKESECRET_pg_7f3kQ9wZ2mXa\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/deploy/dokploy-export.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/deploy/dokploy-export.json",
+      "content": "{\"DB_PASSWORD\":\"FAKESECRET_pg_7f3kQ9wZ2mXa\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_7f3kQ9wZ2mXa"
+   ],
+   "must_see": [
+    "filePath",
+    "numLines",
+    "startLine",
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

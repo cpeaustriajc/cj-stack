@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1220",
+ "title": "journalctl of an app unit",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "journalctl Authorization Bearer value redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-1 'journalctl -u myapp --since \"1 hour ago\" -n 500'"
+    },
+    "tool_response": {
+     "stdout": "Authorization: Bearer FAKESECRET_b3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_b3"
+   ],
+   "must_see": [
+    "Authorization: Bearer"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Bearer value redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'Authorization: Bearer FAKESECRET_b3\\n'",
+   "must_not_see": [
+    "FAKESECRET_b3"
+   ],
+   "must_see": [
+    "Authorization: Bearer"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre",
+   "name": "journalctl command stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-1 'journalctl -u myapp --since \"1 hour ago\" -n 500'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

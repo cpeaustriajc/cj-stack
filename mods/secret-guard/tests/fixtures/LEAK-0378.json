@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0378",
+ "title": "P2b op item get bulk dump in JSON",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "op item get --format json with password field withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op item get Deploy --format json"
+    },
+    "tool_response": {
+     "stdout": "{\"id\":\"abc123\",\"title\":\"Deploy\",\"fields\":[{\"id\":\"password\",\"value\":\"FAKESECRET_op_23\"}]}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_op_23"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

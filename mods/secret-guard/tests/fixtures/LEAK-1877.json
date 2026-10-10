@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1877",
+ "title": "osascript tell application Terminal do script is denied at PreToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Terminal do script denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "osascript -e 'tell application \"Terminal\" to do script \"cat FAKESECRET_env.txt\"'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

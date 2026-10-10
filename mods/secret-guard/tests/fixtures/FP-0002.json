@@ -1,0 +1,38 @@
+{
+ "case_id": "FP-0002",
+ "title": "False positive: source file identifiers redacted by name rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of source config with identifiers and header names is left unchanged",
+   "files": {
+    "src/auth/config.ts": "const TOKEN_EXPIRY_SECONDS = 3600;\nconst passwordMinLength = 8;\nheaderName: 'x-api-key'\nprocess.env.API_KEY_HEADER = 'X-API-Key'\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/auth/config.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/auth/config.ts",
+      "content": "const TOKEN_EXPIRY_SECONDS = 3600;\nconst passwordMinLength = 8;\nheaderName: 'x-api-key'\nprocess.env.API_KEY_HEADER = 'X-API-Key'\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_see": [
+    "const TOKEN_EXPIRY_SECONDS = 3600;",
+    "const passwordMinLength = 8;",
+    "headerName: 'x-api-key'",
+    "process.env.API_KEY_HEADER = 'X-API-Key'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

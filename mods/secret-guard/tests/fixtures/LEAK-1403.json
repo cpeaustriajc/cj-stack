@@ -1,0 +1,71 @@
+{
+ "case_id": "LEAK-1403",
+ "title": "Read of a PEM split across two Read chunks",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PEM chunk 1 with BEGIN header and body lines",
+   "files": {
+    "scratch/deploy_key.pem": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_KEYLINE_01b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAE\nFAKESECRET_KEYLINE_02bm9uZQAAAAAAAAAB\nFAKESECRET_KEYLINE_03Y2s2s0V6U2dlTmg3\n-----END OPENSSH PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "scratch/deploy_key.pem",
+     "offset": 0,
+     "limit": 12
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "scratch/deploy_key.pem",
+      "content": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_KEYLINE_01b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAE\nFAKESECRET_KEYLINE_02bm9uZQAAAAAAAAAB\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYLINE_01",
+    "FAKESECRET_KEYLINE_02"
+   ],
+   "must_see": [
+    "BEGIN OPENSSH PRIVATE KEY"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PEM chunk 2 with base64-looking body and END line",
+   "files": {
+    "scratch/deploy_key.pem": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_KEYLINE_01b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAE\nFAKESECRET_KEYLINE_02bm9uZQAAAAAAAAAB\nFAKESECRET_KEYLINE_03Y2s2s0V6U2dlTmg3\n-----END OPENSSH PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "scratch/deploy_key.pem",
+     "offset": 12,
+     "limit": 12
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "scratch/deploy_key.pem",
+      "content": "FAKESECRET_KEYLINE_03Y2s2s0V6U2dlTmg3\n-----END OPENSSH PRIVATE KEY-----\n",
+      "numLines": 2,
+      "startLine": 13,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYLINE_03"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

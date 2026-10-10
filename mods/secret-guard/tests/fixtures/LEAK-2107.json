@@ -1,0 +1,70 @@
+{
+ "case_id": "LEAK-2107",
+ "title": "MCP output: redaction applied to the first text block only, secret in a later content block",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP multi-block content: secret in second text block (MCP shape not in hook-payloads.json; case-defined)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__docs__search",
+    "tool_input": {
+     "query": "status"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "ok"
+      },
+      {
+       "type": "text",
+       "text": "secret=FAKESECRET_mcp5"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp5"
+   ],
+   "must_see": [
+    "secret="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "MCP structuredContent field: secret in non-text field",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_mcp6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__docs__search",
+    "tool_input": {
+     "query": "status"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "ok"
+      }
+     ],
+     "structuredContent": {
+      "value": "FAKESECRET_mcp6"
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp6"
+   ],
+   "must_see": [
+    "ok"
+   ],
+   "policy_note": "R5: planted FAKESECRET_mcp6 in a harvested .env in files (SERVICE_TOKEN=<same value>), so the value comes from a secret file. Nothing else changed. The first fixture (FAKESECRET_mcp5, behind a secret= name signal) did not fail and is kept verbatim."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

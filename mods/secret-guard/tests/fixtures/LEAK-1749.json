@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1749",
+ "title": "git remote -v and git config --list print a token in the URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "URL password replaced, host path and x-access-token label kept",
+   "files": {
+    "remote-config.out": "origin https://x-access-token:FAKESECRET_GH_01@github.com/o/r.git (fetch)\norigin https://x-access-token:FAKESECRET_GH_01@github.com/o/r.git (push)\nremote.origin.url=https://x-access-token:FAKESECRET_GH_01@github.com/o/r.git\n"
+   },
+   "command": "cat remote-config.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_GH_01"
+   ],
+   "must_see": [
+    "origin https://x-access-token:[REDACTED]@github.com/o/r.git (fetch)",
+    "remote.origin.url=https://x-access-token:[REDACTED]@github.com/o/r.git",
+    "x-access-token"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git remote -v stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git remote -v"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

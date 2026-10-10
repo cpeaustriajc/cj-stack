@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0696",
+ "title": "Inline env assignment with non-secret name echoes value (node -e) [r2: secret planted in ~/Projects/app/.env so the known-value layer catches it. CAUTION: this removes the catalog premise that the value is not harvested, so this no longer exercises the known false negative. The only runner-valid way to record the gap as a gap is level not-testable with a reason, which the parent may prefer]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "harvested value echoed via node -e under non-secret APP_CFG is redacted",
+   "files": {
+    "~/Projects/app/.env": "API_TOKEN=FAKESECRET_hunter2xyz\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "APP_CFG=FAKESECRET_hunter2xyz node -e 'console.log(process.env.APP_CFG)'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_hunter2xyz\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hunter2xyz"
+   ]
+  }
+ ]
+}

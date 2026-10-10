@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1164",
+ "title": "Write tool writes a copied secret into a repo file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies Write of an _authToken assignment to .npmrc",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/proj/.npmrc",
+     "content": "//registry.npmjs.org/:_authToken=FAKESECRET_npm"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies Write of a known-shaped password assignment in seed.js",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/proj/scripts/seed.js",
+     "content": "const pw = 'FAKESECRET_pw';"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write that reads the password from env stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/proj/scripts/seed.js",
+     "content": "const pw = process.env.SEED_PW;"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

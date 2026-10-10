@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-1154",
+ "title": "scp of remote secret file into project or renamed copy: deny both scp commands; mask the renamed copy on Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "scp remote .env into project denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp deploy@prod-host:/srv/app/.env /Users/cj/Projects/renav/"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "scp remote shared .env to renamed tmp-env.txt denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "scp prod-web:/srv/app/shared/.env ./tmp-env.txt"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of renamed copy: secret value masked by content",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/tmp-env.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/tmp-env.txt",
+      "content": "SECRET_KEY=FAKESECRET_renamed\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_renamed"
+   ],
+   "must_see": [
+    "SECRET_KEY=",
+    "tmp-env.txt"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

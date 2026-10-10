@@ -1,0 +1,9 @@
+{
+ "case_id": "LEAK-0277",
+ "title": "Pasted DATABASE_URL in the prompt reaches the model",
+ "level": "not-testable",
+ "fixtures": [],
+ "duplicate_of_dropped": false,
+ "gap_note": "The e2e prompt itself contains the secret, so the model has it before any tool runs. User-pasted secrets are a gap no hook can close; unit fixtures still cover the tool output.",
+ "reason_not_testable": "The e2e prompt itself contains the secret, so the model has it before any tool runs. User-pasted secrets are a gap no hook can close; unit fixtures still cover the tool output."
+}

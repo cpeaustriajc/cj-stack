@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1063",
+ "title": "ps -E environment flag on macOS (flag UNVERIFIED; output simulated, batch lists e2e)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "supported ps -E output: STRIPE value redacted, HOME kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -E -p 4121 -o command="
+    },
+    "tool_response": {
+     "stdout": "node server.js STRIPE_SECRET_KEY=FAKESECRET_sk_live_G7 HOME=/Users/cj\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_G7"
+   ],
+   "must_see": [
+    "node server.js",
+    "STRIPE_SECRET_KEY=[REDACTED]",
+    "HOME=/Users/cj"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "unsupported-flag usage error passes unchanged (printf stand-in, exit 1)",
+   "files": {},
+   "command": "printf 'ps: illegal option -- E\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [],
+   "must_see": [
+    "ps: illegal option -- E"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

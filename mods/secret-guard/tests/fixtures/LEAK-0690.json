@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0690",
+ "title": "Write tool content with a secret: tool_input and echoed tool_response",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Write .env.local: secret in tool_response content and structuredPatch replaced; tool_input copy is the recorded gap",
+   "files": {
+    ".env.local": "STRIPE_SECRET_KEY=FAKESECRET_sk_test_0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/work/proj/.env.local",
+     "content": "STRIPE_SECRET_KEY=FAKESECRET_sk_test_0001\n"
+    },
+    "tool_response": {
+     "type": "create",
+     "filePath": "/work/proj/.env.local",
+     "content": "STRIPE_SECRET_KEY=FAKESECRET_sk_test_0001\n",
+     "structuredPatch": [
+      {
+       "oldStart": 1,
+       "oldLines": 0,
+       "newStart": 1,
+       "newLines": 1,
+       "lines": [
+        "+STRIPE_SECRET_KEY=FAKESECRET_sk_test_0001"
+       ]
+      }
+     ],
+     "originalFile": null,
+     "userModified": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_test_0001"
+   ],
+   "must_see": [
+    "filePath",
+    "structuredPatch",
+    "userModified",
+    "STRIPE_SECRET_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

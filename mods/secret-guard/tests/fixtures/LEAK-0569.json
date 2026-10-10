@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-0569",
+ "title": "Backup script stderr: encryption password and URL userinfo redacted, labels and host kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "two stderr lines redacted through 2>&1 and tail",
+   "files": {
+    "scripts/backup.sh": "echo 'backup: encryption password=FAKESECRET_bk33' >&2\necho 'config url https://user:FAKESECRET_bk33b@host/x' >&2\n"
+   },
+   "command": "sh scripts/backup.sh --verbose 2>&1 | tail -n 200",
+   "exit_code": 0,
+   "must_not_see": [
+    "password=FAKESECRET_bk33",
+    "user:FAKESECRET_bk33b"
+   ],
+   "must_see": [
+    "backup: encryption password=",
+    "config url https://user:",
+    "@host/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

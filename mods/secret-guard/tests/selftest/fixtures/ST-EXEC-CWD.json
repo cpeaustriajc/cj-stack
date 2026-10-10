@@ -1,0 +1,17 @@
+{
+ "case_id": "ST-EXEC-CWD",
+ "title": "cd survives",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cd sub",
+   "command": "mkdir -p sub && cd sub && echo FAKESECRET_toy3 >&2",
+   "must_not_see": [
+    "FAKESECRET_toy3"
+   ],
+   "cwd_after": "sub",
+   "exit_code": 0
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1940",
+ "title": "base64 of a secret file is denied by the guard (encoded-copy evasion)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 of .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 .env > w.b64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "base64 of non-secret text stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo hello | base64"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

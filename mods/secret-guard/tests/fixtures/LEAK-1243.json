@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1243",
+ "title": "memory notes file auto-loaded in later sessions",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "memory note content holds a registry value (deny)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_p11\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "~/.claude/projects/renav/memory/notes.md",
+     "content": "db password FAKESECRET_p11"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary memory note stays allowed",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_p11\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "~/.claude/projects/renav/memory/notes.md",
+     "content": "Prefers pnpm over npm in this repo."
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

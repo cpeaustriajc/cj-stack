@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1377",
+ "title": "grep -o extracts an Anthropic-format key from a notes file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -o of sk-ant- pattern from notes file",
+   "files": {
+    "notes/keys.txt": "anthropic: sk-ant-api03-FAKESECRET_a1b2c3d4e5f6\n"
+   },
+   "command": "grep -o 'sk-ant-[A-Za-z0-9_-]*' notes/keys.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_a1b2c3d4e5f6"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

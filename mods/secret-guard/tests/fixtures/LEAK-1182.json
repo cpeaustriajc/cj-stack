@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1182",
+ "title": "ssh tail of bash history piped through tail",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "mysql -p inline password and export TOKEN=value in history output",
+   "files": {},
+   "command": "printf '%s\\n' 'mysql -u root -pFAKESECRET_m1' 'export TOKEN=FAKESECRET_t2' | tail -200",
+   "must_not_see": [
+    "FAKESECRET_m1",
+    "FAKESECRET_t2"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

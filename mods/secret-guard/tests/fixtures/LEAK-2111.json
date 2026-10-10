@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2111",
+ "title": "Large Bash output persisted to disk before the PostToolUse rewrite",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real hooks: 5000-line output with secret on line 3000; model-visible result redacted (on-disk tool-results copy not asserted by runner)",
+   "files": {
+    "gen.sh": "seq 1 5000 | sed 's/^3000$/DB_PASSWORD=FAKESECRET_ALPHA/'\n"
+   },
+   "prompt": "Run `bash gen.sh` with Bash, then tell me exactly what line 3000 of its output says.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_ALPHA"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Agent Bash read of persisted tool-results file must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.claude/projects/-Users-cj-Projects-renav/s1/tool-results/toolu_FAKE01.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of one tool-results file; no listed secret source or deny combo. Judgment call: the fixture implies tool-results are sensitive, so flip if owner adds )"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

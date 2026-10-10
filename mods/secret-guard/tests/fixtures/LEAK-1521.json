@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1521",
+ "title": "Parent passes token inside Agent prompt (catalog test_level e2e; the guard decision happens before any subagent starts, so level set to unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Agent call whose prompt contains a ghp_ token is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "description": "clone repo",
+     "prompt": "Use token ghp_FAKESECRET000000000000000000000000000 to clone the private repo",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Agent call with an ordinary prompt stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "description": "summarise readme",
+     "prompt": "Read README.md and summarise it in one sentence.",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

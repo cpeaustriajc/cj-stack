@@ -1,0 +1,46 @@
+{
+ "case_id": "REL-0005",
+ "title": "Large git log -p output: hook timeout or throw fails open",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "normal-size git log -p diff with historical FAKESECRET_big7 is redacted (50 MB timeout/throw not injectable; fail-closed NOT proven)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p --all"
+    },
+    "tool_response": {
+     "stdout": "commit 9f8e7d6c\n-API_KEY=FAKESECRET_big7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_big7"
+   ],
+   "must_see": [
+    "commit 9f8e7d6c"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git log -p --all stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p --all"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

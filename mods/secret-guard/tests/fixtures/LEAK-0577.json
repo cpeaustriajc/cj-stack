@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0577",
+ "title": "log collect writes an archive that is read later (e2e; collect itself not run, show output simulated with a local file)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash log show --archive output redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --archive ./scratch/ui.logarchive --info"
+    },
+    "tool_response": {
+     "stdout": "2026-10-10 09:12:44.311 browser[901]: token=FAKESECRET_arc42\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_arc42"
+   ],
+   "must_see": [
+    "browser[901]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session reads simulated show output",
+   "files": {
+    "ui-show.txt": "2026-10-10 09:12:44.311 browser[901]: token=FAKESECRET_arc42\n"
+   },
+   "prompt": "Run exactly this Bash command and reply with its complete output: cat ui-show.txt . Do not run any other command.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_arc42"
+   ],
+   "must_see": [
+    "browser[901]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

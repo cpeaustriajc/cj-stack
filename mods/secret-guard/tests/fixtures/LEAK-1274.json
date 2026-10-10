@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1274",
+ "title": "Grep over repo finds token in store that MCP_REMOTE_CONFIG_DIR placed inside the repo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep-repo-tokens-allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "refresh_token|access_token",
+     "path": "/Users/cj/Projects/renav",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "grep-repo-access_token-value-redacted",
+   "files": {
+    ".mcp-auth/mcp-remote-v1/tokens.json": "{\n  \"access_token\": \"FAKESECRET_repoacc0006\"\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "refresh_token|access_token",
+     "path": "/Users/cj/Projects/renav",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".mcp-auth/mcp-remote-v1/tokens.json:3:  \"access_token\": \"FAKESECRET_repoacc0006\"",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_repoacc0006"
+   ],
+   "must_see": [
+    "access_token",
+    ".mcp-auth/mcp-remote-v1/tokens.json:3:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

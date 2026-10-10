@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1224",
+ "title": "psql query returning a credential column",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "psql table: credential cell redacted by PostToolUse, tenant name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'psql -c \"select name, api_key from tenants limit 50\"'"
+    },
+    "tool_response": {
+     "stdout": " name | api_key\n------+-----------\n acme | FAKESECRET_t8\n(1 row)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_t8"
+   ],
+   "must_see": [
+    "acme",
+    "(1 row)"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "psql table: credential cell redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf ' name | api_key\\n------+-----------\\n acme | FAKESECRET_t8\\n(1 row)\\n'",
+   "must_not_see": [
+    "FAKESECRET_t8"
+   ],
+   "must_see": [
+    "acme",
+    "(1 row)"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

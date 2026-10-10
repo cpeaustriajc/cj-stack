@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1924",
+ "title": "Decrypt output written to stderr instead of stdout; both fields must be scanned",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr-only secret redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "age -d -i ./FAKE_identity.txt ./FAKE_cred.age 1>&2"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "FAKESECRET_age_0003\n",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_age_0003"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

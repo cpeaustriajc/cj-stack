@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0245",
+ "title": "Hook exits 1 with no JSON on Bash output: raw stdout passes through",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "normal-path redaction of DB_TOKEN in Bash stdout (exit-1 fault injection is not expressible in the fixture format, so fail-closed behaviour is NOT proven)",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DB_TOKEN=FAKESECRET_9fQ2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_9fQ2"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env redacted at source by the filter (exit-1 path not injectable)",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "command": "cat .env",
+   "must_not_see": [
+    "FAKESECRET_9fQ2"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

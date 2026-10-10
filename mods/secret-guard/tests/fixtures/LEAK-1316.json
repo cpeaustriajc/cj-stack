@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1316",
+ "title": "npm config list proxy password (post + simulated pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "npm config list stdout proxy line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm config list -l"
+    },
+    "tool_response": {
+     "stdout": "proxy = \"http://FAKEUSER:FAKESECRET_npmcfg0040@host.example:8080\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npmcfg0040"
+   ],
+   "must_see": [
+    "host.example:8080"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated npm config list output",
+   "files": {},
+   "command": "printf 'proxy = \"http://FAKEUSER:FAKESECRET_npmcfg0040@host.example:8080\"\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_npmcfg0040"
+   ],
+   "must_see": [
+    "host.example:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

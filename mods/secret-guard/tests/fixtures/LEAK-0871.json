@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0871",
+ "title": "cat .env with redactor failing; model must see no part of the original stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env output is withheld or redacted",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_1"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_1",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0632",
+ "title": "ssh cat of a remote server .env file (ssh simulated by a shell function, never real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh deploy@prod-web-1 cat .env: DSN password and API_KEY redacted",
+   "files": {},
+   "command": "ssh() { printf 'DATABASE_URL=postgres://app:FAKESECRET_pw2@db:5432/app\\nAPI_KEY=FAKESECRET_api_3\\n'; }; ssh deploy@prod-web-1 'cat /srv/app/shared/.env'",
+   "must_not_see": [
+    "FAKESECRET_pw2",
+    "FAKESECRET_api_3"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:",
+    "@db:5432/app",
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Variant ssh deploy@prod cat /srv/app/.env: same redaction",
+   "files": {},
+   "command": "ssh() { printf 'DATABASE_URL=postgres://app:FAKESECRET_pw2@db:5432/app\\nAPI_KEY=FAKESECRET_api_3\\n'; }; ssh deploy@prod 'cat /srv/app/.env'",
+   "must_not_see": [
+    "FAKESECRET_pw2",
+    "FAKESECRET_api_3"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://app:",
+    "@db:5432/app",
+    "API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

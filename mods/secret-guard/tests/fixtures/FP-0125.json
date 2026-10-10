@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0125",
+ "title": "False positive: short harvested value matches version numbers",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat readme with harvested short value 1",
+   "files": {
+    ".dev.vars": "SECRET_ROTATION_ENABLED=1\n",
+    "fixtures/readme.txt": "Upgraded to version 1.2.3 on port 8100, see ticket 11.\n"
+   },
+   "command": "cat fixtures/readme.txt",
+   "exit_code": 0,
+   "must_see": [
+    "Upgraded to version 1.2.3 on port 8100, see ticket 11."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0404",
+ "title": "D1 defaults read dumps whole preference domain",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "apiToken line redacted, endpoint line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read com.example.devtool"
+    },
+    "tool_response": {
+     "stdout": "apiToken = \\\"FAKESECRET_def_50\\\";\\nendpoint = \\\"https://x\\\";\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_def_50"
+   ],
+   "must_see": [
+    "endpoint"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated defaults read apiToken withheld at source",
+   "files": {},
+   "command": "defaults() { printf 'apiToken = \"FAKESECRET_def_50\";\\nendpoint = \"https://x\";\\n'; }; defaults read com.example.devtool",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_def_50"
+   ],
+   "must_see": [
+    "endpoint"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

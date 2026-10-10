@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0920",
+ "title": "docker inspect Env with server-generated Postgres password (name rule, no local file)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect Env JSON array; POSTGRES_PASSWORD value redacted, other entries intact",
+   "files": {
+    "sim-docker-inspect.sh": "printf '%s\\n' '[\"PATH=/usr/local/sbin:/usr/bin\",\"POSTGRES_USER=renav\",\"POSTGRES_PASSWORD=FAKESECRET_pg_7f3kQ9wZ2mXa\",\"PG_VERSION=16.4\"]'\n"
+   },
+   "command": "sh sim-docker-inspect.sh",
+   "must_not_see": [
+    "FAKESECRET_pg_7f3kQ9wZ2mXa"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD",
+    "PATH=/usr/local/sbin:/usr/bin",
+    "POSTGRES_USER=renav",
+    "PG_VERSION=16.4"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

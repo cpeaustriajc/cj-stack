@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0835",
+ "title": "Wrong-shape updatedToolOutput for cat .env.test (e2e: model must not see token)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat .env.test via Bash, token must not reach the model",
+   "files": {
+    ".env.test": "DOCS_TEST_TOKEN=FAKESECRET_tok_0123456789\n"
+   },
+   "prompt": "Run Bash: cat .env.test and return the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_tok_0123456789"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0367",
+ "title": "K22 env | grep token after a value was exported earlier",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env grep token, value never seen by hook (key-name rule)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "GITHUB_TOKEN=FAKESECRET_tok_13\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_13"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-0896",
+ "title": "Redactor error on malformed tool_response: raw output must not pass",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tool_response is a string holding stdout JSON; hook must exit 0 and emit schema-valid Bash updatedToolOutput with withheld placeholder",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env"
+    },
+    "tool_response": "{\"stdout\": \"FAKESECRET_ENV_PASSWORD=hunter-FAKESECRET\", \"stderr\": \"\"}"
+   },
+   "must_not_see": [
+    "FAKESECRET_ENV_PASSWORD",
+    "hunter-FAKESECRET"
+   ],
+   "must_see": [
+    "[REDACTED: redactor error, output withheld]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

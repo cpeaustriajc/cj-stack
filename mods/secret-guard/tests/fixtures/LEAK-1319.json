@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1319",
+ "title": "ps argv shows proxy password (post + simulated pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ps aux grep proxy line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps aux | grep -i proxy"
+    },
+    "tool_response": {
+     "stdout": "user 4242 0.0 0.1 node npm --proxy http://FAKEUSER:FAKESECRET_psargv0043@host.example:8080 install\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_psargv0043"
+   ],
+   "must_see": [
+    "node npm --proxy",
+    "host.example:8080 install"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated ps output",
+   "files": {},
+   "command": "printf 'user 4242 0.0 0.1 node npm --proxy http://FAKEUSER:FAKESECRET_psargv0043@host.example:8080 install\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_psargv0043"
+   ],
+   "must_see": [
+    "node npm --proxy",
+    "host.example:8080 install"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

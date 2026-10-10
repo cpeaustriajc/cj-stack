@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0332",
+ "title": "leaks with explicit -fullContent",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "leaks -fullContent denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -fullContent 4242"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "full content redacted if run",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_FULL\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks -fullContent 4242"
+    },
+    "tool_response": {
+     "stdout": "Leak of 48 bytes\n  content: \"FAKESECRET_FULL\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FULL"
+   ],
+   "must_see": [
+    "Leak of 48 bytes"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

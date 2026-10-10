@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0121",
+ "title": "False positive: lockfile integrity hashes via Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of package-lock.json keeps integrity lines unchanged",
+   "files": {
+    "package-lock.json": "{\n  \"name\": \"renav\",\n  \"integrity\": \"sha512-FAKEkQ7mZpa2Wv8Lr1NxhT5cYbJ0GesU3dVfOiK9PlM4wRzXtAnB6qHyEjCoFAKEgS2uDik0Zf7WlVmb3vHcJz==\"\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/package-lock.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/package-lock.json",
+      "content": "{\n  \"name\": \"renav\",\n  \"integrity\": \"sha512-FAKEkQ7mZpa2Wv8Lr1NxhT5cYbJ0GesU3dVfOiK9PlM4wRzXtAnB6qHyEjCoFAKEgS2uDik0Zf7WlVmb3vHcJz==\"\n}\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "\"integrity\": \"sha512-FAKEkQ7mZpa2Wv8Lr1NxhT5cYbJ0GesU3dVfOiK9PlM4wRzXtAnB6qHyEjCoFAKEgS2uDik0Zf7WlVmb3vHcJz==\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

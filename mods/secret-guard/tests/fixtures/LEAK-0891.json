@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0891",
+ "title": "docker inspect Env entry with escaped newlines in a PEM value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker-inspect-env-via-printf-standin",
+   "files": {},
+   "command": "printf '%s\\n' '[{\"Id\":\"c0ffee01\",\"Name\":\"/app-web-1\",\"Config\":{\"Image\":\"app:latest\",\"Env\":[\"FAKESECRET_ENV_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\\nFAKESECRET_PEM_BODY\\n-----END PRIVATE KEY-----\",\"PORT=3000\"]}}]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ENV_PRIVATE_KEY",
+    "FAKESECRET_PEM_BODY"
+   ],
+   "must_see": [
+    "app-web-1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "docker-inspect-env-object",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_ENV_PRIVATE_KEY\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh sd-mp 'docker inspect app-web-1'"
+    },
+    "tool_response": {
+     "stdout": "[{\"Id\":\"c0ffee01\",\"Name\":\"/app-web-1\",\"Config\":{\"Image\":\"app:latest\",\"Env\":[\"FAKESECRET_ENV_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\\nFAKESECRET_PEM_BODY\\n-----END PRIVATE KEY-----\",\"PORT=3000\"]}}]",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ENV_PRIVATE_KEY",
+    "FAKESECRET_PEM_BODY"
+   ],
+   "must_see": [
+    "app-web-1"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

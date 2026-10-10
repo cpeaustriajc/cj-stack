@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0411",
+ "title": "D9 plutil over Group Containers glob: value line must be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plutil -p Group Containers glob",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -p \"$HOME/Library/Group Containers\"/*/Library/Preferences/*.plist"
+    },
+    "tool_response": {
+     "stdout": "\"token\" => \"FAKESECRET_group_58\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_group_58"
+   ],
+   "must_see": [
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,84 @@
+{
+ "case_id": "LEAK-1117",
+ "title": "Grep tool content search over home, project, dotfile, snapshot, or single-file scopes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep over /Users/cj with dotfile glob is allowed (home root)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token|secret|password",
+     "path": "/Users/cj",
+     "glob": "**/.*",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: Grep with output_mode content prints matching lines, which is plain display for any scope. The output is redacted, so the guard allows it. Was expect deny."
+  },
+  {
+   "kind": "pre",
+   "name": "Grep of .dev.vars single file is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY",
+     "path": ".dev.vars"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Grep tool on a single named secret file (.dev.vars). Owner allows the Grep tool on secret files.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Grep over ~/.claude/shell-snapshots is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "TOKEN|SECRET|KEY",
+     "path": "/Users/cj/.claude/shell-snapshots",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: Grep with output_mode content on shell-snapshots prints matching lines (plain display), and the output is redacted. Reading it loosens no hook, setting or permission, so R4 does not apply. Was expect deny."
+  },
+  {
+   "kind": "post",
+   "name": "if a project-scoped search runs, SUPABASE_KEY value is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_use_id": "toolu_fx_1117",
+    "tool_input": {
+     "pattern": "SUPABASE_KEY",
+     "path": "/Users/cj/Projects/renav",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".env:3:SUPABASE_KEY=FAKESECRET_sb",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sb"
+   ],
+   "must_see": [
+    "SUPABASE_KEY=[REDACTED]"
+   ]
+  }
+ ]
+}

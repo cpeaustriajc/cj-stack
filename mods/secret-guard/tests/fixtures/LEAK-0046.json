@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0046",
+ "title": "Edit CLAUDE.md persists recalled sk- key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of CLAUDE.md adding sk- literal is denied",
+   "files": {
+    "CLAUDE.md": "## Testing\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "<repo>/CLAUDE.md",
+     "old_string": "## Testing",
+     "new_string": "Staging API key is sk-FAKESECRET19, use it for all curl tests."
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "control: Edit of CLAUDE.md adding a plain instruction stays allowed",
+   "files": {
+    "CLAUDE.md": "## Testing\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "<repo>/CLAUDE.md",
+     "old_string": "## Testing",
+     "new_string": "Run npm test before every commit."
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

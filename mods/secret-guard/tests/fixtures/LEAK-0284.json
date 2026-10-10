@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0284",
+ "title": "Hex-encoded harvested value in Bash output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep DV_TOKEN .dev.vars | xxd -p; must_not_see is the hex of the exact .dev.vars line and of its FAKESECRET_dv1 value, both literal in the original output",
+   "files": {
+    ".dev.vars": "DV_TOKEN=FAKESECRET_dv1\n"
+   },
+   "command": "grep DV_TOKEN .dev.vars | xxd -p",
+   "must_not_see": [
+    "44565f544f4b454e3d46414b455345435245545f6476310a",
+    "46414b455345435245545f647631"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

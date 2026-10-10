@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0742",
+ "title": "base64 of .dev.vars (wrapping at 76 columns not exercised: 36-char output does not wrap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 of a secret file is denied (secret source plus transform)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < .dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "base64 of API_TOKEN line: encoded form not shown",
+   "files": {
+    ".dev.vars": "API_TOKEN=FAKESECRET_tok2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "QVBJX1RPS0VOPUZBS0VTRUNSRVRfdG9rMgo=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "QVBJX1RPS0VOPUZBS0VTRUNSRVRfdG9rMgo="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0046",
+ "title": "False positive check: grep for KEY matching the KEY_COUNT identifier stays unchanged (post and pre allow)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -n KEY output keeps KEY_COUNT and value 3",
+   "files": {
+    "src/config.ts": "const KEY_COUNT = 3;\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n KEY src/config.ts"
+    },
+    "tool_response": {
+     "stdout": "42:const KEY_COUNT = 3;\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "42:const KEY_COUNT = 3;",
+    "KEY_COUNT"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "grep -n KEY src/config.ts is allowed",
+   "files": {
+    "src/config.ts": "const KEY_COUNT = 3;\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n KEY src/config.ts"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

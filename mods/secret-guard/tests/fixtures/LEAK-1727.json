@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1727",
+ "title": "Read of zsh history with mysql -p inline password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mysql -p inline password in Read of .zsh_history is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.zsh_history"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.zsh_history",
+      "content": ": 1718000000:0;mysql -u root -pFAKESECRET_mysql_pw -h db.internal\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mysql_pw"
+   ],
+   "must_see": [
+    "mysql -u root",
+    "-h db.internal"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

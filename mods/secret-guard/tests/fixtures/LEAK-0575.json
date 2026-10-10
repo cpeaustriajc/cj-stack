@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0575",
+ "title": "Killed log stream still returns partial output through the hook (catalog says e2e; pre_exec used because the spec routes interrupted output to pre_exec; termination simulated by exit 124)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "access_token line redacted before a timeout exit of 124",
+   "files": {
+    "bin/log.sh": "echo 'access_token=FAKESECRET_ls40'\nexit 124\n"
+   },
+   "command": "sh bin/log.sh stream --level debug",
+   "exit_code": 124,
+   "must_not_see": [
+    "access_token=FAKESECRET_ls40"
+   ],
+   "must_see": [
+    "access_token=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

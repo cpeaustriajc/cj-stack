@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1476",
+ "title": "psql SELECT of credential columns returns token cells",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "psql select of access_token and refresh_token cells",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "psql \"$DATABASE_URL\" -c 'select id, provider, access_token, refresh_token from oauth_connections limit 50'",
+     "description": "Query oauth connections"
+    },
+    "tool_response": {
+     "stdout": " id | provider | access_token | refresh_token\n 1 | github | FAKESECRET_at_1 | FAKESECRET_rt_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_at_1",
+    "FAKESECRET_rt_1"
+   ],
+   "must_see": [
+    " id | provider | access_token | refresh_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

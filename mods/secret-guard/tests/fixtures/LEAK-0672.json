@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0672",
+ "title": "cut/head/fold splits the value into one character per line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "fold -w1 of STRIPE value, recorded leak",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -d= -f2 .env | head -1 | fold -w1"
+    },
+    "tool_response": {
+     "stdout": "F\nA\nK\nE\nS\nE\nC\nR\nE\nT\n_\ns\nk\n_\nl\ni\nv\ne\n_\na\nb\nc\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "F\nA\nK\nE\nS\nE\nC\nR\nE\nT\n_\ns\nk\n_\nl\ni\nv\ne\n_\na\nb\nc"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

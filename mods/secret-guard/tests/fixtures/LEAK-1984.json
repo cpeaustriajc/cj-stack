@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1984",
+ "title": "Process substitution with base64 transform hides the value from literal redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 over process substitution naming a protected file is denied",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < <(cat secret.env)"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "base64 with a process substitution argument naming a protected file is denied",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 <(cat secret.env)"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

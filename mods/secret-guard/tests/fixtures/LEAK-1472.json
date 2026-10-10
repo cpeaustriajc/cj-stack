@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1472",
+ "title": "Bash: fold of a harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf value | fold -w 8",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_p@ss#1\n"
+   },
+   "command": "printf '%s' 'FAKESECRET_p@ss#1' | fold -w 8",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECR",
+    "ET_p@ss"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

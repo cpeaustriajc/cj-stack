@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1213",
+ "title": "systemctl show Environment for a unit",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Environment= API_TOKEN and URL password redacted (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'Environment=API_TOKEN=FAKESECRET_t7 DB_URL=postgres://u:FAKESECRET_p8@h\\n'",
+   "must_not_see": [
+    "FAKESECRET_t7",
+    "FAKESECRET_p8"
+   ],
+   "must_see": [
+    "Environment=API_TOKEN=",
+    "DB_URL=postgres://u:",
+    "@h"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "systemctl show Environment redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'systemctl show myapp -p Environment'"
+    },
+    "tool_response": {
+     "stdout": "Environment=API_TOKEN=FAKESECRET_t7 DB_URL=postgres://u:FAKESECRET_p8@h\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_t7",
+    "FAKESECRET_p8"
+   ],
+   "must_see": [
+    "Environment=API_TOKEN=",
+    "DB_URL=postgres://u:",
+    "@h"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

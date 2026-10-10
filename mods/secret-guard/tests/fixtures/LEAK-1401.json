@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1401",
+ "title": "Stderr secret on a failed Bash command (PostToolUseFailure)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote error on stderr with exit 1; URL password must be redacted",
+   "files": {},
+   "command": "printf 'Error: connect failed postgres://renav:FAKESECRET_PW@db.internal:5432/renav\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_PW"
+   ],
+   "must_see": [
+    "postgres://renav:[REDACTED]@db.internal:5432/renav"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .env.test then false; stdout line redacted on non-zero exit",
+   "files": {
+    ".env.test": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "command": "cat .env.test; false",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

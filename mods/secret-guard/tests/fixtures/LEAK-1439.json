@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1439",
+ "title": "Multi-word label before the secret value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "two harvested values under multi-word labels",
+   "files": {
+    ".env": "SECRET_ACCESS_KEY=FAKESECRET_q5\nCLIENT_SECRET=FAKESECRET_r6\n",
+    "secrets-export.txt": "Secret access key: FAKESECRET_q5\nClient Secret = FAKESECRET_r6\n"
+   },
+   "command": "cat ./secrets-export.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_q5",
+    "FAKESECRET_r6"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

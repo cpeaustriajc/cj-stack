@@ -1,0 +1,2 @@
+#!/bin/bash
+cat "$RT_DATA/psql.txt"

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1446",
+ "title": "Notebook code cell source and metadata secrets",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret in code source and in cell metadata",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/config.ipynb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/config.ipynb",
+      "content": "{\"cells\":[{\"cell_type\":\"code\",\"execution_count\":2,\"metadata\":{\"api_key\":\"FAKESECRET_src\"},\"outputs\":[],\"source\":[\"API_KEY = \\\"FAKESECRET_src\\\"\\n\",\"client = Client(API_KEY)\"]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_src"
+   ],
+   "must_see": [
+    "API_KEY = ",
+    "client = Client(API_KEY)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1746",
+ "title": "git stash list and git stash show -p",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "stash URL password replaced, stash name kept",
+   "files": {
+    "stash-show.out": "stash@{0}: WIP on main\ndiff --git a/config/db.ts b/config/db.ts\n@@ -1 +1 @@\n+DB_URL=postgres://app:FAKESECRET_STASH_01@db/x\n"
+   },
+   "command": "cat stash-show.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_STASH_01"
+   ],
+   "must_see": [
+    "stash@{0}: WIP on main",
+    "+DB_URL=postgres://app:[REDACTED]@db/x"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git stash list and git stash show -p stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git stash list && git stash show -p stash@{0}"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

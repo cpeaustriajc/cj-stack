@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0113",
+ "title": "Repo .claude/settings.json redirects API base URL before trust",
+ "level": "not-testable",
+ "reason_not_testable": "The config is applied before the workspace trust prompt is accepted and before any tool call or PostToolUse hook runs, so no hook payload exists to test. Non-hook controls from the catalog: do not open untrusted repos, read the trust prompt, and run a Claude Code release containing the cited fix (version 2.0.65 is cited by the catalog and is UNVERIFIED here).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

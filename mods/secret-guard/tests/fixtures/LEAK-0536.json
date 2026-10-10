@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0536",
+ "title": "Agent-added console.log of process.env, then app run",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "node app.js prints env line with secret-named key",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "node app.js 2>&1"
+    },
+    "tool_response": {
+     "stdout": "PATH=/usr/bin:/bin\nSTRIPE_SECRET_KEY=FAKESECRET_env2\nNODE_ENV=development\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_env2"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=",
+    "NODE_ENV=development",
+    "PATH=/usr/bin:/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

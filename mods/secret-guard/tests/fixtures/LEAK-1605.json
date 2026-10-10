@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1605",
+ "title": "Bash hook throws and exits 1 without JSON (exception approximated by non-object tool_response; fixture schema has no injection hook)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "unexpected tool_response shape withholds secret",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/x"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-1304",
+ "title": "Read of ~/.composer/auth.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.composer/auth.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.composer/auth.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.composer/auth.json.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, github-oauth and http-basic password values are redacted and the JSON keys remain",
+   "files": {
+    ".composer/auth.json": "{\"github-oauth\":{\"github.com\":\"FAKESECRET_ghoauth0029\"},\"http-basic\":{\"repo.packagist.example\":{\"username\":\"ci\",\"password\":\"FAKESECRET_composerpw0029\"}}}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.composer/auth.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.composer/auth.json",
+      "content": "{\"github-oauth\":{\"github.com\":\"FAKESECRET_ghoauth0029\"},\"http-basic\":{\"repo.packagist.example\":{\"username\":\"ci\",\"password\":\"FAKESECRET_composerpw0029\"}}}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_fake_1304"
+   },
+   "must_not_see": [
+    "FAKESECRET_ghoauth0029",
+    "FAKESECRET_composerpw0029"
+   ],
+   "must_see": [
+    "github-oauth",
+    "github.com",
+    "http-basic",
+    "repo.packagist.example",
+    "username"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

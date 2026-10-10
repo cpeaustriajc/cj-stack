@@ -1,0 +1,24 @@
+{
+ "case_id": "ST-MARKER-TOKEN36",
+ "title": "unmarked 36-char ghp_ is invalid",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ghp 36",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "ghp_a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8"
+    }
+   },
+   "must_see": [
+    "ghp_"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0308",
+ "title": "lldb attach then getenv and frame variable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "lldb attach with getenv expression is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "lldb -p 4242 -o 'expr (char*)getenv(\"DATABASE_URL\")' -o 'frame variable' -o quit"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "lldb getenv output with URL userinfo if it ran",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "lldb -p 4242 -o 'expr (char*)getenv(\"DATABASE_URL\")' -o 'frame variable' -o quit"
+    },
+    "tool_response": {
+     "stdout": "(char *) $0 = 0x... \"postgres://app:FAKESECRET_DBPASS@db/app\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DBPASS"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

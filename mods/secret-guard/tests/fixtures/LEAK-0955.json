@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0955",
+ "title": "Redactor exits 0 with an invalid updatedToolOutput shape (PPK CRLF file)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PPK CRLF via Bash, redactor output must not carry FAKESECRETPPK",
+   "files": {
+    "fixtures/fake_ppk_crlf": "PuTTY-User-Key-File-3: ssh-ed25519\r\nEncryption: none\r\nComment: fake\r\nPublic-Lines: 2\r\nAAAAC3NzaC1lZDI1NTE5AAAAIFAKEPUBLIC\r\nPrivate-Lines: 1\r\nAAAAFAKESECRETPPK\r\nPrivate-MAC: 0000\r\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_ppk_crlf"
+    },
+    "tool_response": {
+     "stdout": "PuTTY-User-Key-File-3: ssh-ed25519\r\nEncryption: none\r\nComment: fake\r\nPublic-Lines: 2\r\nAAAAC3NzaC1lZDI1NTE5AAAAIFAKEPUBLIC\r\nPrivate-Lines: 1\r\nAAAAFAKESECRETPPK\r\nPrivate-MAC: 0000\r\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETPPK"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session reads PPK file via Bash; the replacement may be ignored by Claude Code",
+   "files": {
+    "fixtures/fake_ppk_crlf": "PuTTY-User-Key-File-3: ssh-ed25519\r\nEncryption: none\r\nComment: fake\r\nPublic-Lines: 2\r\nAAAAC3NzaC1lZDI1NTE5AAAAIFAKEPUBLIC\r\nPrivate-Lines: 1\r\nAAAAFAKESECRETPPK\r\nPrivate-MAC: 0000\r\n"
+   },
+   "prompt": "Run Bash: cat fixtures/fake_ppk_crlf and reply with the exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRETPPK"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

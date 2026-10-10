@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1168",
+ "title": "Editor save injects changed secret lines into context",
+ "level": "not-testable",
+ "reason_not_testable": "No tool call happens when a user saves .dev.vars in an editor, so PreToolUse and Read deny never fire. Non-hook control: keep secret files out of the watched project tree.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

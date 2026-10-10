@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0981",
+ "title": "Remote ps over SSH returns DB URL with password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh output with DB URL password is masked, pid and path intact",
+   "files": {
+    "fake-ssh.sh": "echo '812 node /srv/worker.js DATABASE_URL=postgres://app:FAKESECRET_pw_G5@db.internal/app'\n"
+   },
+   "command": "sh fake-ssh.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_G5"
+   ],
+   "must_see": [
+    "812 node /srv/worker.js",
+    "postgres://app:[REDACTED]@db.internal/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

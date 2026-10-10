@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1514",
+ "title": "Subagent final report quotes DATABASE_URL secret (Agent matcher name per hook-payloads.json is Agent, not Task)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Agent result: password redacted in content, status and agentId kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Agent",
+    "tool_input": {
+     "description": "Find DB URL",
+     "prompt": "Find DATABASE_URL in .env and report it.",
+     "subagent_type": "general-purpose",
+     "run_in_background": false
+    },
+    "tool_response": {
+     "status": "completed",
+     "prompt": "Find DATABASE_URL in .env and report it.",
+     "agentId": "a3a1e8a5174520fa6",
+     "agentType": "general-purpose",
+     "handbackReport": {
+      "text": "Found DATABASE_URL=postgres://app:FAKESECRET_pw@db.internal/renav in .env line 3"
+     },
+     "content": [
+      {
+       "type": "text",
+       "text": "Found DATABASE_URL=postgres://app:FAKESECRET_pw@db.internal/renav in .env line 3"
+      }
+     ],
+     "totalToolUseCount": 2
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "completed",
+    "a3a1e8a5174520fa6",
+    "db.internal/renav"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "subagent quotes .env line through the real session: password absent from final reply",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw@db.internal/renav\n"
+   },
+   "prompt": "Use the Agent tool with subagent_type general-purpose to read .env and, in your final report, quote line 1 verbatim.",
+   "allowed_tools": "Agent,Read,Bash",
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

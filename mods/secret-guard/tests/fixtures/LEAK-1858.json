@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1858",
+ "title": "Claude Code headers helper output in MCP config echoed via Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp get output: bearer value redacted, Authorization header name and URL kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude mcp get my-server"
+    },
+    "tool_response": {
+     "stdout": "my-server:\n  Type: http\n  URL: https://mcp.example.test/sse\n  Headers:\n    Authorization: Bearer FAKESECRET_BEARER_xxx\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_xxx"
+   ],
+   "must_see": [
+    "Authorization",
+    "https://mcp.example.test/sse"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated mcp get output: bearer redacted at source",
+   "files": {},
+   "command": "printf 'my-server:\\n  Headers:\\n    Authorization: Bearer FAKESECRET_BEARER_xxx\\n'",
+   "must_not_see": [
+    "FAKESECRET_BEARER_xxx"
+   ],
+   "must_see": [
+    "Authorization"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

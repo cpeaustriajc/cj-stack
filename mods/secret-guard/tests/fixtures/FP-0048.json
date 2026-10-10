@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0048",
+ "title": "False positive: short harvested values (DEBUG=1, PORT=3000) replace unrelated digits",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo with digits matching harvested DEBUG and PORT values is unchanged",
+   "files": {
+    ".env": "DEBUG=1\nPORT=3000\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"node 18.1 port 3000 build 1234\""
+    },
+    "tool_response": {
+     "stdout": "node 18.1 port 3000 build 1234\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "node 18.1 port 3000 build 1234"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real echo output with digits is unchanged",
+   "files": {
+    ".env": "DEBUG=1\nPORT=3000\n"
+   },
+   "command": "echo \"node 18.1 port 3000 build 1234\"",
+   "must_not_see": [],
+   "must_see": [
+    "node 18.1 port 3000 build 1234"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0452",
+ "title": "[9] Read of zsh history file for an inline TOKEN export",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "export GITHUB_TOKEN value in zsh history is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.zsh_history"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.zsh_history",
+      "content": ": 1760000000:0;export GITHUB_TOKEN=FAKESECRET_hist09\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hist09"
+   ],
+   "must_see": [
+    "export GITHUB_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

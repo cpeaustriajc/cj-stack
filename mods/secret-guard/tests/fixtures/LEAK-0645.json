@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-0645",
+ "title": "Large remote journalctl output with the secret at the end (pre_exec for source redaction; tool-results spill file NOT assertable by this schema)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "20000-line ssh output with a Bearer line at the end: the bearer value must not reach the model",
+   "files": {},
+   "command": "ssh() { yes 'Jun 10 10:00:00 api[123]: request ok' | head -n 20000; printf 'Authorization: Bearer FAKESECRET_bearer_15\\n'; }; ssh prod 'journalctl -u api --no-pager -n 20000'",
+   "must_not_see": [
+    "FAKESECRET_bearer_15"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

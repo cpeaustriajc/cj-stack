@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0744",
+ "title": "stderr-only secret via ssh 2>&1 with stdout rewrite only",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr DATABASE_URL secret redacted; all four Bash keys kept",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/app\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host 'cat /etc/app/env' 2>&1"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/app\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stderr-only secret redacted at source through the filter",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/app\n"
+   },
+   "command": "printf '%s\\n' 'DATABASE_URL=postgres://app:FAKESECRET_pw1@db:5432/app' >&2",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

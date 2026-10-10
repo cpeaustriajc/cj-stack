@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0055",
+ "title": "False positive: KEY/TOKEN substrings in a Read of a SQL schema",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "schema-sql-no-redaction",
+   "files": {
+    "src/db/schema.sql": "CREATE TABLE tokenizer_cfg (primary_key_col int, monkey_count int);\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/db/schema.sql"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/db/schema.sql",
+      "content": "CREATE TABLE tokenizer_cfg (primary_key_col int, monkey_count int);\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "CREATE TABLE tokenizer_cfg (primary_key_col int, monkey_count int);"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

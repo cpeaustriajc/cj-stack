@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1948",
+ "title": "Repo-committed statusLine command prints env secrets to the UI",
+ "level": "not-testable",
+ "reason_not_testable": "The statusLine command runs outside the tool-call pipeline, so there is no tool_response for PostToolUse or PreToolUse to see. Whether UI output reaches the model is UNVERIFIED. Non-hook control: review committed .claude/settings.json before trusting a repo, pin statusLine in managed settings, and keep env dumps out of statusline scripts.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

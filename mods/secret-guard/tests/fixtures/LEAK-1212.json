@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1212",
+ "title": "recursive grep for secret-shaped strings sk_live and AKIA",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "sk_live_ token redacted with no key name on the line (remote simulated with printf)",
+   "files": {},
+   "command": "printf '/home/u/x.sh:4:export K=sk_live_FAKESECRET_1\\n'",
+   "must_not_see": [
+    "FAKESECRET_1"
+   ],
+   "must_see": [
+    "/home/u/x.sh:4:export K="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "sk_live_ token redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'grep -rn \"sk_live\\|AKIA\" /srv /home'"
+    },
+    "tool_response": {
+     "stdout": "/home/u/x.sh:4:export K=sk_live_FAKESECRET_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_1"
+   ],
+   "must_see": [
+    "/home/u/x.sh:4:export K="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "sk_live/AKIA grep stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'grep -rn \"sk_live\\|AKIA\" /srv /home'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

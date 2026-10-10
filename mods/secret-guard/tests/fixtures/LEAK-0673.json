@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0673",
+ "title": "rev of grep output must not reveal the reversed secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep DB_PASSWORD .dev.vars | rev",
+   "files": {
+    ".dev.vars": "DB_PASSWORD=FAKESECRET_pw_123\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DB_PASSWORD .dev.vars | rev"
+    },
+    "tool_response": {
+     "stdout": "321_wp_TERCESEKAF=DROWSSAP_BD\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "321_wp_TERCESEKAF",
+    "DROWSSAP_BD"
+   ],
+   "policy_note": "R5: added harvested .env with SERVICE_TOKEN=<same value as the fixture secret, FAKESECRET_pw_123>; existing .dev.vars kept; nothing else changed."
+  }
+ ]
+}

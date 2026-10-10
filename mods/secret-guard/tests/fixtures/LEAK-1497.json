@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1497",
+ "title": "npm run migrate error prints connection URI with password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command (exit 1): stderr URI password redacted, ECONNREFUSED and host kept",
+   "files": {},
+   "command": "printf 'ECONNREFUSED postgres://app:FAKESECRET_pw@db.internal:5432/app\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "ECONNREFUSED",
+    "db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0149",
+ "title": "Read .env then /feedback: e2e checks only the recorded tool_response and final reply; the /feedback bundle and session JSONL grep are not in the runner spec",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Read .env, DATABASE_URL password not in recorded output or reply",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pg_pw@db.example/app\n"
+   },
+   "prompt": "Read the file .env and reply with only DONE.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_pg_pw"
+   ],
+   "must_see": [
+    "DATABASE_URL"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

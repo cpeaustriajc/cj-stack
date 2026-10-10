@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0348",
+ "title": "User-typed ! shell-mode open of a .command file",
+ "level": "not-testable",
+ "reason_not_testable": "The input is typed by the user in shell mode, not an agent tool call, and whether PreToolUse runs for ! mode is UNVERIFIED, so no hook fixture can prove it. Non-hook control: strict sandbox mode and user policy (N), as the catalog states.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

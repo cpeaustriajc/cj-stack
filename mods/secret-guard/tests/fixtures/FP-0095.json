@@ -1,0 +1,34 @@
+{
+ "case_id": "FP-0095",
+ "title": "Read test file: AWS documentation example key and JWT-shaped fixture pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read aws.test.ts: AWS docs example key and JWT-shaped literal pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/src/__tests__/aws.test.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/src/__tests__/aws.test.ts",
+      "content": "const exampleKey = 'AKIAIOSFODNN7EXAMPLE';\nconst fixtureJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGQUtFIn0.FAKEc2ln';\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const exampleKey = 'AKIAIOSFODNN7EXAMPLE';",
+    "const fixtureJwt = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJGQUtFIn0.FAKEc2ln';"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "TAMP-0066",
+ "title": "1Password agent socket set as SSH_AUTH_SOCK",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "SSH_AUTH_SOCK assigned to 1Password agent path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "SSH_AUTH_SOCK=\"$HOME/Library/Group Containers/2BUIKH15PA.com.1password/t/agent.sock\" ssh-add -L"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display: ssh-add -L lists public keys only. SSH_AUTH_SOCK prefix only selects the agent socket and is not a transform. Owner allows plain credential-CLI d)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

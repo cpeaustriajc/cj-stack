@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1894",
+ "title": "sqlite3 DELETE leaves the secret in the -wal file while the tool output looks clean",
+ "level": "not-testable",
+ "reason_not_testable": "Only the disk residue (app.db-wal and freelist pages written by SQLite) is in question. A fixture needs a must_not_see string that occurs in the raw input, but the command output is empty and the secret exists only inside the database, so the runner would mark it invalid. Non-hook control: stop storing raw secrets in SQLite, use secure_delete with WAL checkpoint and truncation in the app, and rotate any secret that was stored there.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

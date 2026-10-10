@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0527",
+ "title": "[75] ls -l symlink arrow target carries a DSN-like name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ls -l symlink: text after -> redacted, link name and permission columns kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET-prod\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -l /Users/cj/Projects/renav/.env*"
+    },
+    "tool_response": {
+     "stdout": "lrwxr-xr-x  1 cj  staff  41 Oct 10 09:00 .env -> ../vault/dsn-FAKESECRET-prod.url\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET-prod",
+    "../vault/dsn-FAKESECRET-prod.url"
+   ],
+   "must_see": [
+    "lrwxr-xr-x  1 cj  staff  41 Oct 10 09:00 .env ->"
+   ],
+   "policy_note": "R5: added harvested project file .env (SERVICE_TOKEN=FAKESECRET-prod). No other change."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

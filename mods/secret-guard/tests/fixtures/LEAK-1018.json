@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1018",
+ "title": "Linux procfs environ read via redirected tr with grep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "procfs environ via tr | grep: value redacted, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tr NUL to newline < /proc/4121/environ | grep -i api_key"
+    },
+    "tool_response": {
+     "stdout": "OPENAI_API_KEY=FAKESECRET_oa_AO37\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oa_AO37"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

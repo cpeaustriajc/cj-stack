@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2128",
+ "title": "Redactor hangs on a large output and is killed at the default 600-second timeout",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real hooks: ~2MB output with secret on last line; model-visible result must not contain value (timeout not injectable by runner)",
+   "files": {
+    "gen.sh": "yes filler | head -c 2000000\necho DB=FAKESECRET_DELTA\n"
+   },
+   "prompt": "Run `bash gen.sh` with Bash and reply with only its last line.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_DELTA"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "~2MB output with secret on last line filtered at source",
+   "files": {
+    "gen.sh": "yes filler | head -c 2000000\necho DB=FAKESECRET_DELTA\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_DELTA\n"
+   },
+   "command": "bash gen.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DELTA"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

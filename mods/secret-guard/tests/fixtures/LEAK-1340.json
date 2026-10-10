@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1340",
+ "title": "npm config get _authToken harvested from .npmrc",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stdout with trailing newline; value harvested from .npmrc",
+   "files": {
+    ".npmrc": "//registry.npmjs.org/:_authToken=FAKESECRET_npmtok0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm config get _authToken"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_npmtok0123456789abcdef\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npmtok0123456789abcdef"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stdout without trailing newline",
+   "files": {
+    ".npmrc": "//registry.npmjs.org/:_authToken=FAKESECRET_npmtok0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm config get _authToken"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_npmtok0123456789abcdef",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npmtok0123456789abcdef"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

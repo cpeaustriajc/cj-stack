@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1842",
+ "title": "git grep over all revisions prints a historical secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git grep over rev-list prints the same fake Stripe key in two commits",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git grep -n 'sk_live_' $(git rev-list --all)"
+    },
+    "tool_response": {
+     "stdout": "3f9a1c2e8b7d6f5a4e3c2b1a0f9e8d7c6b5a4f3e:src/billing.ts:12:const stripe = new Stripe(\"sk_live_FAKESECRET_0001\");\n9d07a1d3aa11bb22cc33dd44ee55ff6677889900:src/billing.ts:12:const stripe = new Stripe(\"sk_live_FAKESECRET_0001\");\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_0001"
+   ],
+   "must_see": [
+    "3f9a1c2e8b7d6f5a4e3c2b1a0f9e8d7c6b5a4f3e",
+    "9d07a1d3aa11bb22cc33dd44ee55ff6677889900",
+    "src/billing.ts:12:const stripe = new Stripe("
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

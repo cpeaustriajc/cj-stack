@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1981",
+ "title": "Hardlink made by an interpreter or cp -l that the ln guard does not match",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of an interpreter-made hardlink redacts a registered value",
+   "files": {
+    "secret.env": "TOKEN=FAKESECRET_ccc333\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/fakeuser/proj/x.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/fakeuser/proj/x.txt",
+      "content": "TOKEN=FAKESECRET_ccc333\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ccc333"
+   ],
+   "must_see": [
+    "TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0448",
+ "title": "[5] Read of macOS DiagnosticReports .ips crash log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .ips crash log: --api-key value inside args string is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Logs/DiagnosticReports/node-2026-10-09-1.ips"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/Logs/DiagnosticReports/node-2026-10-09-1.ips",
+      "content": "{\"app\":\"node\",\"args\":[\"--api-key=FAKESECRET_crash05\"]}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_crash05"
+   ],
+   "must_see": [
+    "args",
+    "--api-key="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

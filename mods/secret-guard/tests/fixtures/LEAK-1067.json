@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1067",
+ "title": "Bash cat of a fixture OPENSSH private key: whole block replaced",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat fixture OPENSSH private key copy",
+   "files": {
+    "keys/fixture_ossh": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_ossh_body\n-----END OPENSSH PRIVATE KEY-----\n"
+   },
+   "command": "cat keys/fixture_ossh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ossh_body"
+   ],
+   "must_see": [],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

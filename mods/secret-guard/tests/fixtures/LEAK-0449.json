@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0449",
+ "title": "[6] Read of a secret file that was moved to ~/.Trash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of a secret-named file under ~/.Trash is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.Trash/.env.local"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a secret-named file in ~/.Trash with nothing combined. Matches the plain-read rule.)"
+  },
+  {
+   "kind": "post",
+   "name": "if read, API_KEY value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.Trash/.env.local"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.Trash/.env.local",
+      "content": "API_KEY=FAKESECRET_trash06\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_trash06"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

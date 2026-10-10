@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0983",
+ "title": "Grep of shell history for bearer and token= lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "history grep output with bearer header is masked, command and URL intact",
+   "files": {
+    "fake-history.txt": "210 ls -la\n212 curl -H 'Authorization: Bearer FAKESECRET_tok_I7' https://api.example.test\n"
+   },
+   "command": "grep -i bearer fake-history.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok_I7"
+   ],
+   "must_see": [
+    "212 curl -H",
+    "Bearer [REDACTED]",
+    "https://api.example.test"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

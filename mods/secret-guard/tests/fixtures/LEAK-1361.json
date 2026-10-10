@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1361",
+ "title": "Control: copied .env keeps redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cp .env to config/copy.env then cat keeps DB_PASSWORD redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_cp_0010\n"
+   },
+   "command": "mkdir -p config && cp .env config/copy.env && cat config/copy.env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_cp_0010"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "legitimate mkdir/cp/cat chain stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mkdir -p config && cp .env config/copy.env && cat config/copy.env"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1789",
+ "title": "Read a fixture JSON captured from a live login",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read login fixture access and refresh tokens",
+   "files": {
+    "fixtures/auth/login.response.json": "{\"access_token\":\"FAKESECRET_FIX_01\",\"refresh_token\":\"FAKESECRET_FIX_02\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/fixtures/auth/login.response.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/fixtures/auth/login.response.json",
+      "content": "{\"access_token\":\"FAKESECRET_FIX_01\",\"refresh_token\":\"FAKESECRET_FIX_02\"}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FIX_01",
+    "FAKESECRET_FIX_02"
+   ],
+   "must_see": [
+    "access_token",
+    "refresh_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

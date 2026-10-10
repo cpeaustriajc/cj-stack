@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-0707",
+ "title": "Bash env|grep|base64 encodes the secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 of KEY=value line (no trailing newline) must be redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep DB_PASSWORD | base64"
+    },
+    "tool_response": {
+     "stdout": "REJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd18xMjM=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "REJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd18xMjM="
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "base64 of the bare harvested value must be redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_pw_123' | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9wd18xMjM=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9wd18xMjM="
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

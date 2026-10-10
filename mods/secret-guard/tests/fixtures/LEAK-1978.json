@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1978",
+ "title": "Fleet-wide git hook path set in config and commit output printed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git -c core.hooksPath override on commit is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -c core.hooksPath=.githooks commit -m fix"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "commit output printing a known CI token is redacted",
+   "files": {
+    ".env": "CI_TOKEN=FAKESECRET_CI_TOKEN_6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -c core.hooksPath=.githooks commit -m fix"
+    },
+    "tool_response": {
+     "stdout": "CI_TOKEN=FAKESECRET_CI_TOKEN_6\n[main 7a1b2c3] fix\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CI_TOKEN_6"
+   ],
+   "must_see": [
+    "[main 7a1b2c3] fix",
+    "CI_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

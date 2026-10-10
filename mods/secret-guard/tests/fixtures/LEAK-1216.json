@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1216",
+ "title": "docker inspect with --format for Config.Env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "one-line JSON array: DB_PASSWORD value redacted, PATH kept (remote simulated with printf)",
+   "files": {},
+   "command": "printf '[\"DB_PASSWORD=FAKESECRET_d5\",\"PATH=/usr/bin\"]\\n'",
+   "must_not_see": [
+    "FAKESECRET_d5"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "PATH=/usr/bin"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "one-line JSON array redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh node1 'docker inspect api --format \"{{json .Config.Env}}\"'"
+    },
+    "tool_response": {
+     "stdout": "[\"DB_PASSWORD=FAKESECRET_d5\",\"PATH=/usr/bin\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_d5"
+   ],
+   "must_see": [
+    "DB_PASSWORD=",
+    "PATH=/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

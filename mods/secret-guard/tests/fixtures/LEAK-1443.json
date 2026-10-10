@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1443",
+ "title": "Read .ipynb: JSON-escaped quote and backslash in a harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON-escaped quote and backslash form of a harvested value",
+   "files": {
+    ".env": "TOKEN_SECRET=FAKESECRET\"q\\x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/scratch/token.ipynb"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/scratch/token.ipynb",
+      "content": "{\"cells\":[{\"cell_type\":\"code\",\"execution_count\":1,\"metadata\":{},\"outputs\":[{\"name\":\"stdout\",\"output_type\":\"stream\",\"text\":[\"TOKEN_SECRET=FAKESECRET\\\"q\\\\x\\n\"]}],\"source\":[\"pass\"]}],\"metadata\":{},\"nbformat\":4,\"nbformat_minor\":5}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET",
+    "FAKESECRET\\\"q\\\\x",
+    "q\\\\x"
+   ],
+   "must_see": [
+    "TOKEN_SECRET="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

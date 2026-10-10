@@ -1,0 +1,6 @@
+#!/bin/bash
+case "$1" in
+  run) shift; [ "$1" = -- ] && shift; set -a; . "$RT_DATA/env.txt"; set +a; exec "$@";;
+  read) head -1 "$RT_DATA/op_item.txt" | sed 's/^[^=]*=//';;
+  *) cat "$RT_DATA/op_item.txt";;
+esac

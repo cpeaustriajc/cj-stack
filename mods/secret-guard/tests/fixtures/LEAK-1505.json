@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-1505",
+ "title": "MCP list_webhooks returns signing secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "signingSecret redacted inside MCP text content block, id kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleHost__list_webhooks",
+    "tool_input": {},
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "[{\"id\":\"wh_1\",\"signingSecret\":\"whsec_FAKESECRET_hook\"}]"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "whsec_FAKESECRET_hook"
+   ],
+   "must_see": [
+    "wh_1",
+    "signingSecret"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "signingSecret redacted in bare JSON array, id kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleHost__list_webhooks",
+    "tool_input": {},
+    "tool_response": [
+     {
+      "id": "wh_1",
+      "signingSecret": "whsec_FAKESECRET_hook"
+     }
+    ]
+   },
+   "must_not_see": [
+    "whsec_FAKESECRET_hook"
+   ],
+   "must_see": [
+    "wh_1",
+    "signingSecret"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

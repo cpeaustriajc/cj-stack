@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2039",
+ "title": "MCP filesystem write tool bypasses a Bash-only guard",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mcp filesystem write of a secret into a Dropbox path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__filesystem__write_file",
+    "tool_input": {
+     "path": "/Users/cj/Dropbox/keys/backup.json",
+     "content": "{\"api_key\":\"FAKESECRET_fff666\"}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mcp filesystem write of ordinary content to a local project path stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__filesystem__write_file",
+    "tool_input": {
+     "path": "/Users/cj/Projects/renav/notes/backup.json",
+     "content": "{\"status\":\"ok\"}"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

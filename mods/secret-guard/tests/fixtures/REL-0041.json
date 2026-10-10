@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0041",
+ "title": "Research status note (not a vector)",
+ "level": "not-testable",
+ "reason_not_testable": "Research status note, not a leak vector; there is no hook behaviour to exercise. Non-hook control: do not treat the unverified claims as test oracles; re-run research before relying on them.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1823",
+ "title": "Edit a source file to inline sk_live key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit billing.ts to inline sk_live key; deny",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/src/billing.ts",
+     "old_string": "const stripe = new Stripe(key)",
+     "new_string": "const stripe = new Stripe(\"sk_live_FAKESECRET_EDIT_01\")"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

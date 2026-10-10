@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0640",
+ "title": "MCP tool result returns a password field (MCP matcher and fixture server UNVERIFIED)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP-named tool_response: password value redacted, host kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__db__describe_connection",
+    "tool_input": {},
+    "tool_response": {
+     "host": "db.example.internal",
+     "user": "app",
+     "password": "FAKESECRET_mcp_pw6"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp_pw6"
+   ],
+   "must_see": [
+    "db.example.internal",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Real session calls mcp__db__describe_connection served by a fixture stdio server in the project",
+   "files": {
+    ".mcp.json": "{\"mcpServers\":{\"db\":{\"command\":\"python3\",\"args\":[\"fixture_db_mcp.py\"]}}}\n",
+    "fixture_db_mcp.py": "import json, sys\nfor line in sys.stdin:\n    m = json.loads(line)\n    if 'id' not in m:\n        continue\n    if m['method'] == 'initialize':\n        r = {'protocolVersion': m['params']['protocolVersion'], 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'db', 'version': '1.0'}}\n    elif m['method'] == 'tools/list':\n        r = {'tools': [{'name': 'describe_connection', 'description': 'Describe the connection', 'inputSchema': {'type': 'object', 'properties': {}}}]}\n    else:\n        r = {'content': [{'type': 'text', 'text': json.dumps({'host': 'db.example.internal', 'user': 'app', 'password': 'FAKESECRET_mcp_pw6'})}]}\n    print(json.dumps({'jsonrpc': '2.0', 'id': m['id'], 'result': r}), flush=True)\n"
+   },
+   "prompt": "Call the mcp__db__describe_connection tool and reply with its result exactly.",
+   "allowed_tools": "mcp__db__describe_connection",
+   "must_not_see": [
+    "FAKESECRET_mcp_pw6"
+   ],
+   "must_see": [
+    "db.example.internal"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

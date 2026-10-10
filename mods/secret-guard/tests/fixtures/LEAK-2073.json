@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2073",
+ "title": "grep over unencrypted iOS Finder backups prints a token line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep over MobileSync backup prints api_key JSON; value redacted, key and structure kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rh \"api_key\" ~/Library/Application\\ Support/MobileSync/Backup | head -5"
+    },
+    "tool_response": {
+     "stdout": "{\"api_key\":\"FAKESECRET_bk_0003\"}\n{\"api_key_name\":\"primary\"}\n{\"api_key_hint\":\"sandbox\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bk_0003"
+   ],
+   "must_see": [
+    "api_key",
+    "primary",
+    "sandbox"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

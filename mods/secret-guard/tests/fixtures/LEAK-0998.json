@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0998",
+ "title": "Agent sed masking that misses the variable name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "value stays masked after a partial agent sed that does not match the name",
+   "files": {
+    "env.txt": "JIRA_API_TOKEN=FAKESECRET_jira_X21\n"
+   },
+   "command": "grep -i JIRA env.txt | sed 's/TOKEN_[A-Z]*=.*/TOKEN=***/'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_jira_X21"
+   ],
+   "must_see": [
+    "JIRA_API_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

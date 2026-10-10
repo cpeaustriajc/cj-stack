@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0458",
+ "title": "[14] sqlite3 query on the LaunchServices quarantine event database",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sqlite3 on QuarantineEventsV2 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2 'select LSQuarantineDataURLString from LSQuarantineEvent order by rowid desc limit 20;'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Single read-only sqlite3 select; no secret source or transform named in item 4. Flagged as disputed.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "quarantine query output (simulated) with token= is redacted if run",
+   "files": {
+    "sqlite-out.txt": "https://files.example.com/dl/x?token=FAKESECRET_q14\n"
+   },
+   "command": "cat sqlite-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_q14"
+   ],
+   "must_see": [
+    "files.example.com/dl/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

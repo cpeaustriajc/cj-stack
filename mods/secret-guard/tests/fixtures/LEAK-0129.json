@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0129",
+ "title": "sudo wg showconf prints the live interface private key (i22)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo wg showconf is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo wg showconf wg0"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (sudo wg showconf is a plain display of the WireGuard config. Owner decision allows it; redactor hides values.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, PrivateKey value in Bash stdout is redacted and ListenPort kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo wg showconf wg0"
+    },
+    "tool_response": {
+     "stdout": "[Interface]\nPrivateKey = FAKESECRET_live_key\nListenPort = 51820\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_live_key"
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]",
+    "ListenPort = 51820"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "FP-0093",
+ "title": "Harvested localhost: Read line stays intact and a following Edit with that literal succeeds",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Read docker-compose ports line then Edit it, harvested DB_HOST=localhost",
+   "files": {
+    ".env": "DB_HOST=localhost\n",
+    "docker-compose.yml": "services:\n  db:\n    image: postgres:16\n    ports:\n      - \"localhost:5432:5432\"\n"
+   },
+   "prompt": "Read docker-compose.yml. Then use the Edit tool to change the line - \"localhost:5432:5432\" to - \"127.0.0.1:5432:5432\" in docker-compose.yml. Reply with the exact ports line you read before editing.",
+   "allowed_tools": "Read,Edit",
+   "must_not_see": [],
+   "must_see": [
+    "localhost:5432:5432",
+    "127.0.0.1:5432:5432"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

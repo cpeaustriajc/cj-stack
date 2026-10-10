@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0083",
+ "title": "Bash cat config/model.json: max_tokens and tokenizer values pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat config/model.json byte-identical",
+   "files": {
+    "config/model.json": "{\"max_tokens\": 4096, \"tokenizer\": \"bert-base-uncased\"}\n"
+   },
+   "command": "cat config/model.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "max_tokens",
+    "4096",
+    "tokenizer",
+    "bert-base-uncased"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

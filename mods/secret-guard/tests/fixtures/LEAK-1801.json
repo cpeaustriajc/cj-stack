@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1801",
+ "title": "npm test prints DSN in ECONNREFUSED error",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ECONNREFUSED DSN, exit 1 assumed (failing test)",
+   "files": {
+    "test-sim.sh": "echo \"connect ECONNREFUSED postgres://renav:FAKESECRET_TEST_01@db:5432/renav\" >&2\nexit 1\n"
+   },
+   "command": "sh ./test-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_TEST_01"
+   ],
+   "must_see": [
+    "ECONNREFUSED",
+    "postgres://renav:",
+    "@db:5432/renav"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

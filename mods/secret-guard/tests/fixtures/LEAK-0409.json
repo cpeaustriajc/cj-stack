@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0409",
+ "title": "D6 Grep content search over Preferences",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content match with apiToken value redacted, path kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "api[_-]?key|token|secret",
+     "path": "/Users/example/Library/Preferences",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/example/Library/Preferences/com.example.devtool.plist:2:<key>apiToken</key><string>FAKESECRET_grep_56</string>",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_grep_56"
+   ],
+   "must_see": [
+    "com.example.devtool.plist"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

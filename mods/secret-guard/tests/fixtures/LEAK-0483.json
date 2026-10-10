@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0483",
+ "title": "Read of /dev/fd/3 inherited from a parent process",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of /dev/fd/3 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/dev/fd/3"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read tool call with no combo; the policy says Claude may read anything. Source fd is not identified as a secret, so this is UNVERIFIED.)"
+  },
+  {
+   "kind": "post",
+   "name": "Read of /dev/fd/3 output: AWS_SECRET value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/dev/fd/3"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/dev/fd/3",
+      "content": "AWS_SECRET=FAKESECRET_fd38",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_fd38"
+   ],
+   "must_see": [
+    "AWS_SECRET"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

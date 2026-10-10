@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0488",
+ "title": "aws sts assume-role output redirected to /tmp/creds.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "assume-role output redirected to /tmp is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws sts assume-role --role-arn arn:aws:iam::123:role/ops --role-session-name s1 > /tmp/creds.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of /tmp/creds.json: SecretAccessKey value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/creds.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/tmp/creds.json",
+      "content": "{\"SecretAccessKey\": \"FAKESECRET_aw43\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aw43"
+   ],
+   "must_see": [
+    "SecretAccessKey"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

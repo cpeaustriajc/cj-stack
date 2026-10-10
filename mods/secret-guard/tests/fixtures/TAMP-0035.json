@@ -1,0 +1,60 @@
+{
+ "case_id": "TAMP-0035",
+ "title": "Edit or Bash removes PostToolUse hook from settings: both denied; cat still redacted (mid-session reload is UNVERIFIED and not tested)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of settings.json removing PostToolUse entry",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/settings.json",
+     "old_string": "\"PostToolUse\"",
+     "new_string": "\"Disabled\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Bash sed removing hook entry from settings.json",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i.bak '/secret_redact/d' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "cat .env after tamper attempt still redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_KEY=FAKESECRET_sk_live_abc123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

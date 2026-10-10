@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1966",
+ "title": "Deliberate ROT13 transform of tcpdump output to evade redaction",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "Expected outcome is a leak. An arbitrary deliberate transform (tr ROT13) of stdout cannot be enumerated by an output pattern, so no fixture can prove protection, and any fixture that passed with no hook would be a survivor. Non-hook control per the spec: sandbox read deny on capture file extensions (https://code.claude.com/docs/en/sandboxing), with residual risk accepted.",
+ "duplicate_of_dropped": false
+}

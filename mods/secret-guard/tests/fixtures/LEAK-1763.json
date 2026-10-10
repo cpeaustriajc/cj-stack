@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1763",
+ "title": "Read a source map whose sourcesContent embeds a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read app.js.map, value inside escaped sourcesContent replaced, JSON shape kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_MAP_01\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/renav/dist/app.js.map"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/renav/dist/app.js.map",
+      "content": "{\"version\":3,\"sources\":[\"config.ts\"],\"sourcesContent\":[\"export const k = \\\"FAKESECRET_MAP_01\\\"\\n\"]}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_MAP_01"
+   ],
+   "must_see": [
+    "sourcesContent",
+    "config.ts",
+    "export const k = "
+   ],
+   "policy_note": "R5 (per instruction): planted FAKESECRET_MAP_01 in harvested .env as SERVICE_TOKEN, so it comes from a secret file. No other change."
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0415",
+ "title": "D13 defaults write copying a secret via command substitution: PreToolUse must deny",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "defaults write from defaults read substitution",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults write com.example.devtool apiKey \"$(defaults read com.example.other apiKey)\""
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

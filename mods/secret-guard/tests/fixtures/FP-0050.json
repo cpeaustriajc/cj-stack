@@ -1,0 +1,61 @@
+{
+ "case_id": "FP-0050",
+ "title": "False positive: ordinary log must pass unchanged (the case's 3 MB size is not reproducible in a fixture; a short log is used and the timeout path is UNVERIFIED at this size)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of ordinary app.log passes through unchanged",
+   "files": {
+    "app.log": "2026-10-10T08:00:01Z INFO GET /health 200 3ms\n2026-10-10T08:00:02Z WARN cache miss key=user:42\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.log"
+    },
+    "tool_response": {
+     "stdout": "2026-10-10T08:00:01Z INFO GET /health 200 3ms\n2026-10-10T08:00:02Z WARN cache miss key=user:42\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "2026-10-10T08:00:01Z INFO GET /health 200 3ms",
+    "2026-10-10T08:00:02Z WARN cache miss key=user:42"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "guard allows cat of ordinary log",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.log"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real cat of ordinary log through the filter wrapper",
+   "files": {
+    "app.log": "2026-10-10T08:00:01Z INFO GET /health 200 3ms\n2026-10-10T08:00:02Z WARN cache miss key=user:42\n"
+   },
+   "command": "cat app.log",
+   "must_not_see": [],
+   "must_see": [
+    "2026-10-10T08:00:01Z INFO GET /health 200 3ms",
+    "2026-10-10T08:00:02Z WARN cache miss key=user:42"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

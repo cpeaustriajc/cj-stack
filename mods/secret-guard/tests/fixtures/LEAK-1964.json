@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1964",
+ "title": "mitmproxy flow file dump prints Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mitmdump Authorization header redacted; GET line kept",
+   "files": {
+    ".env": "BEARER_TOKEN=FAKESECRET_BEARER_5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mitmdump -nr /work/session.mitm"
+    },
+    "tool_response": {
+     "stdout": "GET /health HTTP/1.1\nAuthorization: Bearer FAKESECRET_BEARER_5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER_5"
+   ],
+   "must_see": [
+    "GET /health",
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1022",
+ "title": "Claude launched under op run, then env grep for secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env | grep secret: APP_SECRET value redacted from output alone",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i secret"
+    },
+    "tool_response": {
+     "stdout": "APP_SECRET=FAKESECRET_app_AS44\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_app_AS44"
+   ],
+   "must_see": [
+    "APP_SECRET=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

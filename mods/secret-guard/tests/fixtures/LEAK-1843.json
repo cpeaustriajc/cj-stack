@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1843",
+ "title": "git log -p piped to grep shows removed secret lines from all refs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "removed CLIENT_SECRET diff line with no vendor prefix",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --all -p | grep -i 'secret' | head -50"
+    },
+    "tool_response": {
+     "stdout": "-CLIENT_SECRET=FAKESECRET_0002\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_0002"
+   ],
+   "must_see": [
+    "-CLIENT_SECRET="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

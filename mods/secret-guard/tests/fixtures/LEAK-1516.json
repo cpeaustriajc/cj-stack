@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1516",
+ "title": "Workflow template interpolates env secret into prompt",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The leak happens inside a workflow script's prompt builder before any tool call, so no hook event fires and no fixture kind observes the rendered prompt. Non-hook control: the workflow prompt-builder must refuse to interpolate env values whose names match secret rules, covered by a unit test on that builder in the workflow code, and secrets must not be placed in env read by workflows.",
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "REL-0027",
+ "title": "Empty harvested value: Bash echo output is unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo hello world with empty harvested SENTRY_DSN",
+   "files": {
+    ".env": "SENTRY_DSN=\n"
+   },
+   "command": "echo 'hello world'",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "hello world"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}
