@@ -12,8 +12,8 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.4.8",
-      "description": "work-planning (any tracker), triage, project-knowledge and reflect; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
+      "version": "2.5.0",
+      "description": "work-planning (any tracker), triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [
         "planning",
@@ -31,7 +31,7 @@
         "./skills/planning/work-planning",
         "./skills/planning/triage",
         "./skills/knowledge/project-knowledge",
-        "./skills/knowledge/reflect",
+        "./skills/knowledge/hone",
         "./skills/quality/break-it",
         "./skills/quality/ui-polish",
         "./skills/quality/feature-files",
@@ -111,6 +111,12 @@
       "name": "loop-brake",
       "source": "./mods/loop-brake",
       "description": "Ends a turn after N forced Stop-hook continuations, so a goal hook can't burn your usage.",
+      "category": "productivity"
+    },
+    {
+      "name": "hone-nudge",
+      "source": "./mods/hone-nudge",
+      "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run.",
       "category": "productivity"
     }
   ]

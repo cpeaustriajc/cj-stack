@@ -1,0 +1,6 @@
+{
+  "name": "hone-nudge",
+  "version": "0.1.0",
+  "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run",
+  "author": { "name": "CJ" }
+}

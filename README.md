@@ -1,6 +1,7 @@
 | `session-modes` | a mod: `/mode audit`, `no-pr` or `chat`, enforced for the session | optional |
 | `denial-explainer` | a mod: names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
 | `loop-brake` | a mod: ends a turn after N forced Stop-hook continuations | optional |
+| `hone-nudge` | a mod: suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
 # cj-stack
 
 CJ's skills and mods for Claude Code.
@@ -15,6 +16,7 @@ CJ's skills and mods for Claude Code.
 /plugin install session-modes@cj-stack
 /plugin install denial-explainer@cj-stack
 /plugin install loop-brake@cj-stack
+/plugin install hone-nudge@cj-stack
 ```
 
 While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
@@ -47,7 +49,7 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
 | [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
-| [reflect](skills/knowledge/reflect/SKILL.md) | knowledge | mining past transcripts for my repeated corrections and proposing where each lesson should live: code, lint, hook, test, skill or instruction file |
+| [hone](skills/knowledge/hone/SKILL.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
 | [playbooks](skills/quality/playbooks/SKILL.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
 | [interrogate](skills/quality/interrogate/SKILL.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
 | [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |

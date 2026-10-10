@@ -7,6 +7,12 @@ CORRECTION = re.compile(
     r"^\s*(no\b|nope|why\b|stop\b|don'?t\b|do not\b|i already|i said|i meant|that's not|wrong|"
     r"huh|wait\b|actually\b|\?\?)", re.I)
 INTERRUPT = "[Request interrupted by user"
+COMMAND = re.compile(r"<command-name>\s*([^<\s]+)\s*</command-name>")
+# Keep this detection in step with mods/hone-nudge/hooks/register.ts, which duplicates it.
+
+
+def skill_name(raw):
+    return raw.strip().lstrip("/").split(":")[-1]
 
 
 def text_of(content):
@@ -15,8 +21,15 @@ def text_of(content):
     return "\n".join(b.get("text", "") for b in content or [] if isinstance(b, dict) and b.get("type") == "text")
 
 
-def exchanges(path, stats):
-    last_claude, asks = "", {}
+def exchanges(path, stats, skill=None):
+    """Yield (kind, claude, user); with `skill`, only those made while that skill was the active one."""
+    for hit in _exchanges(path, stats, skill):
+        if skill is None or hit[0] == skill:
+            yield hit[1:]
+
+
+def _exchanges(path, stats, skill):
+    last_claude, asks, active = "", {}, None
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             try:
@@ -34,10 +47,18 @@ def exchanges(path, stats):
                 if said.strip():
                     last_claude = said
                 for block in content if isinstance(content, list) else []:
+                    if block.get("type") == "tool_use" and block.get("name") == "Skill":
+                        named = (block.get("input") or {}).get("skill")
+                        if isinstance(named, str):
+                            active = skill_name(named)
                     if block.get("type") == "tool_use" and block.get("name") == "AskUserQuestion":
                         asks[block["id"]] = json.dumps(block.get("input", {}))[:1200]
                 continue
             if entry.get("type") != "user":
+                continue
+            started = COMMAND.search(text_of(content))
+            if started:
+                active = skill_name(started.group(1))
                 continue
             for block in content if isinstance(content, list) else []:
                 if not isinstance(block, dict) or block.get("type") != "tool_result":
@@ -45,16 +66,16 @@ def exchanges(path, stats):
                 result = block.get("content")
                 result = result if isinstance(result, str) else text_of(result)
                 if block.get("tool_use_id") in asks:
-                    yield "ASK", asks[block["tool_use_id"]], result[:1200]
+                    yield active, "ASK", asks[block["tool_use_id"]], result[:1200]
                 elif "doesn't want to proceed" in result or "rejected" in result[:200].lower():
-                    yield "REJECTED", last_claude[-600:], result[:600]
+                    yield active, "REJECTED", last_claude[-600:], result[:600]
             said = text_of(content)
             if not said.strip() or said.startswith("<") or len(said) > 2500:
                 continue
             if INTERRUPT in said:
-                yield "INTERRUPT", last_claude[-600:], said
+                yield active, "INTERRUPT", last_claude[-600:], said
             elif CORRECTION.search(said) or "?" in last_claude[-600:]:
-                yield "REPLY", last_claude[-600:], said
+                yield active, "REPLY", last_claude[-600:], said
             last_claude = ""
 
 
@@ -63,6 +84,7 @@ def main():
     ap.add_argument("--out", required=True, help="markdown file to write")
     ap.add_argument("--root", default=os.path.expanduser("~/.claude/projects"))
     ap.add_argument("--project", default="", help="only transcript folders containing this text")
+    ap.add_argument("--skill", default="", help="only corrections made while this skill was active (plugin prefix ok)")
     ap.add_argument("--since", default="", help="YYYY-MM-DD; skip files last modified before it")
     args = ap.parse_args()
 
@@ -72,10 +94,11 @@ def main():
         cutoff = datetime.strptime(args.since, "%Y-%m-%d").timestamp()
         files = [f for f in files if os.path.getmtime(f) >= cutoff]
 
+    skill = skill_name(args.skill) if args.skill else None
     stats = {"bad_lines": 0, "hits": 0}
     with open(args.out, "w", encoding="utf-8") as out:
         for i, path in enumerate(files, 1):
-            for kind, claude, user in exchanges(path, stats):
+            for kind, claude, user in exchanges(path, stats, skill):
                 folder = os.path.basename(os.path.dirname(path))[-40:]
                 out.write(f"### {kind} {folder}\nCLAUDE: {claude}\nUSER: {user}\n\n")
                 stats["hits"] += 1
