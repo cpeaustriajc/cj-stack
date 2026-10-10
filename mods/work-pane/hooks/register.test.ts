@@ -7,14 +7,16 @@ const LINEAR_CONNECTOR = 'mcp__c52a7905-a861-4431-9619-0e85c0e83d6a__'
 
 type Answer = string | 'dismiss' | 'first'
 
-function world($t: Engine, on: On, answer: Answer, reply: Record<string, unknown> = { result: 'ok' }) {
+function world($t: Engine, on: On, answer: Answer, reply: Record<string, unknown> = { result: 'ok' }, surfaces: readonly string[] = ['terminal']) {
   const asked: string[] = []
   const ran: string[] = []
   const toasts: string[] = []
 
   on('ui.toast', ($, e) => {
     toasts.push(e.text)
+    return { value: undefined } as never
   })
+  on('session.surfaces', () => ({ value: surfaces }) as never)
   on('ui.render', { component: 'AskUserQuestion' }, () => ({ type: 'engine', ref: 0 }) as never)
 
   on('tool.call', async ($, e) => {
@@ -567,4 +569,33 @@ test('an unknown patch op still shows its contents', async ($, on) => {
 test('a patch on an issue description reads the same way', async ($, on) => {
   const q = await question($, on, { tool: `${LINEAR}save_issue`, id: 'MP-9', patch: [{ op: 'replace', old_string: 'a', new_string: 'b' }] })
   expect(q).toMatch(/\n {2}− a\n {2}\+ b\n/)
+})
+
+test('a Linear write passes to the host without asking when no surface can draw a dialog', async ($, on) => {
+  const w = world($, on, 'first', { result: 'ok' }, [])
+  const out = await $.tool.call(comment as never)
+  expect(w.asked).toEqual([])
+  expect(w.ran).toEqual([comment.tool])
+  expect(out.deny).toBe(undefined)
+})
+
+test('a Linear write still asks when a terminal surface can draw the dialog', async ($, on) => {
+  const w = world($, on, 'first', { result: 'ok' }, ['terminal'])
+  await $.tool.call(comment as never)
+  expect(w.asked.length).toBe(1)
+})
+
+test('a Linear write is still denied when the person closes the dialog on a terminal surface', async ($, on) => {
+  const w = world($, on, 'dismiss', { result: 'ok' }, ['terminal'])
+  const out = await $.tool.call(comment as never)
+  expect(w.ran).toEqual([])
+  expect(out.deny).toMatch(/not approved \(dialog closed or no one to ask\)/)
+})
+
+test('a non-Linear tool is untouched when no surface can draw a dialog', async ($, on) => {
+  const w = world($, on, 'first', { result: 'ok' }, [])
+  const out = await $.tool.call({ tool: 'Read' } as never)
+  expect(w.asked).toEqual([])
+  expect(w.ran).toEqual(['Read'])
+  expect(out.deny).toBe(undefined)
 })

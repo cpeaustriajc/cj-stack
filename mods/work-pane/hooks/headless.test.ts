@@ -10,6 +10,7 @@ function world(on: Parameters<Parameters<typeof test>[1]>[1]) {
   on('command.register', (_$, e) => (commands.push((e as { name: string }).name), { value: {} }) as never)
   on('ui.open', (_$, e) => (opened.push((e as { id: string }).id), { value: true }) as never)
   on('ui.toast', () => undefined)
+  on('session.surfaces', () => ({ value: ['terminal'] }) as never)
   on('session.start', (_$, e) => e as never)
   on('tool.call', (_$, e) => {
     if (e.tool === 'AskUserQuestion') {

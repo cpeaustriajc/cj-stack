@@ -365,6 +365,7 @@ export const register: Register = on => {
 
     const name = linearWrite(e.tool)
     if (!name) return next(e)
+    if ((await $.session.surfaces()).length === 0) return next(e)
 
     const server = /^mcp__(.+?)__/.exec(e.tool)![1]
     const title =

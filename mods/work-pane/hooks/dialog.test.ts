@@ -11,6 +11,7 @@ const engineSaw: string[] = []
 let mounts = 0
 
 function engine(on: On) {
+  on('session.surfaces', () => ({ value: ['terminal'] }) as never)
   on('ui.render', { component: 'AskUserQuestion' }, ($, e) => {
     engineSaw.push((e.props.questions as { question: string }[])[0].question)
     return { type: 'engine', ref: 0 } as never
@@ -87,6 +88,7 @@ for (const surface of SURFACES) {
 function world(on: On, lookup: 'title' | 'error' | 'throw' | 'garbage' | 'hang') {
   const asked: { question: string; options: string[] }[] = []
   const looked: string[] = []
+  on('session.surfaces', () => ({ value: ['terminal'] }) as never)
   on('mcp.call', ($, e) => {
     looked.push(`${e.server}/${e.tool}/${String(e.args.id)}`)
     if (lookup === 'throw') throw new Error('offline')
@@ -132,6 +134,7 @@ test('a new document makes no lookup', async ($, on) => {
 })
 
 test('a long title gives a short button without a cut-off phrase', async ($, on) => {
+  on('session.surfaces', () => ({ value: ['terminal'] }) as never)
   on('mcp.call', () => ({ value: { content: [{ type: 'text', text: JSON.stringify({ title: 'Decision: Checkout for Afternic and other partners' }) }], isError: false } }) as never)
   const labels: string[] = []
   on('tool.call', ($, e) => {
