@@ -1,6 +1,6 @@
 ---
 name: ui-polish
-description: Review a UI or its animations against the design and a list of the small mistakes agents keep making - wrong easing, slow or janky motion, clutter, truncation, missing states - and return a Before/After/Why table with a verdict. Use when I say "polish", "review the UI", "does this feel right", "check the animation", or before asking me to sign off a visual change.
+description: Review a UI or its animations against the design and a list of the small mistakes agents keep making - wrong easing, slow or janky motion, clutter, truncation, missing states - and return a Before/After/Why table with a verdict. Use when I say "polish", "review the UI", "does this feel right", "check the animation", or before asking me to sign off a visual change. Not for building, restyling, or choosing palette or type; a design skill does that.
 ---
 
 # UI polish
@@ -21,6 +21,10 @@ app has both. Reading the code is not enough.
 
 ## 2. Check against the mistake list
 
+Read `references/motion.md` when the change has motion, `references/interaction.md` when it has
+controls, forms, loading or navigation, and `references/app-ui.md` for dashboards, admin,
+settings or other dense app screens. Every row in the report names the rule it breaks.
+
 **Layout and content**
 - Drifts from the design: spacing, radius, weight, colour, order, or components the design
   doesn't have.
@@ -35,8 +39,9 @@ app has both. Reading the code is not enough.
 
 **Motion**
 - Entrances use `ease-in`. They should ease out. Use ease-in-out only for on-screen movement.
-- Motion that answers a click, key or hover taking over about 300ms, or any delay before
-  that feedback. One deliberate page-load or reveal sequence the design asks for may run longer.
+- Feedback to a click, key or hover that doesn't start at once, or a duration outside the
+  per-element bands in `references/motion.md`. One deliberate page-load or reveal sequence the
+  design asks for may run longer.
 - More than one thing moving for attention at once. Stage one change at a time; secondary
   motion stays smaller and quieter than the main one.
 - Things that grow from `scale(0)`. Start from about 0.95 with opacity.
