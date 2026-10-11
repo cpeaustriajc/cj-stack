@@ -23,8 +23,9 @@ phases into frontend and backend.
 
 ## Internal tool
 
-Three phases. There is no Demo, because no approver gates a tool only the team uses, and no spec:
-the project What and the items' Done When are enough.
+Three phases. There is no Demo, because no approver gates a tool only the team uses. The spec
+stays short: requirements and Out of scope, confirmed by the main user, so work items still have
+requirements to cite.
 
 | Phase | Holds | Exit check | Decides |
 | --- | --- | --- | --- |

@@ -21,7 +21,7 @@ was active (a plugin prefix is fine). Read that skill's SKILL.md and references 
 
 Large output goes to subagents: split the file into chunks and have read-only subagents return
 the recurring patterns, each with 2-3 short verbatim quotes and the count of sessions it appears
-in. Never quote secrets, tokens or credentials.
+in. Tell each subagent to quote no secrets, tokens or credentials: transcripts hold them raw.
 
 ## 2. Keep only what recurs
 

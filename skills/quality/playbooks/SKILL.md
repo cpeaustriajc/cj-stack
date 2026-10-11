@@ -18,9 +18,6 @@ Each kind of work fails in its own way, so each has a fixed order that carries i
    pass, and missing evidence is reported as a gap.
 5. Report the proof the playbook asks for, then commit per slice as usual.
 
-The steps fit into Scout → Spec → Build → Commit. They decide *what* each phase must prove,
-not who does it.
-
-Evidence follows the end-to-end rule: drive the real app and leave a re-runnable command plus
+Evidence means driving the real app and leaving a re-runnable command plus
 its trace, screenshots or video. Read the project's feature file for the area first, if it has
 one (`feature-files`).

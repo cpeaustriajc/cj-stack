@@ -10,6 +10,9 @@ means open it as a draft. Any other word is the base branch.
 
 ## Steps
 
+0. **Remote.** If `gh auth status` fails, say so and stop. If there is no GitHub remote,
+   look for a matching repo with `gh repo list`, then ask with the ask tool: link the match,
+   create a private repo, or create a public one.
 1. **Branch.** If you're on the default branch, create one named `claude/<short-topic>`
    (`claude/` is required by a hook). Otherwise stay on the current branch.
 2. **Commit.** Keep the existing commits as they are; never squash or rewrite them. If
@@ -48,13 +51,11 @@ means open it as a draft. Any other word is the base branch.
      the blast radius in a few words, such as `Merge danger: one-way door, adds
      premium_prices table; blast radius: search results and checkout totals.`
 
-     Link the issue as related; never write `Closes`, `Fixes` or `Resolves`. Find the issue
+     Link the issue as related; never write `Closes`, `Fixes` or `Resolves`, since merging
+     would close the issue before the verifier marks it done. Find the issue
      in the branch name, the commits or the session. If there is none, leave the line out.
      Leave the Evidence line out when no E2E run happened; don't invent one. No headings,
      checklists or test-plan sections unless the template asks for them. Keep it short.
-7. **No remote.** If `gh auth status` fails, say so and stop. If there is no GitHub remote,
-   look for a matching repo with `gh repo list`, then ask with the ask tool: link the match,
-   create a private repo, or create a public one.
 
 Report the PR URL on its own line, plus one line on anything skipped, such as "no issue
 found" or "no evidence linked".

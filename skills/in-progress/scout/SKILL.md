@@ -25,7 +25,7 @@ Ask, in one round, before any method:
 - **What I have that others don't**: a problem I hit weekly, a job or industry I know from the
   inside, a community I'm part of, an audience, a skill, a domain name, data.
 - **What I want from it**: money (how much, how soon), learning, or joy. Personal software is a
-  fine answer; then `vision`'s personal path applies and the filters below matter less.
+  fine answer; then `vision`'s "for me alone" questions apply and the filters below matter less.
 - **How much time**: evenings for a month, or a year of weekends.
 
 The best ideas sit on the first answer. An idea with no edge of mine is a race against everyone
@@ -71,20 +71,18 @@ to look up or a test, not a guess.
    workflow it sits inside, integrations that are hard to get, trust, a licence or compliance
    track record, a community, a brand.
 6. **Small enough that big players won't bother**, and big enough to pay for my time.
-7. **The buyer wouldn't build it themselves with an agent.** A thin tool over open-source parts,
-   or a single model call with a form in front, fails this. Ongoing operations, infrastructure,
-   compliance or taste pass it.
+7. **Neither the buyer nor a model lab would build it themselves.** A thin tool over
+   open-source parts, or a single model call with a form in front, fails this: buyers build the
+   first in a weekend and labs absorb the second. Ongoing operations, infrastructure, compliance
+   or taste pass it.
 8. **Worth it even if copied**: it pays back in weeks, grows my audience either way, or teaches
    me what I wanted to learn.
 
 ## 4. Red flags
 
-Say these plainly when a candidate shows them:
+Beyond a failed filter, say these plainly when a candidate shows them:
 
-- A wrapper whose only value is a model call: the labs absorb these.
-- A utility the buyer could build privately in a weekend.
-- A tool for other builders whose only channel is search.
-- No channel at all: "launch and hope".
+- A tool for other builders whose only channel is search, the channel shrinking fastest.
 - A free tool or a waitlist as the plan to validate; validation is someone paying.
 - Agents and automation before a single user.
 - A complex product as the first one, when an add-on or a one-time sale would teach the same.

@@ -1,19 +1,19 @@
 ---
 name: tickets
 description: >
-  Cut a confirmed spec into work items in the team's tracker: thin end-to-end slices, each one
-  demoable, sized for one session, citing the requirements it meets, with blocked-by links. Also
-  writes or reviews a single work item, bug or chore. Use when I say "ticket", "break this into
-  tickets", "cut the next slice", "write the issue", "file these" or "fix ABC-123"; after `shape`
-  when a spec is Confirmed; and when a ticket is too long or does two things.
+  Cut a confirmed spec into work items in the team's tracker: thin end-to-end slices, each
+  demoable, sized for one session, citing the requirements it meets, with blocked-by links; and
+  write or review a single work item, bug or chore. Use it whenever I say "ticket", "break this
+  into tickets", "cut the next slice", "write the issue", "file these", "review ABC-123" or
+  "rewrite this ticket", after `shape` confirms a spec, and when a ticket is too long or does two
+  things.
 ---
 
 # Tickets
 
-The bottom of three levels: `vision` for the product, `shape` for each project, `tickets` for each
-slice. Read the five top-down rules in `../shape/SKILL.md` first; they hold here too. Find the
-tracker and its adapter as section 1 there says; the adapter's **Work item**, **Sub-item**,
-**Work type** and **Dependency** rows say where each part below lands.
+The work-item level of a top-down plan. Read `../shape/references/top-down.md` first: the five
+rules, finding the tracker, and how writes are made and checked. The adapter's Work item,
+Sub-item, Work type and Dependency rows say where each part below lands.
 
 ## 1. Read the spec
 
@@ -23,8 +23,8 @@ already cite.
 
 ## 2. Cut the next slice
 
-The next slice only, not the whole spec: the spec lasts, items are cut as the work moves and may
-be thrown away when direction changes.
+Cut the next slice only, not the whole spec: the spec lasts, while items are cut as the work
+moves and thrown away when direction changes.
 
 - **Vertical, not layered.** Each item cuts a narrow but complete path through every layer the
   feature touches, and is demoable or verifiable on its own. A schema-only or API-only item is a
@@ -41,9 +41,9 @@ be thrown away when direction changes.
 
 Show me the slice as a list before writing anything: each item's title, the requirements it
 cites, what I would see when it is done, and what blocks it. Ask whether the granularity and the
-blocking are right, and iterate until I approve. That is the only question at this level: the
-spec has settled the rest. Any other question means the spec is unclear, so it goes up to
-`shape` as a change to the spec, not into a ticket.
+blocking are right, and iterate until I approve. That is the only question at this level. Any
+other question means the spec is unclear, so it goes up to `shape` as a spec change rather than
+being settled inside a ticket, where nobody would find it again.
 
 ## 3. Write each item
 
@@ -89,8 +89,8 @@ Context, and cites the requirement it breaks.
 
 - **Work types.** `Task` for anything a user can see, `Bug` for a defect, and `Chore` for work with
   no visible change: docs, tooling, dependencies, or a refactor that automated tests prove changes
-  no behaviour. A Chore cites no requirement and skips the verifier, so it must not touch the
-  areas the project lists as risky (sign-in and payment, typically). When unsure, it is a Task.
+  no behaviour. A Chore cites no requirement and skips the verifier, so it can't touch the areas
+  the project lists as risky (sign-in and payment, typically). When unsure, it is a Task.
 - **A Chore's body adds a check** that it really can skip the verifier. If any line is false, it
   is a Task:
 
@@ -109,16 +109,9 @@ Context, and cites the requirement it breaks.
   Sub-items hold the tasks under an item that is longer than one cycle.
 - **A bug found after Done is a new item**, labelled Bug and related to the original. Reopening
   hides the history.
-- **A requirement found wrong while building** goes up to me as a question for `shape`; the item
-  never quietly changes it.
-- **Use the tracker's templates** when the team has them, and read their current text first.
 
-## 5. Writing to the tracker and checking the tree
+## 5. Write and check
 
-Writing follows section 7 of `../shape/SKILL.md`: state each write before making it, show the
-first one, batch the slice into as few writes as the tracker allows, and read it back. Create
-blockers first so later items can link to real ids. Then read the project back into the outline
-in `../shape/references/tree-outline.md` and run `python3 ../shape/scripts/check_tree.py
-<outline.json>` from this skill's folder, with `--launch` when the project is entering Launch. Fix
-every line it prints before handing back; its notes list the requirements still waiting for a
-slice.
+Write as `top-down.md` says, creating blockers first so later items link to real ids. Run the
+tree check with `--launch` when the project is entering Launch; before that, its notes list the
+requirements still waiting for a slice.

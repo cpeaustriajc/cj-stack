@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Triage an idea, plan or change before building it - decide whether it needs questions at all, then interview me in short rounds of ask-tool questions with a recommended answer each until no decision is left open. Use when I say "triage this", "grill me", "ask me", "stress-test this", or "plan and ask me" about a change, a feature or a plan; a whole product idea goes to `vision`, which grills with this same method.
+description: Triage an idea, plan or change before building it - decide whether it needs questions at all, then interview me in short rounds of ask-tool questions with a recommended answer each until no decision is left open. Use when I say "triage this", "grill me", "ask me questions first", "stress-test this", or "plan and ask me" about a change, a feature or a plan; a whole product idea goes to `vision`, which grills with this same method.
 ---
 
 ## Triage first
@@ -26,9 +26,8 @@ still open this round waits for a later round.
 
 - Before round 1, and whenever a question needs a fact, dispatch read-only subagents to look
   it up: code, specs, mockups, the tracker, docs, earlier transcripts, the live app in a
-  browser. Asking me something you could have looked up is the
-  fastest way to annoy me. Ask only the questions downstream of a running lookup later; ask
-  the rest now.
+  browser. Asking me something you could have looked up is the fastest way to annoy me. Hold
+  only the questions downstream of a running lookup; ask the rest now.
 - If a spec, a design mockup, an existing pattern in a sibling product or a well-known
   convention (Auth0/Clerk-style flows, for example) already answers it, follow it and list it
   under **Assumed**. Don't ask it.
@@ -37,10 +36,9 @@ still open this round waits for a later round.
 
 ## Never make me repeat myself
 
-Questions get fewer as the plan goes down: the product (`vision`) is grilled hardest, a project
-under it only on what the product left open, and a slice almost never. When the work sits under
-a product or a spec, start the ledger with what that level already settled, and size the
-remaining questions, not the whole idea.
+When the work sits under a product or a spec, start the ledger with what that level already
+settled and size only the questions left: under a confirmed product, a project is usually one
+round or none.
 
 Open each round with a short ledger in chat, before the form:
 
@@ -56,7 +54,8 @@ about that conflict only.
 
 ## How to ask
 
-- Use the `AskUserQuestion` tool, not a numbered list in chat. One call per round, with up to
+- Use the ask tool (a form with options; `AskUserQuestion` in Claude Code), not a numbered list
+  in chat. One call per round, with up to
   4 questions: pick the frontier questions that unblock the most. The rest wait.
 - Put the recommended option first, marked "(Recommended)". Each option gets a one-line
   consequence: what it costs, what it touches, what it locks in.
@@ -67,7 +66,7 @@ about that conflict only.
   Define any term I might not know in half a line.
 - For a layout, look or feel question, attach an ASCII `preview` per option, or offer
   "show me a mockup first" as an option. I decide visual things by seeing them.
-- No preamble. Keep any justification to the option descriptions.
+- Keep any justification to the option descriptions.
 
 ## Reading my answers
 
@@ -104,6 +103,5 @@ criteria?".
 Grilling writes nothing: no code, no tracker or doc writes, no pushes. The session is done
 when the frontier is empty. Then post the final ledger as one compact list of every decision
 with its one-line reason, and ask whether we have a shared understanding. On yes, offer the
-next step in one line: the level below the one we settled, so a product goes to `vision`, a
-project to `shape` and a confirmed spec to `tickets`; or decisions recorded via
-`project-knowledge`. Do nothing until I pick one.
+next step in one line: a project to `shape`, a confirmed spec to `tickets`, or decisions
+recorded via `project-knowledge`. Do nothing until I pick one.

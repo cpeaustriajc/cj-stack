@@ -12,7 +12,7 @@ Paths here are relative to the repo root.
 
 ## Prerequisites
 
-`claude` (2.1.296 here), `python3` and `bash`. Nothing to install or build.
+`claude`, `python3` and `bash`. Nothing to install or build.
 
 ## Run (agent path)
 
@@ -58,8 +58,7 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 ## Not in the driver
 
 - **secret-guard's suite** (`python3 mods/secret-guard/tests/secret_hooks_test.py --hooks-dir
-  mods/secret-guard/hooks`) reported 738 failing of 3,568 on this Linux container. Its README says
-  some cases need macOS `sandbox-exec`; that was not separated from real failures here, so it is
-  left out of `all` until someone does.
-- **`claude plugin eval`**: no shipped skill has eval cases yet except `project-knowledge`
-  (`skills/knowledge/project-knowledge/evals/`); not run here.
+  mods/secret-guard/hooks`) is left out of `all`: some cases need macOS `sandbox-exec`, and those
+  haven't been separated from real failures on Linux.
+- **`claude plugin eval <plugin>`** runs the cases under each skill's `evals/`; the driver
+  doesn't.

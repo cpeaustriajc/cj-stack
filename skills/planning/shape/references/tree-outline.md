@@ -51,5 +51,5 @@ run includes its project and that project's items.
   cites no requirement.
 - `done_when`: the number of Done When checks; `chars`: the body's length.
 
-Run `python3 scripts/check_tree.py <file>`; add `--launch` when the project is entering Launch, so a
+Run it as `top-down.md` says; add `--launch` when the project is entering Launch, so a
 requirement with no item fails instead of being listed as not yet sliced.

@@ -6,7 +6,7 @@ description: >
   one change per pass, kept or reverted, with state and a log on disk and a brake on lack of
   progress. Use when I say "drive this", "loop until", "keep going until green", "run it
   overnight", "hillclimb", or hand over a ticket to finish unattended; and before writing a goal,
-  a Stop hook or a scheduled loop.
+  a Stop hook or a scheduled loop. Not for re-running a command on a timer; that is `/loop`.
 ---
 
 # Drive

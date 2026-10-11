@@ -22,8 +22,9 @@ what the change is meant to do. Reviewers get only their slice of this bundle an
 Read-only subagents with fresh context, none of which has seen this conversation, run in
 parallel. Diversity comes from what each one sees, never from personas:
 
-- **Full**: the whole bundle, on Opus.
-- **Blind**: the diff and the changed files with no description or spec, on Sonnet. It judges
+- **Full**: the whole bundle, on the strongest model available.
+- **Blind**: the diff and the changed files with no description or spec, on a different model
+  from Full where one is available, so the two don't share blind spots. It judges
   what the code does, not what it was meant to do, so it catches what the description explains
   away.
 - **Spec**: only when a spec or issue exists. It gets the spec and the diff with no description,

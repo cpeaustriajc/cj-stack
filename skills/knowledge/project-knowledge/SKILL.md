@@ -22,9 +22,8 @@ Obsidian vault or Confluence. It never lives in the code repository: it is read 
 through a CLI or an MCP server at the moment it is needed. The conventions below are the same on
 every backend; only the adapter changes.
 
-The knowledge is written **for people**. It never mentions Claude, agents, `CLAUDE.md`, `.claude/`,
-rules files or "context". An instruction aimed at an agent belongs in `CLAUDE.md` or a rules file.
-A reason, a finding or a piece of history belongs here.
+The knowledge is written **for people**: an instruction aimed at an agent belongs in `CLAUDE.md`
+or a rules file; a reason, a finding or a piece of history belongs here.
 
 ## 1. Find where it lives
 
@@ -112,8 +111,6 @@ Use the backend's own link syntax: `[[Page]]` on a wiki or in Obsidian, a page m
 2. On the old page, change **only** the Status line to `Superseded by [[Decision NNN …]]`.
 3. In the index, update the old row's Status and add the new row at the top.
 
-Never edit the body of the old page.
-
 **When only part of it is replaced**, the rest still stands, so the old decision stays in force.
 Write its Status as one line: `Partly superseded by [[Decision NNN …]]: <the part replaced>`, for
 example `Partly superseded by [[Decision 010 Polar Web Checkout]]: the App-Store-only rule`. Put the
@@ -152,7 +149,7 @@ gap: every later decision builds on it.
 - **Show the user new or changed pages before publishing** a first write to a shared space.
   Publishing to a team's Notion, Confluence or public wiki is visible to everyone. After the user
   has approved the shape once, a routine new decision can be published and then reported.
-- **Never lose work.** Commit or save after every change. See each adapter for how. With parallel
+- **Save after every change**; each adapter says how (a wiki is a git repo and needs a push). With parallel
   agents, give each one its own working copy, or make one agent own the writes.
 - **Before publishing, check that:**
   - no page mentions Claude or agents
