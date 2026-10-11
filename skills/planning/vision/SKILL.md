@@ -6,8 +6,8 @@ description: >
   specified and what is out of scope, ordered so the riskiest unknown is built first. Then hand
   each feature to `shape`, one at a time. Use when I bring a product idea or a vision, say "grill
   me on this idea", "plan the product", "set up the initiative" or "what are the features", or ask
-  for a product plan from features down to tickets; and for a product-level status update or
-  audit.
+  for a product plan from features down to tickets; when something I built for myself might be
+  worth selling; and for a product-level status update or audit.
 ---
 
 # Vision
@@ -139,7 +139,25 @@ version of the whole product that works end to end and answers the riskiest unkn
 4. A change to a feature after its project exists returns that project's spec to Draft; say so in
    one line and tell me what it touches.
 
-## 4. Product updates and audits
+## 4. From personal to sellable
+
+When I think something I built for myself could sell, grill it again as a product for others,
+with the same five worth-it questions. Two things differ from a fresh idea:
+
+- **I am user one, which is evidence and bias at once.** That I use it weekly proves it works for
+  one person. That I love it proves nothing about anyone else. Ask for evidence from others:
+  people who have asked for it or a copy, the ones I could show it to this week, and how I would
+  reach more of them.
+- **Selling has a cost the personal version never paid.** Price it in weeks before the verdict:
+  accounts for more than one person, billing, onboarding that works without me, support, privacy
+  and security, reliability, and the time all of it takes from building.
+
+The usual verdict is **test first**: put it in front of five people who have the problem, or
+offer it before building the selling parts, and decide on what they do, not what they say. On
+build, write a new Draft product for others, its features including the selling parts, with
+product phases from here on; the personal product stays as it is until the new one replaces it.
+
+## 5. Product updates and audits
 
 - **A product update** is one line per project, with the project's own health and its phase,
   then the product's health as my judgement, proposed if the facts don't settle it. Read each
@@ -148,7 +166,7 @@ version of the whole product that works end to end and answers the riskiest unkn
   deferred, every project serves a feature, nothing is built under a Draft level, and Not yet
   specified holds nothing that has since sharpened.
 
-## 5. Writing to the tracker and checking the tree
+## 6. Writing to the tracker and checking the tree
 
 Writing follows section 7 of `../shape/SKILL.md`: state each write before making it, show the
 first one, read it back. Then read the tree back into the outline in
