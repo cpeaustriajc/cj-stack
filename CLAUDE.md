@@ -12,6 +12,8 @@ Use what Claude Code ships before writing your own checks:
   a no-plugin baseline.
 - `claude plugin details <plugin>` for a plugin's components and projected token cost.
 - `claude plugin test mods/<mod>` for a mod's hook tests.
+- `/doctor prompt-audit` when a new frontier model ships (Fable or Opus tier, not smaller ones):
+  flags instructions written for older models and rules that conflict or point at missing files.
 - `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
 
 ## Buckets
