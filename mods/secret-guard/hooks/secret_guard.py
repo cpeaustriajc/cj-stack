@@ -1279,7 +1279,7 @@ CC_DOC = re.compile(r"\.(?:md|mdx|markdown|txt|rst)$", re.I)
 _VAL = r'\s*:\s*("(?:[^"\\]|\\.)*"|[^\s,}\]]+)'
 HELPER_RX = re.compile(r'"(apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh)"' + _VAL, re.I)
 EXFIL_ENV_RX = re.compile(r'"(\w*ANTHROPIC\w*BASE_URL|OTEL_EXPORTER_\w*ENDPOINT|OTEL_LOG_\w+)"' + _VAL, re.I)
-OFF_RX = re.compile(r'"(disableAllHooks)"\s*:\s*"?([^\s,}\]"]*)', re.I)
+OFF_RX = re.compile(r'"(disableAllHooks|allowManagedHooksOnly)"\s*:\s*"?([^\s,}\]"]*)', re.I)
 PLUGIN_RX = re.compile(r'"(secret-guard@[^"]*)"' + _VAL, re.I)
 CMD_RX = re.compile(r'"(command|statusLine|fileSuggestion|apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh)"\s*:\s*"((?:[^"\\]|\\.)*)"', re.I)
 REDACTOR_RX = re.compile(r"redact|secret_guard|secret_filter|secret-guard", re.I)
@@ -1474,9 +1474,53 @@ def _script_paths(c, cwd):
     return out
 
 
+CC_LAYERS = ("~/.claude/settings.json", "~/.claude/settings.local.json", ".claude/settings.json", ".claude/settings.local.json",
+             "/Library/Application Support/ClaudeCode/managed-settings.json", "/etc/claude-code/managed-settings.json",
+             "C:\\ProgramData\\ClaudeCode\\managed-settings.json", "~/.claude/plugins/installed_plugins.json", "~/.claude/plugins/known_marketplaces.json")
+_HOOKED = {}
+
+
+def _jload(f, cwd):
+    try:
+        d = json.loads(_cc_disk(f, cwd) or "null")
+    except ValueError:
+        return {}
+    return d if isinstance(d, dict) else {}
+
+
+def _plugin_cmds(docs, cwd):
+    on, mk, roots = set(), {}, []
+    for d in docs + [{"extraKnownMarketplaces": _jload(CC_LAYERS[8], cwd)}]:
+        ep, km = d.get("enabledPlugins"), d.get("extraKnownMarketplaces")
+        on |= {k for k, v in ep.items() if v} if isinstance(ep, dict) else set()
+        for k, v in km.items() if isinstance(km, dict) else []:
+            src = v.get("source") if isinstance(v, dict) else None
+            if isinstance(src, dict) and src.get("source") == "directory" and isinstance(src.get("path"), str):
+                mk[k] = src["path"]
+    reg = _jload(CC_LAYERS[7], cwd).get("plugins")
+    for name in on:
+        roots += [e.get("installPath") for e in (reg.get(name) if isinstance(reg, dict) and isinstance(reg.get(name), list) else []) if isinstance(e, dict)]
+        pl, _, m = name.partition("@")
+        for e in _jload(os.path.join(mk[m], ".claude-plugin", "marketplace.json"), cwd).get("plugins", []) if m in mk else []:
+            if isinstance(e, dict) and e.get("name") == pl and isinstance(e.get("source"), str):
+                roots.append(os.path.normpath(os.path.join(mk[m], e["source"])))
+    return [re.sub(r"\$\{?CLAUDE_PLUGIN_ROOT\}?", r.replace("\\", "/"), c) for r in dict.fromkeys(x for x in roots if isinstance(x, str))
+            for c in _cmds(_cc_disk(os.path.join(r, "hooks", "hooks.json"), cwd) or "")]
+
+
 def _hooked_set(cwd):
-    texts = [_cc_disk(f, cwd) for f in ("~/.claude/settings.json", "~/.claude/settings.local.json", ".claude/settings.json", ".claude/settings.local.json")]
-    return {x for t in texts if t for c in _cmds(t) for x in _script_paths(c, cwd)}
+    st = []
+    for f in CC_LAYERS:
+        try:
+            st.append(os.stat(os.path.join(cwd or os.getcwd(), os.path.expanduser(f))).st_mtime_ns)
+        except OSError:
+            st.append(None)
+    key = (cwd, tuple(st))
+    if key not in _HOOKED:
+        texts = [_cc_disk(f, cwd) for f in CC_LAYERS[:7]]
+        cmds = [c for t in texts if t for c in _cmds(t)] + _plugin_cmds([_jload(f, cwd) for f in CC_LAYERS[:7]], cwd)
+        _HOOKED[key] = {x for c in cmds for x in _script_paths(c, cwd)}
+    return _HOOKED[key]
 
 
 def _script_leak(sp, eng, cwd):
@@ -1805,7 +1849,7 @@ def cc_bash(cmd, targets, cwd, eng, force=None, orig=None):
         if kind == "json" and cmd.count(tgt) < 2 and re.search(r">|\btee\b|\b(?:cp|mv|install|dd|ln)\b", cmd) and not re.search(r"\b(?:sed|perl)\s+(?:-\S+\s+)*-\w*i", cmd):
             return "replacing Claude Code's settings with content the guard cannot see; use Edit or Write so the change can be checked"
         if kind == "json" and (re.search(r"apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh|ANTHROPIC\w*BASE_URL|OTEL_EXPORTER_\w*ENDPOINT|OTEL_LOG_", t2, re.I)
-                               or re.search(r"secret-guard@|disableAllHooks|redact|secret_(?:guard|filter)|(?-i:\bPost[A-Z]\w*)|[\"'](?:http|prompt|agent)[\"']", cmd, re.I)
+                               or re.search(r"secret-guard@|disableAllHooks|allowManagedHooksOnly|redact|secret_(?:guard|filter)|(?-i:\bPost[A-Z]\w*)|[\"'](?:http|prompt|agent)[\"']", cmd, re.I)
                                or _hook_reach(cmd, tgt, cwd)):
             return "changing a credential helper, endpoint, the redactor's hook entry or a PostToolUse hook of Claude Code's settings by command"
         if kind == "json" and any(_r1(c, True, eng, cwd) for c in cmds) or (kind != "json" or re.search(r"statusLine|fileSuggestion|\bcommand\b", t2)) and _r1(
