@@ -19,7 +19,8 @@ adapters live there as well: find the tracker as its section 1 says, and use the
 
 ## 1. Grill me
 
-A product idea is the vaguest thing in the plan, so this skill does the grilling itself. Run the
+A product idea is the vaguest thing in the plan, so this skill does the grilling itself. An idea
+handed over from `scout` arrives with its evidence; start the ledger from it. Run the
 interview from `../triage/SKILL.md`, from **Grilling** to **Ending**: the ledger, the rounds, the
 recommended answers, the lookups. Skip its sizing: a product idea is always grilled. What changes
 at this level:
@@ -46,6 +47,9 @@ at this level:
     up; say what this would do that they don't, or recommend using one instead.
   - **What it costs**: my time to the first usable version, in weeks, and what it costs to keep
     running and maintain after. Estimates are mine to give; label yours as guesses.
+  - **Reach and copies**: how I reach the people who pay, and what a copy built with an agent in
+    a weekend could not take: distribution I own, data that accrues per customer, a workflow it
+    sits in, trust or compliance. If a copy with an audience would win, say so.
   - **What it displaces**: what else that time would go to. Ask me which matters more.
   - **What it returns**: money, time saved, learning, or joy. Any of these can be enough, but say
     which one this is.
