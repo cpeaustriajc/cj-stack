@@ -1,6 +1,6 @@
 ---
 name: hone
-description: Mine past Claude Code transcripts for the times I corrected, interrupted or pushed back on Claude, find the lessons that recur, and propose where each one should live - code structure, a lint rule, a hook, a test, a skill or an instruction file - plus what to prune, for my approval. With a skill name, improve that one skill from the corrections made while it ran. Use when I say "hone", "hone <skill>", "hone this skill", "improve this skill from my corrections", "reflect", "what do I keep correcting", "learn from my sessions", "why does Claude keep doing X", or after a session with several corrections. Not for updating one CLAUDE.md from a single session.
+description: Mine past Claude Code transcripts for the times I corrected, interrupted or pushed back on Claude, find the lessons that recur, and propose where each one should live - code structure, a lint rule, a hook, a test, a skill or an instruction file - plus what to prune, for my approval. With a skill name, improve that one skill from the corrections made while it ran. Use when I say "hone", "hone this skill", "hone" followed by a skill name, "improve this skill from my corrections", "reflect", "what do I keep correcting", "learn from my sessions", "why does Claude keep doing X", or after a session with several corrections. Not for updating one CLAUDE.md from a single session.
 ---
 
 # Hone
