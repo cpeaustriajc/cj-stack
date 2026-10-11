@@ -10,7 +10,7 @@ uses, and offer to note the answer in the project's facts; don't edit the projec
 
 | Level | GitHub object |
 |---|---|
-| Goal | A Projects board (Projects v2) for the whole product, or a pinned issue |
+| Product | A Projects board (Projects v2) for the whole product, or a pinned issue |
 | Project | A **parent issue** whose sub-issues are its work items, with the project template as its body. On a team that plans in Projects boards, a board per project instead. |
 | Spec, engineering document | A wiki page or a pinned issue linked from the parent issue's How. Not a file in the repo: the product owner reads it, and edits shouldn't need a pull request. |
 | Decision | Follows the `project-knowledge` skill if installed; otherwise a wiki page per decision |

@@ -3,8 +3,8 @@ import { modeSuggestions } from './suggest'
 
 const names = (rows: { text: string }[]) => rows.map(r => r.text)
 
-test('/mode with a space lists all four modes in order', () => {
-  expect(names(modeSuggestions('/mode ', 6, 'audit'))).toEqual(['audit', 'no-pr', 'chat', 'off'])
+test('/mode with a space lists all five modes in order', () => {
+  expect(names(modeSuggestions('/mode ', 6, 'audit'))).toEqual(['audit', 'no-pr', 'chat', 'product', 'off'])
 })
 
 test('a partial mode name lists only the modes it starts', () => {
@@ -22,6 +22,7 @@ test('the current mode is marked on its dim line', () => {
     'read and report only',
     'no pull requests',
     'answer here, no PR or push (on)',
+    'plan top-down: vision, shape, tickets',
     'lift the current mode',
   ])
 })

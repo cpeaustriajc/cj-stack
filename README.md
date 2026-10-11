@@ -31,7 +31,9 @@ All skills are model-invoked (Claude picks them from their description), except 
 
 | Skill | Bucket | What it is for |
 |---|---|---|
-| [work-planning](skills/planning/work-planning/SKILL.md) | planning | shaping work in any tracker (Linear, Jira, GitHub, others): specs, work items, phases, projects, updates |
+| [vision](skills/planning/vision/SKILL.md) | planning | a product idea as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
+| [shape](skills/planning/shape/SKILL.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
+| [tickets](skills/planning/tickets/SKILL.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
 | [triage](skills/planning/triage/SKILL.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
 | [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
 | [hone](skills/knowledge/hone/SKILL.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
@@ -56,8 +58,8 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [jira-ticket](skills/archived/jira-ticket/SKILL.md) | Jira tickets and acceptance criteria |
 | [draft-ticket](skills/archived/draft-ticket/SKILL.md) | end-to-end Jira ticket drafting |
 | [github-issue](skills/archived/github-issue/SKILL.md) | GitHub issues holding a Jira ticket's engineering detail |
-| [linear-planning](skills/archived/linear-planning/SKILL.md) | Linear-only predecessor of work-planning (not shipped) |
-| [linear-project](skills/archived/linear-project/SKILL.md) | Linear-only predecessor of work-planning (not shipped) |
+| [linear-planning](skills/archived/linear-planning/SKILL.md) | Linear-only predecessor of shape (not shipped) |
+| [linear-project](skills/archived/linear-project/SKILL.md) | Linear-only predecessor of shape (not shipped) |
 | [project-wiki](skills/archived/project-wiki/SKILL.md) | GitHub-wiki-only predecessor of project-knowledge |
 
 ## Mods
@@ -66,7 +68,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 |---|---|---|
 | `linear-gate` | holds every Linear write until you allow it | by default |
 | `usage-pace` | weekly usage in the status line, and whether it lasts until your reset | optional |
-| `session-modes` | `/mode audit`, `no-pr` or `chat`, enforced for the session | optional |
+| `session-modes` | `/mode audit`, `no-pr`, `chat` or `product` (plan top-down, no code, tracker writes only after a planning skill loads), enforced for the session | optional |
 | `denial-explainer` | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
 | `loop-brake` | ends a turn after N forced Stop-hook continuations | optional |
 | `hone-nudge` | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |

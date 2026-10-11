@@ -5,7 +5,7 @@ tool's own MCP server or CLI to see what it can create, then map the levels onto
 
 | Level | Look for | Fallback |
 |---|---|---|
-| Goal | A portfolio, goal, initiative or top-level folder | A pinned page the projects link to |
+| Product | A portfolio, goal, initiative or top-level folder | A pinned page the projects link to |
 | Project | A project, list, board or epic | A parent item with child items |
 | Spec, engineering document | A doc or page attached to the project | A page in the team's wiki, linked from the project |
 | Phase | A milestone or section | A single-select "Phase" field, or a section per phase |

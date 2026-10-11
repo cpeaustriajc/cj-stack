@@ -7,7 +7,7 @@ Use the Linear MCP server. If the only Linear tools listed are `authenticate` an
 
 | Level | Linear object |
 |---|---|
-| Goal | Initiative |
+| Product | Initiative |
 | Project | Project |
 | Spec, engineering document, decision | Project Document (a team-wide decision is a Team Document) |
 | Phase | Project milestone |
@@ -16,7 +16,7 @@ Use the Linear MCP server. If the only Linear tools listed are `authenticate` an
 | Work type | Issue template (`Task`, `Bug`, `Chore` if the team has them), plus a label |
 | Dependency | Issue relation "blocked by"; project dependency for project-level ones |
 | Cycle | Cycle |
-| Status update | Project update, with health `onTrack`, `atRisk` or `offTrack` |
+| Status update | Project update, with health `onTrack`, `atRisk` or `offTrack`; a product update is an initiative update |
 
 Coming from Jira: a Story is an Issue, an Epic is a Project, and an Epic description or Confluence
 PRD is the project's spec Document. Never file a spec as an issue, never title a project "Epic 1",
@@ -35,6 +35,8 @@ Write checkboxes in Done When as `- [ ]`. Linear renders them as task lists.
 
 - Issues: `save_issue` (create, or update with `id`), `get_issue`, `list_issues`, `save_comment`.
 - Projects: `save_project`, `get_project`, `save_milestone`, `save_status_update`.
+- Initiatives: use the server's initiative tools if it lists any. If it lists none, draft the
+  initiative text for the person to paste, and say so; never file the product as a project.
 - Documents: `save_document`, `get_document`, `list_documents`.
 - Relations: `blockedBy`, `relatedTo` and `parentId` on `save_issue`. They only add; removing
   needs the matching `remove…` field.

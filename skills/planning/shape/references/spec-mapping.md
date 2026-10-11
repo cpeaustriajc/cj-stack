@@ -6,9 +6,9 @@
 | --- | --- |
 | Product goal, business value, customer value | The goal (usually already there) |
 | Epic, objective | Project Why and What |
-| Feature 1, Feature 2 | Spec sections, one outcome sentence each |
-| User story N | A build item, once the spec is Confirmed |
-| Acceptance criteria | The spec, verbatim; quoted into items |
+| Feature 1, Feature 2 | Product features in `vision`, or spec Requirements when they are one project |
+| User story N | One or more Requirements; a build item cites them once the spec is Confirmed |
+| Acceptance criteria | Requirements, verbatim; quoted into items |
 | Acceptance considerations: UI behaviour, ordering | Item acceptance criteria |
 | Acceptance considerations: performance | Project How |
 | Dependencies on another system | Project How; on other work, a "blocked by" relation |

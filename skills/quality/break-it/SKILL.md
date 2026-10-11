@@ -84,5 +84,5 @@ Then in chat, plain words and no internal jargon:
 3. **What held up**: one line listing the attacks that did nothing.
 
 Stop there. Fix only what I name. When I say to file them, write them up as tracker issues via
-`work-planning`. Write them for people who never open the repo: steps a person can follow in the app, with no
+`tickets`. Write them for people who never open the repo: steps a person can follow in the app, with no
 repo paths.

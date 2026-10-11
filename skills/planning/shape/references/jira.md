@@ -7,7 +7,7 @@ items" and projects "spaces"; the APIs and MCP tools still say "issue" and "proj
 
 | Level | Jira object |
 |---|---|
-| Goal | An Initiative above Epic (Premium plans, configured in Plans); otherwise a Confluence page the epics link to |
+| Product | An Initiative above Epic (Premium plans, configured in Plans); otherwise a Confluence page the epics link to |
 | Project | Epic. Its description holds the project template. |
 | Spec, engineering document | A Confluence page linked from the epic. Jira descriptions are a poor home for a long spec with a status line and history. |
 | Decision | Follows the `project-knowledge` skill if installed (Confluence adapter); otherwise a Confluence page per decision |

@@ -99,5 +99,6 @@ criteria?".
 Grilling writes nothing: no code, no tracker or doc writes, no pushes. The session is done
 when the frontier is empty. Then post the final ledger as one compact list of every decision
 with its one-line reason, and ask whether we have a shared understanding. On yes, offer the
-next step in one line, for example a spec in the tracker via `work-planning`, or
-decisions recorded via `project-knowledge`. Do nothing until I pick one.
+next step in one line: the level below the one we settled, so a product goes to `vision`, a
+project to `shape` and a confirmed spec to `tickets`; or decisions recorded via
+`project-knowledge`. Do nothing until I pick one.

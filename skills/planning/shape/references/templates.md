@@ -3,57 +3,51 @@
 The team's own templates in the tracker win over these. Where the team has none, or its template
 is missing a section below, use these shapes.
 
-## Work item (Task, Bug)
+## Spec
+
+Written from decisions already made (`triage`), never to make new ones. A section with nothing
+real to say is left out rather than filled.
 
 ```markdown
-## Context
+Status: Draft | Confirmed (<date>, <approver>)
+Feature: <the product feature this serves, quoted>
 
-<Why this exists now, the evidence, and the links that stop someone rediscovering it.>
+## Problem
 
-## Outcome
+<Whose problem, in their words, and the evidence.>
 
-<The concrete state that is true when this is done. One sentence.>
+## Done
 
-## Done When
+<The observable outcome: who does what, and what they see. One or two sentences.>
 
-- [ ] <One observable check. Behaviour someone can see, not test steps.>
+## Requirements
 
-## Out of Scope
+R1. <Who> <does what> and <sees what>.
+R2. <An empty, error or edge state, stated the same way.>
 
-- <Only the boundaries that prevent a likely misunderstanding. Omit the section if none.>
+## Testing seams
+
+- <Where the feature is proven, highest first. One is ideal.>
+
+## Approaches considered
+
+- <The approach not taken, in one line, and why.>
+
+## Out of scope
+
+- <What was asked for or obvious, and deliberately left out.>
+
+## Open questions
+
+- <Must be empty before the spec is Confirmed.>
 ```
 
-Length limits, because a long item is usually two items and a reviewer stops reading:
-
-- **Context:** 2–4 sentences plus links. Probe data and architecture go in the pull request or the
-  engineering document; link them.
-- **Outcome:** one sentence.
-- **Done When:** 3–5 checkboxes, one check each. A build item quotes the spec statements it
-  satisfies here, word for word, plus any finer conditions the verifier needs. No click-by-click
-  steps, no "record only" measurements, no "deliberately absent" lists.
-- **Out of Scope:** 0–3 bullets.
-- **Whole body:** under about 1,500 characters. Longer means split it.
-- **No "As a … I want … so that" line** unless the product owner asks for it. That sentence is
-  where mechanism and timing tend to sneak in. Keep their acceptance criteria.
-
-A Bug adds what was expected and what happened, with the steps that reproduce it, under Context.
-
-## Chore
-
-The same four headings, plus a check that it really can skip the verifier. If any line is false,
-it is a Task.
-
-```markdown
-## No-QA check
-
-- [ ] It touches none of the areas the project lists as risky.
-- [ ] It renames or removes no route and no test selector.
-- [ ] Nothing a user or tester could notice changes.
-- [ ] Every user path it changes is covered by an automated test.
-```
-
-Its Done When holds checks an engineer can confirm alone: a command that passes, a file state, a
-search that finds nothing, or the end-to-end command and where its trace is.
+- **Requirements** are numbered once and never renumbered; a dropped one is struck through, so
+  work items that cite it still resolve. A long list is fine: it should cover the feature.
+- **Out of scope** is never empty on a Confirmed spec. The things refused are the most useful
+  lines on the page.
+- The spec cites no file paths or code; they go stale. A prototype's snippet that pins a decision
+  (a state machine, a schema) may be inlined, marked as from a prototype.
 
 ## Project
 
@@ -65,7 +59,7 @@ Name:
 Summary:          <one sentence: the user or business outcome>
 Lead:
 Team(s):
-Goal:
+Product:
 Status:
 Start:
 Target:
@@ -127,7 +121,7 @@ If buyers or end users will ever see the result, it is a product project, even w
 it first.
 
 **Keep out of the description**, in the tracker's native fields instead: lead, members and teams;
-goal and status; priority and dates; phases; dependencies; links and resources; health.
+product and status; priority and dates; phases; dependencies; links and resources; health.
 
 ## Status update
 
