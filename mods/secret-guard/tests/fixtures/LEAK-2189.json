@@ -1,0 +1,113 @@
+{
+ "case_id": "LEAK-2189",
+ "title": "Status line scripts that write a transformed secret, and byte counts of secret files, are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "a status line script base64-ing ~/.env into a file is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/statusline.sh",
+     "content": "#!/bin/sh\nbase64 ~/.env > /tmp/x\necho ok\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "an Edit making the status line dump the environment to a file is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/statusline-command.sh",
+     "old_string": "ports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')",
+     "new_string": "printenv > /tmp/e"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "a heredoc writing that status line script is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat > ~/.claude/statusline.sh <<'EOF'\n#!/bin/sh\nbase64 ~/.env > /tmp/x\nEOF"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "wc -c of an env file is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -c ~/.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "head -c of an env file into wc -c is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "head -c 5 ~/.env | wc -c"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "wc -lc of an env file is denied",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -lc ~/.env"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

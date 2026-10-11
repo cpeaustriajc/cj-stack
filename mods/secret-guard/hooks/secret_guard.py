@@ -1180,6 +1180,9 @@ def xform_hit(t, srcs, secret_file, cwd=None):
         if tok in ("gzip", "bzip2", "xz", "zstd", "strings", "less") and not re.search(r"\|\s*" + re.escape(tok), cleaned):
             m = XFORM.search(cleaned, m.end())
             continue
+        if tok == "wc" and re.match(r"\s+-l(?:\s+[^\s|;&<>-][^\s|;&<>]*)*\s*(?:$|[|;&)<>\n])", cleaned[m.end():]):
+            m = XFORM.search(cleaned, m.end())
+            continue
         if tok in ("wc",) or tok in ("sum", "bc", "dc"):
             return tok
         return tok
@@ -1445,6 +1448,8 @@ def _cc_lines(t):
 def _cc_kind(p):
     if CC_KEEP.search(p):
         return None
+    if re.search(r"(?:^|/)\.claude/statusline", p, re.I):
+        return "script"
     if CC_JSON.search(p) or CC_BASH.search(p):
         return "json"
     return ("doc" if CC_DOC.search(p) else "json" if p.lower().endswith(".json") else "script") if CC_TREE.search(p) else None
