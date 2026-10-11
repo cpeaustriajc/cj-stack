@@ -817,7 +817,7 @@ def bash_check(cmd, eng, cwd):
                           SAFE.get(kind if kind in SAFE else "tool", SAFE["tool"]))
 
     cc = []
-    w = write_to_protected(raw, cc) or cc and cc_bash(n, cc, cwd, eng)
+    w = write_to_protected(raw, cc) or cc and cc_bash(n, cc, cwd, eng) or hook_bash(n, cwd, eng)
     if w:
         return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
 
@@ -1402,7 +1402,7 @@ def _cc_json(P, Q, full, fresh, eng, cwd):
         return "changing whether secret-guard is enabled"
     old = _cmds(P)
     for c, label in _cmds(Q).items():
-        if c not in old and _r1(c, True, eng, cwd):
+        if c not in old and (_r1(c, True, eng, cwd) or any(_script_leak(x, eng, cwd) for x in _script_paths(c, cwd))):
             return "a %s command that dumps the environment or reads secrets" % label
     hp, hq = _hooks(P), _hooks(Q)
     if full and hp is not None and hq is not None:
@@ -1431,8 +1431,7 @@ def cc_check(tool, ti, pn, kind, cwd, body, eng):
     if kind == "json":
         why = _cc_json(P, Q, full, pre is None, eng, cwd)
     elif kind == "script":
-        shell = re.search(r"(?:^|/)[^./]+$|\.(?:sh|bash|zsh|ksh|command)$", pn, re.I) and not re.match(r"#!.*\b(?:python|node|ruby|perl|deno|bun|pwsh|php)", Q)
-        if _r1(new, bool(shell), eng, cwd):
+        if _r1(new, _shell_file(pn, Q), eng, cwd):
             why = "a hook script (%s) that dumps the environment or reads secrets" % os.path.basename(pn)
     elif any(_r1(c, True, eng, cwd) for c in re.findall(r"!`([^`\n]+)`", new) + re.findall(r"```!\n(.*?)```", new, re.S)):
         why = "a command in %s that dumps the environment or reads secrets" % os.path.basename(pn)
@@ -1451,7 +1450,39 @@ def _cc_kind(p):
     return ("doc" if CC_DOC.search(p) else "json" if p.lower().endswith(".json") else "script") if CC_TREE.search(p) else None
 
 
-def cc_bash(cmd, targets, cwd, eng):
+def _shell_file(pn, text):
+    return bool(re.search(r"(?:^|/)[^./]+$|\.(?:sh|bash|zsh|ksh|command)$", pn, re.I)) and not re.match(r"#!.*\b(?:python|node|ruby|perl|deno|bun|pwsh|php)", text)
+
+
+def _script_paths(c, cwd):
+    out = []
+    for tok in re.findall(r"[^\s|;&<>()`]+", re.sub(r"[\"']", "", c)):
+        tok = re.sub(r"\$\{?CLAUDE_PROJECT_DIR\}?", (cwd or ".").replace("\\", "/"), re.sub(r"\$\{?HOME\}?", "~", tok))
+        if "$" not in tok and not tok.startswith("-") and re.search(r"[/~]|\.(?:py|sh|bash|zsh|js|mjs|cjs|ts|rb|pl|php|ps1|lua)$", tok):
+            out.append(os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(tok))))
+    return out
+
+
+def _hooked_set(cwd):
+    texts = [_cc_disk(f, cwd) for f in ("~/.claude/settings.json", "~/.claude/settings.local.json", ".claude/settings.json", ".claude/settings.local.json")]
+    return {x for t in texts if t for c in _cmds(t) for x in _script_paths(c, cwd)}
+
+
+def _script_leak(sp, eng, cwd):
+    t = _cc_disk(sp, cwd) if os.path.isfile(sp) and not CC_KEEP.search(sp) else None
+    return bool(t) and "\x00" not in t and _r1("\n".join(_cc_lines(t)), _shell_file(sp, t), eng, cwd)
+
+
+def hook_bash(cmd, cwd, eng):
+    tg = [m.group(1) for m in re.finditer(r"(?<![\d&])>>?\s*['\"]?([^\s'\"|;&<>)]+)", cmd) if not m.group(1).startswith(("/dev/", "&"))]
+    tg += re.findall(r"\btee\s+(?:-\S+\s+)*['\"]?([^\s'\"|;&<>)]+)", cmd)
+    tg += [seg.split()[-1].strip("'\"") for seg in re.findall(r"\b(?:cp|mv|install)\s+[^|;&<>\n]+|\b(?:sed|perl)\s+[^|;&<>\n]*?-\w*i[^|;&<>\n]*", cmd)]
+    hs = _hooked_set(cwd) if tg else set()
+    hit = [x for x in tg if os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(x))) in hs]
+    return hit and cc_bash(cmd, hit, cwd, eng, "script")
+
+
+def cc_bash(cmd, targets, cwd, eng, force=None):
     q_rx = r"'([^']*)'|\"((?:[^\"\\]|\\.)*)\""
     full = []
     strip_heredocs(cmd, full)
@@ -1463,7 +1494,7 @@ def cc_bash(cmd, targets, cwd, eng):
     lits = "\n".join(a or b for a, b in re.findall(q_rx, cmd))
     t2 = re.sub(r"\bdel\([^()]*(?:\([^()]*\)[^()]*)*\)", "", cmd)
     for tgt in dict.fromkeys(targets):
-        kind = _cc_kind(tgt)
+        kind = force or _cc_kind(tgt)
         if kind == "json" and not CC_JSON.search(tgt) and not CC_TREE.search(tgt):
             continue
         gone = [""] if re.search(r"\b(?:rm|unlink|shred|truncate)\b[^|;&\n]*" + re.escape(tgt), cmd) else []
@@ -1498,7 +1529,7 @@ def write_check(tool, ti, eng, cwd=None):
         pn = re.sub(r"/\./", "/", pn)
         if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit") or "write" in tool.lower() or "edit" in tool.lower():
             cc = _cc_kind(pn)
-            d = cc and cc_check(tool, ti, pn, cc, cwd, body, eng)
+            d = cc_check(tool, ti, pn, cc or "script", cwd, body, eng) if cc or os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(pn))) in _hooked_set(cwd) else None
             if d:
                 return d
             if not cc and (PROT_PATHS.search(pn) or PROT_BASE.search(pn) and CLAUDE_DIR.search(pn)):
