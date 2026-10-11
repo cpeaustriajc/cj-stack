@@ -767,7 +767,7 @@ EXTRA_DENY = [(re.compile(rx, re.I), why) for rx, why in (
     (r"\bRIPGREP_CONFIG_PATH\s*=", "pointing ripgrep at a config"),
     (r"\b(?:cp|ln|ditto|rsync|mv|install|tar|zip)\b[^|;&\n]*(?:~|\$HOME|/Users/[\w.-]+)/\.(?:ssh|aws|gnupg|kube|config/gh|npmrc|netrc|docker)\b", "copying a credential folder"),
     (r"\bclient[_-]?secret\s*=", "a client secret on the command line"),
-    (r"\b(?:printenv|env)\s*(?:\|[^>\n;&]*)?>>?\s*(?!/dev/|&|\(?\"?\$\{?TMPDIR)[^\s&]", "writing the environment to a file"),
+    (r"\b(?:printenv|env)\s*(?:\|[^>\n;&]*)?>>?\s*(?!/dev/|&|\(?\"?\$\{?TMPDIR)[^\s&]", "a redirect after env or printenv"),
     (r"\bqlmanage\b(?![^\n]*-m\b)(?![^\n]*\.(?:png|jpe?g|gif|heic)\b)", "previewing files as images"),
     (r"\bssh\b[^;&\n]*\bcat\b\s+[^'\"|;&]*(?:" + _SF + r")[^|;&\n]*['\"]\s*>>?\s*[^\s&]", "pulling a remote secret file into a local file"),
     (r"\bssh\b[^;&\n]*\btar\b[^;&\n]*\.(?:aws|ssh|gnupg|kube)", "copying remote credential folders"),
@@ -1029,6 +1029,9 @@ def _search_unsafe_target(f, cwd):
     return bool(re.search(r"[*?\[]", f)) or os.path.isdir(full)
 
 
+_DIFF_MARKER_PATTERNS = frozenset({"^[-+][^-+]"})
+
+
 def search_oracle_hit(text, cwd, secret_file):
     for line in text.split("\n"):
         try:
@@ -1071,9 +1074,49 @@ def search_oracle_hit(text, cwd, secret_file):
                 targets.append(None)
             for tgt in targets:
                 keys = _file_keys(tgt, cwd) if tgt is not None else None
-                if not all(_is_key_name(p, keys) for p in patterns):
+                if not all(_is_key_name(p, keys) or p in _DIFF_MARKER_PATTERNS for p in patterns):
                     return "a count, test or list whose pattern is not a key name"
     return None
+
+
+_META_FIELDS = "timestamp|version|entrypoint|permissionMode|type|sessionId|gitBranch|cwd"
+_META_ASSIGN = re.compile(r"(?<![\w$.-])(\w+)=\$\(jq -r '(?:select\(\.(%s)!=null\)\|\.\2|\.(%s))' \"\$f\"(?:\s*\|\s*head -1)?\)" % (_META_FIELDS, _META_FIELDS))
+_SLICED = re.compile(r"\$\{#(\w+)\}|\$\{(\w+):\d")
+
+
+def _metadata_slices_only(low):
+    # every use of a sliced name must be its metadata assignment or a read; any other use can carry a secret.
+    if not re.search(r"\*\.jsonl\b", low):
+        return False
+    names = {a or b for a, b in _SLICED.findall(low)}
+    if not names:
+        return False
+    for v in names:
+        rest = _META_ASSIGN.sub(lambda m: " " if m.group(1) == v else m.group(0), low)
+        ev = re.escape(v)
+        rest = re.sub(r"\$\{#%s\}|\$\{%s:\d|\$\{%s\}|\$%s(?!\w)" % (ev, ev, ev, ev), " ", rest)
+        if re.search(r"(?<![\w$.-])%s(?![\w.-])" % ev, rest):
+            return False
+    return True
+
+
+_COUNTED_DIFF_RE = re.compile(r"\bchezmoi\s+diff\b(?P<args>[^|;&\n]*)\|\s*grep\s+-[cE]+\s+(?:'(?P<sq>[^']*)'|\"(?P<dq>[^\"]*)\"|(?P<bare>[^\s;&|)]+))")
+
+
+def _strip_counted_diffs(low, cwd=None):
+    # a count over a diff body reveals values unless the pattern is a key of that file or a diff marker.
+    def keep(m):
+        pat = next(g for g in (m.group("sq"), m.group("dq"), m.group("bare")) if g is not None)
+        if pat in _DIFF_MARKER_PATTERNS:
+            return " "
+        targets = [t for t in m.group("args").split() if not t.startswith("-")]
+        if len(targets) != 1:
+            return m.group(0)
+        keys = _file_keys(os.path.expanduser(targets[0]), cwd)
+        if keys is not None and _is_key_name(pat, keys):
+            return " "
+        return m.group(0)
+    return _COUNTED_DIFF_RE.sub(keep, low)
 
 
 def xform_hit(t, srcs, secret_file, cwd=None):
@@ -1084,10 +1127,10 @@ def xform_hit(t, srcs, secret_file, cwd=None):
     # pipeline-aware: a transform only counts when it is not merely the source's own plain use
     s = SHELL_XFORM.search(low)
     if s and (secret_file or srcs):
-        if re.search(r"\$\{#|\$\{\w+:\d", low):
+        if re.search(r"\$\{#|\$\{\w+:\d", low) and not _metadata_slices_only(low):
             return "shell substring or length probe"
     plain_grep = re.compile(r"\bgrep\b(?!\s+-[a-zA-Z]*[cqo])")
-    cleaned = low
+    cleaned = _strip_counted_diffs(low, cwd)
     # oracle with value literal: grep -q/-c PATTERN where the pattern has a value after '='
     m = XFORM.search(cleaned)
     while m:
