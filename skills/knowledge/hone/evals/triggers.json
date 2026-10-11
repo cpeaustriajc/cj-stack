@@ -1,0 +1,34 @@
+[
+ {
+  "query": "what do I keep correcting claude about? go through my sessions from the last two weeks",
+  "should_trigger": true
+ },
+ {
+  "query": "hone the shape skill from the corrections I made while it ran last week",
+  "should_trigger": true
+ },
+ {
+  "query": "why does claude keep adding comments to every function even though I always remove them? learn from my sessions",
+  "should_trigger": true
+ },
+ {
+  "query": "reflect on today's session: I corrected you like five times, what should become a rule or a hook",
+  "should_trigger": true
+ },
+ {
+  "query": "update CLAUDE.md with what we learned in this session about the build command",
+  "should_trigger": false
+ },
+ {
+  "query": "review this diff for bugs before I merge",
+  "should_trigger": false
+ },
+ {
+  "query": "summarize what we did today for my standup",
+  "should_trigger": false
+ },
+ {
+  "query": "write a skill that formats our changelog",
+  "should_trigger": false
+ }
+]

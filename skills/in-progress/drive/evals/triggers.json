@@ -1,0 +1,34 @@
+[
+ {
+  "query": "drive cart.test.ts to green overnight, keep going until every test passes",
+  "should_trigger": true
+ },
+ {
+  "query": "loop until the lighthouse score is above 90, one change at a time, revert what doesn't help",
+  "should_trigger": true
+ },
+ {
+  "query": "hillclimb the bundle size down, keep or revert each change, run it while I sleep",
+  "should_trigger": true
+ },
+ {
+  "query": "set up a goal that keeps working until the typecheck is clean, with a budget",
+  "should_trigger": true
+ },
+ {
+  "query": "check the deploy every 5 minutes",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the failing test in cart.test.ts",
+  "should_trigger": false
+ },
+ {
+  "query": "run the test suite",
+  "should_trigger": false
+ },
+ {
+  "query": "break the cart spec into tickets",
+  "should_trigger": false
+ }
+]

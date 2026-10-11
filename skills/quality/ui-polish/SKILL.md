@@ -1,6 +1,10 @@
 ---
 name: ui-polish
-description: Review a UI or its animations against the design and a list of the small mistakes agents keep making - wrong easing, slow or janky motion, clutter, truncation, missing states - and return a Before/After/Why table with a verdict. Use when I say "polish", "review the UI", "does this feel right", "check the animation", or before asking me to sign off a visual change. Not for building, restyling, or choosing palette or type; a design skill does that.
+description: >
+  This skill should be used when the user asks to review a UI against its design, polish spacing,
+  type, colour or motion, or sign off a visual change, and before asking for visual sign-off. It
+  compares the screen with the design and a list of common mistakes, and reports a
+  Before/After/Why table with one verdict: ship, ship after the top fixes, or rework.
 ---
 
 # UI polish
@@ -12,7 +16,7 @@ reviews and reports. It changes nothing until I name what to change.
 
 Before judging anything, find the design: a mockup, a Figma frame, a design-tool export, a
 screenshot I gave you, or the closest existing screen in the same app. **The design wins over
-your taste.** Going off and inventing your own version is the worst outcome here. A design plan
+your taste.** A design plan
 I approved counts as the design, even when it departs from the existing screens. If there is
 no design, say so and judge against the existing screens.
 
@@ -38,7 +42,8 @@ settings or other dense app screens. Every row in the report names the rule it b
   price flow.
 
 **Motion**
-- Entrances use `ease-in`. They should ease out. Use ease-in-out only for on-screen movement.
+- Any `ease-in`, on entrances or exits. Ease out instead; ease-in-out only for movement already
+  on screen.
 - Feedback to a click, key or hover that doesn't start at once, or a duration outside the
   per-element bands in `references/motion.md`. One deliberate page-load or reveal sequence the
   design asks for may run longer.
@@ -64,8 +69,7 @@ One table with one row per issue, most visible first:
 | # | Where | Before | After | Why |
 |---|---|---|---|---|
 
-When the issue is in code, "Where" cites `file:line` as well as the screen location. Re-read
-every cited line before reporting so each one is exact. Attach a screenshot when the issue is
+When the issue is in code, "Where" cites `file:line` as well as the screen location. Attach a screenshot when the issue is
 visual. Then give one verdict: **Ship**, **Ship after the top N**, or **Rework** when it is off-
 design. Fix only the rows I name. For a visual change, show me before and after screenshots and
 wait for my sign-off before committing.

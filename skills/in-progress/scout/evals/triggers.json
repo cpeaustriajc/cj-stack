@@ -1,0 +1,34 @@
+[
+ {
+  "query": "find me a SaaS idea worth building, I've worked in dental clinics for ten years",
+  "should_trigger": true
+ },
+ {
+  "query": "what should I build? I want something that can make 2k a month as a side project",
+  "should_trigger": true
+ },
+ {
+  "query": "is there a SaaS in shopify store owners' complaints? scout that niche for me",
+  "should_trigger": true
+ },
+ {
+  "query": "what's still worth building now that anyone can clone an app with AI in a weekend",
+  "should_trigger": true
+ },
+ {
+  "query": "grill me on my idea: a marketplace for used climbing gear",
+  "should_trigger": false
+ },
+ {
+  "query": "write the spec for my habit tracker project",
+  "should_trigger": false
+ },
+ {
+  "query": "how do I price my SaaS",
+  "should_trigger": false
+ },
+ {
+  "query": "write a landing page for my app",
+  "should_trigger": false
+ }
+]

@@ -1,0 +1,46 @@
+# Claude Code adapter
+
+Mechanics checked against the Claude Code docs in October 2026; read the current pages when a
+detail matters, since these change.
+
+## `/goal` runs the loop
+
+`/goal <condition>` (https://code.claude.com/docs/en/goal) keeps the session working until the
+condition is met. After each turn a small fast model reads the condition and the conversation and
+answers not yet, met, or impossible. One goal per session; `/goal` alone shows its status, `/goal
+clear` ends it.
+
+- **The evaluator reads the transcript only.** It runs no command and opens no file. So the
+  condition asks for the check's output to be shown: write it as "`<check command>` has been run
+  after the last change and its pasted output shows <end state>", never "the tests pass".
+- **There is no built-in budget.** Put it in the condition: "or stop after 20 turns", and the
+  evaluator judges it from the conversation. Use `--max-budget-usd` for a hard spend cap on a
+  headless run.
+- **Compile section 2 into one condition**: the Done when line as pasted check output, the Holds
+  throughout lines, the Floor, and the Budget clause, in that order.
+- **It doesn't change permissions.** An unattended run needs auto mode, or the loop stalls on the
+  first prompt.
+- **It survives `--resume`**, but its turn count and timer start over, so a turn budget restarts
+  too; the log on disk is the real count.
+
+## A check the evaluator can't fake
+
+For a run that matters, add a Stop hook of `type: "agent"` (https://code.claude.com/docs/en/hooks-guide)
+that runs the check itself and blocks the stop until it passes. That is section 7's separate
+checker. Agent hooks are experimental; a command hook running the check script also works.
+
+Claude Code overrides a Stop hook after it blocks eight times in a row with no tool call in
+between; `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` changes that.
+
+## Waiting on something outside
+
+A pass that waits on CI, a deploy or a long job uses `/loop` without an interval, so Claude paces
+itself with `ScheduleWakeup`, rather than a goal that polls. Self-paced loops end after one missed
+wakeup and are not restored on resume.
+
+## With cj-stack mods
+
+- **`loop-brake`** ends a turn after its cap of forced Stop-hook continuations (3 by default). If
+  it is installed, it may also cap a `/goal` run; raise its `maxContinuations` (up to 20) for the
+  session, or turn it off for the run, and rely on section 6's brake instead.
+- **`session-modes`**: `/mode no-pr` suits a loop whose work I review before a pull request.

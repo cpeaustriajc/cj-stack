@@ -1,0 +1,50 @@
+[
+ {
+  "query": "write the spec for the saved-searches project, the product already lists it as F3 'buyers get alerts for names they want'",
+  "should_trigger": true
+ },
+ {
+  "query": "our PO pasted an entire spec into a single jira ticket PROJ-88, can you put this in a proper doc and set up the epic",
+  "should_trigger": true
+ },
+ {
+  "query": "set a milestone structure for the onboarding revamp project in linear, we have a demo friday",
+  "should_trigger": true
+ },
+ {
+  "query": "after the demo the CEO wants the shortlist to work for teams not just individuals, update the project and spec",
+  "should_trigger": true
+ },
+ {
+  "query": "draft the weekly status update for the checkout project, two items slipped and one is blocked on payments team",
+  "should_trigger": true
+ },
+ {
+  "query": "audit this linear project description, it feels like it's actually three different projects mashed together",
+  "should_trigger": true
+ },
+ {
+  "query": "I have a vague idea for an app for dog walkers, is it worth building?",
+  "should_trigger": false
+ },
+ {
+  "query": "break the confirmed alerts spec into tickets",
+  "should_trigger": false
+ },
+ {
+  "query": "record the decision that we're dropping v1 of the API in the wiki",
+  "should_trigger": false
+ },
+ {
+  "query": "ask me questions first before you refactor the auth middleware",
+  "should_trigger": false
+ },
+ {
+  "query": "review this PR for bugs before I merge",
+  "should_trigger": false
+ },
+ {
+  "query": "file these 4 bugs from the QA session as issues",
+  "should_trigger": false
+ }
+]

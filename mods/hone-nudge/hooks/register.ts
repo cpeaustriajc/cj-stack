@@ -6,7 +6,7 @@ const MOD = 'hone-nudge'
 const WEEK = 7 * 86_400_000
 // Keep SHIPPED in step with the skills array of the cj-stack plugin in marketplace.json.
 const SHIPPED = new Set([
-  'work-planning', 'triage', 'project-knowledge', 'hone', 'break-it', 'ui-polish',
+  'vision', 'shape', 'tickets', 'triage', 'project-knowledge', 'hone', 'break-it', 'ui-polish',
   'feature-files', 'playbooks', 'interrogate', 'commit', 'create-pr',
 ])
 // Keep this detection in step with skills/knowledge/hone/scripts/corrections.py, which a separate plugin cannot import.

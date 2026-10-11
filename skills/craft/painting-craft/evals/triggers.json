@@ -1,0 +1,34 @@
+[
+ {
+  "query": "paint a knight on horseback at dusk as an SVG, gallery quality",
+  "should_trigger": true
+ },
+ {
+  "query": "this canvas illustration of a lighthouse looks flat and cheap, the boat seems to float, fix it",
+  "should_trigger": true
+ },
+ {
+  "query": "draw a 1960s Vespa in code, get the proportions and the details right",
+  "should_trigger": true
+ },
+ {
+  "query": "render a castle courtyard in Blender from a script, with medieval armour on the guards that's historically right",
+  "should_trigger": true
+ },
+ {
+  "query": "make a bar chart of monthly revenue",
+  "should_trigger": false
+ },
+ {
+  "query": "build an SVG icon set for the toolbar: save, open, close",
+  "should_trigger": false
+ },
+ {
+  "query": "resize these PNGs to 512px",
+  "should_trigger": false
+ },
+ {
+  "query": "write CSS for a gradient hero background",
+  "should_trigger": false
+ }
+]

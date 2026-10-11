@@ -1,13 +1,11 @@
 ---
 name: project-knowledge
 description: >
-  Read and keep a project's decision log and research pages wherever the team keeps them: GitHub
-  wiki, Notion, Linear documents, Obsidian, Confluence or Google Docs. Use it whenever a decision is being made,
-  changed, reversed or questioned ("what did we decide about X", "record this decision", "we
-  changed our mind on…", "why is it like this"). Also use it when writing up research, when moving
-  rationale, evidence or history out of CLAUDE.md, rules files or the README, and when a
-  project's CLAUDE.md points at a wiki, Notion page, Linear project or vault. Use it even when the user just says
-  "note that down" about a product or architecture choice.
+  This skill should be used when the user says "note that down as a decision", "what did we decide
+  about X", "supersede that decision", asks to record research or a finding, or a decision is made
+  in conversation that others will need. It keeps a decision log and research pages for people in
+  the team's wiki, Notion, Linear, Obsidian or Confluence, read before deciding and never
+  rewritten. Agent instructions belong in CLAUDE.md instead.
 ---
 
 # Project knowledge
@@ -22,9 +20,8 @@ Obsidian vault or Confluence. It never lives in the code repository: it is read 
 through a CLI or an MCP server at the moment it is needed. The conventions below are the same on
 every backend; only the adapter changes.
 
-The knowledge is written **for people**. It never mentions Claude, agents, `CLAUDE.md`, `.claude/`,
-rules files or "context". An instruction aimed at an agent belongs in `CLAUDE.md` or a rules file.
-A reason, a finding or a piece of history belongs here.
+The knowledge is written **for people**: an instruction aimed at an agent belongs in `CLAUDE.md`
+or a rules file; a reason, a finding or a piece of history belongs here.
 
 ## 1. Find where it lives
 
@@ -112,8 +109,6 @@ Use the backend's own link syntax: `[[Page]]` on a wiki or in Obsidian, a page m
 2. On the old page, change **only** the Status line to `Superseded by [[Decision NNN …]]`.
 3. In the index, update the old row's Status and add the new row at the top.
 
-Never edit the body of the old page.
-
 **When only part of it is replaced**, the rest still stands, so the old decision stays in force.
 Write its Status as one line: `Partly superseded by [[Decision NNN …]]: <the part replaced>`, for
 example `Partly superseded by [[Decision 010 Polar Web Checkout]]: the App-Store-only rule`. Put the
@@ -152,7 +147,7 @@ gap: every later decision builds on it.
 - **Show the user new or changed pages before publishing** a first write to a shared space.
   Publishing to a team's Notion, Confluence or public wiki is visible to everyone. After the user
   has approved the shape once, a routine new decision can be published and then reported.
-- **Never lose work.** Commit or save after every change. See each adapter for how. With parallel
+- **Save after every change**; each adapter says how (a wiki is a git repo and needs a push). With parallel
   agents, give each one its own working copy, or make one agent own the writes.
 - **Before publishing, check that:**
   - no page mentions Claude or agents

@@ -1,6 +1,11 @@
 ---
 name: launch-video
-description: Make a narrated product launch or promo video (a trailer, teaser, feature reveal or social clip) from a live site or a brief, in every social shape (9:16, 1:1, 16:9), with a local voiceover, local music, thumbnails and cover images, and a launch kit of per-platform post copy. Use it whenever someone asks for a trailer, teaser, launch video, promo, reel, short, TikTok, ad, "something for social media", a voiceover or narrator for a video, thumbnails or marketing images for a launch, or post templates and captions to go with a video, and when they say an existing promo feels flat, "meh", robotic or unnatural.
+description: >
+  This skill should be used when the user asks for a trailer, teaser, launch video, promo, reel,
+  short, TikTok, ad, "something for social media", a voiceover, thumbnails or launch images, or
+  captions for a video, or says a promo feels flat, "meh" or robotic. It makes a narrated launch
+  video from a live site or brief in every social shape, with local voiceover and music,
+  thumbnails, and per-platform post copy.
 ---
 
 # Launch video

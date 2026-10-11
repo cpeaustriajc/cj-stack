@@ -12,8 +12,8 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.6.2",
-      "description": "work-planning (any tracker), triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
+      "version": "2.7.0",
+      "description": "vision, shape and tickets for top-down planning in any tracker, triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [
         "planning",
@@ -28,7 +28,9 @@
         "ui"
       ],
       "skills": [
-        "./skills/planning/work-planning",
+        "./skills/planning/vision",
+        "./skills/planning/shape",
+        "./skills/planning/tickets",
         "./skills/planning/triage",
         "./skills/knowledge/project-knowledge",
         "./skills/knowledge/hone",
@@ -63,7 +65,7 @@
       "name": "cj-paint",
       "source": "./",
       "strict": false,
-      "version": "1.2.0",
+      "version": "1.2.1",
       "description": "painting-craft: drawing and painting scenes, figures and vehicles in code (SVG, canvas, numpy, Blender) with a screenshot review loop.",
       "category": "design",
       "keywords": [
@@ -92,7 +94,7 @@
     {
       "name": "session-modes",
       "source": "./mods/session-modes",
-      "description": "/mode audit, no-pr or chat, enforced for the rest of the session.",
+      "description": "/mode audit, no-pr, chat or product, enforced for the rest of the session.",
       "category": "productivity"
     },
     {

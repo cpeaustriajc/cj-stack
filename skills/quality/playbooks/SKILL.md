@@ -1,6 +1,11 @@
 ---
 name: playbooks
-description: Route a bug fix, refactor, performance fix or feature to its playbook and copy the steps into the task list, so each kind of work carries its own proof - a reproduced bug, pinned behaviour, a measured baseline, a verified slice. Use at the start of any bug, refactor, "make it faster" or feature task bigger than a one-line change.
+description: >
+  This skill should be used when fixing a bug, refactoring, chasing a performance problem or
+  building a feature from a ticket, at the start of any such task bigger than a one-line change.
+  It routes the work to its playbook and copies the steps into the task list, so each kind of work
+  carries its own proof: a reproduced bug, pinned behaviour, a measured baseline or a verified
+  slice.
 ---
 
 # Playbooks
@@ -18,9 +23,6 @@ Each kind of work fails in its own way, so each has a fixed order that carries i
    pass, and missing evidence is reported as a gap.
 5. Report the proof the playbook asks for, then commit per slice as usual.
 
-The steps fit into Scout → Spec → Build → Commit. They decide *what* each phase must prove,
-not who does it.
-
-Evidence follows the end-to-end rule: drive the real app and leave a re-runnable command plus
+Evidence means driving the real app and leaving a re-runnable command plus
 its trace, screenshots or video. Read the project's feature file for the area first, if it has
 one (`feature-files`).

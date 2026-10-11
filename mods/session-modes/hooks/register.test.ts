@@ -46,6 +46,7 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     return { value: undefined } as never
   })
   on('prompt.compose', () => ({ sections: [{ id: 'base', text: 'base', scope: 'shared' }] }) as never)
+  on('skill.prompt', (_$, e) => ({ text: (e as { text: string }).text }) as never)
   return state
 }
 
@@ -165,7 +166,7 @@ test('/mode alone reports the current mode and lists the modes', async ($, on) =
   await start($ as never)
   const none = await mode($ as never)
   expect(none.text).toMatch(/off/)
-  for (const m of ['audit', 'no-pr', 'chat', 'off']) expect(none.text).toContain(m)
+  for (const m of ['audit', 'no-pr', 'chat', 'product', 'off']) expect(none.text).toContain(m)
   await mode($ as never, 'chat')
   expect((await mode($ as never)).text).toMatch(/current mode: chat/i)
 })
@@ -175,7 +176,7 @@ test('an unknown mode lists the modes and changes nothing', async ($, on) => {
   const w = await setUp(on, $ as never, 'audit')
   const out = await mode($ as never, 'foo')
   expect(out.text).toMatch(/foo/)
-  for (const m of ['audit', 'no-pr', 'chat', 'off']) expect(out.text).toContain(m)
+  for (const m of ['audit', 'no-pr', 'chat', 'product', 'off']) expect(out.text).toContain(m)
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
   expect(last(w.statuses)).toBe('audit — read and report only')
 })
@@ -242,10 +243,10 @@ test('an interactive session registers the mode command', async ($, on) => {
   expect(w.commands).toEqual(['mode'])
 })
 
-test('the mode command hints its four arguments', async ($, on) => {
+test('the mode command hints its five arguments', async ($, on) => {
   const w = world(on)
   await start($ as never)
-  expect(w.hints).toEqual(['audit | no-pr | chat | off'])
+  expect(w.hints).toEqual(['audit | no-pr | chat | product | off'])
 })
 
 test('a non-interactive session registers no command and draws no status', async ($, on) => {
@@ -404,4 +405,129 @@ test('a resumed session with a mode on republishes its file at start', async ($,
   w.writes.length = 0
   await start($ as never)
   expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'chat' })
+})
+
+const skill = ($: { skill: { prompt: (e: never) => Promise<unknown> } }, name: string) =>
+  $.skill.prompt({ skill: name, text: 'x' } as never)
+
+const PRODUCT_TABLE: [string, Record<string, unknown>, boolean][] = [
+  // tool call, denied before any planning skill loads
+  ['Edit', { file_path: '/repo/src/app.ts' }, true],
+  ['Write', { file_path: '/repo/src/new.tsx' }, true],
+  ['NotebookEdit', { notebook_path: '/repo/a.ipynb' }, true],
+  ['Write', { file_path: '/repo/plans/vision.md' }, false],
+  ['Edit', { file_path: '/repo/docs/spec.MD' }, false],
+  ['Read', { file_path: '/repo/src/app.ts' }, false],
+  ['mcp__github__create_pull_request', {}, true],
+  ['Bash:git push origin main', {}, true],
+  ['Bash:gh pr create --fill', {}, true],
+  ['Bash:echo x > src/app.ts', {}, true],
+  ['Bash:echo x >> plans/tickets.md', {}, false],
+  ['Bash:git commit -m plan', {}, false],
+  ['Bash:pnpm test 2>&1', {}, false],
+]
+
+for (const [tool, input, denied] of PRODUCT_TABLE) {
+  test(`product mode ${denied ? 'denies' : 'allows'} ${tool}${input.file_path ? ` on ${input.file_path}` : ''}`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    await setUp(on, $ as never, 'product')
+    const out = tool.startsWith('Bash:') ? await bash($ as never, tool.slice(5)) : await $.tool.call({ tool, ...input } as never)
+    expect(blocked(out)).toBe(denied)
+  })
+}
+
+const OUTSIDE: [string, string, boolean][] = [
+  // tool, bash command, counts as a write outside the repo
+  ['mcp__linear-server__save_issue', '', true],
+  ['mcp__linear-server__save_milestone', '', true],
+  ['mcp__atlassian__createJiraIssue', '', true],
+  ['mcp__asana__asana_create_task', '', true],
+  ['mcp__notion__notion-update-page', '', true],
+  ['mcp__linear-server__get_issue', '', false],
+  ['mcp__linear-server__list_projects', '', false],
+  ['mcp__atlassian__getJiraIssue', '', false],
+  ['mcp__github__get_settings', '', false],
+  ['Bash', 'gh issue create --title x', true],
+  ['Bash', 'gh api repos/o/r/milestones -X POST -f title=x', true],
+  ['Bash', 'acli jira workitem create --summary x', true],
+  ['Bash', 'gh issue list', false],
+  ['Bash', 'gh api repos/o/r/milestones', false],
+]
+
+for (const [tool, command, outside] of OUTSIDE) {
+  test(`product mode ${outside ? 'holds' : 'allows'} ${command || tool} until a planning skill loads`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    await setUp(on, $ as never, 'product')
+    const call = () => (tool === 'Bash' ? bash($ as never, command) : $.tool.call({ tool } as never))
+    expect(blocked(await call())).toBe(outside)
+    await skill($ as never, 'shape')
+    expect(blocked(await call())).toBe(false)
+  })
+}
+
+test('a held tracker write tells Claude which skill to load', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  await setUp(on, $ as never, 'product')
+  const out = await $.tool.call({ tool: 'mcp__linear-server__save_issue' } as never)
+  expect(out.deny).toMatch(/product mode is on/)
+  expect(out.deny).toMatch(/tickets for work items/)
+  expect(out.deny).toMatch(/\/mode off/)
+})
+
+for (const name of ['vision', 'tickets', 'cj-stack:shape', '/tickets']) {
+  test(`loading ${name} opens tracker writes`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    await setUp(on, $ as never, 'product')
+    await skill($ as never, name)
+    expect(blocked(await $.tool.call({ tool: 'mcp__linear-server__save_project' } as never))).toBe(false)
+  })
+}
+
+for (const name of ['triage', 'other:shape', 'commit']) {
+  test(`loading ${name} keeps tracker writes held`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    await setUp(on, $ as never, 'product')
+    await skill($ as never, name)
+    expect(blocked(await $.tool.call({ tool: 'mcp__linear-server__save_project' } as never))).toBe(true)
+  })
+}
+
+test('a planning skill never opens code edits in product mode', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  await setUp(on, $ as never, 'product')
+  await skill($ as never, 'tickets')
+  expect(blocked(await $.tool.call({ tool: 'Edit', file_path: '/repo/src/app.ts' } as never))).toBe(true)
+})
+
+test('a skill loaded before product mode was set still counts', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await skill($ as never, 'vision')
+  await mode($ as never, 'product')
+  expect(blocked(await $.tool.call({ tool: 'mcp__linear-server__save_initiative' } as never))).toBe(false)
+})
+
+for (const m of ['audit', 'no-pr', 'chat']) {
+  test(`${m} mode never holds a tracker write`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    await setUp(on, $ as never, m)
+    expect(blocked(await $.tool.call({ tool: 'mcp__linear-server__save_issue' } as never))).toBe(false)
+  })
+}
+
+test('the skill prompt passes through unchanged', async ($, on) => {
+  world(on)
+  await start($ as never)
+  expect(await skill($ as never, 'shape')).toEqual({ text: 'x' })
+})
+
+test('product mode states itself in the prompt and the status line', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'product')
+  expect(last(w.statuses)).toBe('product — vision → shape → tickets')
+  const text = (await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text
+  expect(text).toMatch(/^Product mode: plan top-down/)
+  expect(text).toMatch(/triage/)
 })

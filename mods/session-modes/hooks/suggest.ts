@@ -6,6 +6,7 @@ const DIM: Record<Mode, string> = {
   audit: 'read and report only',
   'no-pr': 'no pull requests',
   chat: 'answer here, no PR or push',
+  product: 'plan top-down: vision, shape, tickets',
   off: 'lift the current mode',
 }
 

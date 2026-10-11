@@ -1,6 +1,6 @@
 import { atom, read, update } from 'claude-code'
 import type { Hook, Register } from 'claude-code'
-import { SECTION, parseMode, report, verdict } from './modes'
+import { SECTION, parseMode, planningSkill, report, verdict } from './modes'
 import type { Mode } from './modes'
 import { modeSuggestions } from './suggest'
 
@@ -47,12 +47,15 @@ export async function pruneState($: Api): Promise<void> {
 }
 
 const mode = atom({ plugin: 'session-modes', key: 'mode' } as const, 'off' as Mode)
+// Whether vision, shape or tickets has loaded this session: product mode's key to outside writes.
+const planned = atom({ plugin: 'session-modes', key: 'planned' } as const, false)
 const SECTION_ID = 'session-modes:mode'
 
 const STATUS: Record<Exclude<Mode, 'off'>, string> = {
   audit: 'audit — read and report only',
   'no-pr': 'no-pr — no pull requests',
   chat: 'chat — answer here, no PR or push',
+  product: 'product — vision → shape → tickets',
 }
 
 async function drawStatus($: Api, current: Mode): Promise<void> {
@@ -67,8 +70,8 @@ export const register: Register = on => {
     if (e.isInteractive === false) return result
     await $.command.register({
       name: 'mode',
-      description: 'Set the session mode: audit, no-pr, chat or off',
-      argumentHint: 'audit | no-pr | chat | off',
+      description: 'Set the session mode: audit, no-pr, chat, product or off',
+      argumentHint: 'audit | no-pr | chat | product | off',
     })
     const current = await read($, mode)
     await drawStatus($, current)
@@ -99,9 +102,17 @@ export const register: Register = on => {
     return { text: wanted === 'off' ? 'Mode off.' : `Mode ${wanted} on.` }
   })
 
+  on('skill.prompt', async ($, e, next) => {
+    if (planningSkill(e.skill)) await update($, planned, () => true)
+    return next(e)
+  })
+
   on('tool.call', async ($, e, next) => {
-    const command = e.tool === 'Bash' && typeof (e as { command?: unknown }).command === 'string' ? (e as { command: string }).command : ''
-    const deny = verdict(await read($, mode), e.tool, command)
+    const input = e as { command?: unknown; file_path?: unknown; notebook_path?: unknown }
+    const command = e.tool === 'Bash' && typeof input.command === 'string' ? input.command : ''
+    const rawPath = input.file_path ?? input.notebook_path
+    const path = typeof rawPath === 'string' ? rawPath : ''
+    const deny = verdict(await read($, mode), { tool: e.tool, command, path, planned: await read($, planned) })
     return deny ? { deny } : next(e)
   })
 

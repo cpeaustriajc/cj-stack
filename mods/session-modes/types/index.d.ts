@@ -1,7 +1,7 @@
-export type Mode = 'off' | 'audit' | 'no-pr' | 'chat'
+export type Mode = 'off' | 'audit' | 'no-pr' | 'chat' | 'product'
 
 declare module 'claude-code' {
   interface PluginState {
-    'session-modes': { mode: Mode }
+    'session-modes': { mode: Mode; planned: boolean }
   }
 }
