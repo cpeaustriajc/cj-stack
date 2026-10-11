@@ -44,6 +44,9 @@ Then run `claude plugin validate .`.
 A shipped skill holds a method that works on any tool. Tool mechanics go in `references/<tool>.md`
 adapters; a team's roles, rules and taste stay in that team's repo, which the skill reads first.
 
+A mod never denies or overrides what Claude Code already decides: the permission mode, edits to
+its settings and hooks, the auto-mode classifier. It adds only what the harness lacks.
+
 ## Copies
 
 This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or a project's
