@@ -114,6 +114,12 @@
       "category": "productivity"
     },
     {
+      "name": "memory-lint",
+      "source": "./mods/memory-lint",
+      "description": "Denies an auto-memory write that holds task state, one-off references or repo detail.",
+      "category": "productivity"
+    },
+    {
       "name": "secret-guard",
       "source": "./mods/secret-guard",
       "description": "Keeps secret values out of Claude's context: redacts tool output, filters Bash streams, and denies commands that would encode, test or exfiltrate a secret.",
