@@ -46,6 +46,31 @@ test('file:line pointers and code blocks are repo detail', async ($, on) => {
   expect((await write($, `${DIR}/x.md`, 'Retry like this:\n```ts\nretry(3)\n```')).deny).toContain('repo detail')
 })
 
+test('.claude/ paths and host:port addresses are not references or pointers', async ($, on) => {
+  world(on)
+  for (const text of [
+    'Local stack setup is in `.claude/rules/server.local.md`.',
+    'Always navigate via `http://127.0.0.1:8000` (not `localhost:8000`) so Sanctum cookies stick.',
+    'The staging API answers on api.example.dev:8443 only.',
+  ]) {
+    expect((await write($, `${DIR}/x.md`, text)).deny).toBeUndefined()
+  }
+})
+
+test('a dated note is dated status', async ($, on) => {
+  world(on)
+  for (const text of ['Dev server is wired to strangerank since 2026-09-04.', 'As of 2026 the team is three people.']) {
+    expect((await write($, `${DIR}/x.md`, text)).deny).toContain('dated status')
+  }
+})
+
+test('the refusal says where a team rule or a decision goes instead', async ($, on) => {
+  world(on)
+  const r = await write($, `${DIR}/x.md`, 'Currently the team decided customers come first.')
+  expect(r.deny).toContain('AGENTS.md')
+  expect(r.deny).toContain('decision log')
+})
+
 test('a long topic file is denied', async ($, on) => {
   world(on)
   const r = await write($, `${DIR}/x.md`, 'The user prefers small commits. '.repeat(50))

@@ -5,6 +5,8 @@ const DEFAULT_DIR = /\/projects\/[^/]+\/memory\//
 const INDEX = /(^|\/)MEMORY\.md$/
 const MAX_TOPIC = 1200
 const MAX_INDEX_LINE = 200
+// Only code files: a bare `\.\w+:\d+` also matches hosts with ports (127.0.0.1:8000).
+const CODE_EXT = 'ts|tsx|js|jsx|mjs|cjs|php|py|rb|go|rs|swift|kt|java|vue|svelte|css|scss|sql|sh|c|h|cpp|cs|ex|exs'
 
 // Each rule names one kind of note that is not worth carrying into later sessions.
 const RULES: { why: string; test: (text: string) => boolean }[] = [
@@ -17,19 +19,24 @@ const RULES: { why: string; test: (text: string) => boolean }[] = [
     test: t =>
       /\b(pr|pull request|issue)\s*#?\d+\b/i.test(t) ||
       /(^|\s)#\d{2,}\b/.test(t) ||
-      /\bclaude\/[\w.-]+/.test(t) ||
+      /(^|[\s(`'"])claude\/[\w.-]+/.test(t) ||
       (t.match(/\b[0-9a-f]{7,40}\b/g) ?? []).some(h => /\d/.test(h) && /[a-f]/.test(h)),
   },
   {
     why: 'repo detail Claude can read again (a file:line pointer or a code block)',
-    test: t => /[\w/-]+\.\w+:\d+/.test(t) || /^\s*```/m.test(t),
+    test: t => new RegExp(`[\\w/-]+\\.(${CODE_EXT}):\\d+`).test(t) || /^\s*```/m.test(t),
+  },
+  {
+    why: 'dated status ("since 2026-09-04", "as of 2026") that goes stale unseen',
+    test: t => /\b20\d{2}-[01]\d-[0-3]\d\b/.test(t) || /\bas of (19|20)\d{2}\b/i.test(t),
   },
 ]
 
 const BAR =
   'Memory keeps durable facts that would otherwise be relearned: the user\'s corrections and preferences, ' +
   'and non-obvious quirks of this project or environment. If this is one, restate it without the flagged parts. ' +
-  'If it is task state, a finding, or readable from the repo, do not save it.'
+  'If it is task state, a finding, or readable from the repo, do not save it. ' +
+  'A rule the team shares goes in AGENTS.md or a checked-in rule; a decision goes in the team\'s decision log.'
 
 function body(text: string): string {
   return text.replace(/^---\n[\s\S]*?\n---\n?/, '')
