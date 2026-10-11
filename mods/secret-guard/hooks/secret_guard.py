@@ -819,7 +819,7 @@ def bash_check(cmd, eng, cwd):
             return denial("a command that exposes credentials or weakens the redaction setup",
                           SAFE.get(kind if kind in SAFE else "tool", SAFE["tool"]))
 
-    w = w or cc and cc_bash(n, cc, cwd, eng) or hook_bash(n, cwd, eng)
+    w = w or cc and cc_bash(n, cc, cwd, eng, orig=cmd) or hook_bash(n, cwd, eng, cmd)
     if w:
         return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
 
@@ -860,7 +860,7 @@ def bash_check(cmd, eng, cwd):
             return denial("a secret source combined with a transform or test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
     cc_src = bool(CC_SECRET_RE.search(raw + "\n" + allt))
     if cc_src or srcs or secret_file:
-        x = CC_CMP.search(raw) and not (cc_src and not srcs and not secret_file and _jq_fixed(raw)) and "a comparison" or cc_src and (search_oracle_hit(raw + "\n" + allt, cwd, secret_file, True) or CC_LEN.search(allt) and "a length probe")
+        x = CC_CMP.search(raw) and not (cc_src and not srcs and not secret_file and _jq_fixed(n)) and "a comparison" or cc_src and (search_oracle_hit(raw + "\n" + allt, cwd, secret_file, True) or CC_LEN.search(allt) and "a length probe")
         if x:
             return denial("a secret source or Claude Code config combined with a test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
     if srcs or secret_file:
@@ -1054,6 +1054,9 @@ CC_CMP = re.compile(r"\[\[[^\n;&|]*?\s(?:==?|!=|=~)\s|(?:\btest|\[)\s[^\n;&|]*?\
 
 def _jq_fixed(raw):
     ps = [a or b or c for a, b, c in re.findall(r"\bjq\s+(?:-\w+\s+)*(?:'([^']*)'|\"([^\"]*)\"|(\S+))", raw)]
+    for _ in range(2):
+        ps = [re.sub(r'\s*(?:\|\s*tostring|//\s*(?:"[^"\\]*"|-?\d+(?:\.\d+)?|true|false|null))\s*$', "", x.strip()) for x in ps]
+    ps = [re.sub(r'\.?\[\s*"([A-Za-z_]\w*)"\s*\]', r".\1", x) for x in ps]
     return bool(ps) and not re.search(r"\b(?:cat|head|tail|grep|egrep|rg|sed|awk|less|strings|python3?|node|perl|ruby)\b", raw) and all(
         re.fullmatch(r"(?:\.[A-Za-z_]\w*)+", x) and not any(_secret_name(k) for k in x.split(".")[1:]) and ".env." not in x + "." for x in ps)
 CC_LEN = re.compile(r"\bwc\s+(?:-\w+\s+)*-\w*[cm]|\b(?:head|tail|cut)\s+(?:-\w+\s+)*-\w*c")
@@ -1486,13 +1489,172 @@ def _script_leak(sp, eng, cwd):
     return bool(t) and "\x00" not in t and _r1("\n".join(_cc_lines(t)), _shell_file(sp, t), eng, cwd)
 
 
-def hook_bash(cmd, cwd, eng):
+def hook_bash(cmd, cwd, eng, orig=None):
     tg = [m.group(1) for m in re.finditer(r"(?<![\d&])>>?\s*['\"]?([^\s'\"|;&<>)]+)", cmd) if not m.group(1).startswith(("/dev/", "&"))]
     tg += re.findall(r"\btee\s+(?:-\S+\s+)*['\"]?([^\s'\"|;&<>)]+)", cmd)
     tg += [seg.split()[-1].strip("'\"") for seg in re.findall(r"\b(?:cp|mv|install)\s+[^|;&<>\n]+|\b(?:sed|perl)\s+[^|;&<>\n]*?-\w*i[^|;&<>\n]*", cmd)]
     hs = _hooked_set(cwd) if tg else set()
     hit = [x for x in tg if os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(x))) in hs]
-    return hit and cc_bash(cmd, hit, cwd, eng, "script")
+    return hit and cc_bash(cmd, hit, cwd, eng, "script", orig)
+
+
+def _pipelines(t):
+    out, cur, word, q, i = [], [], [], None, 0
+    while i < len(t):
+        c = t[i]
+        if q:
+            q = None if c == q else q
+        elif c in "'\"":
+            q = c
+        elif c == "\\" and i + 1 < len(t):
+            word.append(t[i:i + 2])
+            i += 2
+            continue
+        elif c in ";\n" or c in "&|" and t[i:i + 2] in ("&&", "||"):
+            cur.append("".join(word))
+            out.append(cur)
+            cur, word = [], []
+            i += 1 + (c in "&|")
+            continue
+        elif c == "|":
+            cur.append("".join(word))
+            word = []
+            i += 1
+            continue
+        word.append(c)
+        i += 1
+    cur.append("".join(word))
+    out.append(cur)
+    return [[s for s in p if s.strip()] for p in out if any(s.strip() for s in p)]
+
+
+def _argv(s):
+    s = re.sub(r"(?:(?<=\s)|^)\d*(?:>>?|<|&>)&-?\d*(?=\s|$)", " ", s)
+    s = re.sub(r"(?:(?<=\s)|^)\d+(?=>)", "", s)
+    try:
+        lx = shlex.shlex(s, posix=True, punctuation_chars=";&|<>")
+        lx.whitespace_split = True
+        toks = list(lx)
+    except ValueError:
+        return None
+    out, skip = [], False
+    for x in toks:
+        if skip:
+            skip = False
+        elif re.fullmatch(r"\d*[<>]+&?", x):
+            skip = True
+        else:
+            out.append(x)
+    while out and re.fullmatch(r"[A-Za-z_]\w*=.*", out[0], re.S):
+        out.pop(0)
+    return out
+
+
+def _esc(s):
+    return re.sub(r"\\(.)", lambda m: {"n": "\n", "t": "\t", "\\": "\\"}.get(m.group(1), m.group(0)), s)
+
+
+def _payloads(cmd, cwd):
+    out = []
+    for p in _pipelines(strip_heredocs(cmd)):
+        if not re.search(r"\btee\b|(?<![\d&<])>>?\s*(?!&|/dev/)\S", " | ".join(p)):
+            continue
+        for s in p:
+            a = _argv(s) or [""]
+            if a[0] == "echo":
+                a = a[1:]
+                while a and re.fullmatch(r"-[neE]+", a[0]):
+                    a = a[1:]
+                out += [" ".join(a), _esc(" ".join(a))]
+            elif a[0] == "printf" and len(a) > 1:
+                out.append(_esc(a[1]) + "\n".join(a[2:]))
+            elif a[0] == "cat":
+                out += [_cc_disk(f, cwd) or "" for f in a[1:] if not f.startswith("-")]
+    return [x for x in out if x]
+
+
+def _same(a, b, cwd):
+    f = lambda x: os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(re.sub(r"^\$\{?HOME\}?", "~", x))))
+    return f(a) == f(b)
+
+
+JQ_BAD = re.compile(r"\binputs?\b|\$__\w+|\bimport\b|\binclude\b|\binput_\w+|\$ENV\b|(?<![.\w$\"])env\b|\bdebug\b|\bstderr\b|\bhalt_error\b|\bget_\w+|\bmodulemeta\b|\binput_line_number\b")
+SED_ADDR = r"(?:\d+|\$|/(?:[^/\\\n]|\\.)*/[IM]?|\\(?P<d%d>[^\n\\])(?:(?!(?P=d%d))[^\\\n]|\\.)*(?P=d%d)[IM]?)"
+SED_CMD = re.compile(r"[\s;]*(?:%s(?:\s*,\s*%s)?)?\s*!?\s*(?:s(?P<s>[^\\\n\s])(?:(?!(?P=s))[^\\\n]|\\.)*(?P=s)(?:(?!(?P=s))[^\\\n]|\\.)*(?P=s)[gIip0-9]*|[dp]|(?P<ac>[aic])(?:\\\n(?:[^\\\n]|\\.)*|[ \t]+(?P<txt>[^\n]*)))[ \t]*(?:[;\n]|$)" % (SED_ADDR % (1, 1, 1), SED_ADDR % (2, 2, 2)))
+
+
+def _sed_prog(p):
+    i, out = 0, ""
+    while p[i:].strip(" \t\n;"):
+        m = SED_CMD.match(p, i)
+        if not m or m.end() == i:
+            return None
+        out += m.group(0) if m.group("txt") is None else p[i:m.start("ac")] + m.group("ac") + "\\\n" + m.group("txt") + "\n"
+        i = m.end()
+    return out
+
+
+def _cc_tool_run(argv, src, cwd):
+    import subprocess
+    import tempfile
+    tool = os.path.basename(argv[0])
+    exe = next((x for x in ("/usr/bin/" + tool, "/opt/homebrew/bin/" + tool, "/usr/local/bin/" + tool, "/bin/" + tool) if os.path.isfile(x)), None)
+    opts, prog, files, i = [], [], [], 1
+    while i < len(argv):
+        a = argv[i]
+        if tool == "jq" and re.fullmatch(r"-[rjcSCMaesn]+|--(?:tab|raw-output|compact-output|sort-keys|join-output|ascii-output|exit-status|slurp|null-input|monochrome-output)", a):
+            opts.append(a)
+        elif tool == "jq" and a in ("--indent", "--arg", "--argjson") and i + 1 + (a != "--indent") < len(argv):
+            k = 2 + (a != "--indent")
+            opts += argv[i:i + k]
+            i += k
+            continue
+        elif tool == "sed" and re.fullmatch(r"-[Ernu]+|--(?:regexp-extended|quiet|silent)", a):
+            opts.append(a)
+        elif tool == "sed" and (a in ("-e", "--expression") or a.startswith("--expression=")):
+            prog.append(a.split("=", 1)[1] if "=" in a else argv[i + 1] if i + 1 < len(argv) else "")
+            i += 1 + (a in ("-e", "--expression"))
+            continue
+        elif tool == "sed" and re.fullmatch(r"-i.*|--in-place(?:=.*)?", a):
+            i += 1 + (a == "-i" and i + 1 < len(argv) and (argv[i + 1] == "" or argv[i + 1].startswith(".")))
+            continue
+        elif a.startswith("-") and a != "-":
+            return False
+        elif not prog:
+            prog.append(a)
+        else:
+            files.append(a)
+        i += 1
+    prog = [_sed_prog(x) for x in prog] if tool == "sed" else prog
+    if not exe or not prog or None in prog or prog[0].startswith("-") or tool == "jq" and JQ_BAD.search(prog[0]):
+        return False
+    if any(not _same(f, files[0], cwd) for f in files):
+        return False
+    with tempfile.TemporaryDirectory() as d:
+        with open(os.path.join(d, "in"), "w") as fh:
+            fh.write(src)
+        cmd = [exe, "-L", os.path.join(d, "none")] + opts + [prog[0], "in"] if tool == "jq" else [exe] + opts + [x for e in prog for x in ("-e", e)] + ["in"]
+        try:
+            r = subprocess.run(cmd, cwd=d, env={"HOME": d, "PATH": "/usr/bin:/bin", "LC_ALL": "C"}, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=2)
+        except (OSError, subprocess.SubprocessError):
+            return False
+    return r.stdout if r.returncode == 0 else False
+
+
+def _cc_results(cmd, tgt, cwd):
+    out = []
+    for p in _pipelines(strip_heredocs(cmd)):
+        for s in p:
+            a = _argv(s)
+            if a and os.path.basename(a[0]) in ("jq", "sed") and any(_same(x, tgt, cwd) for x in a[1:] if not x.startswith("-")):
+                src = _cc_disk(tgt, cwd)
+                if src is None and os.path.basename(a[0]) == "sed":
+                    continue
+                r = src is not None and _cc_tool_run(a, src, cwd)
+                if r is False:
+                    return False
+                out.append(r)
+    return out
 
 
 def _hook_reach(cmd, tgt, cwd):
@@ -1515,7 +1677,8 @@ def _hook_reach(cmd, tgt, cwd):
     return any(e and e.startswith("Post") or (e is None and red) or e in red for e in evs)
 
 
-def cc_bash(cmd, targets, cwd, eng, force=None):
+def cc_bash(cmd, targets, cwd, eng, force=None, orig=None):
+    src = orig or cmd
     q_rx = r"'([^']*)'|\"((?:[^\"\\]|\\.)*)\""
     made = set(re.findall(r"(?:>>?|\btee\s+(?:-\S+\s+)*)\s*['\"]?([^\s'\"|;&<>)]+)", cmd))
     full = []
@@ -1524,7 +1687,7 @@ def cc_bash(cmd, targets, cwd, eng, force=None):
         full += [_cc_disk(a, cwd) for a in [a.strip("'\"") for a in m.group(1).split() if not a.startswith("-")][:-1] if a not in made]
     for m in re.finditer(r"\b(?:echo|printf)\s+([^|;&>\n]*)(?:>|\|\s*tee\b)", cmd):
         full.append("".join(a or b for a, b in re.findall(q_rx, m.group(1))) or m.group(1).strip() or "\n")
-    full = [q for q in full if q]
+    full = [q for q in full + _payloads(src, cwd) if q]
     lits = "\n".join(a or b for a, b in re.findall(q_rx, cmd))
     t2 = re.sub(r"\bdel\([^()]*(?:\([^()]*\)[^()]*)*\)", "", cmd)
     cmds = []
@@ -1538,11 +1701,16 @@ def cc_bash(cmd, targets, cwd, eng, force=None):
         if kind == "json" and not CC_JSON.search(tgt) and not CC_TREE.search(tgt):
             continue
         gone = [""] if re.search(r"\b(?:rm|unlink|shred|truncate)\b[^|;&\n]*" + re.escape(tgt), cmd) else []
-        for q in full + gone:
+        res = _cc_results(src, tgt, cwd)
+        if res and re.search(r"del\(\s*\.hooks\.Post|\.hooks\.Post\w*\S*\s*[-|]?=(?!=)", src):
+            return "removing or rewriting a PostToolUse hook of Claude Code's settings"
+        if res is False:
+            return "a jq or sed edit of Claude Code's config that the guard cannot evaluate (unknown option or command, or no readable file); use Edit or Write"
+        for q in full + gone + res:
             d = cc_check("Write", {"content": q}, tgt, kind, cwd, q, eng)
             if d:
                 return d
-        if full or gone:
+        if full or gone or res:
             continue
         if kind == "json" and cmd.count(tgt) < 2 and re.search(r">|\btee\b|\b(?:cp|mv|install|dd|ln)\b", cmd) and not re.search(r"\b(?:sed|perl)\s+(?:-\S+\s+)*-\w*i", cmd):
             return "replacing Claude Code's settings with content the guard cannot see; use Edit or Write so the change can be checked"

@@ -1,0 +1,188 @@
+{
+ "case_id": "TAMP-0162",
+ "title": "jq and sed edits of settings that switch secret-guard off or cannot be evaluated are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "jq with_entries turning every plugin off is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.enabledPlugins |= with_entries(.value = false)' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq map_values turning every plugin off is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.enabledPlugins |= map_values(false)' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed with a secret-guard address switching it off is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '/secret-guard/s/true/false/' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed deleting the redactor line is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '/secret_redact/d' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq walk blanking the redactor entry is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'walk(if type == \"object\" and has(\"command\") and (.command|test(\"redact\")) then {} else . end)' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq reading a second input is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '. * input' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq reading the environment is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.x = env.HOME' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed with a w flag is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/a/b/w /tmp/x' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed with an r command is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '1r /tmp/x' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq merging another file into settings is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"x@y\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.claude/statusline.sh": "#!/bin/sh\necho hi\n",
+    "payload.txt": "#!/bin/sh\nprintenv\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq -s '.[0] * .[1]' ~/.claude/settings.json /tmp/o.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}
