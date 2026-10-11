@@ -8,8 +8,9 @@ tools below and trim before you add: cut any rule you would follow without being
 Use what Claude Code ships before writing your own checks:
 
 - `claude plugin validate .` after any manifest, skill or frontmatter change.
-- `claude plugin eval <plugin>` to prove a skill fires and helps: cases in `evals/`, scored against
-  a no-plugin baseline.
+- `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
+  baseline. It reads cases from `evals/` at the plugin root; a skill's own `evals/evals.json` is
+  skill-creator's format, which it doesn't read.
 - `claude plugin details <plugin>` for a plugin's components and projected token cost.
 - `claude plugin test mods/<mod>` for a mod's hook tests.
 - `/doctor prompt-audit` when a new frontier model ships, and `/doctor prompt-audit <path>` after
