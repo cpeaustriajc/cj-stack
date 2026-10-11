@@ -786,7 +786,7 @@ EXTRA_DENY = [(re.compile(rx, re.I), why) for rx, why in (
     (r"\bscreen\s+-[a-zA-Z]*dm|\btmux\s+send-keys\b|\bssh\b[^\n]*\btmux\s+new\b", "an unattended shell session"),
     (r"\bwhile\s+read\b[^;\n]*;\s*do\s+(?:ba|z)?sh\s+-c\s+[\"']?\$", "a command relay loop"),
     (r"\bssh\s+['\"][^'\"]*[;|&$`]", "ssh with shell metacharacters in the host"),
-    (r"\bsed\s+-i\S*\s[^|;&\n]*(?:ssh-guard|guard\.sh|redact\w*|\bhooks?\b)", "editing a guard script"),
+    (r"\b(?:sed|perl)\b[^|;&\n]*\s-\w*i\S*\s[^|;&\n]*(?:ssh-guard|guard\.sh|secret_(?:guard|redact|filter|engine)\.py|secret-guard\S*/hooks\.json)", "editing a guard script"),
     (r"\bgit\s+(?:-\S+\s+\S+\s+)*-c\s+core\.hooksPath\s*=", "pointing git at other hooks"),
     (r"\bjq\b[^|\n]*\b(?:apiKeyHelper|awsCredentialExport|otelHeadersHelper)\b[^\n]*\|", "running a credential helper"),
     (r"\bssh\s+(?:-\S+\s+)*-A\b", "agent forwarding"),
@@ -807,8 +807,11 @@ def bash_check(cmd, eng, cwd):
     if "$(" in raw:
         allt = allt + "\n" + drop_display("\n".join(s for m in re.findall(r"\$\(([^()]*)\)", raw) for s in effective(norm(m), cwd)))
 
+    cc = []
+    w = write_to_protected(raw, cc)
+    scan = raw if cc or re.search(r"\bclaude\s+(?:config|plugins?)\b|hooks\.json|\.claude\b|managed-settings", raw) else re.sub(r"(?i)disableAllHooks|disable_all_hooks", " ", raw)
     for rx in EDIT_RES:
-        if rx.search(raw):
+        if rx.search(scan):
             return denial("a command that weakens the redaction setup", SAFE["edit"])
 
     for rx, kind in HARD_TOOLS:
@@ -816,8 +819,7 @@ def bash_check(cmd, eng, cwd):
             return denial("a command that exposes credentials or weakens the redaction setup",
                           SAFE.get(kind if kind in SAFE else "tool", SAFE["tool"]))
 
-    cc = []
-    w = write_to_protected(raw, cc) or cc and cc_bash(n, cc, cwd, eng) or hook_bash(n, cwd, eng)
+    w = w or cc and cc_bash(n, cc, cwd, eng) or hook_bash(n, cwd, eng)
     if w:
         return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
 
@@ -858,7 +860,7 @@ def bash_check(cmd, eng, cwd):
             return denial("a secret source combined with a transform or test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
     cc_src = bool(CC_SECRET_RE.search(raw + "\n" + allt))
     if cc_src or srcs or secret_file:
-        x = CC_CMP.search(raw) and "a comparison" or cc_src and (search_oracle_hit(raw + "\n" + allt, cwd, secret_file, True) or CC_LEN.search(allt) and "a length probe")
+        x = CC_CMP.search(raw) and not (cc_src and not srcs and not secret_file and _jq_fixed(raw)) and "a comparison" or cc_src and (search_oracle_hit(raw + "\n" + allt, cwd, secret_file, True) or CC_LEN.search(allt) and "a length probe")
         if x:
             return denial("a secret source or Claude Code config combined with a test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
     if srcs or secret_file:
@@ -1047,7 +1049,13 @@ def _search_unsafe_target(f, cwd):
 _DIFF_MARKER_PATTERNS = frozenset({"^[-+][^-+]"})
 CC_SECRET_RE = re.compile(r"(?:\.claude/(?:[\w.-]+/)*settings[\w.-]*\.json|(?<![\w-])\.claude\.json|managed-settings\.json|\.mcp\.json)(?![\w.-])", re.I)
 CC_KEY = re.compile(r"\"?[a-z]+(?:[A-Z][a-z]*)*\"?")
-CC_CMP = re.compile(r"\[\[[^\]\n]*\s(?:==?|!=|=~)\s|(?:\btest|\[)\s[^\]\n;&|]*\s!?=\s")
+CC_CMP = re.compile(r"\[\[[^\n;&|]*?\s(?:==?|!=|=~)\s|(?:\btest|\[)\s[^\n;&|]*?\s!?=\s")
+
+
+def _jq_fixed(raw):
+    ps = [a or b or c for a, b, c in re.findall(r"\bjq\s+(?:-\w+\s+)*(?:'([^']*)'|\"([^\"]*)\"|(\S+))", raw)]
+    return bool(ps) and not re.search(r"\b(?:cat|head|tail|grep|egrep|rg|sed|awk|less|strings|python3?|node|perl|ruby)\b", raw) and all(
+        re.fullmatch(r"(?:\.[A-Za-z_]\w*)+", x) and not any(_secret_name(k) for k in x.split(".")[1:]) and ".env." not in x + "." for x in ps)
 CC_LEN = re.compile(r"\bwc\s+(?:-\w+\s+)*-\w*[cm]|\b(?:head|tail|cut)\s+(?:-\w+\s+)*-\w*c")
 
 
@@ -1487,17 +1495,44 @@ def hook_bash(cmd, cwd, eng):
     return hit and cc_bash(cmd, hit, cwd, eng, "script")
 
 
+def _hook_reach(cmd, tgt, cwd):
+    evs = []
+    for m in re.finditer(r"del\(\s*\.hooks\b((?:\.\w+|\[[^\]]*\])*)|\.hooks\b((?:\.\w+|\[[^\]]*\])*)\s*[-|]?=(?!=)", cmd):
+        e = re.match(r"\.(\w+)|\[\s*\"(\w+)\"\s*\]", m.group(1) if m.group(1) is not None else m.group(2))
+        evs.append(e and (e.group(1) or e.group(2)))
+    if not re.search(r"\bjq\b", cmd) and re.search(r"\bhooks\b|\bmatcher\b", cmd):
+        evs.append(None)
+    if not evs:
+        return False
+    disk = _cc_disk(tgt, cwd)
+    if not disk:
+        return True
+    try:
+        hooks = json.loads(disk).get("hooks")
+    except (ValueError, AttributeError):
+        hooks = None
+    red = {ev for ev, g in hooks.items() if REDACTOR_RX.search(json.dumps(g))} if isinstance(hooks, dict) else ({None} if REDACTOR_RX.search(disk) else set())
+    return any(e and e.startswith("Post") or (e is None and red) or e in red for e in evs)
+
+
 def cc_bash(cmd, targets, cwd, eng, force=None):
     q_rx = r"'([^']*)'|\"((?:[^\"\\]|\\.)*)\""
+    made = set(re.findall(r"(?:>>?|\btee\s+(?:-\S+\s+)*)\s*['\"]?([^\s'\"|;&<>)]+)", cmd))
     full = []
     strip_heredocs(cmd, full)
     for m in re.finditer(r"\b(?:cp|mv|install)\b((?:\s+[^\s|;&<>]+)+)", cmd):
-        full += [_cc_disk(a.strip("'\""), cwd) for a in [a for a in m.group(1).split() if not a.startswith("-")][:-1]]
+        full += [_cc_disk(a, cwd) for a in [a.strip("'\"") for a in m.group(1).split() if not a.startswith("-")][:-1] if a not in made]
     for m in re.finditer(r"\b(?:echo|printf)\s+([^|;&>\n]*)(?:>|\|\s*tee\b)", cmd):
         full.append("".join(a or b for a, b in re.findall(q_rx, m.group(1))) or m.group(1).strip() or "\n")
     full = [q for q in full if q]
     lits = "\n".join(a or b for a, b in re.findall(q_rx, cmd))
     t2 = re.sub(r"\bdel\([^()]*(?:\([^()]*\)[^()]*)*\)", "", cmd)
+    cmds = []
+    for c in re.findall(r'"command"\s*:\s*("(?:[^"\\]|\\.)*")', cmd):
+        try:
+            cmds.append(json.loads(c))
+        except ValueError:
+            cmds.append(c)
     for tgt in dict.fromkeys(targets):
         kind = force or _cc_kind(tgt)
         if kind == "json" and not CC_JSON.search(tgt) and not CC_TREE.search(tgt):
@@ -1512,9 +1547,11 @@ def cc_bash(cmd, targets, cwd, eng, force=None):
         if kind == "json" and cmd.count(tgt) < 2 and re.search(r">|\btee\b|\b(?:cp|mv|install|dd|ln)\b", cmd) and not re.search(r"\b(?:sed|perl)\s+(?:-\S+\s+)*-\w*i", cmd):
             return "replacing Claude Code's settings with content the guard cannot see; use Edit or Write so the change can be checked"
         if kind == "json" and (re.search(r"apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh|ANTHROPIC\w*BASE_URL|OTEL_EXPORTER_\w*ENDPOINT|OTEL_LOG_", t2, re.I)
-                               or re.search(r"secret-guard@|disableAllHooks|\.hooks\b|[\"']hooks[\"']|\bPost\w+|\bmatcher\b|redact|secret_(?:guard|filter)|[\"'](?:http|prompt|agent)[\"']", cmd, re.I)):
-            return "changing a credential helper, endpoint or hook entry of Claude Code's settings by command; use Edit so the change can be checked"
-        if (kind != "json" or re.search(r"statusLine|fileSuggestion|\bcommand\b", t2)) and _r1(lits, kind != "json", eng, cwd):
+                               or re.search(r"secret-guard@|disableAllHooks|redact|secret_(?:guard|filter)|(?-i:\bPost[A-Z]\w*)|[\"'](?:http|prompt|agent)[\"']", cmd, re.I)
+                               or _hook_reach(cmd, tgt, cwd)):
+            return "changing a credential helper, endpoint, the redactor's hook entry or a PostToolUse hook of Claude Code's settings by command"
+        if kind == "json" and any(_r1(c, True, eng, cwd) for c in cmds) or (kind != "json" or re.search(r"statusLine|fileSuggestion|\bcommand\b", t2)) and _r1(
+                lits + "\n" + re.sub(r"(?<!\\)[/|#]", "\n", lits), kind != "json", eng, cwd):
             return "writing a command or script into Claude Code's config that dumps the environment or reads secrets"
     return None
 

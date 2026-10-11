@@ -1,0 +1,189 @@
+{
+ "case_id": "FP-0190",
+ "title": "Harmless hook script and hook entry edits, fixed-key config compares and hook-off words outside config are allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed -i adding a flag to a project hook script is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/--write/--log-level warn --write/' .claude/hooks/fmt.sh"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "jq adding an eslint PreToolUse hook to settings is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.hooks.PreToolUse += [{\"matcher\":\"Edit\",\"hooks\":[{\"type\":\"command\",\"command\":\"npx eslint --fix\"}]}]' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "jq adding an eslint PreToolUse hook beside the redactor is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.hooks.PreToolUse += [{\"matcher\":\"Edit\",\"hooks\":[{\"type\":\"command\",\"command\":\"npx eslint --fix\"}]}]' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "jq deleting PreToolUse hooks while the redactor sits in PostToolUse is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'del(.hooks.PreToolUse)' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "jq setting a harmless Stop hook is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.hooks.Stop=[{\"hooks\":[{\"type\":\"command\",\"command\":\"true\"}]}]' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "comparing permissions.defaultMode from settings is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[ \"$(jq -r .permissions.defaultMode ~/.claude/settings.json)\" = auto ] && echo on"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "comparing the model from settings with [[ == is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[[ $(jq -r .model ~/.claude/settings.json) == opus ]] && echo y"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "a heredoc to /tmp whose text names the all-hooks-off key is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat > /tmp/p.py <<'EOF'\nx = '\"disableAllHooks\": true'\nEOF"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "echo of the all-hooks-off key into /tmp is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo '\"disableAllHooks\": true' > /tmp/x.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  },
+  {
+   "kind": "pre",
+   "name": "Write of a probe script naming the plugin-disable command is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"permissions\": {\n    \"defaultMode\": \"default\"\n  },\n  \"model\": \"opus\",\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"npx prettier --check .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    ".claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/p.py",
+     "content": "cmd = 'claude plugin disable secret-guard@cj-stack'\nk = '\"disableAllHooks\": true'\n"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: hook scripts and hook entries are judged by what they add (R1 plus the kept Post*/http/prompt/agent rule); removals deny only when they reach the redactor or PostToolUse; a fixed non-secret key compare reveals no secret; R3 words count only on config."
+  }
+ ],
+ "duplicate_of_dropped": false
+}
