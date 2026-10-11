@@ -1,0 +1,62 @@
+{
+  "case_id": "FP-0203",
+  "title": "A shell read prompt label followed by a variable name is not a key and its value",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "post",
+      "name": "Read of a skill with read -rsp prompts into a variable",
+      "files": {},
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/u/.claude/plugins/cf/skills/turnstile/SKILL.md"
+        },
+        "tool_response": {
+          "type": "text",
+          "file": {
+            "filePath": "/home/u/.claude/plugins/cf/skills/turnstile/SKILL.md",
+            "content": "     1. **Export + relaunch** (token enters neither chat nor shell history): `read -rsp 'Cloudflare API token: ' token; echo; export CLOUDFLARE_API_TOKEN=\"$token\"; unset token`, then restart the agent from that terminal.\n     2. **Save to file** (token in a user-only file): `umask 077; read -rsp 'Cloudflare API token: ' token; echo; printf '%s' \"$token\" > ~/.cf-turnstile-token; unset token`, then load it without printing it.\n",
+            "numLines": 2,
+            "startLine": 1,
+            "totalLines": 2
+          }
+        }
+      },
+      "must_see": [
+        "     1. **Export + relaunch** (token enters neither chat nor shell history): `read -rsp 'Cloudflare API token: ' token; echo; export CLOUDFLARE_API_TOKEN=\"$token\"; unset token`, then restart the agent from that terminal.",
+        "     2. **Save to file** (token in a user-only file): `umask 077; read -rsp 'Cloudflare API token: ' token; echo; printf '%s' \"$token\" > ~/.cf-turnstile-token; unset token`, then load it without printing it."
+      ]
+    },
+    {
+      "kind": "pre",
+      "name": "allow read -rsp prompts into a variable",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/allow-read--rsp-prompts-.md",
+          "content": "     1. **Export + relaunch** (token enters neither chat nor shell history): `read -rsp 'Cloudflare API token: ' token; echo; export CLOUDFLARE_API_TOKEN=\"$token\"; unset token`, then restart the agent from that terminal.\n     2. **Save to file** (token in a user-only file): `umask 077; read -rsp 'Cloudflare API token: ' token; echo; printf '%s' \"$token\" > ~/.cf-turnstile-token; unset token`, then load it without printing it.\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "allow read -p double-quoted prompt into a variable",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/allow-read--p-double-quo.md",
+          "content": "read -p \"DB password: \" db_pass\n"
+        }
+      },
+      "expect": "allow"
+    }
+  ]
+}

@@ -609,6 +609,17 @@ def _json_str_end(text, i):
     return min(k, n) if k < n and text[k] == '"' else i
 
 
+READ_PROMPT = re.compile(r"(?<![\w-])read(?:[ \t]+-[A-Za-z]+)*[ \t]+-[A-Za-z]*p[ \t]*(?P<q>['\"])[^'\"\n]*$")
+READ_VARS = re.compile(r"[ \t]*(?P<q>['\"])(?P<v>(?:[ \t]+[A-Za-z_]\w*)+)[ \t]*(?:[;&|)`\n]|$)")
+
+
+def _read_prompt(text, m):
+    pre = READ_PROMPT.search(text, text.rfind("\n", 0, m.start()) + 1, m.start("name"))
+    post = READ_VARS.match(text, m.end())
+    return bool(pre and post and pre.group("q") == post.group("q")
+                and not any(looks_random(v) for v in post.group("v").split()))
+
+
 def _scan_names(text, spans, ctx=0, loose=False):
     for m in NAME_RE.finditer(text):
         name = m.group("name")
@@ -626,6 +637,8 @@ def _scan_names(text, spans, ctx=0, loose=False):
                     spans.append(sp)
             continue
         if loose and _template(text, m):
+            continue
+        if m.group("sep") == ":" and _read_prompt(text, m):
             continue
         if m.group("q") == '"' and not m.group("q2") and m.group("sep") == "=" and not re.match(r"[ \t]*\\?[\"']", text[m.end():m.end() + 8]):
             e = _json_str_end(text, m.end())
