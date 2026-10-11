@@ -1318,6 +1318,7 @@ def sq(s):
 
 
 def rewrite(cmd, ctx=0):
+    import secret_engine as eng_wrap
     f = sq(FILTER) + " " + str(int(ctx))
     head = (
         "__sg_py=$(command -v python3 || command -v python) || __sg_py=python3\n"
@@ -1334,9 +1335,9 @@ def rewrite(cmd, ctx=0):
         "while { kill -0 $__sg_po 2>/dev/null || kill -0 $__sg_pe 2>/dev/null; } && [ $__sg_n -lt 100 ]; do sleep 0.1; __sg_n=$((__sg_n+1)); done; "
         "kill $__sg_po $__sg_pe 2>/dev/null; rm -rf \"$__sg_d\"; return $__sg_rc; }\n"
         "__sg_exit() { __sg_ec=$?; __sg_fin; exit $__sg_ec; }\n"
-        "builtin trap __sg_exit EXIT\n"
+        + eng_wrap.WRAP_OPEN
     )
-    return head + cmd + "\n__sg_x=$?; __sg_fin; (exit $__sg_x)\n"
+    return head + cmd + eng_wrap.WRAP_CLOSE
 
 
 def main():

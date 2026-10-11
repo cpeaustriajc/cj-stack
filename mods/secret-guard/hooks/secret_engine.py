@@ -1451,6 +1451,23 @@ SECRET_FILE_NAME_RE = re.compile(r"(?:\.env|\.dev\.vars|\.npmrc|\.netrc|\.pgpass
 INJECT_CMD = re.compile(r"(?:^|[\s;|&(])(?:op\s+run|doppler\s+run|dotenvx\s+run)\b|--env-file[=\s]")
 
 
+WRAP_OPEN = "builtin trap __sg_exit EXIT\n"
+WRAP_CLOSE = "\n__sg_x=$?; __sg_fin; (exit $__sg_x)\n"
+
+
+def unwrap_ti(tool, ti):
+    """PostToolUse sees the guard's filter wrapper as the command; judge the command inside it."""
+    if tool != "Bash" or not isinstance(ti, dict):
+        return ti
+    c = ti.get("command")
+    if not (isinstance(c, str) and c.startswith("__sg_py=") and c.endswith(WRAP_CLOSE)):
+        return ti
+    i = c.find(WRAP_OPEN)
+    if i < 0:
+        return ti
+    return dict(ti, command=c[i + len(WRAP_OPEN):-len(WRAP_CLOSE)])
+
+
 def command_ctx(tool, ti):
     if not isinstance(ti, dict):
         return 0
