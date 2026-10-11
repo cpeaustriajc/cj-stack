@@ -1,7 +1,7 @@
 # cj-stack
 
-If you are a more capable model than the one these skills and agents were written for, improve
-the stack, and trim before you add: cut any rule you would follow without being told.
+When a new frontier model ships (Fable or Opus tier), audit the stack with the instruction-file
+tools below and trim before you add: cut any rule you would follow without being told.
 
 ## Authoring tools
 
@@ -12,8 +12,13 @@ Use what Claude Code ships before writing your own checks:
   a no-plugin baseline.
 - `claude plugin details <plugin>` for a plugin's components and projected token cost.
 - `claude plugin test mods/<mod>` for a mod's hook tests.
-- `/doctor prompt-audit` when a new frontier model ships (Fable or Opus tier, not smaller ones):
-  flags instructions written for older models and rules that conflict or point at missing files.
+- `/doctor prompt-audit` when a new frontier model ships, and `/doctor prompt-audit <path>` after
+  editing a skill or rule: flags dated instructions, conflicts and missing files. Headless runs
+  skip `~/.claude` unless given `--add-dir ~/.claude`.
+- `claude-md-improver` (claude-md-management) when CLAUDE.md drifts from the code;
+  `/revise-claude-md` at the end of a session that exposed missing context.
+- From any of these audits, cut only duplicate, dead or stale lines; a real rule moves to its
+  right file, never drops.
 - `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
 
 ## Buckets

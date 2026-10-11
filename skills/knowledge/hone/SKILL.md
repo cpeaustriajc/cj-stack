@@ -37,7 +37,11 @@ broken anyway, the fix is a stronger layer, not a second copy of the rule.
 
 ## 3. Prune as well as add
 
-Look for:
+Start from the tool's own instruction-file audit, if it has one (Claude Code:
+`references/claude-code.md`). Its findings are candidates, judged against the transcripts like
+the rest. A real rule in the wrong file moves; it is never dropped.
+
+Also look for:
 - instruction lines that changed nothing in the transcripts, or were broken anyway
 - repeated wasted tool calls
 - checks or scripts that exist but aren't wired in
