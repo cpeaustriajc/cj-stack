@@ -27,6 +27,13 @@ const RULES: { why: string; test: (text: string) => boolean }[] = [
     test: t => new RegExp(`[\\w/-]+\\.(${CODE_EXT}):\\d+`).test(t) || /^\s*```/m.test(t),
   },
   {
+    why: 'something short-lived that changes within days (pending work, a branch, a plan or /tmp path)',
+    test: t =>
+      /\b(tomorrow|tonight|this week|next week|last week|this sprint|still pending|is pending|pending (a|an|the|client|research|review|approval|input))\b/i.test(t) ||
+      /\bbranch\s+`?[\w.-]+\/[\w./-]+/i.test(t) ||
+      /\.claude\/(plans|jobs|todos)\/|(^|[\s`(])\/(private\/)?tmp\//.test(t),
+  },
+  {
     why: 'dated status ("since 2026-09-04", "as of 2026") that goes stale unseen',
     test: t => /\b20\d{2}-[01]\d-[0-3]\d\b/.test(t) || /\bas of (19|20)\d{2}\b/i.test(t),
   },
@@ -34,7 +41,7 @@ const RULES: { why: string; test: (text: string) => boolean }[] = [
 
 const BAR =
   'Memory keeps durable facts that would otherwise be relearned: the user\'s corrections and preferences, ' +
-  'and non-obvious quirks of this project or environment. If this is one, restate it without the flagged parts. ' +
+  'and non-obvious quirks of this project or environment that will still hold in a month. If this is one, restate it without the flagged parts. ' +
   'If it is task state, a finding, or readable from the repo, do not save it. ' +
   'A rule the team shares goes in AGENTS.md or a checked-in rule; a decision goes in the team\'s decision log.'
 

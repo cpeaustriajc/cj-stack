@@ -64,6 +64,31 @@ test('a dated note is dated status', async ($, on) => {
   }
 })
 
+test('anything likely to change within days is short-lived', async ($, on) => {
+  world(on)
+  for (const text of [
+    'Full plan: `~/.claude/plans/clever-wibbling-shamir.md`.',
+    'Logs are in /tmp/build.log.',
+    'The rewrite lives on branch feature/native-rewrite.',
+    'First deploy still pending: needs wrangler login.',
+    'Use ETFs instead, pending research.',
+    'Revisit the pricing page next week.',
+  ]) {
+    expect((await write($, `${DIR}/x.md`, text)).deny).toContain('short-lived')
+  }
+})
+
+test('domain words like pending-delete and durable worktree quirks are not short-lived', async ($, on) => {
+  world(on)
+  for (const text of [
+    'Snapnames pending-delete candidates arrive without metadata.',
+    'Buttons show a pending state while in flight, never a confirm dialog.',
+    'In a worktree under `.claude/worktrees/<name>`, run pnpm install first.',
+  ]) {
+    expect((await write($, `${DIR}/x.md`, text)).deny).toBeUndefined()
+  }
+})
+
 test('the refusal says where a team rule or a decision goes instead', async ($, on) => {
   world(on)
   const r = await write($, `${DIR}/x.md`, 'Currently the team decided customers come first.')
