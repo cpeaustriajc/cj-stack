@@ -139,7 +139,7 @@ CRED_TOOLS = [
     (r"\bat\s+now\b|\bcrontab\b|\bat\s+-f\b", "edit"),
     (r"\bmkfifo\b(?=.*(?:cat|sh|bash|read|\.env|secret))", "tool"),
     (r"\bscript\s+(?:-\S+\s+)*(?:--log-\w+|-q|-c|\S+\.log|\S+typescript)|\bscriptreplay\b|\bsudoreplay\b|\basciinema\b|\btlog\b", "tool"),
-    (r"\bidevicebackup2\b|\bmdls\b(?![-.\w])|\bmdfind\b(?=.*(?:kMDItemTextContent|-onlyin\s+\S*(?:creds|secret|\.config|\.ssh|\.aws|Library)|key|token|secret|password|\.env|credential))|\blocate\b|\bmdfind\b\s+\S+$", "tool"),
+    (r"\bidevicebackup2\b|\bmdls\b(?![-.\w])|\bmdfind\b(?=.*(?:kMDItemTextContent|-onlyin\s+\S*(?:creds|secret|\.config|\.ssh|\.aws|Library)|key|token|secret|password|\.env|credential))|(?<![\w./-])locate(?![\w./-])|\bmdfind\b\s+\S+$", "tool"),
     (r"\bxcrun\s+xcresulttool\b|\bxcrun\s+simctl\s+(?:keychain|openurl|pbpaste)", "tool"),
     (r"\bgit\s+(?:reflog\s+expire|gc\s+--prune|prune\b|filter-branch|filter-repo)", "edit"),
     (r"\bgit\s+(?:-C\s+\S+\s+)?(?:-c\s+\S+\s+)*log\b.*-g\b.*--walk-reflogs|\bgit\s+.*--walk-reflogs", "tool"),
@@ -872,21 +872,46 @@ def strip_safe_literals(t):
     return re.sub(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?|<[A-Za-z_ ]+>", "", t)
 
 
+def _shell_pieces(t):
+    # Split only outside quotes: a python -c body cut at ';' hides its write from the verb check.
+    out, cur, q = [], [], None
+    for c in t:
+        if q:
+            q = None if c == q else q
+            cur.append(c)
+        elif c in "'\"":
+            q = c
+            cur.append(c)
+        elif c in "|&;\n":
+            out.append("".join(cur))
+            cur = []
+        else:
+            cur.append(c)
+    out.append("".join(cur))
+    return out
+
+
 def write_to_protected(t):
     tl = t
     for m in re.finditer(r">>?\s*['\"]?([^\s'\"|;&<>)]+)", tl):
         tgt = m.group(1)
         if PROT_PATHS.search(tgt) or PROT_BASE.search(tgt):
             return "writing to a hook, settings or shell-startup file"
-    if not PROT_PATHS.search(tl):
-        return None
-    if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bperl\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
-                 r"write_text|write_bytes|\.write\(|writeFile|appendFile|open\([^)]*['\"][wa]|json\.dump|\bgit\s+(?:checkout|restore|reset|stash|clean)|\bed\b|\bawk\b.*inplace|\bpatch\b|\btouch\b|\bunlink\b|\bshred\b|"
-                 r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", tl, re.I):
-        if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", tl, re.I) and not re.search(
-                r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|write_text|\.write\(|open\([^)]*['\"][wa]|json\.dump|setdefault|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)|\bgit\s+(?:checkout|restore|reset)", tl, re.I):
-            return None
-        return "modifying a hook, settings, startup or tamper-sensitive file"
+    pieces = _shell_pieces(tl)
+    # A cd into .claude or a variable naming a protected path carries it into later pieces: judge the whole command.
+    whole = any(re.match(r"\s*(?:cd|pushd)\s", p) and re.search(r"\.claude(?:/|\s|$|['\"])", p)
+                or re.match(r"\s*(?:export\s+)?\w+=", p) and (PROT_PATHS.search(p) or re.search(r"\.claude(?:/|\s|$|['\"])", p))
+                for p in pieces)
+    for piece in [tl] if whole else pieces:
+        if not (whole or PROT_PATHS.search(piece)):
+            continue
+        if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bperl\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
+                     r"write_text|write_bytes|\.write\(|writeFile|appendFile|open\([^)]*['\"][wa]|json\.dump|\bgit\s+(?:checkout|restore|reset|stash|clean)|\bed\b|\bawk\b.*inplace|\bpatch\b|\btouch\b|\bunlink\b|\bshred\b|"
+                     r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", piece, re.I):
+            if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", piece, re.I) and not re.search(
+                    r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|write_text|\.write\(|open\([^)]*['\"][wa]|json\.dump|setdefault|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)|\bgit\s+(?:checkout|restore|reset)", piece, re.I):
+                continue
+            return "modifying a hook, settings, startup or tamper-sensitive file"
     return None
 
 
@@ -1293,6 +1318,7 @@ def sq(s):
 
 
 def rewrite(cmd, ctx=0):
+    import secret_engine as eng_wrap
     f = sq(FILTER) + " " + str(int(ctx))
     head = (
         "__sg_py=$(command -v python3 || command -v python) || __sg_py=python3\n"
@@ -1309,9 +1335,9 @@ def rewrite(cmd, ctx=0):
         "while { kill -0 $__sg_po 2>/dev/null || kill -0 $__sg_pe 2>/dev/null; } && [ $__sg_n -lt 100 ]; do sleep 0.1; __sg_n=$((__sg_n+1)); done; "
         "kill $__sg_po $__sg_pe 2>/dev/null; rm -rf \"$__sg_d\"; return $__sg_rc; }\n"
         "__sg_exit() { __sg_ec=$?; __sg_fin; exit $__sg_ec; }\n"
-        "builtin trap __sg_exit EXIT\n"
+        + eng_wrap.WRAP_OPEN
     )
-    return head + cmd + "\n__sg_x=$?; __sg_fin; (exit $__sg_x)\n"
+    return head + cmd + eng_wrap.WRAP_CLOSE
 
 
 def main():

@@ -5,7 +5,7 @@
     "url": "https://github.com/cpeaustriajc"
   },
   "metadata": {
-    "description": "CJ's skills and mods for Claude Code: planning in Linear, a decision log, and the work pane."
+    "description": "CJ's skills and mods for Claude Code: planning in any tracker, a decision log, proving work in the real app, and guards for secrets, memory and Linear writes."
   },
   "plugins": [
     {
@@ -113,6 +113,12 @@
       "name": "hone-nudge",
       "source": "./mods/hone-nudge",
       "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run.",
+      "category": "productivity"
+    },
+    {
+      "name": "memory-lint",
+      "source": "./mods/memory-lint",
+      "description": "Denies an auto-memory write that holds task state, one-off references or repo detail.",
       "category": "productivity"
     },
     {

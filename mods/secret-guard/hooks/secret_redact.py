@@ -106,18 +106,19 @@ def worker():
         return
     import secret_engine as eng
 
+    ti = eng.unwrap_ti(ev.get("tool_name"), ev.get("tool_input"))
     try:
         if len(raw) > MAX_BYTES:
             out = eng.placeholder_like(resp, "oversized")
         elif eng.odd_shape(ev.get("tool_name"), resp):
             out = eng.withhold_shape(resp)
-        elif eng.withhold_ctx(ev.get("tool_name"), ev.get("tool_input")):
+        elif eng.withhold_ctx(ev.get("tool_name"), ti):
             out = eng.marked_like(resp)
         else:
             cwd = ev.get("cwd") if isinstance(ev.get("cwd"), str) else None
             engine = eng.Engine(cwd)
-            engine.grep_words = eng.grep_hint_words(ev.get("tool_name"), ev.get("tool_input"))
-            ctx = eng.command_ctx(ev.get("tool_name"), ev.get("tool_input"))
+            engine.grep_words = eng.grep_hint_words(ev.get("tool_name"), ti)
+            ctx = eng.command_ctx(ev.get("tool_name"), ti)
             engine.deadline = time.monotonic() + eng.REDACT_BUDGET
             out = eng.run_budget(lambda: engine.redact_obj(resp, ctx=ctx), eng.REDACT_BUDGET + eng.BACKSTOP)
     except eng.OverBudget:

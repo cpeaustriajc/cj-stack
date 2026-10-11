@@ -72,6 +72,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | `denial-explainer` | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
 | `loop-brake` | ends a turn after N forced Stop-hook continuations | optional |
 | `hone-nudge` | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
+| `memory-lint` | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | `secret-guard` | keeps secret values out of Claude's context: redacts tool output, denies encode-or-test tricks; needs `python3` | recommended |
 
 ## Other plugins
