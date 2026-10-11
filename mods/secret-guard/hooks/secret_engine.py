@@ -134,6 +134,38 @@ def _classify(name):
     return 1
 
 
+_BIGRAMS = set(("ab ac ad ae ag ai al am an ap ar as at au ba be bi bl bo br ca ce ch ci ck co cr ct cu da de di do dr ea ec ed ee el em "
+                "en eo ep er es et ex fi fo ga ge gi gl gr ha he hi ho hy ia ic id ie if ig il im in io ip ir is it iv iz ke la le li ll lo "
+                "lu ly ma me mi mo mp na nc nd ne ng ni no ns nt oc od og oi ol om on oo op or os ot ou ov pa pe ph pi pl po pr qu ra rc "
+                "rd re ri rm ro rr rs rt ru ry sa sc se sh si sm so sp ss st su ta te th ti to tr tu ty ub ul um un ur us ut ve vi ze").split())
+
+
+def _randomish(t, n=8):
+    """A segment that reads as generated: letters mixed with digits, frequent case changes, or letters unlike English."""
+    if len(t) < n or not (t.isascii() and t.isalnum()) or t.isdigit():
+        return False
+    if re.search(r"\d", t):
+        return True
+    if sum(a.isupper() != b.isupper() for a, b in zip(t, t[1:])) * 3 >= len(t):
+        return True
+    low = t.lower()
+    common = sum(low[i:i + 2] in _BIGRAMS for i in range(len(low) - 1))
+    return common * 3 < (len(low) - 1) * 2 or max(map(len, re.split(r"[aeiouy]", low))) >= 5
+
+
+def _rand_part(v, n=8):
+    return any(_randomish(t, n) for t in re.split(r"[^A-Za-z0-9]+", v))
+
+
+def _rand_len(v):
+    return sum(len(t) for t in re.split(r"[^A-Za-z0-9]+", v) if _randomish(t))
+
+
+def _secret_named(k):
+    """Classified as secret, or naming a PIN, passcode or secret anywhere in the name."""
+    return classify(k) != 0 or any(w.lower() in ("pin", "passcode", "otp", "secret", "secrets") for w in words(k))
+
+
 def looks_random(v):
     if len(v) < 12:
         return False
@@ -176,7 +208,7 @@ def benign(v):
         return True
     if s.startswith("ENC[") or re.fullmatch(r"\d{1,4}", s):
         return True
-    if re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*){2,}", s) and not re.search(r"\d", s):
+    if re.fullmatch(r"[A-Za-z_]\w*(?:\.[A-Za-z_]\w*){2,}", s) and not re.search(r"\d", s) and not _rand_part(s, 10):
         return True
     if re.fullmatch(r"(?:[A-Za-z]+[_\-])*[xX*]{8,}", s):
         return True
@@ -1307,7 +1339,7 @@ def _cache_path(key):
 HARVEST_DIR = "secret-guard"
 HARVEST_NAME = "harvest-cache.json"
 # Bump when _file_values changes, or cached entries keep values the old rules extracted.
-HARVEST_RULES = 2
+HARVEST_RULES = 3
 
 
 def harvest_path():
@@ -1472,7 +1504,14 @@ def _file_values(path, text):
 
 def _kv_values(k, v, envfile, vals):
     """Harvest one name=value pair; in an env file a random or mixed value counts under any name."""
-    if not v or benign_h(v) or (any(w.lower() in PUBLIC_WORDS for w in words(k)) and not _public_secret(k)):
+    if not v or (any(w.lower() in PUBLIC_WORDS for w in words(k)) and not _public_secret(k)):
+        return
+    sec = _secret_named(k)
+    if sec and (re.fullmatch(r"\d{6,}", v) or _rand_part(v)) or "://" in v and not URL_USERINFO.search(v) and _rand_len(
+            re.sub(r"^[A-Za-z][\w+.\-]*://[^/?#]*", "", v)) >= (12 if sec else 20):
+        vals.append(v)
+        return
+    if benign_h(v):
         return
     if k.startswith("//") or "_auth" in k.lower():
         pass
@@ -1508,14 +1547,14 @@ URL_PARTS = re.compile(r"[A-Za-z][A-Za-z0-9+.\-]*://([^/?#\s@]*)([/?#][^\s]*)?")
 def _plain_value(v):
     """Not a credential: a URL or host:port with no userinfo or secret-looking part, a number, a boolean or a short word."""
     s = v.strip().strip("\"'")
-    if re.fullmatch(r"[+-]?\d{1,11}(?:\.\d+)?|true|false|yes|no|on|off|null|none|nil|enabled|disabled", s, re.I):
+    if re.fullmatch(r"[+-]?\d{1,5}(?:\.\d+)?|true|false|yes|no|on|off|null|none|nil|enabled|disabled", s, re.I):
         return True
-    if re.fullmatch(r"[a-z]{1,10}|[A-Z][a-z]{0,9}", s):
+    if re.fullmatch(r"[a-z]{1,10}|[A-Z][a-z]{0,9}", s) and not _randomish(s):
         return True
     if re.fullmatch(r"(?:localhost|[\w\-]+(?:\.[\w\-]+)+|\[[0-9A-Fa-f:.]+\]):\d{1,5}", s):
         return True
     m = URL_PARTS.fullmatch(s)
-    return bool(m) and not QUERY_SECRET.search(s) and not any(
+    return bool(m) and not QUERY_SECRET.search(s) and _rand_len(m.group(2) or "") < 12 and not any(
         looks_random(t) or ctx_secretish(t) for t in re.split(r"[/?#&=;,.:]+", m.group(1) + "/" + (m.group(2) or "")) if t)
 
 
@@ -1820,7 +1859,7 @@ class Engine:
                     got = []
                     for v in _file_values(p, text):
                         v = v.strip()
-                        if len(v) >= 6 and not benign_h(v) and not v.startswith(MARK):
+                        if len(v) >= 6 and (not benign_h(v) or _rand_part(v, 10)) and not v.startswith(MARK):
                             got.append(v)
                     vals.update(got)
                     fresh[p] = {"m": st.st_mtime_ns, "s": st.st_size, "r": HARVEST_RULES, "v": got}
@@ -1829,7 +1868,7 @@ class Engine:
             if self.env:
                 for v in env_values():
                     v = v.strip()
-                    if len(v) >= 6 and not benign_h(v) and not v.startswith(MARK):
+                    if len(v) >= 6 and (not benign_h(v) or _rand_part(v, 10)) and not v.startswith(MARK):
                         vals.add(v)
             self._values = sorted((x for x in vals if not _plain_value(x)), key=lambda x: (-len(x), x))
         return self._values
@@ -1869,8 +1908,7 @@ class Engine:
                 if len(seen) > 20000:
                     break
             if hit:
-                a = m.start() + m.group().find(t)
-                out.append((a, a + len(t)))
+                out.append((m.start(), m.end()))
         return out
 
     def known_spans(self, text, encoded=True):

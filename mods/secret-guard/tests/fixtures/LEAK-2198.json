@@ -1,0 +1,159 @@
+{
+  "case_id": "LEAK-2198",
+  "title": "Harvest keeps PINs, capability URLs and random-labelled values under secret names; plain app URLs stay visible",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "post",
+      "name": "a 6-digit PIN under BANK_PIN printed away from its name is redacted",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "value 2 is 482913\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "482913"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "a URL with a random path segment under PAYMENT_SECRET_URL is redacted",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "value 3 is https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "a URL with a 32-char random path segment under NOTIFY_URL is redacted",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "value 4 is https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "a dotted host with a random label under API_HOST_SECRET is redacted",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "value 5 is svc.qzvkmtrwpxhb.internal\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "svc.qzvkmtrwpxhb.internal"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "the local app URL and a status page stay visible next to a redacted PIN",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "app http://localhost:8000\nstatus https://status.example.com/\npin 482913\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "482913"
+      ],
+      "must_see": [
+        "app http://localhost:8000",
+        "status https://status.example.com/"
+      ]
+    },
+    {
+      "kind": "pre",
+      "name": "Write of the random-labelled host is denied",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/out.txt",
+          "content": "note: svc.qzvkmtrwpxhb.internal\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Agent prompt with the random-labelled host is denied",
+      "files": {
+        ".env": "# FAKESECRET test values\nAPP_URL=http://localhost:8000\nSTATUS_PAGE=https://status.example.com/\nBANK_PIN=482913\nPAYMENT_SECRET_URL=https://pay.example.com/hook/Qm7Lp2Zx9Vt4Rn8Kc3Wy6Hb1\nNOTIFY_URL=https://hooks.example.com/notify/tKqPzWmRvXbNcLyHsDfGjQwErTyUiOpA\nAPI_HOST_SECRET=\"svc.qzvkmtrwpxhb.internal\"\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Agent",
+        "tool_input": {
+          "description": "x",
+          "prompt": "Use this: svc.qzvkmtrwpxhb.internal"
+        }
+      },
+      "expect": "deny"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "case_id": "LEAK-2201",
+  "title": "A token that is part of a known value is redacted whole, punctuation and escapes included, so no boundary shows",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "post",
+      "name": "a truncated value in parentheses is one redaction",
+      "files": {
+        ".env": "API_TOKEN=FAKESECRET_frag_Q7mZ2pLx9Kd\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "head: (FAKESECRET_frag_Q7mZ), tail\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "FAKESECRET_frag_Q7mZ"
+      ],
+      "must_see": [
+        "head: [REDACTED] tail"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "a truncated value after an escape prefix is one redaction",
+      "files": {
+        ".env": "API_TOKEN=FAKESECRET_frag_Q7mZ2pLx9Kd\n"
+      },
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Bash",
+        "tool_input": {
+          "command": "cat notes.txt"
+        },
+        "tool_response": {
+          "stdout": "x \\x41ESECRET_frag_Q7m y\n",
+          "stderr": "",
+          "interrupted": false,
+          "isImage": false
+        }
+      },
+      "must_not_see": [
+        "ESECRET_frag_Q7m"
+      ],
+      "must_see": [
+        "x [REDACTED] y"
+      ]
+    }
+  ]
+}

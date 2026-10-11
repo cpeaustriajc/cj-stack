@@ -156,7 +156,7 @@ CRED_TOOLS = [
     (r"\bCLAUDE_(?:CONFIG_DIR|CODE_[A-Z_]*)\s*=", "edit"),
     (r"disableAllHooks|disable_all_hooks|CLAUDE_CODE_DISABLE\w*HOOK|SECRET_HOOK_(?:HOME|ROOTS)\s*=|PYTHONPATH\s*=|PYTHONSTARTUP\s*=|NODE_OPTIONS\s*=\s*--(?:require|import)|BASH_ENV\s*=|\bENV\s*=\s*\S+\s+(?:ba)?sh|LD_PRELOAD\s*=|DYLD_INSERT_LIBRARIES\s*=", "edit"),
     (r"\bexport\s+PATH=\S*(?:\$HOME|~|/tmp|\.)\S*shim|\bPATH=\S*shim", "edit"),
-    (r"\bpython3?\s+(?:-[A-Za-z]+\s+)*\S*secret_(?:redact|filter|engine)\.py\b", "edit"),
+    (r"\bpython3?\s+(?:-[A-Za-z]+\s+)*\S*secret_(?:redact|filter|engine|guard)\.py\b", "edit"),
     (r"\bln\s+(?:-\S+\s+)*\S*\.claude\b|\bln\s+(?:-\S+\s+)*\S*settings[\w.]*\s", "edit"),
     (r"\b(?:ansible|ansible-playbook)\b(?=.*(?:-m\s+shell|-m\s+command|-m\s+raw|-a\s+['\"]?(?:env|printenv|cat )))", "tool"),
     (r"\bcurl\b[^|;&]*(?:127\.0\.0\.1|localhost)(?::\d+)?/(?:debug/(?:vars|pprof)|actuator/(?:env|heapdump|configprops|beans|mappings|loggers)|env\b|heapdump|metrics/env)|\bwget\b[^|;&]*actuator/env|actuator/env", "tool"),
@@ -1577,6 +1577,28 @@ def _jload(f, cwd):
     return d if isinstance(d, dict) else {}
 
 
+IMPORT_RX = re.compile(r"(?:\bfrom\s*|\bimport\s*\(?\s*|\brequire\s*\(\s*)([\"'])(\.{1,2}/[^\"'\n]+)\1")
+
+
+def _module_files(paths, root, cwd):
+    """Hook modules plus the files they import by relative path, transitively, inside the plugin folder."""
+    seen, todo, top = [], list(paths), os.path.realpath(root) + os.sep
+    while todo and len(seen) < 300:
+        p = todo.pop()
+        if p in seen:
+            continue
+        seen.append(p)
+        for m in IMPORT_RX.finditer(_cc_disk(p, cwd) or ""):
+            b = os.path.join(os.path.dirname(p), m.group(2))
+            for c in (b, re.sub(r"\.[cm]?js$", ".ts", b), re.sub(r"\.[cm]?js$", ".tsx", b), b + ".ts", b + ".tsx", b + ".js", b + ".mjs",
+                      os.path.join(b, "index.ts"), os.path.join(b, "index.js")):
+                c = os.path.realpath(c)
+                if c.startswith(top) and os.path.isfile(c):
+                    todo.append(c)
+                    break
+    return seen
+
+
 def _plugin_cmds(docs, cwd, mods):
     on, mk, roots = set(), {}, []
     for d in docs + [{"extraKnownMarketplaces": _jload(CC_LAYERS[8], cwd)}]:
@@ -1595,6 +1617,7 @@ def _plugin_cmds(docs, cwd, mods):
                 roots.append(os.path.normpath(os.path.join(mk[m], e["source"])))
     out = []
     for r in dict.fromkeys(x for x in roots if isinstance(x, str)):
+        first = len(mods)
         docs = [([os.path.join(r, "hooks")], _cc_disk(os.path.join(r, "hooks", "hooks.json"), cwd) or "")]
         pj = _jload(os.path.join(r, ".claude-plugin", "plugin.json"), cwd).get("hooks")
         for h in pj if isinstance(pj, list) else [pj]:
@@ -1610,6 +1633,7 @@ def _plugin_cmds(docs, cwd, mods):
             except (ValueError, AttributeError):
                 ms = None
             mods += [os.path.realpath(os.path.join(b, m)) for m in ms for b in bases if isinstance(m, str)] if isinstance(ms, list) else []
+        mods[first:] = _module_files(mods[first:], r, cwd)
     return out
 
 

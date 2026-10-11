@@ -1,6 +1,6 @@
 {
   "case_id": "FP-0197",
-  "title": "Reading the guard's scripts and running the guard on an event are allowed; edits and redactor or filter oracle runs stay denied",
+  "title": "Reading the guard's scripts is allowed; edits and running any guard script on chosen input stay denied",
   "level": "unit",
   "duplicate_of_dropped": false,
   "fixtures": [
@@ -90,7 +90,7 @@
     },
     {
       "kind": "pre",
-      "name": "echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"ls\"}}' | python3 -I is allowed",
+      "name": "echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"ls\"}}' | python3 -I stays denied: the guard's answer tests candidate strings",
       "files": {},
       "event": {
         "hook_event_name": "PreToolUse",
@@ -100,11 +100,11 @@
           "description": "x"
         }
       },
-      "expect": "allow"
+      "expect": "deny"
     },
     {
       "kind": "pre",
-      "name": "python3 -I mods/secret-guard/hooks/secret_guard.py < /tmp/ev.json is allowed",
+      "name": "python3 -I mods/secret-guard/hooks/secret_guard.py < /tmp/ev.json stays denied: the guard's answer tests candidate strings",
       "files": {},
       "event": {
         "hook_event_name": "PreToolUse",
@@ -114,11 +114,11 @@
           "description": "x"
         }
       },
-      "expect": "allow"
+      "expect": "deny"
     },
     {
       "kind": "pre",
-      "name": "cat /tmp/ev.json | python3 mods/secret-guard/hooks/secret_guard.py is allowed",
+      "name": "cat /tmp/ev.json | python3 mods/secret-guard/hooks/secret_guard.py stays denied: the guard's answer tests candidate strings",
       "files": {},
       "event": {
         "hook_event_name": "PreToolUse",
@@ -128,7 +128,7 @@
           "description": "x"
         }
       },
-      "expect": "allow"
+      "expect": "deny"
     },
     {
       "kind": "pre",
