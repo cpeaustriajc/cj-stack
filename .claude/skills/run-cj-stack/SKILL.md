@@ -22,7 +22,13 @@ Paths here are relative to the repo root.
 .claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
 .claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
 .claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with cj-stack installed
+.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $1; RUNS=1 halves it
 ```
+
+`routing` checks that each request loads its own planning skill and no sibling, with every
+shipped skill installed together. Each case in `evals/routing/<case>/` is a `prompt.md` plus
+`tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
+an old one's.
 
 `doctor` and `details` install the local working tree (not the pushed one) into a `mktemp -d`
 config directory, so your real `~/.claude` never changes and the temp directory is removed on
@@ -50,6 +56,10 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
   config after installing the plugin there.
 - **Skills in `skills/in-progress/` never appear**: they are not in the marketplace's skills
   array, by design.
+- **`claude plugin eval .` resolves no plugin** ("none resolved — cases run against baseline"):
+  the repo root has no `plugin.json`. The driver builds a throwaway plugin of symlinks instead.
+  The routing cases cap `max_turns` at 3, so "Reached maximum number of turns" in the notes is
+  expected; the Skill call comes on turn 1.
 - **`claude plugin validate skills/<bucket>/<skill>` always fails** with "No manifest found": a
   skill folder is not a plugin. Validate the repo root.
 - **Python scripts leave `__pycache__`** in the skill folder; the driver deletes it, and
