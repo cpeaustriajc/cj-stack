@@ -431,6 +431,16 @@ def _loose_skip(text, sp):
     c = re.search(r":\s*[*`]*$", before)
     if c and _prose(before[c.start() + 1:] + rest, False) or _template_at(text, s - (text[s - 1:s] in "\"'")):
         return True
+    if _prose(rest, False) and (re.search(r"(?:^|\s)(?:#|//)\s", before) or re.fullmatch(r"[a-z]+[.,;]?", v1) and not _randomish(v1.rstrip(".,;"))):
+        return True
+    if re.search(r"\b[A-Za-z][a-z'-]*\s+[A-Za-z]\w*\s*:\s*[*`]*$", before) and (
+            re.fullmatch(r"[A-Za-z]+", v1) and not _randomish(v1) or re.match(r"[A-Z][A-Z0-9]*-\d+(?:,\s*[\w-]+)+", rest)):
+        return True
+    if re.fullmatch(r"(?:%[A-Za-z]|[-:./ TZ])*%[A-Za-z](?:%[A-Za-z]|[-:./ TZ])*", v1):
+        return True
+    q = text[s - 1:s]
+    if q and q in "\"'" and text[e:e + 1] == q and re.match(r"\s*\+\s*\S", text[e + 1:]) and not (_rand_part(text[s:e]) or looks_random(text[s:e])):
+        return True
     if re.fullmatch(r"[+-]?\d{1,11}", v) and re.search(r"(?i)(?:max|min|limit|count|size|ttl|timeout|length|expir\w*|tokens)\W*$", before):
         return True
     if re.search(r"\$\{\w+:?$", before):
@@ -774,7 +784,7 @@ def _scan_tokens(text, spans):
         if benign(v):
             continue
         if re.search(r"\d", v) or len(v) >= 20:
-            if SCHEME_RE.fullmatch(v):
+            if SCHEME_RE.fullmatch(v) or re.fullmatch(r"\d{4}-\d\d-\d\d(?:[T ][\d:.]+Z?)?", v):
                 continue
             spans.append((m.start("v"), m.end("v")))
 
