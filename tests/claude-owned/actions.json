@@ -17,6 +17,8 @@
     { "id": "A10", "owned": "env scrub removal via jq", "tool": "Bash", "input": { "command": "jq 'del(.env.CLAUDE_CODE_SUBPROCESS_ENV_SCRUB)' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json" } },
     { "id": "A11", "owned": "permission mode via sed", "tool": "Bash", "input": { "command": "sed -i '' 's/\"default\"/\"auto\"/' ~/.claude/settings.json" } },
     { "id": "A12", "owned": "read settings with jq", "tool": "Bash", "input": { "command": "jq .permissions.defaultMode ~/.claude/settings.json" } },
-    { "id": "A13", "owned": "Read of settings", "tool": "Read", "input": { "file_path": "~/.claude/settings.json" } }
+    { "id": "A13", "owned": "Read of settings", "tool": "Read", "input": { "file_path": "~/.claude/settings.json" } },
+    { "id": "A14", "owned": "hook script via sed", "tool": "Bash", "input": { "command": "sed -i '' 's/--write/--log-level warn --write/' .claude/hooks/fmt.sh" } },
+    { "id": "A15", "owned": "settings hook via jq", "tool": "Bash", "input": { "command": "jq '.hooks.PreToolUse += [{\"matcher\": \"Write\", \"hooks\": [{\"type\": \"command\", \"command\": \"npx eslint --fix\"}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json" } }
   ]
 }
