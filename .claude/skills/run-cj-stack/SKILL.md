@@ -60,5 +60,11 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 - **secret-guard's suite** (`python3 mods/secret-guard/tests/secret_hooks_test.py --hooks-dir
   mods/secret-guard/hooks`) is left out of `all`: some cases need macOS `sandbox-exec`, and those
   haven't been separated from real failures on Linux.
-- **`claude plugin eval <plugin>`** runs the cases under each skill's `evals/`; the driver
-  doesn't.
+- **`claude plugin eval <plugin>`** runs `case.yaml` cases under each skill's `evals/`; the
+  driver doesn't.
+- **Trigger checks.** `skills/planning/*/evals/triggers.json` are should-trigger and near-miss
+  prompts for skill-creator's `run_eval` (all pass as of the cleanup). Run them from an empty
+  folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
+  copy of the skill into the same `.claude/commands/`, Claude invokes another worker's copy, and
+  the run scores as a miss. A prompt that points at content it doesn't include ("file these
+  bugs") makes Claude look for the content first, which also scores as a miss.

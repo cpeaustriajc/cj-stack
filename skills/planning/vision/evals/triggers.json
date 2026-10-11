@@ -1,0 +1,50 @@
+[
+ {
+  "query": "ok so i've been thinking about an app that helps small landlords track repairs and rent in one place, my uncle has 4 units and uses a notebook. is this worth building? grill me on it",
+  "should_trigger": true
+ },
+ {
+  "query": "I want to plan out a whole product from scratch: a booking tool for independent tattoo artists. what would the features be and where do I even start",
+  "should_trigger": true
+ },
+ {
+  "query": "set up the initiative in linear for our new 'creator payouts' product, we have the idea but nothing written down yet",
+  "should_trigger": true
+ },
+ {
+  "query": "i built a little CLI that renames my photos by date and location for myself. friends keep asking for it. could this actually sell?",
+  "should_trigger": true
+ },
+ {
+  "query": "we need a product plan from the big picture down to tickets for a habit tracker aimed at people with ADHD",
+  "should_trigger": true
+ },
+ {
+  "query": "give me a product-level status update across the three projects under our marketplace initiative",
+  "should_trigger": true
+ },
+ {
+  "query": "cut the next slice of tickets from the confirmed checkout spec in project MP",
+  "should_trigger": false
+ },
+ {
+  "query": "write the spec for the saved-searches project, the product already lists it as F3",
+  "should_trigger": false
+ },
+ {
+  "query": "grill me on whether we should use postgres or sqlite for the sync feature in this repo",
+  "should_trigger": false
+ },
+ {
+  "query": "find me a SaaS idea worth building, I have no idea what to make but I know the dental clinic industry well",
+  "should_trigger": false
+ },
+ {
+  "query": "this ticket ABC-412 is way too long and does two things, rewrite it",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the bug where the cart empties after login",
+  "should_trigger": false
+ }
+]
