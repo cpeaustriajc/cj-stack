@@ -46,6 +46,7 @@ adapters; a team's roles, rules and taste stay in that team's repo, which the sk
 
 A mod never denies or overrides what Claude Code already decides: the permission mode, edits to
 its settings and hooks, the auto-mode classifier. It adds only what the harness lacks.
+`python3 tests/claude-owned/run.py` checks it.
 
 ## Copies
 
