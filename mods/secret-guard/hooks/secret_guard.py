@@ -856,6 +856,11 @@ def bash_check(cmd, eng, cwd):
         x = xform_hit(raw + "\n" + allt, srcs, secret_file, cwd)
         if x:
             return denial("a secret source combined with a transform or test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
+    cc_src = bool(CC_SECRET_RE.search(raw + "\n" + allt))
+    if cc_src or srcs or secret_file:
+        x = CC_CMP.search(raw) and "a comparison" or cc_src and (search_oracle_hit(raw + "\n" + allt, cwd, secret_file, True) or CC_LEN.search(allt) and "a length probe")
+        if x:
+            return denial("a secret source or Claude Code config combined with a test (%s)" % x, SAFE["read"] + " " + SAFE["status"])
     if srcs or secret_file:
         x = xform_hit(allt, srcs, secret_file, cwd)
         if x:
@@ -1040,9 +1045,13 @@ def _search_unsafe_target(f, cwd):
 
 
 _DIFF_MARKER_PATTERNS = frozenset({"^[-+][^-+]"})
+CC_SECRET_RE = re.compile(r"(?:\.claude/(?:[\w.-]+/)*settings[\w.-]*\.json|(?<![\w-])\.claude\.json|managed-settings\.json|\.mcp\.json)(?![\w.-])", re.I)
+CC_KEY = re.compile(r"\"?[a-z]+(?:[A-Z][a-z]*)*\"?")
+CC_CMP = re.compile(r"\[\[[^\]\n]*\s(?:==?|!=|=~)\s|(?:\btest|\[)\s[^\]\n;&|]*\s!?=\s")
+CC_LEN = re.compile(r"\bwc\s+(?:-\w+\s+)*-\w*[cm]|\b(?:head|tail|cut)\s+(?:-\w+\s+)*-\w*c")
 
 
-def search_oracle_hit(text, cwd, secret_file):
+def search_oracle_hit(text, cwd, secret_file, cc=False):
     for line in text.split("\n"):
         try:
             toks = _search_tokens(line)
@@ -1079,12 +1088,13 @@ def search_oracle_hit(text, cwd, secret_file):
                 patterns, files = [pos[0]], pos[1:]
             else:
                 return "a search with no pattern"
-            targets = [f for f in files if _secret_path(f)]
-            if (not files and secret_file) or any(_search_unsafe_target(f, cwd) for f in files if not _secret_path(f)):
+            targets = [f for f in files if _secret_path(f) or cc and CC_SECRET_RE.search(f)]
+            if (not files and (secret_file or cc)) or any(_search_unsafe_target(f, cwd) for f in files if not _secret_path(f)):
                 targets.append(None)
             for tgt in targets:
                 keys = _file_keys(tgt, cwd) if tgt is not None else None
-                if not all(_is_key_name(p, keys) or p in _DIFF_MARKER_PATTERNS for p in patterns):
+                relax = cc and (CC_SECRET_RE.search(tgt) if tgt else not secret_file)
+                if not all(_is_key_name(p, keys) or p in _DIFF_MARKER_PATTERNS or relax and CC_KEY.fullmatch(p) for p in patterns):
                     return "a count, test or list whose pattern is not a key name"
     return None
 
