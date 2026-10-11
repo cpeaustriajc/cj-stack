@@ -1,6 +1,11 @@
 ---
 name: commit
-description: Commit the uncommitted changes in small logical slices with messages in the repo's style, then push the current branch. Pass "local" to skip the push. Typed only - the terminal version of the desktop app's Commit and push button. Not for writing PR bodies or reviewing changes.
+description: >
+  This skill should be used when the user asks to commit their work: "commit", "commit and push",
+  "make commits in the repo's style" or "split these changes into commits". It commits the
+  uncommitted changes in small logical slices with messages in the repo's style, then pushes the
+  current branch ("local" skips the push). The terminal version of the desktop Commit and push
+  button. Not for PR bodies or reviews.
 disable-model-invocation: true
 argument-hint: "[local]"
 ---

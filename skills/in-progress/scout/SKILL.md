@@ -1,13 +1,11 @@
 ---
 name: scout
 description: >
-  Find product ideas worth building when anyone can rebuild an app with an agent in a weekend:
-  run one or two afternoon methods for finding demand (my own itch, where people already pay,
-  complaints about incumbents, a community's own words, search demand, an ecosystem's gaps), then
-  filter the candidates for what a clone can't take, and hand the best one to `vision`. Use when I
-  say "find me an idea", "what should I build", "is there a SaaS in this", "scout this niche", or
-  ask what is still worth building with AI; not for grilling an idea I already have, which is
-  `vision`.
+  This skill should be used when the user says "find me an idea", "what should I build", "is there
+  a SaaS in this", "scout this niche", or asks what is still worth building when apps are cheap to
+  copy. It runs afternoon methods for finding demand, filters candidates for what a clone can't
+  take, and hands the best one to vision. Not for grilling an idea the user already has; that is
+  vision.
 ---
 
 # Scout

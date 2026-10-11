@@ -1,6 +1,10 @@
 ---
 name: run-cj-stack
-description: Run, test, validate and inspect the cj-stack marketplace as a user's Claude Code loads it - plugin validation, every mod's hook tests, the skill script tests, `claude plugin details` token costs and `/skill-doctor` with the plugin installed. Use to check a change to a skill, mod or manifest before committing, to see what a skill costs per turn, or to run skill-doctor on cj-stack.
+description: >
+  This skill should be used to run, test, validate or inspect the cj-stack marketplace as Claude
+  Code loads it: plugin validation, every mod's tests, the skill script tests, plugin token costs,
+  /skill-doctor with the plugin installed, and the trigger and routing evals. Use it before
+  committing a change to a skill, mod or manifest, or to see what a skill costs per turn.
 ---
 
 # Run cj-stack
@@ -74,9 +78,12 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 - **`claude plugin eval <plugin>`** runs `case.yaml` cases under each skill's `evals/`; the
   driver doesn't.
 - **Trigger checks.** Each skill's `evals/triggers.json` holds should-trigger and near-miss prompts
-  for skill-creator's `run_eval`; all pass as of the cleanup. `commit` and `create-pr` are
-  typed-only, so their positives fire only sometimes in `run_eval` (it ignores
-  `disable-model-invocation`); the routing suite is their real check. Run them from an empty
+  for skill-creator's `run_eval`; all pass as of the cleanup. `run_eval` ignores
+  `disable-model-invocation`, so for the typed-only `commit` and `create-pr` it measures only the
+  description; the routing suite checks that they never load on their own.
+- **Descriptions** follow plugin-dev's rules (`tests` checks them): third person ("This skill
+  should be used when…"), at most 500 characters, and a `>` block scalar, since an unquoted
+  description containing `": "` is invalid YAML that `claude plugin validate` doesn't catch. Run them from an empty
   folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
   copy of the skill into the same `.claude/commands/`, Claude invokes another worker's copy, and
   the run scores as a miss. A prompt that points at content it doesn't include ("file these

@@ -1,12 +1,11 @@
 ---
 name: drive
 description: >
-  Run an agent loop that drives work to a checkable finish without me: decide whether it should
-  loop at all, write the exit check before the first pass, freeze the harness that checks it, then
-  one change per pass, kept or reverted, with state and a log on disk and a brake on lack of
-  progress. Use when I say "drive this", "loop until", "keep going until green", "run it
-  overnight", "hillclimb", or hand over a ticket to finish unattended; and before writing a goal,
-  a Stop hook or a scheduled loop. Not for re-running a command on a timer; that is `/loop`.
+  This skill should be used when the user says "drive this", "loop until it passes", "keep going
+  until green", "run it overnight" or "hillclimb", hands over a ticket to finish unattended, or
+  before writing a goal or Stop hook. It decides whether the work should loop, writes the exit
+  check first, freezes the harness, then makes one change per pass, kept or reverted, with a log
+  on disk and a brake on lack of progress. Not for a timer; that is /loop.
 ---
 
 # Drive

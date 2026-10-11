@@ -1,13 +1,11 @@
 ---
 name: vision
 description: >
-  Grill me on a vague product idea, starting with whether it is worth building and worth my time,
-  until it is sharp; then write it as the top of the plan in the team's tracker (destination,
-  features that become projects, not yet specified, out of scope, riskiest first) and hand each
-  feature to `shape` in turn. Use it whenever I bring a product idea or a vision, say "grill me
-  on this idea", "plan the product", "set up the initiative" or "what are the features", want a
-  plan from product down to tickets, wonder whether something I built for myself could sell, or
-  ask for a product-level update or audit.
+  This skill should be used when the user brings a product idea or vision, asks "is this worth
+  building", says "grill me on this idea", "plan the product", "set up the initiative" or "what
+  are the features", wants a plan from product down to tickets, wonders whether a personal tool
+  could sell, or asks for a product-level update. It grills the idea, worth-it first, then writes
+  the top level of the plan and hands each feature to shape.
 ---
 
 # Vision

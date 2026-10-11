@@ -1,6 +1,11 @@
 ---
 name: playbooks
-description: Route a bug fix, refactor, performance fix or feature to its playbook and copy the steps into the task list, so each kind of work carries its own proof - a reproduced bug, pinned behaviour, a measured baseline, a verified slice. Use at the start of any bug, refactor, "make it faster" or feature task bigger than a one-line change.
+description: >
+  This skill should be used when fixing a bug, refactoring, chasing a performance problem or
+  building a feature from a ticket, at the start of any such task bigger than a one-line change.
+  It routes the work to its playbook and copies the steps into the task list, so each kind of work
+  carries its own proof: a reproduced bug, pinned behaviour, a measured baseline or a verified
+  slice.
 ---
 
 # Playbooks

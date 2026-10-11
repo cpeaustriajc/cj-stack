@@ -1,12 +1,11 @@
 ---
 name: shape
 description: >
-  Shape one project in the team's tracker (Linear, Jira, GitHub, a Markdown file or another): a
-  spec with numbered requirements, testing seams, phases as milestones and a project description,
-  under a product from `vision` and above work items from `tickets`. Use it whenever a project,
-  epic, spec or milestone is created, restructured or audited; when I say "shape this", "put this
-  in a doc", "write the spec" or "set a milestone"; when a spec arrives pasted into a single
-  ticket; when direction changes after a demo; and for a project's status update.
+  This skill should be used when a project, epic, spec or milestone is created, restructured or
+  audited in any tracker; when the user says "shape this", "put this in a doc", "write the spec"
+  or "set a milestone"; when a spec arrives pasted into one ticket; when direction changes after a
+  demo; and for a project status update. It writes a spec with numbered requirements, testing
+  seams and phases, under a product from vision.
 ---
 
 # Shape

@@ -1,13 +1,11 @@
 ---
 name: project-knowledge
 description: >
-  Read and keep a project's decision log and research pages wherever the team keeps them: GitHub
-  wiki, Notion, Linear documents, Obsidian, Confluence or Google Docs. Use it whenever a decision is being made,
-  changed, reversed or questioned ("what did we decide about X", "record this decision", "we
-  changed our mind on…", "why is it like this"). Also use it when writing up research, when moving
-  rationale, evidence or history out of CLAUDE.md, rules files or the README, and when a
-  project's CLAUDE.md points at a wiki, Notion page, Linear project or vault. Use it even when the user just says
-  "note that down" about a product or architecture choice.
+  This skill should be used when the user says "note that down as a decision", "what did we decide
+  about X", "supersede that decision", asks to record research or a finding, or a decision is made
+  in conversation that others will need. It keeps a decision log and research pages for people in
+  the team's wiki, Notion, Linear, Obsidian or Confluence, read before deciding and never
+  rewritten. Agent instructions belong in CLAUDE.md instead.
 ---
 
 # Project knowledge

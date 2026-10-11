@@ -1,6 +1,10 @@
 ---
 name: create-pr
-description: Commit what's left, push the branch and open a pull request with a short body that links the issue and the evidence. Pass "draft" to open it as a draft. Typed only - the terminal version of the desktop app's Create PR button. Not for reviewing a PR or writing review comments.
+description: >
+  This skill should be used when the user asks to open a pull request: "open a PR", "make a PR for
+  this branch", "create a draft PR" or "PR this against develop". It commits, runs the fast
+  checks, pushes and opens a PR that links the issue and the evidence ("draft" for a draft, or a
+  base branch). The terminal version of the desktop Create PR button.
 disable-model-invocation: true
 argument-hint: "[draft] [base-branch]"
 ---

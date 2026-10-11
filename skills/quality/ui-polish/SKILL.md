@@ -1,6 +1,10 @@
 ---
 name: ui-polish
-description: Review a UI or its animations against the design and a list of the small mistakes agents keep making - wrong easing, slow or janky motion, clutter, truncation, missing states - and return a Before/After/Why table with a verdict. Use when I say "polish", "review the UI", "does this feel right", "check the animation", or before asking me to sign off a visual change. Not for building, restyling, or choosing palette or type; a design skill does that.
+description: >
+  This skill should be used when the user asks to review a UI against its design, polish spacing,
+  type, colour or motion, or sign off a visual change, and before asking for visual sign-off. It
+  compares the screen with the design and a list of common mistakes, and reports a
+  Before/After/Why table with one verdict: ship, ship after the top fixes, or rework.
 ---
 
 # UI polish

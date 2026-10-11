@@ -23,6 +23,22 @@ tests() {
     compgen -G "$mod/hooks/*.test.ts*" >/dev/null || continue
     say "mod tests: $mod"; run bash -c "claude plugin test '$mod' 2>&1 | tail -3"
   done
+  say "skill descriptions: valid YAML, at most 500 characters, third person (plugin-dev's rules)"
+  run python3 - <<'PY'
+import glob, sys, yaml
+bad = 0
+for f in sorted(glob.glob("skills/*/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
+    if "/archived/" in f:
+        continue
+    try:
+        d = str(yaml.safe_load(open(f).read().split("\n---\n")[0][4:])["description"]).strip()
+    except Exception as e:
+        print(f"{f}: frontmatter does not parse: {e}"); bad = 1; continue
+    if len(d) > 500: print(f"{f}: description is {len(d)} characters"); bad = 1
+    if not d.startswith("This skill should be used"): print(f"{f}: description is not third person"); bad = 1
+print("descriptions ok" if not bad else "descriptions FAILED")
+sys.exit(bad)
+PY
   say "script tests"
   run python3 -I skills/planning/shape/scripts/test_check_tree.py
   run bash skills/knowledge/hone/scripts/test_corrections.sh

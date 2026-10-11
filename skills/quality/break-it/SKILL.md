@@ -1,6 +1,11 @@
 ---
 name: break-it
-description: Drive the real app in a browser as a careless, impatient or confused user and try to break it - double-clicks, back button mid-flow, junk input, worst-case data, tiny screens - then hand back ranked bugs with video or screenshots and repro steps. Use when I say "break it", "try to break this", "dumb user", "monkey test", "bug bash", "dogfood" or "QA this like a user", and after a change to a user flow (forms, checkout, multi-step flows) before review; visual sign-off is `ui-polish`.
+description: >
+  This skill should be used when the user says "break it", "try to break this", "dumb user",
+  "monkey test", "bug bash", "dogfood" or "QA this like a user", and after a change to a user flow
+  (forms, checkout, multi-step flows) before review. It drives the real app as a careless,
+  impatient or confused user with worst-case data and hands back ranked bugs with repro steps and
+  video. Visual sign-off is ui-polish.
 ---
 
 # Break it

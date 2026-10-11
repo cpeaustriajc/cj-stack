@@ -1,12 +1,11 @@
 ---
 name: tickets
 description: >
-  Cut a confirmed spec into work items in the team's tracker: thin end-to-end slices, each
-  demoable, sized for one session, citing the requirements it meets, with blocked-by links; and
-  write or review a single work item, bug or chore. Use it whenever I say "ticket", "break this
-  into tickets", "cut the next slice", "write the issue", "file these bugs as issues", "review ABC-123" or
-  "rewrite this ticket", after `shape` confirms a spec, and when a ticket is too long or does two
-  things.
+  This skill should be used when the user says "ticket", "break this into tickets", "cut the next
+  slice", "write the issue", "file these bugs as issues", "review ABC-123" or "rewrite this
+  ticket", after shape confirms a spec, and when a ticket is too long or does two things. It cuts
+  thin, demoable slices that cite the requirements they meet, with blocked-by links, or writes one
+  work item, bug or chore.
 ---
 
 # Tickets
