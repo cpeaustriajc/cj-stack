@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """PreToolUse hook: deny secret-source plus transform combos and tampering; route Bash output through the filter."""
+import collections
 import json
 import urllib.parse
 import os
@@ -1244,7 +1245,185 @@ SETTINGS_KEYS = re.compile(
     r"excludedCommands|\"sandbox\"|enableAllProjectMcpServers|mcpServers|ANTHROPIC_(?:BASE_URL|AUTH_TOKEN)|OTEL_|CLAUDE_CODE_|permissions", re.I)
 
 
-def write_check(tool, ti, eng):
+CC_JSON = re.compile(r"(?:^|/)(?:\.claude/(?:[\w.-]+/)*settings[\w.-]*\.json|managed-settings\.json|\.mcp\.json)$", re.I)
+CC_TREE = re.compile(r"(?:^|/)\.claude/(?:(?:hooks|worktrees|commands|agents|skills|plugins)/|[\w./-]*\.command$)", re.I)
+CC_KEEP = re.compile(r"secret-guard|secret_(?:engine|redact|guard|filter)\.py|hooks/tests/|redact(?:or)?[\w.-]*\.(?:sh|js|py)(?![\w])|path_guard\.py|session-start\.sh", re.I)
+CC_DOC = re.compile(r"\.(?:md|mdx|markdown|txt|rst)$", re.I)
+_VAL = r'\s*:\s*("(?:[^"\\]|\\.)*"|[^\s,}\]]+)'
+HELPER_RX = re.compile(r'"(apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh)"' + _VAL, re.I)
+EXFIL_ENV_RX = re.compile(r'"(\w*ANTHROPIC\w*BASE_URL|OTEL_EXPORTER_\w*ENDPOINT|OTEL_LOG_\w+)"' + _VAL, re.I)
+OFF_RX = re.compile(r'"(disableAllHooks)"\s*:\s*"?([^\s,}\]"]*)', re.I)
+PLUGIN_RX = re.compile(r'"(secret-guard@[^"]*)"' + _VAL, re.I)
+CMD_RX = re.compile(r'"(command|statusLine|fileSuggestion|apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh)"\s*:\s*"((?:[^"\\]|\\.)*)"', re.I)
+REDACTOR_RX = re.compile(r"redact|secret_guard|secret_filter|secret-guard", re.I)
+HOOKTOK_RX = re.compile(r'"hooks"|"(?:Pre|Post)\w*"|"matcher"|"onFailure"|"timeout"|"async"|"type"\s*:|"command"', re.I)
+RISK_RX = re.compile(r'"Post\w*"\s*:|"type"\s*:\s*"(?:http|prompt|agent)"', re.I)
+EMPTYHOOKS_RX = re.compile(r'"hooks"\s*:\s*(?:\{\s*\}|\[\s*\])')
+ENV_ANY = re.compile(
+    r"(?:(?<![\w./${-])|(?<=/bin/))(?:env(?:\s+-(?:u\s*\S+|[-\w]+))*|printenv|export\s+-p|compgen\s+-e)\s*(?:$|[|;&)`}>\"'<])|(?<![\w./$-])set\s*(?:$|[|;&)`}><])|(?<![\w-])(?:declare|typeset|local)\s+-\w*[pxn]"
+    r"|\$\{!|\beval\b[^\n]*\$|\bjq\b[^\n;|&]*(?:(?<![.\w$:-])env(?![\w:-])|\$ENV\b)|(?<![.\w])_?environ\b(?!\s*(?:\[|\.get\b))|\benvp\b|\bENVIRON\b(?!\s*\[)"
+    r"|\bos\.environb?\b(?!\s*(?:\.(?:get|pop)\b|\[))|\bprocess\.env\b(?!\s*(?:\.\w|\[))|\bDeno\.env\b(?!\.get\b)|%ENV\b|\$_(?:ENV|SERVER)\b(?!\s*\[)"
+    r"|\bENV\b(?!\s*(?:\[|\.fetch\b|\.key\?))(?=\s*(?:\.|\)|$))|\b(?:p|pp|puts|print)\s+ENV\b(?!\s*\[)|\b(?:System\.getenv|GetEnvironmentVariables|getenv)\s*\(\s*\)"
+    r"|\bos\.Environ\(|\benv::vars|(?i:\b(?:get-childitem|gci|ls|dir|gi|get-item|get-content|gc|cat|type)\s+(?:-path\s+)?env:(?!\w))", re.M)
+ENV_GET = re.compile(
+    r"(?:(?P<a>\$ENV\s*\{|(?i:\$\{?env:|(?<![\w$\"'])env:(?=[\\\w])\\?)|\bprocess\.env\.|(?<![\w-])printenv\s+(?:-\S+\s+)*)\s*(?P<n>['\"]?\w*['\"]?)"
+    r"|(?:\bos\.environb?\s*(?:\.(?:get|pop|setdefault)\s*\(|\[)|\b(?:secure_)?getenvb?\s*\(|\bos\.(?:Getenv|LookupEnv)\s*\(|\benv::var(?:_os)?\s*\(|\bSystem\.getenv\s*\("
+    r"|\bDeno\.env\.get\s*\(|\bENV\s*(?:\[|\.fetch\s*\(|\.key\?\s*\()|\bprocess\.env\s*\[|GetEnvironmentVariable\s*\(|\bENVIRON\s*\[|\$_(?:ENV|SERVER)\s*\[)(?=(?P<k>[^)\]}\n]*)))")
+VAR_REF = re.compile(r"\$\{?([A-Za-z_]\w*)|(?<![\w$])([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)(?!\w)")
+HOOK_SRC = [re.compile(rx, re.I) for rx, kind in CRED_TOOLS if kind not in (None, "edit") and "environ" not in rx]
+R1_NET = re.compile(r"\b(?:curl|wget|nc|ncat|socat)\b")
+R1_SEND = re.compile(r"\$\{?\w*(?:KEY|TOKEN|SECRET|PASS|CRED|AUTH)|(?:-d|--data\S*|-F|-T|--upload-file)\s+[\"']?[@<]|\|\s*(?:curl|wget|nc|ncat|socat)\b", re.I)
+
+
+def _u(t):
+    return re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), t)
+
+
+def _cc_pairs(rx, t):
+    return {(m.group(1).lower(), re.sub(r"\s+", "", m.group(2)).lower()) for m in rx.finditer(t)}
+
+
+def _cc_disk(pn, cwd):
+    p = os.path.expanduser(pn)
+    p = p if os.path.isabs(p) else os.path.join(cwd or os.getcwd(), p)
+    try:
+        if os.path.getsize(p) > 2000000:
+            return None
+        with open(p, encoding="utf-8", errors="replace") as f:
+            return f.read()
+    except OSError:
+        return None
+
+
+def _cc_span(tool, ti, disk, body):
+    if tool in ("Edit", "MultiEdit") or "old_string" in ti:
+        pairs = [(e.get("old_string") or "", e.get("new_string") or "") for e in (ti.get("edits") if isinstance(ti.get("edits"), list) else [ti]) if isinstance(e, dict)]
+        cur = disk
+        for o, n in pairs:
+            if cur is None or o not in cur:
+                return "\n".join(o for o, _ in pairs), "\n".join(n for _, n in pairs), False
+            cur = cur.replace(o, n, -1 if ti.get("replace_all") else 1)
+        return disk, cur, True
+    return disk, ti["content"] if isinstance(ti.get("content"), str) else body, disk is not None
+
+
+def _cmds(t):
+    out = {}
+    for m in CMD_RX.finditer(t):
+        try:
+            out.setdefault(json.loads('"' + m.group(2) + '"'), re.sub("(?i)^command$", "hook", m.group(1)))
+        except ValueError:
+            out.setdefault(m.group(2), "hook")
+    try:
+        hooks = json.loads(t).get("hooks")
+    except (ValueError, AttributeError):
+        hooks = None
+    for ev, groups in hooks.items() if isinstance(hooks, dict) else []:
+        for c in re.findall(r'"command":\s*("(?:[^"\\]|\\.)*")', json.dumps(groups)):
+            out[json.loads(c)] = ev + " hook"
+    return out
+
+
+def _secret_name(n):
+    from secret_engine import classify, _is_dsn_name, CTX_KEEP_NAMES
+    return n.lower() not in CTX_KEEP_NAMES and (classify(n) != 0 or _is_dsn_name(n) or n.upper().endswith("HEADERS"))
+
+
+def _r1(c, shell, eng, cwd):
+    c = _u(c).replace("\\\n", "")
+    t = c
+    if shell:
+        if bash_check(c, eng, cwd):
+            return True
+        t = "\n".join(unquote_layers(norm(c)) + effective(norm(c), cwd))
+    t = re.sub(r"([\"'])env\1\s*:", " ", t)
+    if ENV_ANY.search(t) or any(r.search(t) for r in SOURCE_RES + HOOK_SRC) or SECRET_FILES_RE.search(re.sub(r"\b(?:process|Deno)\.env\.", " ", t)) or SENS_COMMON_RE.search(t) or "transcript_path" in t:
+        return True
+    names = [a or b for a, b in VAR_REF.findall(t)]
+    for m in ENV_GET.finditer(t):
+        lit = re.fullmatch(r"\s*(['\"]?)([A-Za-z_]\w*)\1\s*(?:,.*)?", m.group("k")) if m.group("k") is not None else None
+        if m.group("a") is not None:
+            lit = re.fullmatch(r"(['\"]?)([A-Za-z_]\w*)\1", m.group("n"))
+        elif lit and not lit.group(1):
+            lit = None
+        if not lit:
+            return True
+        names.append(lit.group(2))
+    if any(_secret_name(n) for n in names) or R1_NET.search(t) and R1_SEND.search(t):
+        return True
+    return any(re.search(r">&2|/dev/stderr", s) and not re.match(r"\s*(?:(?:then|else|do)\s+)?(?:echo|printf)\b[^$`|<>&]*(?:\d?>&2|>\s*/dev/stderr)\s*$", s) for s in re.split(r"[;\n]|&&|\|\|", c))
+
+
+def _hooks(t):
+    try:
+        doc = json.loads(t) if t.strip() else {}
+    except ValueError:
+        return None
+    red, risk = collections.Counter(), collections.Counter()
+    hooks = doc.get("hooks") if isinstance(doc, dict) else None
+    for ev, groups in (hooks.items() if isinstance(hooks, dict) else []):
+        for g in groups if isinstance(groups, list) else []:
+            m = g.get("matcher") if isinstance(g, dict) else None
+            for h in g["hooks"] if isinstance(g, dict) and isinstance(g.get("hooks"), list) else [g]:
+                key = json.dumps([ev, m, h], sort_keys=True)
+                red[key] += bool(REDACTOR_RX.search(json.dumps(h)))
+                risk[key] += ev.startswith("Post") or isinstance(h, dict) and h.get("type") in ("http", "prompt", "agent")
+    return red, risk
+
+
+def _cc_json(P, Q, full, fresh, eng, cwd):
+    if _cc_pairs(HELPER_RX, Q) - _cc_pairs(HELPER_RX, P):
+        return "adding or changing a credential helper"
+    if _cc_pairs(EXFIL_ENV_RX, Q) - _cc_pairs(EXFIL_ENV_RX, P):
+        return "pointing the API key or telemetry at another host"
+    if {p for p in _cc_pairs(OFF_RX, Q) if p[1] not in ("false", "0", "null", "")} - _cc_pairs(OFF_RX, P):
+        return "switching all hooks off"
+    if _cc_pairs(PLUGIN_RX, Q) != _cc_pairs(PLUGIN_RX, P):
+        return "changing whether secret-guard is enabled"
+    old = _cmds(P)
+    for c, label in _cmds(Q).items():
+        if c not in old and _r1(c, True, eng, cwd):
+            return "a %s command that dumps the environment or reads secrets" % label
+    hp, hq = _hooks(P), _hooks(Q)
+    if full and hp is not None and hq is not None:
+        if hp[0] - hq[0]:
+            return "changing or removing the redaction hook"
+        if hq[1] - hp[1]:
+            return "adding a hook that sees raw tool output or cannot be inspected"
+    else:
+        if REDACTOR_RX.search(P) and P != Q:
+            return "changing or removing the redaction hook"
+        if not full and HOOKTOK_RX.search(P) and P != Q:
+            return "changing a hook entry that may be the redaction hook"
+        if len(RISK_RX.findall(Q)) > len(RISK_RX.findall(P)):
+            return "adding a hook that sees raw tool output or cannot be inspected"
+    if fresh and (not Q.strip() or Q.strip() == "{}" or EMPTYHOOKS_RX.search(Q)):
+        return "emptying a settings file that could not be checked for the redaction hook"
+    return None
+
+
+def cc_check(tool, ti, pn, kind, cwd, body, eng):
+    pre, post, full = _cc_span(tool, ti, _cc_disk(pn, cwd), body)
+    P, Q = _u(pre or ""), _u(post)
+    old = {l.strip() for l in _cc_lines(P)}
+    new = "\n".join(l for l in _cc_lines(Q) if l.strip() not in old)
+    why = None
+    if kind == "json":
+        why = _cc_json(P, Q, full, pre is None, eng, cwd)
+    elif kind == "script":
+        shell = re.search(r"(?:^|/)[^./]+$|\.(?:sh|bash|zsh|ksh|command)$", pn, re.I) and not re.match(r"#!.*\b(?:python|node|ruby|perl|deno|bun|pwsh|php)", Q)
+        if _r1(new, bool(shell), eng, cwd):
+            why = "a hook script (%s) that dumps the environment or reads secrets" % os.path.basename(pn)
+    elif any(_r1(c, True, eng, cwd) for c in re.findall(r"!`([^`\n]+)`", new) + re.findall(r"```!\n(.*?)```", new, re.S)):
+        why = "a command in %s that dumps the environment or reads secrets" % os.path.basename(pn)
+    return denial(why, "Leave that part out; Claude Code's own permission check covers the rest of its config.") if why else None
+
+
+def _cc_lines(t):
+    return [l for l in t.replace("\\\n", "").split("\n") if not re.match(r"\s*#(?!\s*define\b)", l)]
+
+
+def write_check(tool, ti, eng, cwd=None):
     paths = [ti.get(k) for k in ("file_path", "path", "notebook_path", "filepath", "target", "destination") if isinstance(ti.get(k), str)]
     texts = []
     for k, v in ti.items():
@@ -1258,12 +1437,16 @@ def write_check(tool, ti, eng):
             pn = re.sub(r"/[^/.][^/]*/\.\./", "/", pn, count=1)
         pn = re.sub(r"/\./", "/", pn)
         if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit") or "write" in tool.lower() or "edit" in tool.lower():
-            if PROT_PATHS.search(pn) or PROT_BASE.search(pn) and CLAUDE_DIR.search(pn):
+            cc = "json" if CC_JSON.search(pn) else ("doc" if CC_DOC.search(pn) else "json" if pn.lower().endswith(".json") else "script") if CC_TREE.search(pn) and not CC_KEEP.search(pn) else None
+            d = cc and cc_check(tool, ti, pn, cc, cwd, body, eng)
+            if d:
+                return d
+            if not cc and (PROT_PATHS.search(pn) or PROT_BASE.search(pn) and CLAUDE_DIR.search(pn)):
                 return denial("editing a hook, settings or startup file", SAFE["edit"])
-            if PROT_BASE.search(pn) and re.search(r"settings|managed|\.mcp", pn, re.I) and not re.search(r"/src/|docs?/", pn, re.I):
+            if not cc and PROT_BASE.search(pn) and re.search(r"settings|managed|\.mcp", pn, re.I) and not re.search(r"/src/|docs?/", pn, re.I):
                 if re.search(r"(?:^|/)\.claude/|managed-settings|\.mcp\.json", pn, re.I):
                     return denial("editing a hook, settings or startup file", SAFE["edit"])
-            if re.search(r"\.command$|\.envrc$|sitecustomize\.py$|\.rprofile$|(?:^|/)\.(?:zshrc|bashrc|profile)$", pn, re.I) and (
+            if not cc and re.search(r"\.command$|\.envrc$|sitecustomize\.py$|\.rprofile$|(?:^|/)\.(?:zshrc|bashrc|profile)$", pn, re.I) and (
                     re.search(r"\.command$", pn, re.I) or re.search(r"env\b|printenv|cat\s|\$\(|exec |script|curl|nc |os\.environ|Sys\.getenv", body)):
                 return denial("writing a startup or launcher file that could run commands", SAFE["edit"])
             if re.search(r"\.github/workflows/", pn) and re.search(r"secrets\.|curl|env\b|printenv", body) and re.search(r"(?:curl|printenv|\benv\b)", body):
@@ -1345,7 +1528,7 @@ def decide(ev, eng):
     if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit", "SendMessage", "TaskCreate", "TaskUpdate", "SubagentHandback", "Agent", "Task", "WebFetch", "WebSearch") or tool.startswith("mcp__"):
         writer = tool in ("Write", "Edit", "MultiEdit", "NotebookEdit") or bool(re.search(r"write|edit|create|move|copy|update", tool, re.I))
         if writer:
-            d = write_check(tool, ti, eng)
+            d = write_check(tool, ti, eng, cwd)
             if d:
                 return {"deny": d}
         d = generic_check(tool, ti, eng, writer and tool in ("Write", "Edit", "MultiEdit", "NotebookEdit"))

@@ -5,7 +5,7 @@
  "fixtures": [
   {
    "kind": "pre",
-   "name": "Edit adds sandbox excludedCommands to project settings is denied",
+   "name": "Edit adds sandbox excludedCommands to project settings is allowed",
    "files": {},
    "event": {
     "hook_event_name": "PreToolUse",
@@ -16,8 +16,8 @@
      "new_string": "{\"sandbox\":{\"excludedCommands\":[\"cat\"]},"
     }
    },
-   "expect": "deny",
-   "policy_note": "owner: Claude may read anything, but may not loosen its own hooks, settings, permissions, sandbox or git hooks (policy-review flip reverted)"
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off. Supersedes the 'may not loosen' note."
   },
   {
    "kind": "pre_exec",

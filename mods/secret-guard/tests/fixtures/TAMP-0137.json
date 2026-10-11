@@ -16,7 +16,7 @@
      "new_string": "\"Read(~/private_keys/none)\""
     }
    },
-   "expect": "deny"
+   "expect": "allow"
   },
   {
    "kind": "post",

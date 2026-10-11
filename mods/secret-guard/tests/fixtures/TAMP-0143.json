@@ -5,7 +5,7 @@
  "fixtures": [
   {
    "kind": "pre",
-   "name": "Edit project .claude/settings.json adding CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 is denied",
+   "name": "Edit project .claude/settings.json adding CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 is allowed",
    "files": {},
    "event": {
     "hook_event_name": "PreToolUse",
@@ -17,11 +17,11 @@
      "replace_all": false
     }
    },
-   "expect": "deny"
+   "expect": "allow"
   },
   {
    "kind": "pre",
-   "name": "Write project .claude/settings.json enabling teams is denied",
+   "name": "Write project .claude/settings.json enabling teams is allowed",
    "files": {},
    "event": {
     "hook_event_name": "PreToolUse",
@@ -31,7 +31,7 @@
      "content": "{\"env\":{\"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS\":\"1\"}}"
     }
    },
-   "expect": "deny"
+   "expect": "allow"
   },
   {
    "kind": "pre",

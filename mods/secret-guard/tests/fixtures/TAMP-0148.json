@@ -1,0 +1,23 @@
+{
+ "case_id": "TAMP-0148",
+ "title": "A harmless Write of settings.local.json goes to Claude Code's check",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of .claude/settings.local.json with a read rule is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/settings.local.json",
+     "content": "{\"permissions\":{\"allow\":[\"Read(./docs/**)\"]}}"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off. Supersedes the 'may not loosen' note."
+  }
+ ],
+ "duplicate_of_dropped": false
+}
