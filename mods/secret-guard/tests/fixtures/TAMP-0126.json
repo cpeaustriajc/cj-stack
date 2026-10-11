@@ -5,7 +5,7 @@
  "fixtures": [
   {
    "kind": "pre",
-   "name": "sed -i on settings.json chained with cat is denied",
+   "name": "sed -i on settings.json chained with cat is allowed",
    "files": {},
    "event": {
     "hook_event_name": "PreToolUse",
@@ -14,7 +14,8 @@
      "command": "sed -i '' 's/\"deny\"/\"allow\"/' ~/.claude/settings.json && cat .env.example"
     }
    },
-   "expect": "deny"
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off. Supersedes the 'may not loosen' note."
   },
   {
    "kind": "post",

@@ -1,0 +1,113 @@
+{
+ "case_id": "TAMP-0160",
+ "title": "Bash edits of Claude Code's settings that add a helper or switch redaction off are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "jq switching all hooks off is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.disableAllHooks=true' {HOME}/.claude/settings.json > {HOME}/.claude/settings.json.tmp && mv {HOME}/.claude/settings.json.tmp {HOME}/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq adding a credential helper is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.apiKeyHelper=\"~/x.sh\"' {HOME}/.claude/settings.json > {HOME}/.claude/settings.json.tmp && mv {HOME}/.claude/settings.json.tmp {HOME}/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq removing the secret-guard plugin is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'del(.enabledPlugins[\"secret-guard@cj-stack\"])' {HOME}/.claude/settings.json > {HOME}/.claude/settings.json.tmp && mv {HOME}/.claude/settings.json.tmp {HOME}/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed disabling the secret-guard plugin is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i 's/\"secret-guard@cj-stack\": true/\"secret-guard@cj-stack\": false/' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq deleting the PostToolUse hooks is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'del(.hooks.PostToolUse)' {HOME}/.claude/settings.json > {HOME}/.claude/settings.json.tmp && mv {HOME}/.claude/settings.json.tmp {HOME}/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "tee of unseen content over settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat patch.json | tee ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "echo emptying settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo '{}' > ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

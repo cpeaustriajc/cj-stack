@@ -259,7 +259,7 @@ REDIR_TOK = re.compile(r"^(?:\d*|&)(?:>>?|<<?<?|>&|<&)")
 FUNC_DEF = re.compile(r"(?:^|(?<=[;&|\n{(]))\s*(?:function\s+)?([A-Za-z_][\w:.-]*)\s*(?:\(\s*\))?\s*\{")
 
 
-def strip_heredocs(t):
+def strip_heredocs(t, bodies=None):
     lines = t.split("\n")
     out = []
     i = 0
@@ -275,6 +275,8 @@ def strip_heredocs(t):
                 body.append(lines[i])
                 i += 1
             i += 1
+            if bodies is not None:
+                bodies.append("\n".join(body) + "\n")
             if INTERP_HERE.search(ln[:m.start()]):
                 out.extend(body)
     return "\n".join(out)
@@ -814,9 +816,10 @@ def bash_check(cmd, eng, cwd):
             return denial("a command that exposes credentials or weakens the redaction setup",
                           SAFE.get(kind if kind in SAFE else "tool", SAFE["tool"]))
 
-    w = write_to_protected(raw)
+    cc = []
+    w = write_to_protected(raw, cc) or cc and cc_bash(n, cc, cwd, eng)
     if w:
-        return denial(w, SAFE["edit"])
+        return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
 
     if re.search(r"(?:^|[;&|(\n]\s*)\.\s+\S*(?:zshrc|bashrc|profile)\b|\bsource\s+\S*(?:zshrc|bashrc|profile)\b", allt, re.I):
         return denial("sourcing a shell rc file", SAFE["read"])
@@ -892,12 +895,14 @@ def _shell_pieces(t):
     return out
 
 
-def write_to_protected(t):
+def write_to_protected(t, cc):
     tl = t
     for m in re.finditer(r">>?\s*['\"]?([^\s'\"|;&<>)]+)", tl):
         tgt = m.group(1)
         if PROT_PATHS.search(tgt) or PROT_BASE.search(tgt):
-            return "writing to a hook, settings or shell-startup file"
+            if not _cc_kind(tgt):
+                return "writing to a hook, settings or shell-startup file"
+            cc.append(tgt)
     pieces = _shell_pieces(tl)
     # A cd into .claude or a variable naming a protected path carries it into later pieces: judge the whole command.
     whole = any(re.match(r"\s*(?:cd|pushd)\s", p) and re.search(r"\.claude(?:/|\s|$|['\"])", p)
@@ -911,6 +916,10 @@ def write_to_protected(t):
                      r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", piece, re.I):
             if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", piece, re.I) and not re.search(
                     r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|write_text|\.write\(|open\([^)]*['\"][wa]|json\.dump|setdefault|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)|\bgit\s+(?:checkout|restore|reset)", piece, re.I):
+                continue
+            toks = [x for x in re.findall(r"[^\s'\"|;&<>()]+", piece) if PROT_PATHS.search(x) or PROT_BASE.search(x)]
+            if not whole and toks and all(_cc_kind(x) for x in toks):
+                cc.extend(toks)
                 continue
             return "modifying a hook, settings, startup or tamper-sensitive file"
     return None
@@ -1248,6 +1257,7 @@ SETTINGS_KEYS = re.compile(
 CC_JSON = re.compile(r"(?:^|/)(?:\.claude/(?:[\w.-]+/)*settings[\w.-]*\.json|managed-settings\.json|\.mcp\.json)$", re.I)
 CC_TREE = re.compile(r"(?:^|/)\.claude/(?:(?:hooks|worktrees|commands|agents|skills|plugins)/|[\w./-]*\.command$)", re.I)
 CC_KEEP = re.compile(r"secret-guard|secret_(?:engine|redact|guard|filter)\.py|hooks/tests/|redact(?:or)?[\w.-]*\.(?:sh|js|py)(?![\w])|path_guard\.py|session-start\.sh", re.I)
+CC_BASH = re.compile(r"(?:^|/)\.claude/settings[\w.-]*$|(?:^|/)\.mcp\.json[\w.-]*$", re.I)
 CC_DOC = re.compile(r"\.(?:md|mdx|markdown|txt|rst)$", re.I)
 _VAL = r'\s*:\s*("(?:[^"\\]|\\.)*"|[^\s,}\]]+)'
 HELPER_RX = re.compile(r'"(apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh)"' + _VAL, re.I)
@@ -1423,6 +1433,46 @@ def _cc_lines(t):
     return [l for l in t.replace("\\\n", "").split("\n") if not re.match(r"\s*#(?!\s*define\b)", l)]
 
 
+def _cc_kind(p):
+    if CC_KEEP.search(p):
+        return None
+    if CC_JSON.search(p) or CC_BASH.search(p):
+        return "json"
+    return ("doc" if CC_DOC.search(p) else "json" if p.lower().endswith(".json") else "script") if CC_TREE.search(p) else None
+
+
+def cc_bash(cmd, targets, cwd, eng):
+    q_rx = r"'([^']*)'|\"((?:[^\"\\]|\\.)*)\""
+    full = []
+    strip_heredocs(cmd, full)
+    for m in re.finditer(r"\b(?:cp|mv|install)\b((?:\s+[^\s|;&<>]+)+)", cmd):
+        full += [_cc_disk(a.strip("'\""), cwd) for a in [a for a in m.group(1).split() if not a.startswith("-")][:-1]]
+    for m in re.finditer(r"\b(?:echo|printf)\s+([^|;&>\n]*)(?:>|\|\s*tee\b)", cmd):
+        full.append("".join(a or b for a, b in re.findall(q_rx, m.group(1))) or m.group(1).strip() or "\n")
+    full = [q for q in full if q]
+    lits = "\n".join(a or b for a, b in re.findall(q_rx, cmd))
+    t2 = re.sub(r"\bdel\([^()]*(?:\([^()]*\)[^()]*)*\)", "", cmd)
+    for tgt in dict.fromkeys(targets):
+        kind = _cc_kind(tgt)
+        if kind == "json" and not CC_JSON.search(tgt) and not CC_TREE.search(tgt):
+            continue
+        gone = [""] if re.search(r"\b(?:rm|unlink|shred|truncate)\b[^|;&\n]*" + re.escape(tgt), cmd) else []
+        for q in full + gone:
+            d = cc_check("Write", {"content": q}, tgt, kind, cwd, q, eng)
+            if d:
+                return d
+        if full or gone:
+            continue
+        if kind == "json" and cmd.count(tgt) < 2 and re.search(r">|\btee\b|\b(?:cp|mv|install|dd|ln)\b", cmd) and not re.search(r"\b(?:sed|perl)\s+(?:-\S+\s+)*-\w*i", cmd):
+            return "replacing Claude Code's settings with content the guard cannot see; use Edit or Write so the change can be checked"
+        if kind == "json" and (re.search(r"apiKeyHelper|otelHeadersHelper|headersHelper|awsCredentialExport|awsAuthRefresh|ANTHROPIC\w*BASE_URL|OTEL_EXPORTER_\w*ENDPOINT|OTEL_LOG_", t2, re.I)
+                               or re.search(r"secret-guard@|disableAllHooks|\.hooks\b|[\"']hooks[\"']|\bPost\w+|\bmatcher\b|redact|secret_(?:guard|filter)|[\"'](?:http|prompt|agent)[\"']", cmd, re.I)):
+            return "changing a credential helper, endpoint or hook entry of Claude Code's settings by command; use Edit so the change can be checked"
+        if (kind != "json" or re.search(r"statusLine|fileSuggestion|\bcommand\b", t2)) and _r1(lits, kind != "json", eng, cwd):
+            return "writing a command or script into Claude Code's config that dumps the environment or reads secrets"
+    return None
+
+
 def write_check(tool, ti, eng, cwd=None):
     paths = [ti.get(k) for k in ("file_path", "path", "notebook_path", "filepath", "target", "destination") if isinstance(ti.get(k), str)]
     texts = []
@@ -1437,7 +1487,7 @@ def write_check(tool, ti, eng, cwd=None):
             pn = re.sub(r"/[^/.][^/]*/\.\./", "/", pn, count=1)
         pn = re.sub(r"/\./", "/", pn)
         if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit") or "write" in tool.lower() or "edit" in tool.lower():
-            cc = "json" if CC_JSON.search(pn) else ("doc" if CC_DOC.search(pn) else "json" if pn.lower().endswith(".json") else "script") if CC_TREE.search(pn) and not CC_KEEP.search(pn) else None
+            cc = _cc_kind(pn)
             d = cc and cc_check(tool, ti, pn, cc, cwd, body, eng)
             if d:
                 return d

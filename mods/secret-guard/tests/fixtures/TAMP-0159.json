@@ -1,0 +1,100 @@
+{
+ "case_id": "TAMP-0159",
+ "title": "Bash edits of Claude Code's settings that leave redaction and helpers alone are allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "jq deleting the env scrub key through a tmp file and mv is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'del(.env.CLAUDE_CODE_SUBPROCESS_ENV_SCRUB)' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  },
+  {
+   "kind": "pre",
+   "name": "sed -i changing defaultMode is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/\"default\"/\"auto\"/' ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  },
+  {
+   "kind": "pre",
+   "name": "jq adding Bash(*) to permissions.allow is allowed",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.permissions.allow += [\"Bash(*)\"]' {HOME}/.claude/settings.json > {HOME}/.claude/settings.json.tmp && mv {HOME}/.claude/settings.json.tmp {HOME}/.claude/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  },
+  {
+   "kind": "pre",
+   "name": "cp of a harmless backup over settings.local.json is allowed",
+   "files": {
+    ".claude/settings.local.json.bak": "{\"permissions\": {\"allow\": [\"Read(./docs/**)\"]}}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cp .claude/settings.local.json.bak .claude/settings.local.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  },
+  {
+   "kind": "pre",
+   "name": "a heredoc writing a harmless hook script is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat > .claude/hooks/x.sh <<'EOF'\n#!/bin/sh\necho hello\nEOF"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  },
+  {
+   "kind": "pre",
+   "name": "grep -q for the hooks key in settings.json, then echo, is a read and is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '\"hooks\"' ~/.claude/settings.json && echo has-hooks"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check, by Bash too; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off."
+  }
+ ],
+ "duplicate_of_dropped": false
+}
