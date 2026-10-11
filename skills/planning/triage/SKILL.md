@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Triage an idea, plan or change before building it - decide whether it needs questions at all, then interview me in short rounds of ask-tool questions with a recommended answer each until no decision is left open. Use when I say "triage this", "grill me", "ask me", "stress-test this", or "plan and ask me".
+description: Triage an idea, plan or change before building it - decide whether it needs questions at all, then interview me in short rounds of ask-tool questions with a recommended answer each until no decision is left open. Use when I say "triage this", "grill me", "ask me", "stress-test this", or "plan and ask me" about a change, a feature or a plan; a whole product idea goes to `vision`, which grills with this same method.
 ---
 
 ## Triage first

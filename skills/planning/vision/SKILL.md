@@ -1,12 +1,13 @@
 ---
 name: vision
 description: >
-  Turn a product idea into the top level of the plan in the team's tracker: the destination, the
-  features that become projects, what is not yet specified and what is out of scope, ordered so
-  the riskiest unknown is built first. Then hand each feature to `shape`, one at a time. Use when I
-  bring a product idea or a vision, say "plan the product", "set up the initiative", "what are the
-  features", or ask for a product plan from features down to tickets; and for a product-level
-  status update or audit.
+  Grill me on a vague product idea until it is sharp, then write it as the top level of the plan
+  in the team's tracker: the destination, the features that become projects, what is not yet
+  specified and what is out of scope, ordered so the riskiest unknown is built first. Then hand
+  each feature to `shape`, one at a time. Use when I bring a product idea or a vision, say "grill
+  me on this idea", "plan the product", "set up the initiative" or "what are the features", or ask
+  for a product plan from features down to tickets; and for a product-level status update or
+  audit.
 ---
 
 # Vision
@@ -16,10 +17,36 @@ slice. Read the five top-down rules in `../shape/SKILL.md` first; they hold here
 adapters live there as well: find the tracker as its section 1 says, and use the adapter's
 **Product** row and its status-update row for a product update.
 
-## 1. Settle it first
+## 1. Grill me
 
-Run `triage` on the idea until the destination, the people it is for, the first version's cut and
-the features are settled. This skill records those decisions; it makes none.
+A product idea is the vaguest thing in the plan, so this skill does the grilling itself. Run the
+interview from `../triage/SKILL.md`, from **Grilling** to **Ending**: the ledger, the rounds, the
+recommended answers, the lookups. Skip its sizing: a product idea is always grilled. What changes
+at this level:
+
+- **Breadth first.** Round 1 fans out across the whole idea, one question per branch, before going
+  deep on any: who it is for, their problem today, the destination, how we will know it worked,
+  the first version's cut, and the riskiest unknown. Deep questions wait until every branch has a
+  first answer.
+- **The tree is the product.** Every settled branch becomes a line in section 2: a feature, a
+  Success measure, an Out of scope item or the Sequence. Show the Features list growing in the
+  ledger each round, numbered F1…Fn.
+- **Vague is allowed to stay vague.** When I can't answer sharply and no lookup or prototype
+  would settle it, don't press: put it under Not yet specified, say so in the ledger, and move on.
+  Pressing a vague answer into a feature invents one.
+- **Make it concrete to sharpen it.** Ask through one specific person in one specific moment ("Ana
+  runs a small shop and her domain lapses on Friday night. What does she do first?"). Offer a
+  rough sketch, a mock landing page headline or a one-screen flow, as an option when words are
+  not landing.
+- **Kill early.** If the answers show the problem is not real, already solved, or not worth the
+  build, say so with the evidence and recommend stopping. That is a good outcome.
+- **The riskiest unknown gets a test, not an opinion.** If it can be settled by a lookup, a
+  prototype or talking to a user, name that as the first item of the first project rather than
+  deciding it in the interview.
+
+The interview ends when the frontier is empty: every branch is settled, out of scope, or under
+Not yet specified. Then post the ledger as the draft product and ask whether it is right before
+writing anything.
 
 ## 2. Write the product
 
