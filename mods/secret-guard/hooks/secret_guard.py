@@ -156,7 +156,7 @@ CRED_TOOLS = [
     (r"\bCLAUDE_(?:CONFIG_DIR|CODE_[A-Z_]*)\s*=", "edit"),
     (r"disableAllHooks|disable_all_hooks|CLAUDE_CODE_DISABLE\w*HOOK|SECRET_HOOK_(?:HOME|ROOTS)\s*=|PYTHONPATH\s*=|PYTHONSTARTUP\s*=|NODE_OPTIONS\s*=\s*--(?:require|import)|BASH_ENV\s*=|\bENV\s*=\s*\S+\s+(?:ba)?sh|LD_PRELOAD\s*=|DYLD_INSERT_LIBRARIES\s*=", "edit"),
     (r"\bexport\s+PATH=\S*(?:\$HOME|~|/tmp|\.)\S*shim|\bPATH=\S*shim", "edit"),
-    (r"\bpython3?\s+\S*\.claude/hooks/secret_(?:redact|guard|filter|engine)\.py|\bpython3?\s+\S*secret_(?:redact|guard)\.py|\bsecret_(?:redact|guard|filter)\.py\b(?=.*(?:<|\|))", "edit"),
+    (r"\bpython3?\s+(?:-[A-Za-z]+\s+)*\S*secret_(?:redact|filter|engine)\.py\b", "edit"),
     (r"\bln\s+(?:-\S+\s+)*\S*\.claude\b|\bln\s+(?:-\S+\s+)*\S*settings[\w.]*\s", "edit"),
     (r"\b(?:ansible|ansible-playbook)\b(?=.*(?:-m\s+shell|-m\s+command|-m\s+raw|-a\s+['\"]?(?:env|printenv|cat )))", "tool"),
     (r"\bcurl\b[^|;&]*(?:127\.0\.0\.1|localhost)(?::\d+)?/(?:debug/(?:vars|pprof)|actuator/(?:env|heapdump|configprops|beans|mappings|loggers)|env\b|heapdump|metrics/env)|\bwget\b[^|;&]*actuator/env|actuator/env", "tool"),
@@ -843,9 +843,10 @@ def bash_check(cmd, eng, cwd):
                 return denial("writing a secret value into a file", "Reference it by name and never type the value.")
         except Exception as exc:
             return denial("could not analyse the command (%s)" % type(exc).__name__, SAFE["read"])
-    srcs = [r for r in SOURCE_RES + TOOL_SRC_RES if r.search(allt)]
-    secret_file = (bool(SECRET_FILES_RE.search(allt)) and not only_example_files(allt)) or bool(bash_sensitive(allt)) or bool(_EXTRA_FILE.search(allt))
-    srcs_raw = [r for r in SOURCE_RES if r.search(raw)]
+    g_allt = GIT_NAMES.sub("git", allt)
+    srcs = [r for r in SOURCE_RES + TOOL_SRC_RES if r.search(g_allt)]
+    secret_file = (bool(SECRET_FILES_RE.search(g_allt)) and not only_example_files(g_allt)) or bool(bash_sensitive(g_allt)) or bool(_EXTRA_FILE.search(g_allt))
+    srcs_raw = [r for r in SOURCE_RES if r.search(GIT_NAMES.sub("git", raw))]
     if srcs_raw and not srcs:
         srcs = srcs_raw
     if (srcs or secret_file) and raw != allt:
@@ -865,6 +866,12 @@ def bash_check(cmd, eng, cwd):
         if e:
             return denial(e, SAFE["read"])
     return None
+
+
+# git diff, log or show that prints only file names and counts reads no file content.
+GIT_NAMES = re.compile(
+    r"\bgit\s+(?:-[Cc]\s+\S+\s+)*(?:diff|log|show|whatchanged|stash\s+show)\b(?=[^|;&\n]*\s--(?:stat|numstat|shortstat|name-only|name-status|dirstat)\b)"
+    r"(?![^|;&\n]*\s(?:-p\b|-u\b|-U\d*\b|--patch|--word-diff|--color-words|-[GS]|--pickaxe|-L|--binary|--full-diff|--ext-diff|--textconv|-W\b|--function-context|--format|--pretty|--no-index)|[^|;&\n]*\S:\S)[^|;&\n]*")
 
 
 def only_example_files(t):
@@ -1953,7 +1960,7 @@ def write_check(tool, ti, eng, cwd=None):
         return denial("the redaction marker used as a value would overwrite a real secret", "Keep the real value; do not paste redacted output back into config files.")
     if eng is not None:
         try:
-            if eng.has_secret(body):
+            if eng.has_secret(body, loose=True):
                 return denial("the content contains a secret value", "Reference it by name (process.env.NAME or a secrets manager) and never write the value.")
         except Exception as exc:
             return denial("could not analyse the content (%s)" % type(exc).__name__, SAFE["read"])
@@ -1979,7 +1986,7 @@ def generic_check(tool, ti, eng, writer=False):
         return denial("page script that transforms or sends stored tokens", "Read the page text instead; tokens are redacted.")
     if eng is not None:
         try:
-            if eng.has_secret(body) or eng.known_spans(urllib.parse.unquote(body)):
+            if eng.has_secret(body, loose=True) or eng.known_spans(urllib.parse.unquote(body)):
                 return denial("the request contains a secret value", "Reference it by name instead of sending the value.")
         except Exception as exc:
             return denial("could not analyse the request (%s)" % type(exc).__name__, SAFE["read"])

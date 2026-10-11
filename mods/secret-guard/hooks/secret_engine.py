@@ -364,7 +364,68 @@ def _psql_header(ln, nxt):
             and any(classify(c[2].strip()) == 1 for c in _cells(ln, False)))
 
 
-def _table_spans(text, spans):
+PLACEHOLDER_RE = re.compile(r"(?:%[-\d.]*[sdiuxXoqfv]|%\(\w+\)[sdr]|\{[\w.\[\]]*(?:![rsa])?(?::[^{}]*)?\}|\$\{[^}]*\}|\$\w+|<[^<>\n]*>|:\w+|\?|\\?n)+")
+_TEMPLATE_END = re.compile(r"[ \t]*(?:[-+.,%)\]};|&*]|$)", re.M)
+
+
+def _prose(v, more):
+    """A value that reads as words: a plain first word and then another word, on its line or after it."""
+    ws = v.replace("**", "").split()
+    if not ws or not re.fullmatch(r"(?:[A-Za-z][A-Za-z'-]*|[A-Z][A-Z0-9]{1,3}|\d+-[A-Za-z]+|`[^`]+`)[.,;!?]?", ws[0]):
+        return False
+    return bool(re.match(r"[A-Za-z(`*]", ws[1])) if len(ws) > 1 else more
+
+
+_LOOSE_VALUE = re.compile(
+    r"(?i:your)[-_]?[A-Za-z_-]*|[a-z]+(?:[-_][a-z]+)*[-_](?:here|value)|x{3,}|\.{3}|[\\#]"
+    r"|(?:string|number|boolean|any|unknown|undefined|object|void|never|bigint)(?:\[\])?|[\w.+-]+@[\w-]+(?:\.[\w-]+)+"
+    r"|\d{4}-\d\d-\d\d(?:[T ][\d:.]+Z?)?|(?:[A-Za-z]:)?\\[\w.\\ -]*|[\w.-]+\.(?:json|ya?ml|txt|md|toml|ini|cfg|conf|js|ts|py|sh)")
+_CODE_REF = re.compile(r"(?:await\s+|new\s+)?\.?[A-Za-z_$][\w$]*(?:\??\.\??[A-Za-z_$][\w$]*|\??\.?\[[^\]\n]*\]|\((?:[^()\n]|\([^()\n]*\))*\))+")
+
+
+def _loose_skip(text, sp):
+    """Content checks only: the value is a placeholder, a code expression, a type, an address or a count, not a literal."""
+    s, e = sp
+    rest = text[s:].split("\n", 1)[0]
+    before = text[text.rfind("\n", 0, s) + 1:s]
+    v = re.sub(r"\s+(?:#|//).*", "", text[s:e]).strip().strip("\"'`,;):")
+    v = re.sub(r"^(?:[\w-]+:\s*)?(?:(?:Bearer|Basic|Token)\s+)?", "", v)
+    v1 = re.sub(r"\s+--?\w.*", "", v)
+    if PLACEHOLDER_RE.fullmatch(v) or _LOOSE_VALUE.fullmatch(v1) or re.match(
+            r"[\[{]\s*[^\s\"'`]|\([^()\n]*[,:=]|\(\)|[fF][rR]?([\"'])(?:(?:Bearer|Basic|Token)?\s*\{[^{}\"'\n]*\})+\1", rest):
+        return True
+    if text[s - 1:s] not in "\"'`" and re.fullmatch(r"[A-Z]+(?:_[A-Z]+)+", v1):
+        return True
+    c = re.search(r":\s*[*`]*$", before)
+    if c and _prose(before[c.start() + 1:] + rest, False) or _template_at(text, s - (text[s - 1:s] in "\"'")):
+        return True
+    if re.fullmatch(r"[+-]?\d{1,11}", v) and re.search(r"(?i)(?:max|min|limit|count|size|ttl|timeout|length|expir\w*|tokens)\W*$", before):
+        return True
+    if re.search(r"\$\{\w+:?$", before):
+        return True
+    m = _CODE_REF.match(rest)
+    if not m or m.end() < len(re.sub(r"\s+(?:#|//).*", "", text[s:e]).rstrip(",; ")):
+        return False
+    ids = re.findall(r"[A-Za-z_$][\w$]*", m.group())
+    return not any(looks_random(i) for i in ids) and (bool(re.search(r"^(?:await|new)\b|^\.|[(\[?]", m.group())) or not re.search(r"\d", m.group()))
+
+
+def _template(text, m):
+    """The separator ends a string literal (\"token=\" + t, \"secret:\", s): the value is built elsewhere."""
+    return _template_at(text, m.end(), m.start())
+
+
+def _template_at(text, i, start=None):
+    start = i if start is None else start
+    while i < len(text) and text[i] in " \t":
+        i += 1
+    if i >= len(text) or text[i] not in "\"'`":
+        return False
+    before = re.sub(r"\\.", "", text[text.rfind("\n", 0, start) + 1:i])
+    return before.count(text[i]) % 2 == 1 and (text[i] == "`" or bool(_TEMPLATE_END.match(text, i + 1)))
+
+
+def _table_spans(text, spans, loose=False):
     if "|" not in text:
         return
     lines = text.split("\n")
@@ -408,7 +469,7 @@ def _table_spans(text, spans):
                         val = c[2]
                         st = c[0] + (len(val) - len(val.lstrip()))
                         en = c[0] + len(val.rstrip())
-                        if en > st and not benign(text[offs[j] + st:offs[j] + en]):
+                        if en > st and not benign(text[offs[j] + st:offs[j] + en]) and not (loose and _prose(val, False)):
                             spans.append((offs[j] + st, offs[j] + en))
                 if not cont:
                     last_hit = now_hit
@@ -506,7 +567,7 @@ def _json_str_end(text, i):
     return min(k, n) if k < n and text[k] == '"' else i
 
 
-def _scan_names(text, spans, ctx=0):
+def _scan_names(text, spans, ctx=0, loose=False):
     for m in NAME_RE.finditer(text):
         name = m.group("name")
         if re.search(r"(?i)(?<![A-Za-z0-9])public[ \t_\-]*$", text[max(0, m.start() - 10):m.start()]):
@@ -522,15 +583,20 @@ def _scan_names(text, spans, ctx=0):
                 if sp and ctx_secretish(text[sp[0]:sp[1]]) and not _has_userinfo(text, sp):
                     spans.append(sp)
             continue
+        if loose and _template(text, m):
+            continue
         if m.group("q") == '"' and not m.group("q2") and m.group("sep") == "=" and not re.match(r"[ \t]*\\?[\"']", text[m.end():m.end() + 8]):
             e = _json_str_end(text, m.end())
-            if e > m.end() and not benign(text[m.end():e]) and not _has_userinfo(text, (m.end(), e)):
+            if e > m.end() and not benign(text[m.end():e]) and not _has_userinfo(text, (m.end(), e)) and not (loose and PLACEHOLDER_RE.fullmatch(text[m.end():e])):
                 spans.append((m.end(), e))
                 if cls == 1:
                     _strong.append((m.end(), e))
                 continue
         sp = _value_span(text, m.end(), m.start(), cls)
         if sp and re.fullmatch(r"(?:%[-\d.]*[sdiuxXoqfv]|\\?n)+", text[sp[0]:sp[1]]):
+            continue
+        if sp and loose and (PLACEHOLDER_RE.fullmatch(text[sp[0]:sp[1]]) or m.group("sep") == ":" and text[sp[0] - 1] not in "\"'" and _prose(
+                text[sp[0]:text.find("\n", sp[0]) % (len(text) + 1)], False)):
             continue
         if sp and re.match(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*\(", text[sp[0]:sp[1]]):
             continue
@@ -886,23 +952,27 @@ def _scan_k8s(text, spans):
         _k8s_json(text, spans)
 
 
-def structural_spans(text, ctx=0):
+def structural_spans(text, ctx=0, loose=False):
+    """loose (content checks only) skips placeholders, built strings, prose after a colon and prose table cells."""
     del _strong[:]
     spans = []
     _scan_pem(text, spans)
     _scan_tokens(text, spans)
     _scan_urls(text, spans)
-    _scan_names(text, spans, ctx)
+    strong = len(spans)
+    _scan_names(text, spans, ctx, loose)
     _scan_spaced(text, spans)
     _scan_flags(text, spans)
     _scan_cmd_pairs(text, spans)
     _scan_assigns(text, spans)
     _scan_forms(text, spans)
     _scan_columns(text, spans)
-    _table_spans(text, spans)
+    _table_spans(text, spans, loose)
     _scan_k8s(text, spans)
     if ctx:
         _scan_inline_env(text, spans)
+    if loose:
+        spans[strong:] = [sp for sp in spans[strong:] if not _loose_skip(text, sp)]
     return spans
 
 
@@ -1432,6 +1502,23 @@ def env_values(environ=None):
     return vals
 
 
+URL_PARTS = re.compile(r"[A-Za-z][A-Za-z0-9+.\-]*://([^/?#\s@]*)([/?#][^\s]*)?")
+
+
+def _plain_value(v):
+    """Not a credential: a URL or host:port with no userinfo or secret-looking part, a number, a boolean or a short word."""
+    s = v.strip().strip("\"'")
+    if re.fullmatch(r"[+-]?\d{1,11}(?:\.\d+)?|true|false|yes|no|on|off|null|none|nil|enabled|disabled", s, re.I):
+        return True
+    if re.fullmatch(r"[a-z]{1,10}|[A-Z][a-z]{0,9}", s):
+        return True
+    if re.fullmatch(r"(?:localhost|[\w\-]+(?:\.[\w\-]+)+|\[[0-9A-Fa-f:.]+\]):\d{1,5}", s):
+        return True
+    m = URL_PARTS.fullmatch(s)
+    return bool(m) and not QUERY_SECRET.search(s) and not any(
+        looks_random(t) or ctx_secretish(t) for t in re.split(r"[/?#&=;,.:]+", m.group(1) + "/" + (m.group(2) or "")) if t)
+
+
 def _json_values(o, key, out, every=False):
     if isinstance(o, dict):
         for k, v in o.items():
@@ -1744,7 +1831,7 @@ class Engine:
                     v = v.strip()
                     if len(v) >= 6 and not benign_h(v) and not v.startswith(MARK):
                         vals.add(v)
-            self._values = sorted(vals, key=lambda x: (-len(x), x))
+            self._values = sorted((x for x in vals if not _plain_value(x)), key=lambda x: (-len(x), x))
         return self._values
 
     def needles(self):
@@ -1862,8 +1949,8 @@ class Engine:
             spans += [b for b in _bare_spans(scan) if not any(x[0] < b[1] and b[0] < x[1] for x in st)]
         return apply(text, spans)
 
-    def has_secret(self, text):
-        return bool(structural_spans(text) or self.known_spans(text))
+    def has_secret(self, text, loose=False):
+        return bool(structural_spans(text, 0, loose) or self.known_spans(text))
 
     def _learn_spans(self, scan, spans):
         strong = set(_strong)
