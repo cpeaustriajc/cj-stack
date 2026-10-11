@@ -807,21 +807,14 @@ def bash_check(cmd, eng, cwd):
     if "$(" in raw:
         allt = allt + "\n" + drop_display("\n".join(s for m in re.findall(r"\$\(([^()]*)\)", raw) for s in effective(norm(m), cwd)))
 
-    cc = []
-    w = write_to_protected(raw, cc)
-    scan = raw if cc or re.search(r"\bclaude\s+(?:config|plugins?)\b|hooks\.json|\.claude\b|managed-settings", raw) else re.sub(r"(?i)disableAllHooks|disable_all_hooks", " ", raw)
-    for rx in EDIT_RES:
-        if rx.search(scan):
-            return denial("a command that weakens the redaction setup", SAFE["edit"])
+    w = _tamper(cmd, cwd, eng)
+    if w:
+        return w
 
     for rx, kind in HARD_TOOLS:
         if rx.search(allt):
             return denial("a command that exposes credentials or weakens the redaction setup",
                           SAFE.get(kind if kind in SAFE else "tool", SAFE["tool"]))
-
-    w = w or cc and cc_bash(n, cc, cwd, eng, orig=cmd) or hook_bash(n, cwd, eng, cmd)
-    if w:
-        return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
 
     if re.search(r"(?:^|[;&|(\n]\s*)\.\s+\S*(?:zshrc|bashrc|profile)\b|\bsource\s+\S*(?:zshrc|bashrc|profile)\b", allt, re.I):
         return denial("sourcing a shell rc file", SAFE["read"])
@@ -1447,6 +1440,8 @@ def cc_check(tool, ti, pn, kind, cwd, body, eng):
     elif kind == "script":
         if _r1(new, _shell_file(pn, Q), eng, cwd):
             why = "a hook script (%s) that dumps the environment or reads secrets" % os.path.basename(pn)
+        elif any(rx.search(new) for rx in EDIT_RES) or _cli_bad(new):
+            why = "a hook script (%s) that weakens the redaction setup" % os.path.basename(pn)
     elif any(_r1(c, True, eng, cwd) for c in re.findall(r"!`([^`\n]+)`", new) + re.findall(r"```!\n(.*?)```", new, re.S)):
         why = "a command in %s that dumps the environment or reads secrets" % os.path.basename(pn)
     return denial(why, "Leave that part out; Claude Code's own permission check covers the rest of its config.") if why else None
@@ -1554,23 +1549,118 @@ def _esc(s):
     return re.sub(r"\\(.)", lambda m: {"n": "\n", "t": "\t", "\\": "\\"}.get(m.group(1), m.group(0)), s)
 
 
-def _payloads(cmd, cwd):
+WRITE_TG = r"\btee\s+(?:-\S+\s+)*['\"]?([^\s'\"|;&<>)]+)|(?<![\d&<])>>?\s*['\"]?((?!&|/dev/)[^\s'\"|;&<>)]+)"
+
+
+def _payloads(cmd, cwd, wr=None):
     out = []
     for p in _pipelines(strip_heredocs(cmd)):
-        if not re.search(r"\btee\b|(?<![\d&<])>>?\s*(?!&|/dev/)\S", " | ".join(p)):
-            continue
-        for s in p:
-            a = _argv(s) or [""]
-            if a[0] == "echo":
+        tg = re.findall(WRITE_TG, " | ".join(p))
+        t = _texts(p, cwd) if tg else []
+        out += t
+        for a, b in tg if wr is not None else []:
+            wr.setdefault(a or b, []).append("\n".join(t))
+    for hdr, body in _heredocs(cmd) if wr is not None else []:
+        for a, b in re.findall(WRITE_TG, hdr):
+            wr.setdefault(a or b, []).append(body)
+    return out
+
+
+def _texts(p, cwd):
+    out = []
+    for s in p:
+        a = _argv(s) or [""]
+        if a[0] == "echo":
+            a = a[1:]
+            while a and re.fullmatch(r"-[neE]+", a[0]):
                 a = a[1:]
-                while a and re.fullmatch(r"-[neE]+", a[0]):
-                    a = a[1:]
-                out += [" ".join(a), _esc(" ".join(a))]
-            elif a[0] == "printf" and len(a) > 1:
-                out.append(_esc(a[1]) + "\n".join(a[2:]))
-            elif a[0] == "cat":
-                out += [_cc_disk(f, cwd) or "" for f in a[1:] if not f.startswith("-")]
+            out += [" ".join(a), _esc(" ".join(a))]
+        elif a[0] == "printf" and len(a) > 1:
+            out.append(_esc(a[1]) + "\n".join(a[2:]))
+        elif a[0] == "cat":
+            out += [_cc_disk(f, cwd) or "" for f in a[1:] if not f.startswith("-")]
     return [x for x in out if x]
+
+
+
+def _heredocs(t):
+    out, lines, i = [], t.split("\n"), 0
+    while i < len(lines):
+        hdr = lines[i]
+        m = re.search(r"(?<!<)<<-?\s*(['\"]?)([A-Za-z_]\w*)\1", hdr)
+        i += 1
+        if m:
+            j = i
+            while i < len(lines) and lines[i].strip() != m.group(2):
+                i += 1
+            out.append((hdr, "\n".join(lines[j:i])))
+            i += 1
+    return out
+
+
+SH_RUN = r"(?:^|[|;&(]\s*)(?:\w+=\S*\s+)*(?:\S*/)?(?:ba|z|da|k)?sh\b(?![\w.-])|(?:^|[|;&(]\s*)(?:source|\.)\s+/dev/stdin"
+CLI_RX = re.compile(r"\bclaude\s+(?:plugins?\s+(?:disable|uninstall|remove|rm|marketplace\s+(?:remove|rm))|config\s+(?:set|add|remove|rm))\b([^|;&\n]*)", re.I)
+
+
+def _cli_bad(t):
+    for m in CLI_RX.finditer(t):
+        a = m.group(1)
+        if re.search(r"[$`*?\[\]{}'\"\\]|secret-guard|(?:^|\s)(?:--all|-a)\b", a, re.I) or "marketplace" in m.group(0).lower() and re.search(r"cj-stack", a, re.I):
+            return True
+        if "config" in m.group(0).lower() and re.search(r"hook|helper|awsCredentialExport|awsAuthRefresh|enabledPlugins|\benv\b|ANTHROPIC|OTEL|statusLine|fileSuggestion", a, re.I):
+            return True
+    return False
+
+
+def _script_text(f, cwd, wr):
+    for k, v in wr.items():
+        if _same(k, f, cwd):
+            return "\n".join(v)
+    fp = os.path.join(cwd or os.getcwd(), os.path.expanduser(f))
+    return _cc_disk(fp, cwd) if os.path.isfile(fp) and os.path.getsize(fp) < 262144 else None
+
+
+def _bare(n, cmd, cwd, wr):
+    keep, ex, out = [], [], []
+    for hdr, body in _heredocs(cmd):
+        if re.search(SH_RUN, hdr.split("<<")[0].rstrip() + ";", re.I) or re.search(SH_RUN, hdr, re.I) and re.search(r"<<\S*\s*$", hdr):
+            ex.append(body)
+        elif INTERP_HERE.search(hdr):
+            keep.append(body)
+    for p in _pipelines(strip_heredocs(n)):
+        a = [_argv(s) or [""] for s in p]
+        runs = any(INTERP_HERE.search(os.path.basename(x[0])) for x in a[1:])
+        for i, x in enumerate(a):
+            nm, args = os.path.basename(x[0]), [y for y in x[1:] if not y.startswith("-")]
+            if nm in SHELLS and i and not args:
+                ex += _texts(p[:i], cwd)
+            f = args[0] if nm in SHELLS and args and "-c" not in x and not any(re.fullmatch(r"-\w*c\w*", y) for y in x[1:]) or nm in ("source", ".") and args else x[0] if "/" in x[0] else None
+            t = f and _script_text(f, cwd, wr)
+            if t and (nm in SHELLS or nm in ("source", ".") or re.match(r"#!\s*\S*(?:/|env\s+)(?:ba|z|da|k)?sh\b", t)):
+                ex.append(t)
+        out.append(" | ".join(nm if not runs and os.path.basename((_argv(s) or [""])[0]) in ("echo", "printf") else s for s, nm in zip(p, [os.path.basename((_argv(s) or [""])[0]) for s in p])))
+    base = "\n".join(out + keep)
+    return base, "\n".join(unquote_layers(base)), ex
+
+
+def _tamper(cmd, cwd, eng, depth=0):
+    n = norm(cmd)
+    raw = "\n".join(unquote_layers(n))
+    cc, wr = [], {}
+    w = write_to_protected(raw, cc)
+    _payloads(cmd, cwd, wr)
+    base, bare, ex = _bare(n, cmd, cwd, wr)
+    scan = raw if cc else bare if re.search(r"\bclaude\s+(?:config|plugins?)\b|\bclaude\b[^|;&\n]*--settings|hooks\.json|\.claude\b|managed-settings", bare) else re.sub(r"(?i)disableAllHooks|disable_all_hooks", " ", bare)
+    if any(rx.search(scan) for rx in EDIT_RES) or _cli_bad(cmd if cc else base):
+        return denial("a command that weakens the redaction setup", SAFE["edit"])
+    w = w or cc and cc_bash(n, cc, cwd, eng, orig=cmd) or hook_bash(n, cwd, eng, cmd)
+    if w:
+        return w if w.startswith("Blocked:") else denial(w, SAFE["edit"])
+    for b in ex if depth < 3 else []:
+        d = _tamper(b, cwd, eng, depth + 1)
+        if d:
+            return d
+    return None
 
 
 def _same(a, b, cwd):
