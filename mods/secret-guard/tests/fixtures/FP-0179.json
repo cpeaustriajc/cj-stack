@@ -1,0 +1,30 @@
+{
+ "case_id": "FP-0179",
+ "title": "A JS variable named seed holding Math.random() is not a seed phrase",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep output with seed = Math.random() and a later reuse of the same expression",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n random layouts/index.html"
+    },
+    "tool_response": {
+     "stdout": "1120:  function reseed() { seed = (Math.random() * 1e6) | 0; run(true); }\n2041:      face.textContent = 1 + Math.floor(Math.random() * 20);\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "seed = (Math.random() * 1e6) | 0",
+    "Math.floor(Math.random() * 20)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

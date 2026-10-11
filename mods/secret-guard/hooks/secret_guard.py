@@ -872,21 +872,46 @@ def strip_safe_literals(t):
     return re.sub(r"\$\{?[A-Za-z_][A-Za-z0-9_]*\}?|<[A-Za-z_ ]+>", "", t)
 
 
+def _shell_pieces(t):
+    # Split only outside quotes: a python -c body cut at ';' hides its write from the verb check.
+    out, cur, q = [], [], None
+    for c in t:
+        if q:
+            q = None if c == q else q
+            cur.append(c)
+        elif c in "'\"":
+            q = c
+            cur.append(c)
+        elif c in "|&;\n":
+            out.append("".join(cur))
+            cur = []
+        else:
+            cur.append(c)
+    out.append("".join(cur))
+    return out
+
+
 def write_to_protected(t):
     tl = t
     for m in re.finditer(r">>?\s*['\"]?([^\s'\"|;&<>)]+)", tl):
         tgt = m.group(1)
         if PROT_PATHS.search(tgt) or PROT_BASE.search(tgt):
             return "writing to a hook, settings or shell-startup file"
-    if not PROT_PATHS.search(tl):
-        return None
-    if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bperl\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
-                 r"write_text|write_bytes|\.write\(|writeFile|appendFile|open\([^)]*['\"][wa]|json\.dump|\bgit\s+(?:checkout|restore|reset|stash|clean)|\bed\b|\bawk\b.*inplace|\bpatch\b|\btouch\b|\bunlink\b|\bshred\b|"
-                 r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", tl, re.I):
-        if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", tl, re.I) and not re.search(
-                r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|write_text|\.write\(|open\([^)]*['\"][wa]|json\.dump|setdefault|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)|\bgit\s+(?:checkout|restore|reset)", tl, re.I):
-            return None
-        return "modifying a hook, settings, startup or tamper-sensitive file"
+    pieces = _shell_pieces(tl)
+    # A cd into .claude or a variable naming a protected path carries it into later pieces: judge the whole command.
+    whole = any(re.match(r"\s*(?:cd|pushd)\s", p) and re.search(r"\.claude(?:/|\s|$|['\"])", p)
+                or re.match(r"\s*(?:export\s+)?\w+=", p) and (PROT_PATHS.search(p) or re.search(r"\.claude(?:/|\s|$|['\"])", p))
+                for p in pieces)
+    for piece in [tl] if whole else pieces:
+        if not (whole or PROT_PATHS.search(piece)):
+            continue
+        if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bperl\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
+                     r"write_text|write_bytes|\.write\(|writeFile|appendFile|open\([^)]*['\"][wa]|json\.dump|\bgit\s+(?:checkout|restore|reset|stash|clean)|\bed\b|\bawk\b.*inplace|\bpatch\b|\btouch\b|\bunlink\b|\bshred\b|"
+                     r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", piece, re.I):
+            if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", piece, re.I) and not re.search(
+                    r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|write_text|\.write\(|open\([^)]*['\"][wa]|json\.dump|setdefault|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)|\bgit\s+(?:checkout|restore|reset)", piece, re.I):
+                continue
+            return "modifying a hook, settings, startup or tamper-sensitive file"
     return None
 
 

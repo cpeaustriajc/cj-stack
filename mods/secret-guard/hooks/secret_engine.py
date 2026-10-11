@@ -33,6 +33,7 @@ SECRET_WORDS = {
     "sessionkey", "clientsecret", "connectionstring", "pat", "bearertoken", "authtoken", "xauth",
     "mnemonic", "seed",
 }
+WEAK_WORDS = {"seed"}
 SECRET_STEMS = ("passw", "passphrase", "secret", "token", "credential", "apikey", "privatekey", "accesskey",
                 "authkey", "signingkey", "encryptionkey", "masterkey", "sessionkey")
 STEM_EXCEPT = {"tokenizer", "tokenizers", "tokenize", "tokenized", "tokenization", "secretary", "secretariat",
@@ -121,6 +122,8 @@ def _classify(name):
         return 0
     if flat[-3:] == ["access", "key", "id"]:
         return 1
+    if flat[idx] in WEAK_WORDS:
+        return 2
     last = flat[-1]
     if idx != len(flat) - 1 and any(w in NON_SECRET_LAST for w in flat[idx + 1:]):
         return 0
@@ -529,6 +532,10 @@ def _scan_names(text, spans, ctx=0):
         sp = _value_span(text, m.end(), m.start(), cls)
         if sp and re.fullmatch(r"(?:%[-\d.]*[sdiuxXoqfv]|\\?n)+", text[sp[0]:sp[1]]):
             continue
+        if (sp and cls == 1 and m.group("sep") == ":" and re.fullmatch(r"[a-z]+", text[sp[0]:sp[1]])
+                and re.search(r"[a-z][\w-]*[ \t]+$", text[text.rfind("\n", 0, m.start()) + 1:m.start()])
+                and re.match(r"[ \t]+[a-z]", text[sp[1]:])):
+            continue
         if sp and cls == 1:
             _strong.append(sp)
         if sp and re.fullmatch(r"[|>][+-]?\d?", text[sp[0]:sp[1]]) and text[sp[1]:sp[1] + 1] in ("\n", ""):
@@ -921,7 +928,7 @@ def _b64_named_spans(scan, spans):
             if len(part) < 8:
                 continue
             dec = base64.b64decode(part).decode("utf-8", "replace")
-            if structural_spans(dec):
+            if "\ufffd" not in dec and all(c.isprintable() or c in "\r\n\t" for c in dec) and structural_spans(dec):
                 spans.append((m.start(), m.end()))
                 break
 
@@ -1225,6 +1232,8 @@ def _cache_path(key):
 
 HARVEST_DIR = "secret-guard"
 HARVEST_NAME = "harvest-cache.json"
+# Bump when _file_values changes, or cached entries keep values the old rules extracted.
+HARVEST_RULES = 2
 
 
 def harvest_path():
@@ -1392,7 +1401,7 @@ def _file_values(path, text):
                 _scan_tokens(v, us)
                 if us:
                     vals.extend(v[a:b] for a, b in us)
-                else:
+                elif classify(k) == 1:
                     vals.append(v)
             elif "://" not in v:
                 vals.append(v)
@@ -1671,7 +1680,7 @@ class Engine:
                         if st.st_size > 2_000_000:
                             continue
                         ent = cache.get(p)
-                        if ent and ent.get("m") == st.st_mtime_ns and ent.get("s") == st.st_size:
+                        if ent and ent.get("m") == st.st_mtime_ns and ent.get("s") == st.st_size and ent.get("r") == HARVEST_RULES:
                             fresh[p] = ent
                             vals.update(ent["v"])
                             continue
@@ -1685,7 +1694,7 @@ class Engine:
                         if len(v) >= 6 and not benign_h(v) and not v.startswith(MARK):
                             got.append(v)
                     vals.update(got)
-                    fresh[p] = {"m": st.st_mtime_ns, "s": st.st_size, "v": got}
+                    fresh[p] = {"m": st.st_mtime_ns, "s": st.st_size, "r": HARVEST_RULES, "v": got}
                 if fresh != cache:
                     _save_harvest(fresh)
             self._values = sorted(vals, key=lambda x: (-len(x), x))
@@ -1872,7 +1881,7 @@ class Engine:
                     if sec and not benign(v):
                         out[k] = _masked(v)
                     else:
-                        out[k] = self.redact_text(v, 0 if ks in CTX_SKIP_KEYS else ctx)
+                        out[k] = self.redact_text(v, 0 if ks in CTX_SKIP_KEYS or (ks == "base64" and _binary_b64(v)) else ctx)
                 elif isinstance(v, (dict, list)):
                     out[k] = self._redact_obj(v, ks, sec, ctx)
                 else:
@@ -1916,6 +1925,18 @@ def has_surrogate(o):
     return False
 
 
+def _binary_b64(v):
+    body = re.sub(r"\s", "", v)[:4096]
+    body = body[:len(body) - len(body) % 4]
+    try:
+        raw = base64.b64decode(body)
+    except ValueError:
+        return False
+    if len(raw) < 64:
+        return False
+    return sum(1 for c in raw if c < 9 or 13 < c < 32 or c >= 127) * 5 > len(raw)
+
+
 def odd_shape(tool, resp):
     if tool != "Grep" and has_surrogate(resp):
         return True
@@ -1926,7 +1947,7 @@ def odd_shape(tool, resp):
     if tool == "Read" and isinstance(resp, dict):
         f = resp.get("file")
         b = f.get("base64") if isinstance(f, dict) else None
-        return resp.get("type") == "image" and not (isinstance(b, str) and b.startswith(("iVBORw0KGgo", "/9j/", "R0lGOD", "UklGR")))
+        return resp.get("type") == "image" and not (isinstance(b, str) and (b.startswith(("iVBORw0KGgo", "/9j/", "R0lGOD", "UklGR")) or _binary_b64(b)))
     return False
 
 
