@@ -52,7 +52,8 @@ adapters the other two read.
    a Jira URL, or `GitHub issues`.
 2. The connected tools: a Linear MCP server means Linear; an Atlassian MCP server or the `acli` CLI
    means Jira; a GitHub remote with `gh` signed in means GitHub.
-3. Ask once, and offer to add the pointer line.
+3. Ask once, and offer to add the pointer line. For personal software, recommend a Markdown file
+   in the repo (`references/other-trackers.md`) over setting up a tracker.
 
 Then read the matching adapter. It maps the levels below onto that tracker's objects and names the
 tools that reach it.
@@ -109,8 +110,9 @@ often happens after a demo, only the document changes, and nothing already cut i
    existing seams to new ones and the highest seam that works; one is ideal.
 4. **Write the spec** from the template in `references/templates.md`, as a Draft, in the
    project's own vocabulary. Then draft or update the project description from the same file.
-5. **Set the phases** from `references/phases.md` as the project's milestones. A product project
-   starts in Demo; an unknown that a prototype can settle becomes a throwaway Demo item, not a
+5. **Set the phases** from `references/phases.md` as the project's milestones. Personal software
+   uses the internal tool phases, since I confirm everything myself. A product project starts in
+   Demo; an unknown that a prototype can settle becomes a throwaway Demo item, not a
    question for me.
 6. **Check the tree** (section 7), then hand back. When the approver marks the spec Confirmed,
    `tickets` cuts the first slice.

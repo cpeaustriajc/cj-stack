@@ -50,6 +50,17 @@ at this level:
   - **What it returns**: money, time saved, learning, or joy. Any of these can be enough, but say
     which one this is.
 
+  **Personal software**, built for me alone, changes the questions. Ask in round 1 who it is for
+  if it isn't plain. For me:
+  - **Real**: how often I hit the problem and the minutes it costs each time. Five minutes a day
+    is about 30 hours a year: the budget the build has to beat, when time saved is the point.
+  - **Not already solved**: a tool that is 80% there with some setup, a script or a spreadsheet.
+    An option to price against building, not a reason to stop.
+  - **What it costs**: evenings and weekends, plus upkeep when an API or the OS changes.
+  - **What it returns**: time saved, learning or joy. When it is learning or joy the time math
+    doesn't apply, but the build gets a timebox ("two weekends"), and its end is a keep-going or
+    stop decision, not a drift.
+
   Then recommend one verdict, with the reason in a line: **build**, **shrink** (a smaller first
   version is worth it and the whole is not yet), **test first** (one cheap check, a landing page,
   five conversations or a prototype, decides it), or **don't build**. Don't build and test first
@@ -123,7 +134,7 @@ version of the whole product that works end to end and answers the riskiest unkn
 2. Hand the first project to `shape`. The next feature is shaped when the project before it
    reaches Launch, or sooner if I say so.
 3. **Check Worth it again at each Launch**, before shaping the next feature, against what the
-   launch showed and the time it really took. Say in one line whether the verdict still holds; if
+   launch showed and the time it really took; for personal software, whether I used it this week. Say in one line whether the verdict still holds; if
    not, recommend shrinking or stopping rather than carrying on by momentum.
 4. A change to a feature after its project exists returns that project's spec to Draft; say so in
    one line and tell me what it touches.
