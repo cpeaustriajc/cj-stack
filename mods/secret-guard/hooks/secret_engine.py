@@ -532,7 +532,9 @@ def _scan_names(text, spans, ctx=0):
         sp = _value_span(text, m.end(), m.start(), cls)
         if sp and re.fullmatch(r"(?:%[-\d.]*[sdiuxXoqfv]|\\?n)+", text[sp[0]:sp[1]]):
             continue
-        if sp and re.match(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)+\(", text[sp[0]:sp[1]]):
+        if sp and re.match(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*\(", text[sp[0]:sp[1]]):
+            continue
+        if sp and m.group("sep") == ":" and re.search(r"\?[ \t]*$", text[text.rfind("\n", 0, m.start()) + 1:m.start()]):
             continue
         if (sp and cls == 1 and m.group("sep") == ":" and re.fullmatch(r"[a-z]+", text[sp[0]:sp[1]])
                 and re.search(r"[a-z][\w-]*[ \t]+$", text[text.rfind("\n", 0, m.start()) + 1:m.start()])

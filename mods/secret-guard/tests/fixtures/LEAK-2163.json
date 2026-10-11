@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-2163",
+ "title": "pw and dotted password keys stay guarded next to the pw-alias exemptions",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "dotted YAML key ending in password keeps its value hidden",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat application.yml"
+    },
+    "tool_response": {
+     "stdout": "spring.datasource.password: fakeDsPw9xQ2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "fakeDsPw9xQ2"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "YAML pw key with a plain value is still redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat creds.yml"
+    },
+    "tool_response": {
+     "stdout": "pw: fakehunterword\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "fakehunterword"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

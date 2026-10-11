@@ -139,7 +139,7 @@ CRED_TOOLS = [
     (r"\bat\s+now\b|\bcrontab\b|\bat\s+-f\b", "edit"),
     (r"\bmkfifo\b(?=.*(?:cat|sh|bash|read|\.env|secret))", "tool"),
     (r"\bscript\s+(?:-\S+\s+)*(?:--log-\w+|-q|-c|\S+\.log|\S+typescript)|\bscriptreplay\b|\bsudoreplay\b|\basciinema\b|\btlog\b", "tool"),
-    (r"\bidevicebackup2\b|\bmdls\b(?![-.\w])|\bmdfind\b(?=.*(?:kMDItemTextContent|-onlyin\s+\S*(?:creds|secret|\.config|\.ssh|\.aws|Library)|key|token|secret|password|\.env|credential))|\blocate\b|\bmdfind\b\s+\S+$", "tool"),
+    (r"\bidevicebackup2\b|\bmdls\b(?![-.\w])|\bmdfind\b(?=.*(?:kMDItemTextContent|-onlyin\s+\S*(?:creds|secret|\.config|\.ssh|\.aws|Library)|key|token|secret|password|\.env|credential))|(?<![\w./-])locate(?![\w./-])|\bmdfind\b\s+\S+$", "tool"),
     (r"\bxcrun\s+xcresulttool\b|\bxcrun\s+simctl\s+(?:keychain|openurl|pbpaste)", "tool"),
     (r"\bgit\s+(?:reflog\s+expire|gc\s+--prune|prune\b|filter-branch|filter-repo)", "edit"),
     (r"\bgit\s+(?:-C\s+\S+\s+)?(?:-c\s+\S+\s+)*log\b.*-g\b.*--walk-reflogs|\bgit\s+.*--walk-reflogs", "tool"),
