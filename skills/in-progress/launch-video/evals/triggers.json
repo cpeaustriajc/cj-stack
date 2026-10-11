@@ -1,0 +1,34 @@
+[
+ {
+  "query": "make a launch trailer for our app from the live site, with a voiceover",
+  "should_trigger": true
+ },
+ {
+  "query": "I need a 9:16 promo reel for TikTok announcing the new feature",
+  "should_trigger": true
+ },
+ {
+  "query": "our promo video feels flat and the narrator sounds robotic, redo it",
+  "should_trigger": true
+ },
+ {
+  "query": "make thumbnails and per-platform captions to go with the launch video",
+  "should_trigger": true
+ },
+ {
+  "query": "write the launch blog post",
+  "should_trigger": false
+ },
+ {
+  "query": "transcribe this podcast episode",
+  "should_trigger": false
+ },
+ {
+  "query": "make a GIF of the bug for the issue",
+  "should_trigger": false
+ },
+ {
+  "query": "plan the launch: what to post where and when",
+  "should_trigger": false
+ }
+]

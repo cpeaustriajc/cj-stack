@@ -1,6 +1,11 @@
 ---
 name: painting-craft
-description: Draw and paint scenes, figures, creatures, vehicles, buildings and landscapes in code (SVG, canvas, numpy, Blender) to a gallery standard, with a screenshot-and-zoom review loop. Use it whenever you draw, paint, illustrate or animate anything in code, and when someone pastes reference art, says a picture looks off, cheap, flat, floating, out of proportion or in the wrong depth order, or asks for armour, costume, architecture, vehicle or canon research for a picture.
+description: >
+  This skill should be used whenever a picture is drawn, painted, illustrated or animated in code
+  (SVG, canvas, numpy, Blender): scenes, figures, creatures, vehicles, buildings, landscapes. Also
+  when reference art is pasted, a picture looks off, flat, floating or out of proportion, or
+  costume, armour or vehicle research is needed. It paints to a gallery standard with a screenshot
+  review loop. Not for UI icons, charts or diagrams.
 ---
 
 # Painting craft
