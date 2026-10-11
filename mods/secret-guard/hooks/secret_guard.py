@@ -452,6 +452,16 @@ def cmd_index(toks):
     return -1
 
 
+CAT_SUB = re.compile(r"\s*(?:\$\(\s*(?:cat\s+(?:--\s+)?|<\s*)([^\s()`;|&]+)\s*\)|`\s*cat\s+(?:--\s+)?([^\s`;|&]+)\s*`)\s*")
+
+
+def _cat_run(v, cwd, read=None):
+    """\"$(cat F)\", \"$(< F)\" or `cat F` as a shell -c or eval argument runs F: return F's text."""
+    m = CAT_SUB.fullmatch(v)
+    src = m and (read or read_script)((m.group(1) or m.group(2)).strip("'\""), cwd)
+    return src if isinstance(src, str) else None
+
+
 def read_script(path, cwd):
     try:
         p = os.path.expanduser(path)
@@ -582,7 +592,7 @@ def effective(t, cwd, depth=0, budget=None):
                 script = j
                 break
             if ci is not None and ci < len(toks):
-                inner = sub(toks[ci][1])
+                inner = sub(_cat_run(toks[ci][1], cwd) or toks[ci][1])
                 pipes.extend(inner)
                 cur.append(" ".join(raws[:ci] + ["(" + " ; ".join(inner) + ")"] + raws[ci + 1:]))
                 done = True
@@ -596,8 +606,8 @@ def effective(t, cwd, depth=0, budget=None):
         elif cmd in WRAP:
             new = list(raws)
             for j in range(k + 1, len(toks)):
-                if raws[j][:1] in ("'", '"') and re.search(r"[\s;|&$`]", toks[j][1]):
-                    inner = sub(toks[j][1])
+                if raws[j][:1] in ("'", '"') and re.search(r"[\s;|&$`]", toks[j][1]) or cmd == "eval" and _cat_run(toks[j][1], cwd):
+                    inner = sub(cmd == "eval" and _cat_run(toks[j][1], cwd) or toks[j][1])
                     pipes.extend(inner)
                     new[j] = "(" + " ; ".join(inner) + ")"
             cur.append(" ".join(new))
@@ -919,7 +929,7 @@ def write_to_protected(t, cc):
     for piece in [tl] if whole else pieces:
         if not (whole or PROT_PATHS.search(piece)):
             continue
-        if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\bperl\s+(?:-\S+\s+)*-i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
+        if re.search(r"\btee\b|\bsed\s+(?:-\S+\s+)*-i|\b(?:perl|ruby)\s+(?:-\S+\s+)*-[0-9a-hj-zA-LN-Z]*i|\bcp\b|\bmv\b|\brm\b|\bln\b|\btruncate\b|\binstall\b|\bchmod\b|\bchown\b|\bdd\b|\bsponge\b|\bmkdir\b|"
                      r"write_text|write_bytes|\.write\(|writeFile|appendFile|open\([^)]*['\"][wa]|json\.dump|\bgit\s+(?:checkout|restore|reset|stash|clean)|\bed\b|\bawk\b.*inplace|\bpatch\b|\btouch\b|\bunlink\b|\bshred\b|"
                      r"\bprintf\b[^|;&]*\|\s*tee|\bsetdefault\b|\bjq\b[^|;]*(?:del\(|\+\s*\{|=\s)", piece, re.I):
             if re.search(r"\b(?:cat|jq|head|tail|grep|less|sed\s+-n|stat|ls|wc|diff|file|python3?)\b", piece, re.I) and not re.search(
@@ -1354,7 +1364,7 @@ ENV_ANY = re.compile(
 ENV_GET = re.compile(
     r"(?:(?P<a>\$ENV\s*\{|(?i:\$\{?env:|(?<![\w$\"'])env:(?=[\\\w])\\?)|\bprocess\.env\.|(?<![\w-])printenv\s+(?:-\S+\s+)*)\s*(?P<n>['\"]?\w*['\"]?)"
     r"|(?:\bos\.environb?\s*(?:\.(?:get|pop|setdefault)\s*\(|\[)|\b(?:secure_)?getenvb?\s*\(|\bos\.(?:Getenv|LookupEnv)\s*\(|\benv::var(?:_os)?\s*\(|\bSystem\.getenv\s*\("
-    r"|\bDeno\.env\.get\s*\(|\bENV\s*(?:\[|\.fetch\s*\(|\.key\?\s*\()|\bprocess\.env\s*\[|GetEnvironmentVariable\s*\(|\bENVIRON\s*\[|\$_(?:ENV|SERVER)\s*\[)(?=(?P<k>[^)\]}\n]*)))")
+    r"|\b(?:Deno|Bun)\.env\.get\s*\(|(?<![\w$])\$\.env\.get\s*\(|\bENV\s*(?:\[|\.fetch\s*\(|\.key\?\s*\()|\bprocess\.env\s*\[|GetEnvironmentVariable\s*\(|\bENVIRON\s*\[|\$_(?:ENV|SERVER)\s*\[)(?=(?P<k>[^)\]}\n]*)))")
 VAR_REF = re.compile(r"\$\{?([A-Za-z_]\w*)|(?<![\w$])([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)(?!\w)")
 HOOK_SRC = [re.compile(rx, re.I) for rx, kind in CRED_TOOLS if kind not in (None, "edit") and "environ" not in rx]
 R1_NET = re.compile(r"\b(?:curl|wget|nc|ncat|socat)\b")
@@ -1425,7 +1435,15 @@ def _r1(c, shell, eng, cwd):
     t = re.sub(r"([\"'])env\1\s*:", " ", t)
     if ENV_ANY.search(t) or any(r.search(t) for r in SOURCE_RES + HOOK_SRC) or SECRET_FILES_RE.search(re.sub(r"\b(?:process|Deno)\.env\.", " ", t)) or SENS_COMMON_RE.search(t) or "transcript_path" in t:
         return True
-    names = [a or b for a, b in VAR_REF.findall(t)]
+    names = _env_get_names(t)
+    if names is None or any(_secret_name(n) for n in names + [a or b for a, b in VAR_REF.findall(t)]) or R1_NET.search(t) and R1_SEND.search(t):
+        return True
+    return any(re.search(r">&2|/dev/stderr", s) and not re.match(r"\s*(?:(?:then|else|do)\s+)?(?:echo|printf)\b[^$`|<>&]*(?:\d?>&2|>\s*/dev/stderr)\s*$", s) for s in re.split(r"[;\n]|&&|\|\|", c))
+
+
+def _env_get_names(t):
+    """Names read by single-variable getters, or None when one is not a quoted literal."""
+    names = []
     for m in ENV_GET.finditer(t):
         lit = re.fullmatch(r"\s*(['\"]?)([A-Za-z_]\w*)\1\s*(?:,.*)?", m.group("k")) if m.group("k") is not None else None
         if m.group("a") is not None:
@@ -1433,11 +1451,20 @@ def _r1(c, shell, eng, cwd):
         elif lit and not lit.group(1):
             lit = None
         if not lit:
-            return True
+            return None
         names.append(lit.group(2))
-    if any(_secret_name(n) for n in names) or R1_NET.search(t) and R1_SEND.search(t):
-        return True
-    return any(re.search(r">&2|/dev/stderr", s) and not re.match(r"\s*(?:(?:then|else|do)\s+)?(?:echo|printf)\b[^$`|<>&]*(?:\d?>&2|>\s*/dev/stderr)\s*$", s) for s in re.split(r"[;\n]|&&|\|\|", c))
+    return names
+
+
+TS_DUMP = re.compile(r"\bprocess\.env\b(?!\s*(?:\.\w|\[))|\b(?:Deno|Bun)\.env\.toObject\b|\bBun\.env\b(?!\s*(?:\.\w|\[))|(?<![\w$])\$\.env\.(?!get\b)\w+")
+
+
+def _r1_module(t):
+    """A TS hook module: whole-environment reads, a getter of a secret-named or computed variable, or a secret file in a string."""
+    t = _u(t)
+    names = _env_get_names(t)
+    return bool(names is None or any(_secret_name(n) for n in names) or TS_DUMP.search(t)
+                or any(SECRET_FILES_RE.search(m.group(2)) for m in re.finditer(r"([\"'`])((?:\\.|(?!\1)[^\\\n])*)\1", t)))
 
 
 def _hooks(t):
@@ -1496,6 +1523,9 @@ def cc_check(tool, ti, pn, kind, cwd, body, eng):
     why = None
     if kind == "json":
         why = _cc_json(P, Q, full, pre is None, eng, cwd)
+    elif kind == "module":
+        if _r1_module(new):
+            why = "a hook module (%s) that reads the environment, a secret-named variable or a secret file" % os.path.basename(pn)
     elif kind == "script":
         if _r1(new, _shell_file(pn, Q), eng, cwd):
             why = "a hook script (%s) that dumps the environment or reads secrets" % os.path.basename(pn)
@@ -1547,7 +1577,7 @@ def _jload(f, cwd):
     return d if isinstance(d, dict) else {}
 
 
-def _plugin_cmds(docs, cwd):
+def _plugin_cmds(docs, cwd, mods):
     on, mk, roots = set(), {}, []
     for d in docs + [{"extraKnownMarketplaces": _jload(CC_LAYERS[8], cwd)}]:
         ep, km = d.get("enabledPlugins"), d.get("extraKnownMarketplaces")
@@ -1563,11 +1593,27 @@ def _plugin_cmds(docs, cwd):
         for e in _jload(os.path.join(mk[m], ".claude-plugin", "marketplace.json"), cwd).get("plugins", []) if m in mk else []:
             if isinstance(e, dict) and e.get("name") == pl and isinstance(e.get("source"), str):
                 roots.append(os.path.normpath(os.path.join(mk[m], e["source"])))
-    return [re.sub(r"\$\{?CLAUDE_PLUGIN_ROOT\}?", r.replace("\\", "/"), c) for r in dict.fromkeys(x for x in roots if isinstance(x, str))
-            for c in _cmds(_cc_disk(os.path.join(r, "hooks", "hooks.json"), cwd) or "")]
+    out = []
+    for r in dict.fromkeys(x for x in roots if isinstance(x, str)):
+        docs = [([os.path.join(r, "hooks")], _cc_disk(os.path.join(r, "hooks", "hooks.json"), cwd) or "")]
+        pj = _jload(os.path.join(r, ".claude-plugin", "plugin.json"), cwd).get("hooks")
+        for h in pj if isinstance(pj, list) else [pj]:
+            if isinstance(h, str):
+                f = os.path.normpath(os.path.join(r, h))
+                docs.append(([os.path.dirname(f)], _cc_disk(f, cwd) or ""))
+            elif isinstance(h, dict):
+                docs.append(([r, os.path.join(r, ".claude-plugin")], json.dumps(h if "hooks" in h or "modules" in h else {"hooks": h})))
+        for bases, t in docs:
+            out += [re.sub(r"\$\{?CLAUDE_PLUGIN_ROOT\}?", r.replace("\\", "/"), c) for c in _cmds(t)]
+            try:
+                ms = json.loads(t).get("modules") if t.strip() else None
+            except (ValueError, AttributeError):
+                ms = None
+            mods += [os.path.realpath(os.path.join(b, m)) for m in ms for b in bases if isinstance(m, str)] if isinstance(ms, list) else []
+    return out
 
 
-def _hooked_set(cwd):
+def _hooked_set(cwd, modules=False):
     st = []
     for f in CC_LAYERS:
         try:
@@ -1577,9 +1623,10 @@ def _hooked_set(cwd):
     key = (cwd, tuple(st))
     if key not in _HOOKED:
         texts = [_cc_disk(f, cwd) for f in CC_LAYERS[:7]]
-        cmds = [c for t in texts if t for c in _cmds(t)] + _plugin_cmds([_jload(f, cwd) for f in CC_LAYERS[:7]], cwd)
-        _HOOKED[key] = {x for c in cmds for x in _script_paths(c, cwd)}
-    return _HOOKED[key]
+        mods = []
+        cmds = [c for t in texts if t for c in _cmds(t)] + _plugin_cmds([_jload(f, cwd) for f in CC_LAYERS[:7]], cwd, mods)
+        _HOOKED[key] = ({x for c in cmds for x in _script_paths(c, cwd)} | set(mods), set(mods))
+    return _HOOKED[key][bool(modules)]
 
 
 def _script_leak(sp, eng, cwd):
@@ -1593,7 +1640,8 @@ def hook_bash(cmd, cwd, eng, orig=None):
     tg += [seg.split()[-1].strip("'\"") for seg in re.findall(r"\b(?:cp|mv|install)\s+[^|;&<>\n]+|\b(?:sed|perl)\s+[^|;&<>\n]*?-\w*i[^|;&<>\n]*", cmd)]
     hs = _hooked_set(cwd) if tg else set()
     hit = [x for x in tg if os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(x))) in hs]
-    return hit and cc_bash(cmd, hit, cwd, eng, "script", orig)
+    mods = _hooked_set(cwd, True) if hit else set()
+    return hit and cc_bash(cmd, hit, cwd, eng, "module" if all(os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(x))) in mods for x in hit) else "script", orig)
 
 
 def _pipelines(t):
@@ -1738,8 +1786,9 @@ def _bare(n, cmd, cwd, wr):
             if nm in SHELLS and i and not args:
                 ex += _texts(p[:i], cwd)
             f = args[0] if nm in SHELLS and args and "-c" not in x and not any(re.fullmatch(r"-\w*c\w*", y) for y in x[1:]) or nm in ("source", ".") and args else x[0] if "/" in x[0] else None
-            t = f and _script_text(f, cwd, wr)
-            if t and (nm in SHELLS or nm in ("source", ".") or re.match(r"#!\s*\S*(?:/|env\s+)(?:ba|z|da|k)?sh\b", t)):
+            t = f and _script_text(f, cwd, wr) or (nm in SHELLS or nm == "eval") and next(
+                (s for s in (_cat_run(y, cwd, lambda q, c: _script_text(q, c, wr)) for y in x[1:]) if s), None)
+            if t and (nm in SHELLS or nm in ("source", ".", "eval") or re.match(r"#!\s*\S*(?:/|env\s+)(?:ba|z|da|k)?sh\b", t)):
                 ex.append(t)
         out.append(" | ".join(nm if not runs and os.path.basename((_argv(s) or [""])[0]) in ("echo", "printf") else s for s, nm in zip(p, [os.path.basename((_argv(s) or [""])[0]) for s in p])))
     base = "\n".join(out + keep)
@@ -1891,6 +1940,8 @@ def cc_bash(cmd, targets, cwd, eng, force=None, orig=None):
             cmds.append(c)
     for tgt in dict.fromkeys(targets):
         kind = force or _cc_kind(tgt)
+        if re.search(r"\b(?:perl|ruby)\s+(?:[^|;&\n]*\s)?-[0-9a-hj-zA-LN-Z]*i[^|;&\n]*" + re.escape(tgt), cmd):
+            return "a perl or ruby in-place edit of Claude Code's config, which the guard cannot evaluate; use Edit or Write"
         if kind == "json" and not CC_JSON.search(tgt) and not CC_TREE.search(tgt):
             continue
         gone = [""] if re.search(r"\b(?:rm|unlink|shred|truncate)\b[^|;&\n]*" + re.escape(tgt), cmd) else []
@@ -1931,8 +1982,9 @@ def write_check(tool, ti, eng, cwd=None):
             pn = re.sub(r"/[^/.][^/]*/\.\./", "/", pn, count=1)
         pn = re.sub(r"/\./", "/", pn)
         if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit") or "write" in tool.lower() or "edit" in tool.lower():
-            cc = _cc_kind(pn)
-            d = cc_check(tool, ti, pn, cc or "script", cwd, body, eng) if cc or os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(pn))) in _hooked_set(cwd) else None
+            cc, rp = _cc_kind(pn), os.path.realpath(os.path.join(cwd or os.getcwd(), os.path.expanduser(pn)))
+            cc = "module" if cc in (None, "script") and rp in _hooked_set(cwd, True) else cc
+            d = cc_check(tool, ti, pn, cc or "script", cwd, body, eng) if cc or rp in _hooked_set(cwd) else None
             if d:
                 return d
             if not cc and (PROT_PATHS.search(pn) or PROT_BASE.search(pn) and CLAUDE_DIR.search(pn)):
