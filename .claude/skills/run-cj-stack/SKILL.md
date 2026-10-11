@@ -22,11 +22,12 @@ Paths here are relative to the repo root.
 .claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
 .claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
 .claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with cj-stack installed
-.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $1; RUNS=1 halves it
+.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
 ```
 
-`routing` checks that each request loads its own planning skill and no sibling, with every
-shipped skill installed together. Each case in `evals/routing/<case>/` is a `prompt.md` plus
+`routing` checks that each request loads its own skill and not its nearest neighbour, with every
+shipped skill installed together, plus `drive` and `scout` from `in-progress` (linked into the
+eval plugin only), and that the typed-only `commit` and `create-pr` never load on their own. Each case in `evals/routing/<case>/` is a `prompt.md` plus
 `tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
 an old one's.
 

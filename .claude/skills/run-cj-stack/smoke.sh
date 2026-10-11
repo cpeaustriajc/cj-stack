@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Drives the cj-stack marketplace the way a user's Claude Code sees it.
 # Usage (from the repo root): .claude/skills/run-cj-stack/smoke.sh [validate|tests|doctor|details|routing|all]
-# `all` skips routing: it costs about $1 of model calls per run.
+# `all` skips routing: it costs about $2 of model calls per run.
 set -uo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"; cd "$root"
 step="${1:-all}"; failed=0
@@ -38,10 +38,12 @@ details() { say "plugin details"; installed; run env CLAUDE_CONFIG_DIR="$cfg" cl
 # The marketplace entry has no plugin.json, so `claude plugin eval .` resolves no plugin. Build a
 # throwaway plugin of symlinks to the shipped skills, named cj-stack, and evaluate that.
 routing() {
-  say "routing evals: each request loads its own skill and no sibling"
+  say "routing evals: each request loads its own skill and no neighbour"
   local p; p="$(mktemp -d)"; mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
   python3 -c "import json;m=json.load(open('.claude-plugin/marketplace.json'));print('\n'.join(next(x for x in m['plugins'] if x['name']=='cj-stack')['skills']))" |
     while read -r s; do ln -s "$root/${s#./}" "$p/skills/$(basename "$s")"; done
+  # In-progress skills with routing cases join the eval plugin only; they still don't ship.
+  for s in drive scout; do ln -s "$root/skills/in-progress/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
   cp -r evals/routing "$p/evals/"
   (cd "$p" && claude plugin eval . --eval-dir evals/routing --runs "${RUNS:-2}" --ablation none \
