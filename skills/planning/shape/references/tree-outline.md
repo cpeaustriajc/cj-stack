@@ -10,6 +10,7 @@ run includes its project and that project's items.
   "product": {
     "name": "Domain marketplace",
     "status": "Confirmed",
+    "worth_it": "build: buyers abandon at register today; about three weeks to a first version",
     "features": [
       { "id": "F1", "title": "Buy a domain", "project": "Checkout" },
       { "id": "F2", "title": "Sell a domain", "project": null, "deferred": true }

@@ -10,6 +10,7 @@ from check_tree import check  # noqa: E402
 GOOD = {
     "product": {
         "status": "Confirmed",
+        "worth_it": "build: shop owners lose domains monthly; two weeks to a first version",
         "features": [
             {"id": "F1", "title": "Buy", "project": "Checkout"},
             {"id": "F2", "title": "Sell", "project": None, "deferred": True},
@@ -61,6 +62,8 @@ case("a feature not yet shaped is only a note",
      lambda t: t["product"]["features"][1].update(deferred=False), None)
 case("a project its feature does not name fails",
      lambda t: t["product"]["features"][0].update(project="Cart"), "does not name it")
+case("a Confirmed product with Worth it blank fails",
+     lambda t: t["product"].update(worth_it=""), "Worth it blank")
 case("a project serving no feature fails", setp(feature="F9"), "serves no feature")
 case("a Confirmed spec under a Draft product fails",
      lambda t: t["product"].update(status="Draft"), "under a Draft product")

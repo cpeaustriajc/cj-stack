@@ -17,6 +17,8 @@ def check(tree, launch=False):
     features = {}
     if product:
         features = {f["id"]: f for f in product.get("features", [])}
+        if product.get("status") == "Confirmed" and not str(product.get("worth_it", "")).strip():
+            problems.append("product: Confirmed with Worth it blank")
         waiting = [f["id"] for f in features.values() if not f.get("project") and not f.get("deferred")]
         if waiting:
             notes.append(f"product: not yet shaped: {', '.join(waiting)}")

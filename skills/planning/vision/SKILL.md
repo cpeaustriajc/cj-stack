@@ -1,8 +1,8 @@
 ---
 name: vision
 description: >
-  Grill me on a vague product idea until it is sharp, then write it as the top level of the plan
-  in the team's tracker: the destination, the features that become projects, what is not yet
+  Grill me on a vague product idea, starting with whether it is worth building and worth my time,
+  until it is sharp; then write it as the top level of the plan in the team's tracker: the destination, the features that become projects, what is not yet
   specified and what is out of scope, ordered so the riskiest unknown is built first. Then hand
   each feature to `shape`, one at a time. Use when I bring a product idea or a vision, say "grill
   me on this idea", "plan the product", "set up the initiative" or "what are the features", or ask
@@ -25,8 +25,8 @@ recommended answers, the lookups. Skip its sizing: a product idea is always gril
 at this level:
 
 - **Breadth first.** Round 1 fans out across the whole idea, one question per branch, before going
-  deep on any: who it is for, their problem today, the destination, how we will know it worked,
-  the first version's cut, and the riskiest unknown. Deep questions wait until every branch has a
+  deep on any: who it is for, their problem today, whether it is worth building (below), the
+  destination, how we will know it worked, the first version's cut, and the riskiest unknown. Deep questions wait until every branch has a
   first answer.
 - **The tree is the product.** Every settled branch becomes a line in section 2: a feature, a
   Success measure, an Out of scope item or the Sequence. Show the Features list growing in the
@@ -38,8 +38,23 @@ at this level:
   runs a small shop and her domain lapses on Friday night. What does she do first?"). Offer a
   rough sketch, a mock landing page headline or a one-screen flow, as an option when words are
   not landing.
-- **Kill early.** If the answers show the problem is not real, already solved, or not worth the
-  build, say so with the evidence and recommend stopping. That is a good outcome.
+- **Is it worth building, and worth my time?** Settle this before the features, because every
+  later answer depends on it. Look up what you can before asking:
+  - **Real**: who has the problem today, how often, and what they do about it now. A workaround
+    people already pay for or put up with is evidence; "it would be nice" is not.
+  - **Not already solved**: the existing products, tools or a spreadsheet that do this. Look them
+    up; say what this would do that they don't, or recommend using one instead.
+  - **What it costs**: my time to the first usable version, in weeks, and what it costs to keep
+    running and maintain after. Estimates are mine to give; label yours as guesses.
+  - **What it displaces**: what else that time would go to. Ask me which matters more.
+  - **What it returns**: money, time saved, learning, or joy. Any of these can be enough, but say
+    which one this is.
+
+  Then recommend one verdict, with the reason in a line: **build**, **shrink** (a smaller first
+  version is worth it and the whole is not yet), **test first** (one cheap check, a landing page,
+  five conversations or a prototype, decides it), or **don't build**. Don't build and test first
+  are good outcomes; say them plainly when the evidence points there, and stop the interview on
+  don't build.
 - **The riskiest unknown gets a test, not an opinion.** If it can be settled by a lookup, a
   prototype or talking to a user, name that as the first item of the first project rather than
   deciding it in the interview.
@@ -59,6 +74,11 @@ Status: Draft | Confirmed (<date>, <approver>)
 
 <Who it is for, the problem it solves for them, and what the product is once it exists. Neutral
 present tense: "Buyers find and buy a domain in one visit".>
+
+## Worth it
+
+<Verdict (build, shrink or test first) and why: the problem's evidence, what exists already, the
+cost to a first version and to keep running, what it displaces, and what it returns.>
 
 ## Success
 
@@ -92,6 +112,8 @@ version of the whole product that works end to end and answers the riskiest unkn
 - **An unknown that a prototype can settle** becomes a prototype item in the first project's Demo
   phase, not a question for me.
 - **Out of scope is never empty** on a Confirmed product.
+- **Worth it is never blank** on a Confirmed product. A test first verdict makes that test the
+  first item of the first project, and the product stays Draft until its result is in.
 
 ## 3. Hand down, in stages
 
@@ -100,7 +122,10 @@ version of the whole product that works end to end and answers the riskiest unkn
    list until their turn.
 2. Hand the first project to `shape`. The next feature is shaped when the project before it
    reaches Launch, or sooner if I say so.
-3. A change to a feature after its project exists returns that project's spec to Draft; say so in
+3. **Check Worth it again at each Launch**, before shaping the next feature, against what the
+   launch showed and the time it really took. Say in one line whether the verdict still holds; if
+   not, recommend shrinking or stopping rather than carrying on by momentum.
+4. A change to a feature after its project exists returns that project's spec to Draft; say so in
    one line and tell me what it touches.
 
 ## 4. Product updates and audits
@@ -108,7 +133,7 @@ version of the whole product that works end to end and answers the riskiest unkn
 - **A product update** is one line per project, with the project's own health and its phase,
   then the product's health as my judgement, proposed if the facts don't settle it. Read each
   project's latest update; never retype a project's progress by hand.
-- **An audit** checks the product against the five rules: every feature has a project or is
+- **An audit** checks Worth it against the latest launch and the five rules: every feature has a project or is
   deferred, every project serves a feature, nothing is built under a Draft level, and Not yet
   specified holds nothing that has since sharpened.
 

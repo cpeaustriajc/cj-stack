@@ -31,7 +31,7 @@ All skills are model-invoked (Claude picks them from their description), except 
 
 | Skill | Bucket | What it is for |
 |---|---|---|
-| [vision](skills/planning/vision/SKILL.md) | planning | grilling me on a vague product idea, breadth first, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
+| [vision](skills/planning/vision/SKILL.md) | planning | grilling me on a vague product idea, breadth first and starting with whether it is worth building, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
 | [shape](skills/planning/shape/SKILL.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
 | [tickets](skills/planning/tickets/SKILL.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
 | [triage](skills/planning/triage/SKILL.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
