@@ -1,0 +1,14 @@
+{
+  "name": "memory-lint",
+  "version": "0.1.0",
+  "description": "Denies an auto-memory write that holds task state, one-off references or repo detail, so memory keeps only what is worth relearning",
+  "author": { "name": "CJ" },
+  "userConfig": {
+    "memoryDir": {
+      "type": "string",
+      "title": "Memory directory",
+      "description": "Your autoMemoryDirectory setting, if you moved memory out of ~/.claude/projects/<project>/memory",
+      "default": ""
+    }
+  }
+}
