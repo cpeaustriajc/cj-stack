@@ -1,6 +1,6 @@
 ---
 name: feature-files
-description: Keep one short file per user-facing feature that says what exists, how a user reaches it, how to drive and check it, and what tends to break, so end-to-end checks read only the file for the area being changed. Use when verifying a change in the running app, when writing or running an E2E check, when break-it needs a starting point, and when a UI change makes an existing feature file wrong.
+description: Keep one short file per user-facing feature that says what exists, how a user reaches it, how to drive and check it, and what tends to break, so end-to-end checks read only the file for the area being changed. Use when verifying a change in the running app, when an E2E check needs to know how to reach and drive an area (not for writing the test code itself), when break-it needs a starting point, and when a UI change makes an existing feature file wrong.
 ---
 
 # Feature files

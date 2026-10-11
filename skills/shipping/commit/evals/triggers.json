@@ -1,0 +1,34 @@
+[
+ {
+  "query": "commit my changes in small logical commits and push",
+  "should_trigger": true
+ },
+ {
+  "query": "commit and push",
+  "should_trigger": true
+ },
+ {
+  "query": "make commits for what we did, in the repo's style",
+  "should_trigger": true
+ },
+ {
+  "query": "split these changes into sensible commits and push the branch",
+  "should_trigger": true
+ },
+ {
+  "query": "open a pull request for this branch",
+  "should_trigger": false
+ },
+ {
+  "query": "what changed since the last commit",
+  "should_trigger": false
+ },
+ {
+  "query": "revert the last commit",
+  "should_trigger": false
+ },
+ {
+  "query": "write a changelog entry for this release",
+  "should_trigger": false
+ }
+]

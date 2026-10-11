@@ -1,0 +1,34 @@
+[
+ {
+  "query": "open a pull request for this work",
+  "should_trigger": true
+ },
+ {
+  "query": "create a draft PR against develop",
+  "should_trigger": true
+ },
+ {
+  "query": "commit, check and open a PR linking issue MP-42 with the evidence",
+  "should_trigger": true
+ },
+ {
+  "query": "make a PR for this branch",
+  "should_trigger": true
+ },
+ {
+  "query": "review PR 42 for bugs",
+  "should_trigger": false
+ },
+ {
+  "query": "commit my changes and push, no PR",
+  "should_trigger": false
+ },
+ {
+  "query": "what's the status of CI on my PR",
+  "should_trigger": false
+ },
+ {
+  "query": "merge the PR once it's green",
+  "should_trigger": false
+ }
+]

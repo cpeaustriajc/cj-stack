@@ -73,8 +73,10 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
   haven't been separated from real failures on Linux.
 - **`claude plugin eval <plugin>`** runs `case.yaml` cases under each skill's `evals/`; the
   driver doesn't.
-- **Trigger checks.** `skills/planning/*/evals/triggers.json` are should-trigger and near-miss
-  prompts for skill-creator's `run_eval` (all pass as of the cleanup). Run them from an empty
+- **Trigger checks.** Each skill's `evals/triggers.json` holds should-trigger and near-miss prompts
+  for skill-creator's `run_eval`; all pass as of the cleanup. `commit` and `create-pr` are
+  typed-only, so their positives fire only sometimes in `run_eval` (it ignores
+  `disable-model-invocation`); the routing suite is their real check. Run them from an empty
   folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
   copy of the skill into the same `.claude/commands/`, Claude invokes another worker's copy, and
   the run scores as a miss. A prompt that points at content it doesn't include ("file these

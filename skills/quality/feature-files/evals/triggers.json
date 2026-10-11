@@ -1,0 +1,34 @@
+[
+ {
+  "query": "write a feature file for the checkout area so E2E checks know how to reach and drive it",
+  "should_trigger": true
+ },
+ {
+  "query": "the E2E agent keeps getting lost finding the admin panel, document how to reach it and what to check",
+  "should_trigger": true
+ },
+ {
+  "query": "create the per-feature file for search: route, test account, what to verify",
+  "should_trigger": true
+ },
+ {
+  "query": "update the feature file for billing, the settings route moved",
+  "should_trigger": true
+ },
+ {
+  "query": "write the spec for the checkout project",
+  "should_trigger": false
+ },
+ {
+  "query": "write playwright tests for the search page",
+  "should_trigger": false
+ },
+ {
+  "query": "add a data-testid to the search button so tests can find it",
+  "should_trigger": false
+ },
+ {
+  "query": "write a README for the repo",
+  "should_trigger": false
+ }
+]

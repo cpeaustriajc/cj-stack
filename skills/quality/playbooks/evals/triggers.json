@@ -1,0 +1,34 @@
+[
+ {
+  "query": "fix the bug where the cart empties after login, reproduce it first",
+  "should_trigger": true
+ },
+ {
+  "query": "refactor the pricing module without changing behaviour, pin it down first",
+  "should_trigger": true
+ },
+ {
+  "query": "the search endpoint got slow since last week, find out why and fix it with a baseline",
+  "should_trigger": true
+ },
+ {
+  "query": "build the CSV export feature from ticket MP-42 and prove it works end to end",
+  "should_trigger": true
+ },
+ {
+  "query": "break the export spec into tickets",
+  "should_trigger": false
+ },
+ {
+  "query": "try to break the export feature like a careless user",
+  "should_trigger": false
+ },
+ {
+  "query": "what's the difference between a bug and a chore ticket",
+  "should_trigger": false
+ },
+ {
+  "query": "explain how the pricing module works",
+  "should_trigger": false
+ }
+]
