@@ -40,7 +40,7 @@ def split_safe(text, final):
 
 def main():
     import secret_engine as eng
-    engine = eng.Engine(os.getcwd())
+    engine = eng.Engine(os.getcwd(), env=True)
     ctx = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 0
     fd = sys.stdin.fileno()
     buf = b""

@@ -116,7 +116,7 @@ def worker():
             out = eng.marked_like(resp)
         else:
             cwd = ev.get("cwd") if isinstance(ev.get("cwd"), str) else None
-            engine = eng.Engine(cwd)
+            engine = eng.Engine(cwd, env=True)
             engine.grep_words = eng.grep_hint_words(ev.get("tool_name"), ti)
             ctx = eng.command_ctx(ev.get("tool_name"), ti)
             engine.deadline = time.monotonic() + eng.REDACT_BUDGET

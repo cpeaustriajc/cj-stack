@@ -166,6 +166,7 @@ CRED_TOOLS = [
     (r"\bsqlite3\b(?=.*(?:Application Support|Library/(?:Group|Containers|Messages|Mail|Safari|Cookies|Clipboard)|history\.(?:db|sqlite)|\.sqlite|notion|slack|manifest\.db|n\.db))(?!.*\./app\.db)", "tool"),
     (r"\bcat\s+/Users/[^/\s]+/\.config/\w*[sS]ecret", "tool"),
     (r"\bclaude\s+plugins?\s+(?:(?:disable|uninstall|remove|rm)\b[^|;&]*(?:secret-guard|--all)|marketplace\s+(?:remove|rm)\b[^|;&]*\bcj-stack\b)", "edit"),
+    (r"\blaunchctl\s+getenv\b", "tool"),
 ]
 
 EDIT_RES = [re.compile(rx, re.I) for rx, kind in CRED_TOOLS if kind == "edit"]
@@ -1231,6 +1232,57 @@ def exfil_hit(t, secret_file, srcs):
     return None
 
 
+def _grep_reach(full, glob, typ):
+    """Secret files a Grep of full searches; rg lists them so ignore files apply as they do for Grep; else a walk minus git-ignored files."""
+    if os.path.isfile(full):
+        return [full] if _secret_path(full) else []
+    if not os.path.isdir(full):
+        return []
+    import shutil
+    import subprocess
+    globs = []
+    for g in glob.split() if isinstance(glob, str) else []:
+        globs += [g] if "{" in g and "}" in g else [x for x in g.split(",") if x]
+    rg = shutil.which("rg")
+    try:
+        r = subprocess.run([rg, "--files", "--hidden", "--null", "--glob", "!.git"] + [x for g in globs for x in ("--glob", g)]
+                           + (["--type", typ] if isinstance(typ, str) and typ else []) + ["--", full],
+                           capture_output=True, stdin=subprocess.DEVNULL, timeout=3)
+        if r.returncode in (0, 1):
+            return [f for f in r.stdout.decode("utf-8", "surrogateescape").split("\0") if f and _secret_path(f)]
+    except (TypeError, OSError, subprocess.SubprocessError):
+        pass
+    out = []
+    for dp, dns, fns in os.walk(full):
+        dns[:] = [d for d in dns if d != ".git"]
+        out += [os.path.join(dp, f) for f in fns if _secret_path(os.path.join(dp, f))]
+    try:
+        r = subprocess.run(["git", "-C", full, "check-ignore", "-z", "--stdin"], input="\0".join(out).encode("utf-8", "surrogateescape"),
+                           capture_output=True, timeout=3) if out else None
+        gone = set(r.stdout.decode("utf-8", "surrogateescape").split("\0")) if r and r.returncode in (0, 1) else set()
+    except (OSError, subprocess.SubprocessError):
+        gone = set()
+    return [f for f in out if f not in gone]
+
+
+def grep_oracle(ti, cwd):
+    """A count or file list from Grep over a secret file tests a guess unless the pattern is a key name or a diff marker."""
+    mode = ti.get("output_mode") or "files_with_matches"
+    pat, path = ti.get("pattern"), ti.get("path") or cwd or os.getcwd()
+    if mode not in ("count", "files_with_matches") or not isinstance(pat, str) or not isinstance(path, str):
+        return None
+    hits = _grep_reach(os.path.join(cwd or os.getcwd(), os.path.expanduser(path)), ti.get("glob"), ti.get("type"))
+    if not hits:
+        return None
+    keys = set()
+    for f in hits:
+        keys |= (f and _file_keys(f, cwd)) or set()
+    if pat in _DIFF_MARKER_PATTERNS or _is_key_name(pat, keys):
+        return None
+    return denial("a Grep %s over a secret file with a pattern that is not one of its key names, which tests a guessed value" % mode,
+                  "Use output_mode content (values are redacted), or search for a key name.")
+
+
 def read_check(tool, ti):
     paths = []
     for k in ("file_path", "path", "notebook_path", "filepath", "filename", "directory", "dir"):
@@ -1958,6 +2010,9 @@ def decide(ev, eng):
             return {"deny": denial("a Grep for codes in the notifications database", "Ask the owner to paste the notification text.")}
         if isinstance(gp, str) and isinstance(gpat, str) and SECRET_FILES_RE.search(gp) and re.search(r"=\s*[\w$-]{3,}|\bsk_(?:live|test)_", gpat) and not re.search(r"\[|\\w|\.\*|\\S", gpat.split("=", 1)[-1]):
             return {"deny": denial("a Grep that guesses a secret's value", "Read the file instead; values are redacted.")}
+        d = grep_oracle(ti, cwd)
+        if d:
+            return {"deny": d}
     if tool in ("Read", "Grep", "Glob", "NotebookRead", "LS"):
         return None
     if tool in ("Write", "Edit", "MultiEdit", "NotebookEdit", "SendMessage", "TaskCreate", "TaskUpdate", "SubagentHandback", "Agent", "Task", "WebFetch", "WebSearch") or tool.startswith("mcp__"):

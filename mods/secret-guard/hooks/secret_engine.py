@@ -1394,27 +1394,41 @@ def _file_values(path, text):
             v = m.group("raw")
             v = re.sub(r"\s+#.*$", "", v) if not re.search(r"#\S", v) else v
             v = v.strip()
-        if not v or benign_h(v) or (any(w.lower() in PUBLIC_WORDS for w in words(k)) and not _public_secret(k)):
-            continue
-        if k.startswith("//") or "_auth" in k.lower():
-            pass
-        if _secretish(k, v) or low.startswith((".env", ".dev.vars", ".npmrc", ".pypirc", ".boto", ".s3cfg")) and (looks_random(v) or _mixed(v)):
-            if "://" in v and not URL_USERINFO.search(v):
-                us = []
-                _scan_forms(v, us)
-                _scan_tokens(v, us)
-                if us:
-                    vals.extend(v[a:b] for a, b in us)
-                elif classify(k) == 1:
-                    vals.append(v)
-            elif "://" not in v:
-                vals.append(v)
-            if "\\n" in v:
-                vals.append(v.replace("\\n", "\n"))
-            for um in URL_USERINFO.finditer(v):
-                vals.append(um.group("pw"))
+        _kv_values(k, v, low.startswith((".env", ".dev.vars", ".npmrc", ".pypirc", ".boto", ".s3cfg")), vals)
     for m in re.finditer(r"//[^\s:=]+/:(_auth\w*|_password)=(\S+)", text):
         vals.append(m.group(2))
+    return vals
+
+
+def _kv_values(k, v, envfile, vals):
+    """Harvest one name=value pair; in an env file a random or mixed value counts under any name."""
+    if not v or benign_h(v) or (any(w.lower() in PUBLIC_WORDS for w in words(k)) and not _public_secret(k)):
+        return
+    if k.startswith("//") or "_auth" in k.lower():
+        pass
+    if _secretish(k, v) or envfile and (looks_random(v) or _mixed(v)):
+        if "://" in v and not URL_USERINFO.search(v):
+            us = []
+            _scan_forms(v, us)
+            _scan_tokens(v, us)
+            if us:
+                vals.extend(v[a:b] for a, b in us)
+            elif classify(k) == 1:
+                vals.append(v)
+        elif "://" not in v:
+            vals.append(v)
+        if "\\n" in v:
+            vals.append(v.replace("\\n", "\n"))
+        for um in URL_USERINFO.finditer(v):
+            vals.append(um.group("pw"))
+
+
+def env_values(environ=None):
+    """Values of secret-named variables in this process's environment, by the env-file harvest rules."""
+    vals = []
+    for k, v in (os.environ if environ is None else environ).items():
+        if classify(k) or words(k) and _public_secret(k):
+            _kv_values(k, v, False, vals)
     return vals
 
 
@@ -1470,6 +1484,9 @@ def unwrap_ti(tool, ti):
     return dict(ti, command=c[i + len(WRAP_OPEN):-len(WRAP_CLOSE)])
 
 
+CRED_GET = re.compile(r"\b(?:launchctl\s+getenv|aws\b[^|;&\n]*?\bconfigure\s+get)\b([^|;&\n]*)")
+
+
 def command_ctx(tool, ti):
     if not isinstance(ti, dict):
         return 0
@@ -1479,6 +1496,9 @@ def command_ctx(tool, ti):
             return 0
         if re.match(r"\s*(?:ls|find|stat|readlink|du|tree|file)\b", c):
             return 0
+        for m in CRED_GET.finditer(c):
+            if any(classify(w.strip("'\"").rsplit(".", 1)[-1]) for w in m.group(1).split() if not w.startswith("-")):
+                return 1
         if SOURCE_CMD.search(c):
             if re.search(r"\b(?:docker|podman)\s+\S*\s*inspect\b.*(?:-f|--format)\b", c):
                 return 0
@@ -1670,8 +1690,9 @@ def _hint_spans(text, words):
 
 
 class Engine:
-    def __init__(self, cwd=None, harvest=True):
+    def __init__(self, cwd=None, harvest=True, env=False):
         self.cwd = cwd
+        self.env = env
         self.grep_words = ()
         self._values = None
         self._needles = None
@@ -1718,6 +1739,11 @@ class Engine:
                     fresh[p] = {"m": st.st_mtime_ns, "s": st.st_size, "r": HARVEST_RULES, "v": got}
                 if fresh != cache:
                     _save_harvest(fresh)
+            if self.env:
+                for v in env_values():
+                    v = v.strip()
+                    if len(v) >= 6 and not benign_h(v) and not v.startswith(MARK):
+                        vals.add(v)
             self._values = sorted(vals, key=lambda x: (-len(x), x))
         return self._values
 
