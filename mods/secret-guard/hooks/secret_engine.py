@@ -1911,7 +1911,8 @@ class Engine:
         return o
 
 
-CTX_SKIP_KEYS = frozenset(["type", "mode", "filePath", "file_path", "path", "command", "filenames", "matches", "interrupted"])
+CTX_SKIP_KEYS = frozenset(["type", "mode", "filePath", "file_path", "path", "command", "filenames", "matches", "interrupted",
+                           "backgroundTaskId"])
 B64CH = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=_-")
 
 
