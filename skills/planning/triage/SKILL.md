@@ -37,6 +37,11 @@ still open this round waits for a later round.
 
 ## Never make me repeat myself
 
+Questions get fewer as the plan goes down: the product (`vision`) is grilled hardest, a project
+under it only on what the product left open, and a slice almost never. When the work sits under
+a product or a spec, start the ledger with what that level already settled, and size the
+remaining questions, not the whole idea.
+
 Open each round with a short ledger in chat, before the form:
 
 ```

@@ -99,9 +99,12 @@ often happens after a demo, only the document changes, and nothing already cut i
 
 1. **Read the parent.** Open the product and the feature this project serves. Quote the
    feature's line; the project's Done must deliver it.
-2. **Settle the decisions.** If any decision about the project is open, run `triage` first.
-   The spec records decisions; it is not a place to make new ones, and it invents nothing to fill
-   a section.
+2. **Settle what is still open, and only that.** The product already settled who it is for,
+   the destination and this feature's outcome; carry them in as Settled and never re-ask them.
+   If decisions about the project remain, run `triage` on those alone. Under a confirmed product
+   that is usually one round or none; many open questions here mean the product was too vague,
+   so say so and offer to revisit `vision`. The spec records decisions; it is not a place to make
+   new ones, and it invents nothing to fill a section.
 3. **Agree the testing seams** with me before writing: where the feature will be proven. Prefer
    existing seams to new ones and the highest seam that works; one is ideal.
 4. **Write the spec** from the template in `references/templates.md`, as a Draft, in the

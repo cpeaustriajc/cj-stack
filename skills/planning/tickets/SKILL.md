@@ -41,7 +41,9 @@ be thrown away when direction changes.
 
 Show me the slice as a list before writing anything: each item's title, the requirements it
 cites, what I would see when it is done, and what blocks it. Ask whether the granularity and the
-blocking are right, and iterate until I approve.
+blocking are right, and iterate until I approve. That is the only question at this level: the
+spec has settled the rest. Any other question means the spec is unclear, so it goes up to
+`shape` as a change to the spec, not into a ticket.
 
 ## 3. Write each item
 
