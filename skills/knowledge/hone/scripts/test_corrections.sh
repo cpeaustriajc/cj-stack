@@ -80,6 +80,13 @@ check "a multi-select that adds a non-recommended option is kept" 1 "grill-me up
 run ask-own "$Q${NL}$(QA 'keep it in notion')"
 check "a non-recommended or typed answer is kept" 1 "keep it in notion"
 
+AQ='{"type":"assistant","message":{"content":[{"type":"text","text":"Should I continue?"}]}}'
+run peer "$AQ${NL}$(U 'Another Claude session sent a message:\n<cross-session-message from=\"x\">no, stop that</cross-session-message>')"
+check "a message from another Claude session is not the user's correction" 0
+
+run stophook "$A${NL}$(U 'Stop hook feedback:\n[Run ui-polish]: the goal is not satisfied')"
+check "stop hook feedback is kept, labelled as a hook" 1 "### HOOK" "goal is not satisfied"
+
 run resumed "$A${NL}$(U 'no, I already said we fix the source')"
 cp "$tmp/root/-proj/s.jsonl" "$tmp/root/-proj/resumed.jsonl"
 summary="$(python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" | tail -1)"; out="$(cat "$tmp/out.md")"

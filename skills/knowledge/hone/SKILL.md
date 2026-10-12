@@ -18,7 +18,7 @@ cheapest durable fix for each one. It applies nothing without my approval.
 Run `scripts/corrections.py` to pull, from the transcripts on this machine, every place where I
 corrected Claude: the reply right after Claude asked or acted, interrupted requests, rejected tool
 calls, dismissed forms, and replies that open with "no", "why", "I already said", "stop" or
-"don't". Scope it with `--project <substring>` and `--since <YYYY-MM-DD>`. It prints progress and
+"don't". Stop-hook feedback comes out as `HOOK`: a loop there is a lesson too, but not my words. Scope it with `--project <substring>` and `--since <YYYY-MM-DD>`. It prints progress and
 writes one markdown file of exchanges.
 
 `/hone <skill>` runs it with `--skill <skill>`, which keeps only corrections made while that skill

@@ -7,6 +7,8 @@ CORRECTION = re.compile(
     r"^\s*(no\b|nope|why\b|stop\b|don'?t\b|do not\b|i already|i said|i meant|that's not|wrong|"
     r"huh|wait\b|actually\b|\?\?)", re.I)
 INTERRUPT = "[Request interrupted by user"
+PEER = "Another Claude session sent a message"
+HOOK = "Stop hook feedback:"
 COMMAND = re.compile(r"<command-name>\s*([^<\s]+)\s*</command-name>")
 ANSWER = re.compile(r'"="([^"]*)"')
 # Keep this detection in step with mods/hone-nudge/hooks/register.ts, which duplicates it.
@@ -78,9 +80,11 @@ def _exchanges(path, stats, skill):
                 elif "doesn't want to proceed" in result or "rejected" in result[:200].lower():
                     yield active, "REJECTED", last_claude[-600:], result[:600]
             said = text_of(content)
-            if not said.strip() or said.startswith("<") or len(said) > 2500:
+            if not said.strip() or said.startswith(("<", PEER)) or len(said) > 2500:
                 continue
-            if INTERRUPT in said:
+            if said.startswith(HOOK):
+                yield active, "HOOK", last_claude[-600:], said
+            elif INTERRUPT in said:
                 yield active, "INTERRUPT", last_claude[-600:], said
             elif CORRECTION.search(said) or "?" in last_claude[-600:]:
                 yield active, "REPLY", last_claude[-600:], said
