@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Proves no cj-stack mod denies an action Claude Code owns (CLAUDE.md, Tool-neutral).
+"""Proves no cj-stack mod denies or approves an action Claude Code owns (CLAUDE.md, Tool-neutral).
 
 Usage: python3 tests/claude-owned/run.py [--mods DIR] [--self-test]
 
 Command-hook mods: each PreToolUse hook runs on each action with a fake HOME,
 a fake project as cwd and CLAUDE_PLUGIN_ROOT set to the mod folder.
 Module mods: `claude plugin test` runs owned.test.ts on a copy of the mod.
-Exit 1 on any deny or failing test. --self-test runs two decoy mods that deny
-everything and exits 1 unless every check catches them. Log: <tmp>/claude-owned-last-run.log
+Exit 1 on any deny, allow or failing test. --self-test runs decoy mods that deny
+or approve everything and exits 1 unless every check catches them. Log: <tmp>/claude-owned-last-run.log
 """
 import argparse, json, os, re, shutil, subprocess, sys, tempfile
 from pathlib import Path
@@ -47,17 +47,23 @@ def tool_matches(matcher, tool):
         return False
 
 
-def is_deny(code, out):
+def overrides(code, out):
     if code == 2:
-        return True
+        return "denies"
     try:
         data = json.loads(out)
     except ValueError:
-        return False
+        return None
     if not isinstance(data, dict):
-        return False
+        return None
     hso = data.get("hookSpecificOutput")
-    return (isinstance(hso, dict) and hso.get("permissionDecision") == "deny") or data.get("decision") == "block"
+    decision = hso.get("permissionDecision") if isinstance(hso, dict) else None
+    if decision == "deny" or data.get("decision") == "block":
+        return "denies"
+    # An allow skips the permission prompt and the auto-mode classifier.
+    if decision == "allow":
+        return "approves"
+    return None
 
 
 def command_hooks(mod):
@@ -112,6 +118,11 @@ DECOYS = {
         {"type": "command", "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/deny.py"'}]}]}}),
     "deny-command/hooks/deny.py": 'import json\nprint(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", '
                                   '"permissionDecision": "deny", "permissionDecisionReason": "decoy"}}))\n',
+    "allow-command/.claude-plugin/plugin.json": '{"name": "allow-command", "version": "0.0.0", "description": "Self-test decoy."}',
+    "allow-command/hooks/hooks.json": json.dumps({"hooks": {"PreToolUse": [{"matcher": "*", "hooks": [
+        {"type": "command", "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/hooks/allow.py"'}]}]}}),
+    "allow-command/hooks/allow.py": 'import json\nprint(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", '
+                                    '"permissionDecision": "allow"}}))\n',
     "deny-module/.claude-plugin/plugin.json": '{"name": "deny-module", "version": "0.0.0", "description": "Self-test decoy."}',
     "deny-module/hooks/hooks.json": '{"modules": ["./register.ts"]}',
     "deny-module/hooks/register.ts": "import type { Register } from 'claude-code'\n\n"
@@ -152,10 +163,11 @@ def check(mods_dir, log):
                      "cwd": project, "tool_name": a["tool"],
                      "tool_input": {key: place(v, home, project) for key, v in a["input"].items()}}
             code, out, err = run_hook(mod, command, timeout, event, home, project)
-            if is_deny(code, out):
+            verdict = overrides(code, out)
+            if verdict:
                 reason = (out.strip() or err.strip())[:200]
-                emit(log, f"[{k}/{n}] ✘ {mod.name} denies {a['id']} ({a['owned']}): {reason}")
-                failures.append(f"{mod.name} denies {a['id']} ({a['owned']})")
+                emit(log, f"[{k}/{n}] ✘ {mod.name} {verdict} {a['id']} ({a['owned']}): {reason}")
+                failures.append(f"{mod.name} {verdict} {a['id']} ({a['owned']})")
             else:
                 emit(log, f"[{k}/{n}] ✔ {mod.name} {a['id']} ({a['owned']})")
         return failures
@@ -172,11 +184,11 @@ def self_test(log):
         failures = check(tmp, log)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
-    want = len(ACTIONS) + 1
+    want = 2 * len(ACTIONS) + 1
     if len(failures) != want:
-        emit(log, f"SELF-TEST FAILED: decoy mods deny everything, but {len(failures)} of {want} checks caught it")
+        emit(log, f"SELF-TEST FAILED: decoy mods deny or approve everything, but {len(failures)} of {want} checks caught it")
         sys.exit(1)
-    emit(log, f"SELF-TEST PASSED: all {want} decoy denials caught")
+    emit(log, f"SELF-TEST PASSED: all {want} decoy denials and approvals caught")
 
 
 def main():
@@ -192,11 +204,11 @@ def main():
             return
         failures = check(Path(args.mods).resolve(), log)
         if failures:
-            emit(log, f"FAILED: {len(failures)} owned action(s) blocked by a mod")
+            emit(log, f"FAILED: {len(failures)} owned action(s) decided by a mod")
             for f in failures:
                 emit(log, "  - " + f)
             sys.exit(1)
-        emit(log, "PASSED: no mod denies a Claude Code-owned action")
+        emit(log, "PASSED: no mod denies or approves a Claude Code-owned action")
 
 
 if __name__ == "__main__":

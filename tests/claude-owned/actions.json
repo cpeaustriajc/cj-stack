@@ -19,6 +19,8 @@
     { "id": "A12", "owned": "read settings with jq", "tool": "Bash", "input": { "command": "jq .permissions.defaultMode ~/.claude/settings.json" } },
     { "id": "A13", "owned": "Read of settings", "tool": "Read", "input": { "file_path": "~/.claude/settings.json" } },
     { "id": "A14", "owned": "hook script via sed", "tool": "Bash", "input": { "command": "sed -i '' 's/--write/--log-level warn --write/' .claude/hooks/fmt.sh" } },
-    { "id": "A15", "owned": "settings hook via jq", "tool": "Bash", "input": { "command": "jq '.hooks.PreToolUse += [{\"matcher\": \"Write\", \"hooks\": [{\"type\": \"command\", \"command\": \"npx eslint --fix\"}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json" } }
+    { "id": "A15", "owned": "settings hook via jq", "tool": "Bash", "input": { "command": "jq '.hooks.PreToolUse += [{\"matcher\": \"Write\", \"hooks\": [{\"type\": \"command\", \"command\": \"npx eslint --fix\"}]}]' ~/.claude/settings.json > ~/.claude/settings.json.tmp && mv ~/.claude/settings.json.tmp ~/.claude/settings.json" } },
+    { "id": "A16", "owned": "git staging named paths", "tool": "Bash", "input": { "command": "git add -A src/app.ts" } },
+    { "id": "A17", "owned": "plain listing pipeline", "tool": "Bash", "input": { "command": "ls src | tr '\\n' ' '" } }
   ]
 }

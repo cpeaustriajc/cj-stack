@@ -754,7 +754,7 @@ EXTRA_DENY = [(re.compile(rx, re.I), why) for rx, why in (
     (r"\bxargs\s+(?:-\S+\s+)*(?:grep|rg)\b[^\n]*(?:token|secret|passw|key)|\|\s*xargs\s+(?:-\S+\s+)*grep\b", "mass-searching for credentials. Search the project folder"),
     (r"\bcat\s+\S*\.npmrc\s*\|", "filtering a credentials file. Read the file whole; values are redacted"),
     (r"\brsync\b(?:\s+-\S+)*\s+[\w.-]+@[\w.-]+:\S+\s+\S+","pulling a remote tree that may hold secrets. Name the files you need"),
-    (r"\bgit\s+add\s+-A\b", "staging everything, including secrets. Add files by name"),
+    (r"\bgit\s+add\s+(?:-\S+\s+)*-A(?:\s+--)?(?:\s+(?:\.|:/))?\s*(?:$|[;&|\n])", "staging everything, including secrets. Add files by name"),
     (r"\bsed\s+-n\s+p\b[^\n]*\.env\b|\bls\s+-l\w*\s+[^\n|;]*(?<![\w-])(?:\.dev\.vars|\.env)", "probing secret file size or content. Read the file; values are redacted"),
     (r"\bkubectl\b[^\n]*\bexec\b[^\n]*\benv\b[^\n]*\|", "filtering a remote environment. Read a named variable"),
     (r"\bdocker\s+exec\b[^\n]*\$\w*(?:KEY|SECRET|TOKEN|PASS\w*)[^\n]*\|\s*(?:cut|base64|xxd|awk|sed)", "transforming a secret variable"),
@@ -2163,7 +2163,8 @@ def main():
     if "rewrite" in d:
         ti = dict(ev.get("tool_input"))
         ti["command"] = d["rewrite"]
-        out = {"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow", "updatedInput": ti}}
+        # No permissionDecision: "allow" would skip the prompt and the auto-mode classifier.
+        out = {"hookSpecificOutput": {"hookEventName": "PreToolUse", "updatedInput": ti}}
         os.write(1, json.dumps(out, ensure_ascii=True).encode("ascii"))
 
 
