@@ -68,4 +68,21 @@ run junk "$(SK ui-polish)${NL}not json at all${NL}$A${NL}$(U 'no, still found')$
 check "malformed and truncated lines are skipped, span survives" 1 "still found"
 [[ "$summary" == *"2 unreadable lines skipped"* ]] || { fail=$((fail+1)); echo "FAIL junk count: $summary"; }
 
+Q='{"type":"assistant","message":{"content":[{"type":"tool_use","id":"q1","name":"AskUserQuestion","input":{"questions":[]}}]}}'
+QA() { printf '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"q1","content":"Your questions have been answered: \\"Which?\\"=\\"%s\\". You can now continue."}]}}' "$1"; }
+
+run ask-default "$Q${NL}$(QA 'Ship it (Recommended)')"
+check "a form answered with every recommended option is not a correction" 0
+
+run ask-multi "$Q${NL}$(QA 'break-it (Recommended), grill-me upgrades')"
+check "a multi-select that adds a non-recommended option is kept" 1 "grill-me upgrades"
+
+run ask-own "$Q${NL}$(QA 'keep it in notion')"
+check "a non-recommended or typed answer is kept" 1 "keep it in notion"
+
+run resumed "$A${NL}$(U 'no, I already said we fix the source')"
+cp "$tmp/root/-proj/s.jsonl" "$tmp/root/-proj/resumed.jsonl"
+summary="$(python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" | tail -1)"; out="$(cat "$tmp/out.md")"
+check "a resumed session repeating the same exchange is written once" 1 "fix the source"
+
 echo "$pass passed, $fail failed"; (( fail == 0 ))

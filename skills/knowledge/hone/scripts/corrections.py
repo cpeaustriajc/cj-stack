@@ -8,6 +8,7 @@ CORRECTION = re.compile(
     r"huh|wait\b|actually\b|\?\?)", re.I)
 INTERRUPT = "[Request interrupted by user"
 COMMAND = re.compile(r"<command-name>\s*([^<\s]+)\s*</command-name>")
+ANSWER = re.compile(r'"="([^"]*)"')
 # Keep this detection in step with mods/hone-nudge/hooks/register.ts, which duplicates it.
 
 
@@ -19,6 +20,12 @@ def text_of(content):
     if isinstance(content, str):
         return content
     return "\n".join(b.get("text", "") for b in content or [] if isinstance(b, dict) and b.get("type") == "text")
+
+
+def took_defaults(result):
+    answers = ANSWER.findall(result)
+    return bool(answers) and all(
+        part.strip().endswith("(Recommended)") for a in answers for part in a.split(", "))
 
 
 def exchanges(path, stats, skill=None):
@@ -66,7 +73,8 @@ def _exchanges(path, stats, skill):
                 result = block.get("content")
                 result = result if isinstance(result, str) else text_of(result)
                 if block.get("tool_use_id") in asks:
-                    yield active, "ASK", asks[block["tool_use_id"]], result[:1200]
+                    if not took_defaults(result):
+                        yield active, "ASK", asks[block["tool_use_id"]], result[:1200]
                 elif "doesn't want to proceed" in result or "rejected" in result[:200].lower():
                     yield active, "REJECTED", last_claude[-600:], result[:600]
             said = text_of(content)
@@ -96,10 +104,14 @@ def main():
 
     skill = skill_name(args.skill) if args.skill else None
     stats = {"bad_lines": 0, "hits": 0}
+    seen = set()
     with open(args.out, "w", encoding="utf-8") as out:
         for i, path in enumerate(files, 1):
             for kind, claude, user in exchanges(path, stats, skill):
                 folder = os.path.basename(os.path.dirname(path))[-40:]
+                if (folder, kind, claude, user) in seen:
+                    continue
+                seen.add((folder, kind, claude, user))
                 out.write(f"### {kind} {folder}\nCLAUDE: {claude}\nUSER: {user}\n\n")
                 stats["hits"] += 1
             if i % 200 == 0 or i == len(files):
