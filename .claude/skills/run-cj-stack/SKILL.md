@@ -75,16 +75,16 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 - **secret-guard's suite** (`python3 mods/secret-guard/tests/secret_hooks_test.py --hooks-dir
   mods/secret-guard/hooks`) is left out of `all`: some cases need macOS `sandbox-exec`, and those
   haven't been separated from real failures on Linux.
-- **`claude plugin eval <plugin>`** runs `case.yaml` cases under each skill's `evals/`; the
-  driver doesn't.
+- **`claude plugin eval <plugin>`** reads cases from `evals/` at the plugin root, not from a
+  skill's `evals/`; in the driver only `routing` runs it, and `all` leaves it out.
 - **Trigger checks.** Each skill's `evals/triggers.json` holds should-trigger and near-miss prompts
-  for skill-creator's `run_eval`; all pass as of the cleanup. `run_eval` ignores
+  for skill-creator's `run_eval`. `run_eval` ignores
   `disable-model-invocation`, so for the typed-only `commit` and `create-pr` it measures only the
-  description; the routing suite checks that they never load on their own.
-- **Descriptions** follow plugin-dev's rules (`tests` checks them): third person ("This skill
-  should be used when…"), at most 500 characters, and a `>` block scalar, since an unquoted
-  description containing `": "` is invalid YAML that `claude plugin validate` doesn't catch. Run them from an empty
-  folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
+  description; the routing suite checks that they never load on their own. Run `run_eval` from an
+  empty folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
   copy of the skill into the same `.claude/commands/`, Claude invokes another worker's copy, and
   the run scores as a miss. A prompt that points at content it doesn't include ("file these
   bugs") makes Claude look for the content first, which also scores as a miss.
+- **Descriptions** follow plugin-dev's rules (`tests` checks them): third person ("This skill
+  should be used when…"), at most 500 characters, and a `>` block scalar, since an unquoted
+  description containing `": "` is invalid YAML that `claude plugin validate` doesn't catch.
