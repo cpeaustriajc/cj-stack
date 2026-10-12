@@ -18,6 +18,7 @@ function place(value: unknown): unknown {
 function world(on: On) {
   on('env.get', (_$, e) => ({ value: (e as { name: string }).name === 'HOME' ? HOME : undefined }) as never)
   on('tool.call', () => ({ result: { ok: true } }) as never)
+  on('tool.check', () => ({ decision: 'ask' }) as never)
 }
 
 for (const a of shape.actions) {
@@ -25,5 +26,13 @@ for (const a of shape.actions) {
     world(on)
     const r = await $.tool.call({ tool: a.tool, ...(place(a.input) as object) })
     expect(r.deny, `${a.id} (${a.owned}) denied`).toBeUndefined()
+  })
+}
+
+for (const a of shape.actions) {
+  test(`${a.id} ${a.owned} keeps Claude Code's permission verdict`, async ($: any, on) => {
+    world(on)
+    const r = await $.tool.check({ tool: a.tool, input: place(a.input) })
+    expect(r.decision, `${a.id} (${a.owned}) decided by a mod`).toBe('ask')
   })
 }
