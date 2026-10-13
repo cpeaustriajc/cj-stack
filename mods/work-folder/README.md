@@ -1,0 +1,83 @@
+# work-folder
+
+A mod (a plugin that adds a hook to Claude Code) that denies a new agent working file outside `.claude/work/`. Plans, evidence, prototypes and reports then stay out of your repo.
+
+## Why
+
+Agents write plans, scratch notes, reports and probe tests into the repo as they work. These files end up in commits.
+
+work-folder denies the write and tells Claude to use `.claude/work/<topic>/` instead. That folder is gitignored.
+
+## Install
+
+```
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install work-folder@cj-stack
+```
+
+To see that it is on, run `claude plugin list` and look for `work-folder`. The mod is optional: `cj-stack` does not install it.
+
+## Example
+
+1. Claude tries to create `reports/x.md` with the Write tool.
+2. The hook finds that the file does not exist and that `reports/` is a planning folder.
+3. The hook denies the write. Claude reads: "work-folder: reports/x.md looks like an agent working file (a reports/ or docs/ planning folder). Write it under .claude/work/<topic>/ instead; that folder is gitignored."
+4. Claude writes the file under `.claude/work/` instead.
+
+If you keep such files in the repo on purpose, add them to the allow list below.
+
+## What it does
+
+The hook checks the Write and NotebookEdit tools. It judges the path from the nearest folder that holds a `.git` entry.
+
+| Event | Decision |
+|---|---|
+| A new file matches a deny pattern | Deny, and name the pattern and the fix. |
+| A new file matches an allow entry | Pass. |
+| The file already exists | Pass. |
+| The path is under a tool folder such as `.claude/` or `.github/` | Pass. |
+| The path is outside any git repo | Pass. |
+| The allow file is not valid | Deny, and name the file and the fix. |
+| The file system check fails on a path that could match | Deny with "could not check". |
+
+The deny patterns are:
+
+| Pattern | Example |
+|---|---|
+| Prototype, scratch, recovery, spike or `.local` folders | `prototypes/x/index.html` |
+| `reports/` and planning folders under `docs/` | `docs/plans/x.md` |
+| Test artifact and evidence folders | `.e2e-evidence/run.sh` |
+| A loose `.md`, `.html` or `.txt` file at the repo root | `validate.html` |
+| Findings, report, plan or numbered evidence file names | `107-EVIDENCE.md` |
+| Probe and temporary test file names | `zz-probe-load.spec.ts` |
+
+Root files such as `README.md` and `CLAUDE.md` pass. The full lists are in [hooks/register.ts](hooks/register.ts).
+
+### The allow list
+
+To keep a file in the repo, create `.claude/work-folder.json` at the repo root:
+
+```
+{ "allow": ["path/prefix/", "glob/**/*.md"] }
+```
+
+An entry that ends with `/` is a path prefix. Any other entry is a glob.
+
+## Settings
+
+No settings.
+
+To turn the mod off, run `claude plugin disable work-folder@cj-stack`.
+
+## Limits
+
+- It checks only the Write and NotebookEdit tools. Edit, and a shell command that writes a file, pass.
+- It does not add `.claude/work/` to `.gitignore`.
+- The file name patterns are a fixed list. A working file with another name passes.
+- If the file system check fails on a path that could match, the hook denies. Write under `.claude/work/` or retry.
+
+## More
+
+- [hooks/register.ts](hooks/register.ts): the hook source.
+- [hooks/register.test.ts](hooks/register.test.ts): the tests.
+- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
