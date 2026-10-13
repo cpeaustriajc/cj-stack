@@ -1,0 +1,6 @@
+{
+  "name": "work-folder",
+  "version": "0.1.0",
+  "description": "Denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside .claude/work/, which is gitignored, with a per-repo allow list",
+  "author": { "name": "CJ" }
+}

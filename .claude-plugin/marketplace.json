@@ -122,6 +122,12 @@
       "category": "productivity"
     },
     {
+      "name": "work-folder",
+      "source": "./mods/work-folder",
+      "description": "Denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside .claude/work/, which is gitignored, with a per-repo allow list.",
+      "category": "productivity"
+    },
+    {
       "name": "secret-guard",
       "source": "./mods/secret-guard",
       "description": "Keeps secret values out of Claude's context: redacts tool output, filters Bash streams, and denies commands that would encode, test or exfiltrate a secret.",
