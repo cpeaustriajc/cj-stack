@@ -20,8 +20,9 @@ A missing prerequisite is BLOCKED. Print its name and the fix.
 
 ## Select
 
-Map the diff to features. Take each changed path, find the feature file whose **Code** line
-matches it, and run that file's **Tests** and **Check**. Command: `<diff-to-features command>`.
+Map the diff to features. Read `references/features/README.md`. Take each changed path, find
+the feature file whose **Code** line matches it, and run that file's **Tests** and **Check**.
+Command: `<diff-to-features command>`.
 A docs-only or test-only diff skips this run.
 
 ## Drive

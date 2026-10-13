@@ -20,7 +20,8 @@ A proof is a command that a person can re-run. The proof leaves evidence that a 
 ## Setup
 
 1. Read the project's feature files. They are the map. Each feature file has a **Code** line
-   (paths) and **Tests** and **Check** lines (proof).
+   (paths) and **Tests** and **Check** lines (proof). With none yet, write them in the verify
+   skill's `references/features/`, one for each feature the next change touches.
 2. Use the project's run skill for launch. Do not copy a launch command into the verify skill.
 3. Ask the user once where the full E2E suite runs, and when. Example: renav's full run took
    23-53 minutes locally. Write the answer into the project's verify skill. Never decide it for

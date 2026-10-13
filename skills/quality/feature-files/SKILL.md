@@ -16,10 +16,10 @@ the area it touches and nothing else.
 
 ## Where they live
 
-Use the folder the project already has. If it has none, propose `docs/features/` in one line
-and wait for a yes. There is one file per feature, named after what a user calls it, such as
-`checkout.md` or `domain-search.md`, not after the code. An `index.md` lists them in a
-one-line-each table.
+Use the folder the project already has. If it has none, they live inside the project's verify
+skill, in its `references/features/` folder, so the map sits next to the skill that drives it.
+There is one file per feature, named after what a user calls it, such as `checkout.md` or
+`domain-search.md`, not after the code. A `README.md` there lists them in a one-line-each table.
 
 ## What one file holds
 
