@@ -4,14 +4,17 @@ description: >
   This skill should be used when the user says "bug hunt", "deep code review", "audit the
   codebase", "hunt for bugs until clean", "run N rounds of review" or "find and fix every bug".
   Three parallel hunters search the whole scope for real bugs, fix each one test-first in files
-  they own, and search again, round after round, until a round where all three find zero. For a
-  report-only review of one diff, use interrogate instead.
+  they own, and search again, round after round, until a round where all three find zero. Run it
+  as a periodic sweep (nightly, weekly or on demand), not per PR; per-PR proof is self-verify.
+  For a report-only review of one diff, use interrogate instead.
 ---
 
 # Bug hunt
 
 One review pass finds some bugs and hides the rest behind them. A fix also changes the code that
 the next pass reads. So the hunt repeats until a full round finds nothing.
+
+This is a periodic sweep, not a per-PR gate. For proof that one change works, use `self-verify`.
 
 ## 1. Scope and shards
 
@@ -37,6 +40,7 @@ Hunter brief (fill in the brackets):
 > divergence from [spec/issue]. Not style, naming, "consider adding" or a refactor.
 > Known bugs already fixed or rejected: [ledger]. Do not report them again.
 > For each bug in your shard: write a test that fails, show it fail, fix the code, show it pass.
+> Follow the bug order in the `playbooks` skill.
 > Do not change test ids or visible copy unless the fix needs it. If you cannot write a failing
 > test, do not fix it: report it as unproven.
 > For a bug outside your shard: report it, do not edit.
@@ -53,6 +57,9 @@ Hunter brief (fill in the brackets):
 - Hand each out-of-shard bug to the hunter that owns that file next round.
 - Add each bug to the ledger in the scratchpad: verified-fixed, unproven, or rejected with one
   line why.
+- For each verified bug, write one prevention proposal: a lint rule, test, hook or instruction
+  change, in the strongest layer that can hold it, as in `hone`. A proposed lint or test must
+  fail on the original bug code first; show that failure in the proposal.
 - Run the full test suite. A red suite is the next round's first bug.
 - Commit each verified fix as its own atomic commit, if the project lets you commit.
 
@@ -61,11 +68,12 @@ Hunter brief (fill in the brackets):
 Stop when one round has all three hunters at `BUGS FOUND: 0` and coverage is 100%. Also stop and
 ask me after 5 rounds, or when a round finds only bugs a hunter rejects as not real.
 
-Run the E2E suite once at the end. Report:
+Run the full suite as the project's verify skill says. Report:
 - coverage percent and rounds run
 - **verified bugs**, fixed, each with its commit and test
 - **unproven bugs**, kept apart from the verified ones, with why no failing test exists
 - **rejected findings**, one line each, so I can override
+- **Prevention**, one group: the proposal for each verified bug, with its failing check
 - the exact E2E command and where its trace or report is
 
 The ledger and every hunter reply stay in the scratchpad. Say where.
