@@ -2,3 +2,4 @@
 .workspace/
 __pycache__/
 evals/**/results/
+.claude/work/

@@ -28,6 +28,8 @@ Use what Claude Code ships before writing your own checks:
 - `skills/craft/`: shipped in the opt-in `cj-paint` plugin.
 - `skills/in-progress/`: not shipped. A skill starts here.
 - `skills/archived/`: shipped only in the opt-in `cj-jira` plugin, or not at all. Never delete a skill; archive it.
+- Every skill and mod folder has a `README.md` for people: `.claude/rules/readme.md` says how to
+  write it, and `python3 -I scripts/check_readmes.py` checks it.
 
 ## Moving a skill
 

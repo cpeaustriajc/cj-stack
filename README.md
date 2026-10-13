@@ -31,20 +31,20 @@ All skills are model-invoked (Claude picks them from their description), except 
 
 | Skill | Bucket | What it is for |
 |---|---|---|
-| [vision](skills/planning/vision/SKILL.md) | planning | grilling me on a vague product idea, breadth first and starting with whether it is worth building, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
-| [shape](skills/planning/shape/SKILL.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
-| [tickets](skills/planning/tickets/SKILL.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
-| [triage](skills/planning/triage/SKILL.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
-| [project-knowledge](skills/knowledge/project-knowledge/SKILL.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
-| [hone](skills/knowledge/hone/SKILL.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
-| [playbooks](skills/quality/playbooks/SKILL.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
-| [break-it](skills/quality/break-it/SKILL.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
-| [ui-polish](skills/quality/ui-polish/SKILL.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
-| [feature-files](skills/quality/feature-files/SKILL.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
-| [interrogate](skills/quality/interrogate/SKILL.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
-| [commit](skills/shipping/commit/SKILL.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
-| [create-pr](skills/shipping/create-pr/SKILL.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
-| [painting-craft](skills/craft/painting-craft/SKILL.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
+| [vision](skills/planning/vision/README.md) | planning | grilling me on a vague product idea, breadth first and starting with whether it is worth building, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
+| [shape](skills/planning/shape/README.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
+| [tickets](skills/planning/tickets/README.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
+| [triage](skills/planning/triage/README.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
+| [project-knowledge](skills/knowledge/project-knowledge/README.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
+| [hone](skills/knowledge/hone/README.md) | knowledge | mining past transcripts for my repeated corrections, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
+| [playbooks](skills/quality/playbooks/README.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
+| [break-it](skills/quality/break-it/README.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
+| [ui-polish](skills/quality/ui-polish/README.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
+| [feature-files](skills/quality/feature-files/README.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
+| [interrogate](skills/quality/interrogate/README.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
+| [commit](skills/shipping/commit/README.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
+| [create-pr](skills/shipping/create-pr/README.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
+| [painting-craft](skills/craft/painting-craft/README.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 
 `craft` skills ship in `cj-paint` (see [Other plugins](#other-plugins)). Shipped skills stay tool-neutral:
 tool specifics go in a skill's adapters, and a project's own facts stay in that project.
@@ -55,26 +55,26 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 
 | Skill | What it was for |
 |---|---|
-| [jira-ticket](skills/archived/jira-ticket/SKILL.md) | Jira tickets and acceptance criteria |
-| [draft-ticket](skills/archived/draft-ticket/SKILL.md) | end-to-end Jira ticket drafting |
-| [github-issue](skills/archived/github-issue/SKILL.md) | GitHub issues holding a Jira ticket's engineering detail |
-| [linear-planning](skills/archived/linear-planning/SKILL.md) | Linear-only predecessor of shape (not shipped) |
-| [linear-project](skills/archived/linear-project/SKILL.md) | Linear-only predecessor of shape (not shipped) |
-| [project-wiki](skills/archived/project-wiki/SKILL.md) | GitHub-wiki-only predecessor of project-knowledge |
+| [jira-ticket](skills/archived/jira-ticket/README.md) | Jira tickets and acceptance criteria |
+| [draft-ticket](skills/archived/draft-ticket/README.md) | end-to-end Jira ticket drafting |
+| [github-issue](skills/archived/github-issue/README.md) | GitHub issues holding a Jira ticket's engineering detail |
+| [linear-planning](skills/archived/linear-planning/README.md) | Linear-only predecessor of shape (not shipped) |
+| [linear-project](skills/archived/linear-project/README.md) | Linear-only predecessor of shape (not shipped) |
+| [project-wiki](skills/archived/project-wiki/README.md) | GitHub-wiki-only predecessor of project-knowledge |
 
 ## Mods
 
 | Mod | What it does | Install |
 |---|---|---|
-| `linear-gate` | holds every Linear write until you allow it | by default |
-| `usage-pace` | weekly usage in the status line, and whether it lasts until your reset | optional |
-| `session-modes` | `/mode audit`, `no-pr`, `chat` or `product` (plan top-down, no code, tracker writes only after a planning skill loads), enforced for the session | optional |
-| `denial-explainer` | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
-| `loop-brake` | ends a turn after N forced Stop-hook continuations | optional |
-| `hone-nudge` | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
-| `memory-lint` | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
-| `work-folder` | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list | optional |
-| `secret-guard` | keeps secret values out of Claude's context: redacts tool output, denies encode-or-test tricks; needs `python3` | recommended |
+| [linear-gate](mods/linear-gate/README.md) | holds every Linear write until you allow it | by default |
+| [usage-pace](mods/usage-pace/README.md) | weekly usage in the status line, and whether it lasts until your reset | optional |
+| [session-modes](mods/session-modes/README.md) | `/mode audit`, `no-pr`, `chat` or `product` (plan top-down, no code, tracker writes only after a planning skill loads), enforced for the session | optional |
+| [denial-explainer](mods/denial-explainer/README.md) | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
+| [loop-brake](mods/loop-brake/README.md) | ends a turn after N forced Stop-hook continuations | optional |
+| [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
+| [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
+| [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list | optional |
+| [secret-guard](mods/secret-guard/README.md) | keeps secret values out of Claude's context: redacts tool output, denies encode-or-test tricks; needs `python3` | recommended |
 
 ## Other plugins
 
