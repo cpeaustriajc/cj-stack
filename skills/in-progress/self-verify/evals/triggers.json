@@ -1,0 +1,46 @@
+[
+  {
+    "query": "verify your work before you open the PR, I don't want to read the whole diff",
+    "should_trigger": true
+  },
+  {
+    "query": "prove it works by driving the app, then print VERIFIED or NOT VERIFIED per feature",
+    "should_trigger": true
+  },
+  {
+    "query": "set up a verify skill for this repo so the agent checks its own changes before commit",
+    "should_trigger": true
+  },
+  {
+    "query": "can we merge agent PRs without a human reading every diff? what proof do we need?",
+    "should_trigger": true
+  },
+  {
+    "query": "run a weekly audit that checks the verify skill still matches the app",
+    "should_trigger": true
+  },
+  {
+    "query": "the test passed but it only checks toBeTruthy, is that a fake test?",
+    "should_trigger": true
+  },
+  {
+    "query": "write the feature file for the checkout flow with its Code and Tests lines",
+    "should_trigger": false
+  },
+  {
+    "query": "write a playbook for checking the password reset flow end to end",
+    "should_trigger": false
+  },
+  {
+    "query": "interrogate my plan for the billing migration and find the weak assumptions",
+    "should_trigger": false
+  },
+  {
+    "query": "break this login form, try every way a user could get it wrong",
+    "should_trigger": false
+  },
+  {
+    "query": "run a bug hunt across the whole repo and fix every bug until a round comes back clean",
+    "should_trigger": false
+  }
+]
