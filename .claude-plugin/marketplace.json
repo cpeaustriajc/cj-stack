@@ -12,7 +12,7 @@
       "name": "cj-stack",
       "source": "./",
       "strict": false,
-      "version": "2.7.2",
+      "version": "2.7.4",
       "description": "vision, shape and tickets for top-down planning in any tracker, triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [
@@ -119,6 +119,12 @@
       "name": "memory-lint",
       "source": "./mods/memory-lint",
       "description": "Denies an auto-memory write that holds task state, one-off references or repo detail.",
+      "category": "productivity"
+    },
+    {
+      "name": "work-folder",
+      "source": "./mods/work-folder",
+      "description": "Denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside .claude/work/, which is gitignored, with a per-repo allow list.",
       "category": "productivity"
     },
     {

@@ -16,10 +16,10 @@ the area it touches and nothing else.
 
 ## Where they live
 
-Use the folder the project already has. If it has none, propose `docs/features/` in one line
-and wait for a yes. There is one file per feature, named after what a user calls it, such as
-`checkout.md` or `domain-search.md`, not after the code. An `index.md` lists them in a
-one-line-each table.
+Use the folder the project already has. If it has none, they live inside the project's verify
+skill, in its `references/features/` folder, so the map sits next to the skill that drives it.
+There is one file per feature, named after what a user calls it, such as `checkout.md` or
+`domain-search.md`, not after the code. A `README.md` there lists them in a one-line-each table.
 
 ## What one file holds
 
@@ -29,13 +29,18 @@ one-line-each table.
 **What exists**: cart, guest and signed-in checkout, test-mode card payment, receipt page.
 **How a user gets there**: search → domain card → "Buy" → /cart → "Checkout".
 **How to drive it**: test account from the project's test setup; test card 4242…; start URL.
+**Code**: `src/checkout/`, `api/orders.ts`, `components/Cart*`.
+**Tests**: `e2e/checkout.spec.ts`, `src/checkout/*.test.ts`.
 **Check**: the exact command or steps that prove it works, and what to capture as evidence.
 **Paths to cover**: success, cancel, payment declined, empty cart, reload mid-payment, back
 after paying.
 **What tends to break**: cart lost after login redirect; double charge on double click.
 ```
 
-Keep it under about 40 lines. Describe behaviour a user can see, not implementation. Put no
+**Code** and **Tests** let a diff find its feature: a changed path maps to the file, which lists
+its Tests and Check. Keep it under about 40 lines. Describe behaviour a user can see, not
+implementation. Each step pairs an action with a user-visible end state, such as reopening the
+saved item; a toast alone is not proof. Put no
 dates, statuses, ticket numbers or "fixed in…" notes in it: those go stale. They belong in the
 tracker and git history.
 
