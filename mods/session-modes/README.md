@@ -47,6 +47,14 @@ While a mode is on, a band above the prompt shows it in the terminal and in the 
 
 When the mode changes, also by "Turn off", the mod adds a hidden note to your next message that says the current mode, for example "Session mode: off. Audit mode has ended; its rules no longer apply". The mod also puts the mode in the system prompt each turn, but the desktop app does not pass that text to the model. A subagent started while a mode is on gets the rule at the top of its task, and its tool calls are blocked like the main thread's. Workflow agents do not get the note, because their prompt cannot be changed.
 
+### Modes the model sets
+
+The mod adds a tool, `agent_mode`, that Claude can call to set a mode for itself (scope `self`) or for its subagents (scope `subagents`), including subagents that are already running. Example: with your mode off, Claude sets `audit` for subagents and starts three Explore subagents. Each one gets the Audit rule at the top of its task, and any `Edit` it makes is denied. The main thread can still edit.
+
+A call is denied when any rule that applies to the caller denies it, so the stricter rule always wins. Claude cannot loosen your `/mode`: its `off` clears only the modes it set itself. A subagent can set modes for itself and for its own subagents in the same way. `/mode off` and the band's "Turn off" clear every mode Claude set. `/mode audit` does not.
+
+The band shows the modes Claude set on a second row, for example "Set by Claude: Audit for itself and Chat for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
+
 The mod writes `{ "v": 1, "mode": "audit" }` to `~/.claude/mod-state/<session id>.session-modes.json` for a custom status line to read. With no mode, `mode` is `null`. If `CLAUDE_CONFIG_DIR` is set, the file goes to `$CLAUDE_CONFIG_DIR/mod-state`. At session start, the mod deletes its state files older than seven days.
 
 ## Settings
@@ -58,6 +66,7 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - `audit` does not block a Bash command that writes without a redirect, such as `sed -i`. It does not block MCP tools.
 - `no-pr` and `chat` check only the pull request and push commands above. They do not block edits.
 - `product` mode judges an MCP tool by its name only. A tracker tool with no write word in the name passes.
+- A subagent that is already running gets no new task note when a mode above it changes. The new rule applies to its tool calls at once, and only the deny message tells it.
 - After you load a planning skill, tracker writes stay open for the rest of the session.
 - If the mod cannot find a home directory, it writes and prunes no state file. If a write fails, the hook throws "session-modes: could not publish state for the status line". If a prune fails, it throws "session-modes: could not prune old state files".
 

@@ -1,7 +1,25 @@
 import { atom, read, update } from 'claude-code'
 import type { Hook, Register } from 'claude-code'
-import { LABEL, MODE_NOTE, OFF_SECTION, SECTION, SUBAGENT_NOTE, parseMode, planningSkill, report, verdict } from './modes'
-import type { Mode } from './modes'
+import {
+  AGENT_TOOL,
+  AGENT_TOOL_DESCRIPTION,
+  AGENT_TOOL_SCHEMA,
+  INHERITED_NOTE,
+  LABEL,
+  MODE_NOTE,
+  OFF_SECTION,
+  SECTION,
+  SUBAGENT_NOTE,
+  agentModeText,
+  claudeParts,
+  parseMode,
+  parseScope,
+  planningSkill,
+  report,
+  reword,
+  verdict,
+} from './modes'
+import type { Active, Held, Mode } from './modes'
 import { modeSuggestions } from './suggest'
 
 type Api = Parameters<Hook<'session.start'>>[0]
@@ -46,13 +64,13 @@ export async function pruneState($: Api): Promise<void> {
   }
 }
 
-type Active = Exclude<Mode, 'off'>
-
 const mode = atom({ plugin: 'session-modes', key: 'mode' } as const, 'off' as Mode)
 const ended = atom({ plugin: 'session-modes', key: 'ended' } as const, null as Active | null)
 const told = atom({ plugin: 'session-modes', key: 'told' } as const, 'off' as Mode)
 // Whether vision, shape or tickets has loaded this session: product mode's key to outside writes.
 const planned = atom({ plugin: 'session-modes', key: 'planned' } as const, false)
+const agentModes = atom({ plugin: 'session-modes', key: 'agentModes' } as const, {} as Record<string, Held>)
+const parents = atom({ plugin: 'session-modes', key: 'parents' } as const, {} as Record<string, string>)
 const SECTION_ID = 'session-modes:mode'
 
 const CHIP: Record<Active, string> = {
@@ -69,10 +87,13 @@ const RULE: Record<Exclude<Active, 'product'>, { lead: string; detail: string }>
 }
 
 const NARROW = 60
+const MAIN = 'main'
+const NONE: Held = { self: null, subagents: null }
 
 async function setMode($: Api, wanted: Mode): Promise<void> {
   const old = await read($, mode)
   await update($, mode, () => wanted)
+  if (wanted === 'off') await update($, agentModes, () => ({}))
   if (wanted !== 'off') await update($, ended, () => null)
   else if (old !== 'off') await update($, ended, () => old)
   await publishState($, wanted)
@@ -82,6 +103,12 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const result = await next(e)
     // The desktop app runs sessions through the SDK, so isInteractive is false there.
+    await $.tool.register({
+      name: 'agent_mode',
+      description: AGENT_TOOL_DESCRIPTION,
+      inputSchema: AGENT_TOOL_SCHEMA,
+      isDeferred: false,
+    })
     await $.command.register({
       name: 'mode',
       description: 'Set the session mode: audit, no-pr, chat, product or off',
@@ -95,7 +122,10 @@ export const register: Register = on => {
 
   on('command.run', { command: 'mode' }, async ($, e) => {
     const wanted = e.args.trim() === '' ? undefined : parseMode(e.args)
-    if (e.args.trim() === '') return { text: report(await read($, mode)) }
+    if (e.args.trim() === '') {
+      const held = claudeParts((await read($, agentModes))[MAIN])
+      return { text: report(await read($, mode)) + (held ? ` Set by Claude: ${held}.` : '') }
+    }
     if (!wanted) return { text: `Unknown mode "${e.args.trim()}". ${report(await read($, mode))}` }
     await setMode($, wanted)
     return { text: wanted === 'off' ? 'Mode off.' : `Mode ${wanted} on.` }
@@ -103,7 +133,11 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const current = await read($, mode)
-    if (current === 'off' || e.props.hasSurvey) return next(e)
+    const claude = claudeParts((await read($, agentModes))[MAIN])
+    if ((current === 'off' && !claude) || e.props.hasSurvey) return next(e)
+    const { Box, Text, Button } = $.ui.resolve(e)
+    const claudeRow = claude ? <Text dimColor>{`Set by Claude: ${claude}`}</Text> : null
+    if (current === 'off') return <Box flexDirection="column">{claudeRow}</Box>
     const isPlanned = await read($, planned)
     const { lead, detail } =
       current === 'product'
@@ -112,26 +146,28 @@ export const register: Register = on => {
             detail: isPlanned ? 'Tracker writes are open.' : 'Tracker writes wait for vision, shape or tickets.',
           }
         : RULE[current]
-    const { Box, Text, Button } = $.ui.resolve(e)
     return (
-      <Box flexDirection="row" gap={1}>
-        <Text bold color={CHIP[current]}>
-          {LABEL[current]}
-        </Text>
-        <Box flexGrow={1} flexShrink={1}>
-          <Text wrap="truncate-end">
-            {lead}
-            {e.props.bodyColumns < NARROW ? null : <Text dimColor>{' ' + detail}</Text>}
+      <Box flexDirection="column">
+        <Box flexDirection="row" gap={1}>
+          <Text bold color={CHIP[current]}>
+            {LABEL[current]}
           </Text>
+          <Box flexGrow={1} flexShrink={1}>
+            <Text wrap="truncate-end">
+              {lead}
+              {e.props.bodyColumns < NARROW ? null : <Text dimColor>{' ' + detail}</Text>}
+            </Text>
+          </Box>
+          <Button
+            key="off"
+            label="Turn off"
+            onPress={async () => {
+              await setMode($, 'off')
+              await $.ui.toast('Mode off.')
+            }}
+          />
         </Box>
-        <Button
-          key="off"
-          label="Turn off"
-          onPress={async () => {
-            await setMode($, 'off')
-            await $.ui.toast('Mode off.')
-          }}
-        />
+        {claudeRow}
       </Box>
     )
   })
@@ -142,12 +178,42 @@ export const register: Register = on => {
   })
 
   on('tool.call', async ($, e, next) => {
-    const input = e as { command?: unknown; file_path?: unknown; notebook_path?: unknown }
+    const input = e as { command?: unknown; file_path?: unknown; notebook_path?: unknown; mode?: unknown; scope?: unknown }
+    const caller = e.agentId ?? MAIN
+    if (e.tool === AGENT_TOOL) {
+      const wanted = typeof input.mode === 'string' ? parseMode(input.mode) : undefined
+      const scope = parseScope(input.scope)
+      if (!wanted || !scope) {
+        return { result: { content: [{ type: 'text', text: 'agent_mode needs a mode (audit, no-pr, chat, product or off) and a scope (self or subagents).' }], isError: true } } as never
+      }
+      const held = (await read($, agentModes))[caller] ?? NONE
+      const user = await read($, mode)
+      const text = agentModeText(wanted, scope, held[scope], user)
+      await update($, agentModes, all => ({
+        ...all,
+        [caller]: { ...(all[caller] ?? NONE), [scope]: wanted === 'off' ? null : wanted },
+      }))
+      return { result: { content: [{ type: 'text', text }], isError: false } } as never
+    }
     const command = e.tool === 'Bash' && typeof input.command === 'string' ? input.command : ''
     const rawPath = input.file_path ?? input.notebook_path
     const path = typeof rawPath === 'string' ? rawPath : ''
-    const deny = verdict(await read($, mode), { tool: e.tool, command, path, planned: await read($, planned) })
-    return deny ? { deny } : next(e)
+    const call = { tool: e.tool, command, path, planned: await read($, planned) }
+    const user = verdict(await read($, mode), call)
+    if (user) return { deny: user }
+    const held = await read($, agentModes)
+    const own = held[caller]?.self
+    const ownDeny = own ? verdict(own, call) : undefined
+    if (ownDeny) return { deny: reword(ownDeny, 'agent_mode off with scope self to leave.') }
+    const links = await read($, parents)
+    const seen = new Set<string>([caller])
+    for (let at = links[caller]; at !== undefined && !seen.has(at); at = links[at]) {
+      seen.add(at)
+      const above = held[at]?.subagents
+      const aboveDeny = above ? verdict(above, call) : undefined
+      if (aboveDeny) return { deny: reword(aboveDeny, 'set by the agent that started you.') }
+    }
+    return next(e)
   })
 
   on('prompt.compose', async ($, e, next) => {
@@ -169,8 +235,27 @@ export const register: Register = on => {
 
   on('agent.spawn', async ($, e, next) => {
     const current = await read($, mode)
-    if (current === 'off' || e.workflow) return next(e)
-    return next({ ...e, prompt: `${SUBAGENT_NOTE(current)}\n\n${e.prompt}` })
+    const parent = e.parentAgentId ?? MAIN
+    const notes: string[] = []
+    if (current !== 'off' && !e.workflow) notes.push(SUBAGENT_NOTE(current))
+    if (!e.workflow) {
+      const held = await read($, agentModes)
+      const links = await read($, parents)
+      const inherited: Active[] = []
+      const seen = new Set<string>()
+      for (let at: string | undefined = parent; at !== undefined && !seen.has(at); at = links[at]) {
+        seen.add(at)
+        const m = held[at]?.subagents
+        if (m && m !== current && !inherited.includes(m)) inherited.push(m)
+      }
+      notes.push(...inherited.map(INHERITED_NOTE))
+    }
+    const result = await next(notes.length ? { ...e, prompt: `${notes.join(' ')}\n\n${e.prompt}` } : e)
+    if (result.agentId) {
+      const child = result.agentId
+      await update($, parents, all => ({ ...all, [child]: parent }))
+    }
+    return result
   })
 
   on('prompt.autocomplete', async ($, e, next) => {

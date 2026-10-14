@@ -19,6 +19,8 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     env: { HOME: '/home/cj' } as Record<string, string | undefined>,
     now: 100 * 86_400_000,
     spawned: [] as string[],
+    spawnCount: 0,
+    tools: [] as { name: string; description: string; isDeferred?: boolean; inputSchema?: unknown }[],
     prompts: [] as { text: string; context?: readonly string[] }[],
   }
   on('session.id', () => ({ value: 'sess1' }) as never)
@@ -53,7 +55,15 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
   on('ui.render', () => ({ type: 'Box', props: {}, children: [] }) as never)
   on('prompt.compose', () => ({ sections: [{ id: 'base', text: 'base', scope: 'shared' }] }) as never)
   on('skill.prompt', (_$, e) => ({ text: (e as { text: string }).text }) as never)
-  on('agent.spawn', (_$, e) => (state.spawned.push((e as { prompt: string }).prompt), { model: 'm', agentId: 'a1' }) as never)
+  on('agent.spawn', (_$, e) => {
+    state.spawned.push((e as { prompt: string }).prompt)
+    state.spawnCount += 1
+    return { model: 'm', agentId: `a${state.spawnCount}` } as never
+  })
+  on('tool.register', (_$, e) => {
+    state.tools.push(e as never)
+    return { value: { tool: `mcp__session-modes__${(e as { name: string }).name}` } } as never
+  })
   on('prompt.submit', (_$, e) => {
     const input = e as { text: string; context?: readonly string[] }
     state.prompts.push(input)
@@ -747,4 +757,269 @@ test('the mode note goes after the context a prompt already has', async ($, on) 
   expect(notes(w)[0]).toBe('x')
   expect(notes(w)[1]).toMatch(/^Session mode: Audit is on\./)
   expect(out.context).toEqual(notes(w))
+})
+
+const TOOL = 'mcp__session-modes__agent_mode'
+const DESCRIPTION =
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: audit (read and report only), no-pr (no pull requests), chat (no push or PR), product (plan only, no code). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+
+const claudeSets = async ($: any, modeName: string, scope: string, agentId?: string): Promise<string> => {
+  const out = await $.tool.call({ tool: TOOL, mode: modeName, scope, ...(agentId ? { agentId } : {}) } as never)
+  return out.result.content[0].text as string
+}
+const editAs = ($: any, agentId?: string) => $.tool.call({ tool: 'Edit', ...(agentId ? { agentId } : {}) } as never)
+const pushAs = ($: any, agentId?: string) => $.tool.call({ tool: 'Bash', command: 'git push', ...(agentId ? { agentId } : {}) } as never)
+const prAs = ($: any, agentId?: string) => $.tool.call({ tool: 'Bash', command: 'gh pr create', ...(agentId ? { agentId } : {}) } as never)
+
+const AUDIT_NOTE_START = 'The agent that started you set Audit mode for its subagents'
+
+test('the agent_mode tool is registered and not deferred', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  expect(w.tools).toHaveLength(1)
+  expect(w.tools[0]!.name).toBe('agent_mode')
+  expect(w.tools[0]!.isDeferred).toBe(false)
+  expect(w.tools[0]!.description).toBe(DESCRIPTION)
+  expect(w.tools[0]!.inputSchema).toEqual({
+    type: 'object',
+    properties: {
+      mode: { type: 'string', enum: ['audit', 'no-pr', 'chat', 'product', 'off'] },
+      scope: { type: 'string', enum: ['self', 'subagents'] },
+    },
+    required: ['mode', 'scope'],
+  })
+})
+
+test('a mode the model sets for subagents reaches the next subagent and its calls', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  expect(await claudeSets($, 'audit', 'subagents')).toBe('Your subagents are now in Audit mode, also those already running.')
+  await spawn($)
+  expect(w.spawned[0]!.startsWith(AUDIT_NOTE_START)).toBe(true)
+  expect(w.spawned[0]).toBe(
+    'The agent that started you set Audit mode for its subagents, and it applies to you. Audit mode: read and report only. Do not edit files, commit, push or open pull requests; list findings instead. Tool calls that break it are denied.\n\nFind the bug.',
+  )
+  const out = await editAs($, 'a1')
+  expect(out.deny).toMatch(/set by the agent that started you\.$/)
+  expect(out.deny).toMatch(/^audit mode is on: report the change instead of making it; /)
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('a mode the model sets for itself denies its own calls', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  const text = await claudeSets($, 'audit', 'self')
+  expect(text).toMatch(/^You are now in Audit mode\. Audit mode: read and report only\./)
+  const out = await editAs($)
+  expect(out.deny).toMatch(/agent_mode off with scope self to leave\.$/)
+})
+
+test('the model clears the mode it set for itself', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  expect(await claudeSets($, 'off', 'self')).toBe('Cleared the Audit mode you set for yourself.')
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('the model clears the mode it set for subagents', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'chat', 'subagents')
+  expect(await claudeSets($, 'off', 'subagents')).toBe('Cleared the Chat mode you set for your subagents.')
+})
+
+test('off with nothing set says so', async ($, on) => {
+  world(on)
+  await start($ as never)
+  expect(await claudeSets($, 'off', 'self')).toBe('No mode was set for that scope.')
+  expect(await claudeSets($, 'off', 'subagents')).toBe('No mode was set for that scope.')
+})
+
+test('the model cannot loosen the mode the user set', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  const text = await claudeSets($, 'off', 'self')
+  expect(text).toBe("No mode was set for that scope. The user's Audit mode stays on.")
+  expect(text.endsWith("The user's Audit mode stays on.")).toBe(true)
+  expect(blocked(await editAs($))).toBe(true)
+})
+
+test('a self result names the user mode that stays on', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'chat')
+  expect(await claudeSets($, 'audit', 'self')).toMatch(/The user's Chat mode stays on\.$/)
+})
+
+test('the stricter rule wins: the user rule is checked first', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'chat')
+  await claudeSets($, 'audit', 'subagents')
+  await spawn($)
+  expect(w.spawned[0]!.startsWith('The main session is in Chat mode')).toBe(true)
+  expect(w.spawned[0]).toContain(AUDIT_NOTE_START)
+  const edit = await editAs($, 'a1')
+  expect(edit.deny).toMatch(/^audit mode is on: /)
+  const push = await pushAs($, 'a1')
+  expect(push.deny).toBe('chat mode is on: put the result in the reply instead; /mode off to leave.')
+})
+
+test('a nested subagent inherits the mode through its parent', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'no-pr', 'subagents')
+  await spawn($)
+  await spawn($, { parentAgentId: 'a1' })
+  expect(w.spawned[1]).toMatch(/^The agent that started you set No PR mode for its subagents, and it applies to you\. No-PR mode:/)
+  expect(blocked(await prAs($, 'a2'))).toBe(true)
+  expect(blocked(await editAs($, 'a2'))).toBe(false)
+})
+
+test('a subagent sets a mode for its own subagents', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await spawn($)
+  await spawn($, { parentAgentId: 'a1' })
+  expect(await claudeSets($, 'audit', 'subagents', 'a1')).toBe('Your subagents are now in Audit mode, also those already running.')
+  expect(blocked(await editAs($, 'a1'))).toBe(false)
+  expect(blocked(await editAs($, 'a2'))).toBe(true)
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('a subagent sets a mode for itself without touching the main thread', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await spawn($)
+  await claudeSets($, 'audit', 'self', 'a1')
+  expect((await editAs($, 'a1')).deny).toMatch(/agent_mode off with scope self to leave\.$/)
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('the agent_mode tool is never denied', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  const out = await $.tool.call({ tool: TOOL, mode: 'audit', scope: 'subagents' } as never)
+  expect(blocked(out)).toBe(false)
+  await claudeSets($, 'audit', 'self')
+  expect(blocked(await $.tool.call({ tool: TOOL, mode: 'off', scope: 'self' } as never))).toBe(false)
+})
+
+test('/mode off clears the modes the model set', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'subagents')
+  await claudeSets($, 'audit', 'self')
+  await spawn($)
+  expect(blocked(await editAs($, 'a1'))).toBe(true)
+  await mode($ as never, 'off')
+  expect(blocked(await editAs($, 'a1'))).toBe(false)
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('the band Turn off button clears the modes the model set', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'chat')
+  await claudeSets($, 'audit', 'self')
+  const band = await mount($, { surface: 'desktop' })
+  await band.press({ key: 'off' })
+  expect(blocked(await editAs($))).toBe(false)
+})
+
+test('setting a user mode keeps the modes the model set', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  await mode($ as never, 'chat')
+  expect(blocked(await editAs($))).toBe(true)
+})
+
+test('a mode set by the model alone shows one row and no Turn off button', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  const band = await mount($, { surface: 'desktop' })
+  expect(await band.find({ text: 'Set by Claude: Audit for itself' })).toBeDefined()
+  expect(await band.find({ type: 'Button', key: 'off' })).toBeUndefined()
+  expect(await band.find({ type: 'Text', text: /^Audit$/ })).toBeUndefined()
+})
+
+test('the band shows the user mode row and a Set by Claude row', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await claudeSets($, 'chat', 'subagents')
+  const band = await mount($, { surface: 'desktop' })
+  expect(await band.find({ type: 'Text', text: /^Audit$/ })).toBeDefined()
+  expect(await band.find({ text: 'Read and report only.' })).toBeDefined()
+  expect(await band.find({ type: 'Button', key: 'off' })).toBeDefined()
+  expect(await band.find({ text: 'Set by Claude: Chat for subagents' })).toBeDefined()
+})
+
+test('the Set by Claude row joins both scopes', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  await claudeSets($, 'chat', 'subagents')
+  const band = await mount($, { surface: 'desktop' })
+  expect(await band.find({ text: 'Set by Claude: Audit for itself and Chat for subagents' })).toBeDefined()
+})
+
+test('the Set by Claude row yields to a survey', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  const band = await mount($, { surface: 'desktop', over: { hasSurvey: true } })
+  expect(await band.find({ text: /Set by Claude/ })).toBeUndefined()
+})
+
+test('/mode alone reports the modes the model set', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'subagents')
+  expect((await mode($ as never)).text).toBe(
+    'Current mode: off. Modes: audit, no-pr, chat, product, off. Set by Claude: Audit for subagents.',
+  )
+})
+
+test('/mode alone is unchanged when the model set nothing', async ($, on) => {
+  world(on)
+  await start($ as never)
+  expect((await mode($ as never)).text).toBe('Current mode: off. Modes: audit, no-pr, chat, product, off.')
+})
+
+test('a workflow agent keeps its prompt but its calls are denied', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'subagents')
+  await spawn($, { workflow: { runId: 'wf_x', agentIndex: 1 } })
+  expect(w.spawned).toEqual(['Find the bug.'])
+  expect(blocked(await editAs($, 'a1'))).toBe(true)
+})
+
+test('a mode equal to the user mode is not repeated in the subagent note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await claudeSets($, 'audit', 'subagents')
+  await spawn($)
+  expect(w.spawned[0]).not.toContain(AUDIT_NOTE_START)
+  expect(w.spawned[0]!.startsWith('The main session is in Audit mode')).toBe(true)
 })

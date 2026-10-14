@@ -35,6 +35,54 @@ export const MODE_NOTE = (current: Mode, ended: Exclude<Mode, 'off'> | null): st
 export const SUBAGENT_NOTE = (mode: Exclude<Mode, 'off'>): string =>
   `The main session is in ${LABEL[mode]} mode, and it applies to you too. ${SECTION[mode]} Tool calls that break it are denied.`
 
+export type Active = Exclude<Mode, 'off'>
+
+export type Scope = 'self' | 'subagents'
+
+export type Held = { self: Active | null; subagents: Active | null }
+
+export const AGENT_TOOL = 'mcp__session-modes__agent_mode'
+
+export const AGENT_TOOL_DESCRIPTION =
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: audit (read and report only), no-pr (no pull requests), chat (no push or PR), product (plan only, no code). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+
+export const AGENT_TOOL_SCHEMA = {
+  type: 'object',
+  properties: {
+    mode: { type: 'string', enum: [...MODES] },
+    scope: { type: 'string', enum: ['self', 'subagents'] },
+  },
+  required: ['mode', 'scope'],
+}
+
+export function parseScope(raw: unknown): Scope | undefined {
+  return raw === 'self' || raw === 'subagents' ? raw : undefined
+}
+
+export const INHERITED_NOTE = (mode: Active): string =>
+  `The agent that started you set ${LABEL[mode]} mode for its subagents, and it applies to you. ${SECTION[mode]} Tool calls that break it are denied.`
+
+export const agentModeText = (wanted: Mode, scope: Scope, before: Active | null, user: Mode): string => {
+  const kept = scope === 'self' && user !== 'off' ? ` The user's ${LABEL[user]} mode stays on.` : ''
+  if (wanted === 'off') {
+    if (!before) return `No mode was set for that scope.${kept}`
+    return `Cleared the ${LABEL[before]} mode you set for ${scope === 'self' ? 'yourself' : 'your subagents'}.${kept}`
+  }
+  if (scope === 'self') return `You are now in ${LABEL[wanted]} mode. ${SECTION[wanted]}${kept}`
+  return `Your subagents are now in ${LABEL[wanted]} mode, also those already running.`
+}
+
+export function claudeParts(held: Held | undefined): string | undefined {
+  if (!held) return undefined
+  const parts = [
+    held.self ? `${LABEL[held.self]} for itself` : null,
+    held.subagents ? `${LABEL[held.subagents]} for subagents` : null,
+  ].filter((p): p is string => p !== null)
+  return parts.length ? parts.join(' and ') : undefined
+}
+
+export const reword = (text: string, tail: string): string => text.replace('/mode off to leave.', tail)
+
 // The skills that may write a plan outside the repo in product mode.
 export const PLANNING = new Set(['vision', 'shape', 'tickets'])
 
