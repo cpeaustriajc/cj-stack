@@ -10,10 +10,78 @@ export function parseMode(args: string): Mode | undefined {
 export const SECTION: Record<Exclude<Mode, 'off'>, string> = {
   audit: 'Audit mode: read and report only. Do not edit files, commit, push or open pull requests; list findings instead.',
   'no-pr': 'No-PR mode: do not open a pull request. Commit on the branch and say so in the reply.',
-  chat: 'Chat mode: do not open a pull request or push. Put the result in the reply, not in a pull request.',
+  chat: 'Chat mode: do not open a pull request or push. Commit locally if the work needs it, report the result in the reply, and leave the push and the pull request to the user.',
   product:
     'Product mode: plan top-down and write no code. Use vision for the product, shape for a project and tickets for its work items, and triage for any open decision. Load the skill for the level before writing to the tracker.',
 }
+
+export const LABEL: Record<Exclude<Mode, 'off'>, string> = {
+  audit: 'Audit',
+  'no-pr': 'No PR',
+  chat: 'Chat',
+  product: 'Product',
+}
+
+export const OFF_SECTION = (ended: Exclude<Mode, 'off'>): string =>
+  `Session mode: off. ${LABEL[ended]} mode has ended; its rules no longer apply, even if the conversation still shows it on.`
+
+export const MODE_NOTE = (current: Mode, ended: Exclude<Mode, 'off'> | null): string =>
+  current !== 'off'
+    ? `Session mode: ${LABEL[current]} is on. ${SECTION[current]}`
+    : ended
+      ? OFF_SECTION(ended)
+      : 'Session mode: off.'
+
+export const SUBAGENT_NOTE = (mode: Exclude<Mode, 'off'>): string =>
+  `The main session is in ${LABEL[mode]} mode, and it applies to you too. ${SECTION[mode]} Tool calls that break it are denied.`
+
+export type Active = Exclude<Mode, 'off'>
+
+export type Scope = 'self' | 'subagents'
+
+export type Held = { self: Active | null; subagents: Active | null }
+
+export const AGENT_TOOL = 'mcp__session-modes__agent_mode'
+
+export const AGENT_TOOL_DESCRIPTION =
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: audit (read and report only), no-pr (no pull requests), chat (no push or PR), product (plan only, no code). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+
+export const AGENT_TOOL_SCHEMA = {
+  type: 'object',
+  properties: {
+    mode: { type: 'string', enum: [...MODES] },
+    scope: { type: 'string', enum: ['self', 'subagents'] },
+  },
+  required: ['mode', 'scope'],
+}
+
+export function parseScope(raw: unknown): Scope | undefined {
+  return raw === 'self' || raw === 'subagents' ? raw : undefined
+}
+
+export const INHERITED_NOTE = (mode: Active): string =>
+  `The agent that started you set ${LABEL[mode]} mode for its subagents, and it applies to you. ${SECTION[mode]} Tool calls that break it are denied.`
+
+export const agentModeText = (wanted: Mode, scope: Scope, before: Active | null, user: Mode): string => {
+  const kept = scope === 'self' && user !== 'off' ? ` The user's ${LABEL[user]} mode stays on.` : ''
+  if (wanted === 'off') {
+    if (!before) return `No mode was set for that scope.${kept}`
+    return `Cleared the ${LABEL[before]} mode you set for ${scope === 'self' ? 'yourself' : 'your subagents'}.${kept}`
+  }
+  if (scope === 'self') return `You are now in ${LABEL[wanted]} mode. ${SECTION[wanted]}${kept}`
+  return `Your subagents are now in ${LABEL[wanted]} mode, also those already running.`
+}
+
+export function claudeParts(held: Held | undefined): string | undefined {
+  if (!held) return undefined
+  const parts = [
+    held.self ? `${LABEL[held.self]} for itself` : null,
+    held.subagents ? `${LABEL[held.subagents]} for subagents` : null,
+  ].filter((p): p is string => p !== null)
+  return parts.length ? parts.join(' and ') : undefined
+}
+
+export const reword = (text: string, tail: string): string => text.replace('/mode off to leave.', tail)
 
 // The skills that may write a plan outside the repo in product mode.
 export const PLANNING = new Set(['vision', 'shape', 'tickets'])
@@ -59,7 +127,7 @@ function writesCode(tool: string, path: string, command: string): boolean {
 const INSTEAD: Record<Exclude<Mode, 'off'>, string> = {
   audit: 'report the change instead of making it',
   'no-pr': 'commit on the branch and leave the pull request to the user',
-  chat: 'put the result in the reply instead',
+  chat: 'commit locally and leave the push and the pull request to the user',
   product: 'put the plan in the tracker or a Markdown plan file instead',
 }
 
@@ -90,5 +158,28 @@ export function verdict(mode: Mode, call: Call): string | undefined {
 }
 
 export function report(mode: Mode): string {
-  return `Current mode: ${mode}. Modes: ${MODES.join(', ')}.`
+  return `Current mode: ${mode}. Modes: ${MODES.join(', ')}. Also: clear, agents on, agents off.`
 }
+
+export const CLEARED_NOTE = (parts: string): string =>
+  `Session mode: the user cleared the modes you set (${parts}). They no longer apply.`
+
+export const AGENTS_OFF_NOTE = 'Session mode: the user turned off agent_mode. Do not call it.'
+
+export const AGENTS_ON_NOTE = 'Session mode: the user turned agent_mode back on.'
+
+export const AGENTS_OFF_DENY = 'The user turned off agent modes with /mode agents off.'
+
+export type Override = 'clear' | 'agents-on' | 'agents-off' | 'agents-invalid'
+
+export function parseOverride(args: string): Override | undefined {
+  const words = args.trim().toLowerCase().split(/\s+/)
+  if (words.length === 1 && words[0] === 'clear') return 'clear'
+  if (words[0] !== 'agents') return undefined
+  if (words.length === 2 && words[1] === 'on') return 'agents-on'
+  if (words.length === 2 && words[1] === 'off') return 'agents-off'
+  return 'agents-invalid'
+}
+
+export const holdsAny = (all: Record<string, Held>): boolean =>
+  Object.values(all).some(h => h.self !== null || h.subagents !== null)

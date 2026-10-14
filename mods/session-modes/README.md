@@ -37,13 +37,37 @@ In `product` mode, a tracker write is an MCP tool with a write word in its name,
 
 Other commands:
 
-- `/mode` alone shows "Current mode: off. Modes: audit, no-pr, chat, product, off."
+- `/mode` alone shows "Current mode: off. Modes: audit, no-pr, chat, product, off. Also: clear, agents on, agents off."
 - `/mode off` removes the mode and shows "Mode off."
+- `/mode clear` clears the modes Claude set.
+- `/mode agents off` and `/mode agents on` block and allow the `agent_mode` tool. See "Your overrides".
 - An unknown name shows `Unknown mode "<name>"` and changes nothing.
 - A name in capital letters or with spaces around it still works.
-- Typing `/mode ` lists the five names in the prompt suggestions.
+- Typing `/mode ` lists the five names, `clear` and `agents` in the prompt suggestions. Typing `/mode agents ` lists `on` and `off`.
 
-When a desktop or phone surface is attached, the status row shows the mode, for example "audit — read and report only". A terminal-only session shows no status row.
+While a mode is on, a band above the prompt shows it in the terminal and in the desktop app. The band has the mode name in bold and in the mode's colour, the rule in one line and a "Turn off" button. For `audit` it reads "Audit Read and report only. Edits, commits, pushes and PRs are blocked." The "Turn off" button does what `/mode off` does. In a band narrower than 60 columns, the band shows the first sentence only. The band hides while a survey is on screen and when no mode is set.
+
+When the mode changes, also by "Turn off", the mod adds a hidden note to your next message that says the current mode, for example "Session mode: off. Audit mode has ended; its rules no longer apply". The mod also puts the mode in the system prompt each turn, but the desktop app does not pass that text to the model. A subagent started while a mode is on gets the rule at the top of its task, and its tool calls are blocked like the main thread's. Workflow agents do not get the note, because their prompt cannot be changed.
+
+### Modes the model sets
+
+The mod adds a tool, `agent_mode`, that Claude can call to set a mode for itself (scope `self`) or for its subagents (scope `subagents`), including subagents that are already running. Example: with your mode off, Claude sets `audit` for subagents and starts three Explore subagents. Each one gets the Audit rule at the top of its task, and any `Edit` it makes is denied. The main thread can still edit.
+
+A call is denied when any rule that applies to the caller denies it, so the stricter rule always wins. Claude cannot loosen your `/mode`: its `off` clears only the modes it set itself. A subagent can set modes for itself and for its own subagents in the same way. `/mode off` and the band's "Turn off" clear every mode Claude set. `/mode audit` does not.
+
+The band shows the modes Claude set on a second row, for example "Set by Claude: Audit for itself and Chat for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
+
+### Your overrides
+
+You can always take control back from a mode Claude set.
+
+- The "Clear" button on the "Set by Claude" row clears every mode Claude set. Your own mode stays.
+- `/mode clear` does the same. It shows "Cleared Claude's modes." or, with nothing set, "Claude has no modes set."
+- `/mode agents off` clears the modes Claude set and blocks the `agent_mode` tool. While it is off, a call with any mode except `off` is denied with "The user turned off agent modes with /mode agents off." `/mode` alone then ends with "Agent modes: off."
+- `/mode agents on` turns the tool back on.
+- Any other value after `agents` shows "Use /mode agents off or /mode agents on." and changes nothing.
+
+Claude is told on your next message. For example, after "Clear" it reads "Session mode: the user cleared the modes you set (Audit for itself). They no longer apply." `/mode off` and the band's "Turn off" send the same note when Claude had set a mode. Each note is sent once.
 
 The mod writes `{ "v": 1, "mode": "audit" }` to `~/.claude/mod-state/<session id>.session-modes.json` for a custom status line to read. With no mode, `mode` is `null`. If `CLAUDE_CONFIG_DIR` is set, the file goes to `$CLAUDE_CONFIG_DIR/mod-state`. At session start, the mod deletes its state files older than seven days.
 
@@ -56,14 +80,14 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - `audit` does not block a Bash command that writes without a redirect, such as `sed -i`. It does not block MCP tools.
 - `no-pr` and `chat` check only the pull request and push commands above. They do not block edits.
 - `product` mode judges an MCP tool by its name only. A tracker tool with no write word in the name passes.
+- A subagent that is already running gets no new task note when a mode above it changes. The new rule applies to its tool calls at once, and only the deny message tells it.
 - After you load a planning skill, tracker writes stay open for the rest of the session.
-- A non-interactive session has no `/mode` command and no status row. It still enforces a mode that was set.
 - If the mod cannot find a home directory, it writes and prunes no state file. If a write fails, the hook throws "session-modes: could not publish state for the status line". If a prune fails, it throws "session-modes: could not prune old state files".
 
 ## More
 
 - [hooks/modes.ts](hooks/modes.ts): the modes, the prompt text and the block rules.
-- [hooks/register.ts](hooks/register.ts): the hook source and the state file.
+- [hooks/register.tsx](hooks/register.tsx): the hook source, the band and the state file.
 - [hooks/suggest.ts](hooks/suggest.ts): the prompt suggestions.
 - [hooks/register.test.ts](hooks/register.test.ts) and [hooks/suggest.test.ts](hooks/suggest.test.ts): the tests.
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.

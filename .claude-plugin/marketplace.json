@@ -80,6 +80,23 @@
       ]
     },
     {
+      "name": "cj-lab",
+      "source": "./",
+      "strict": false,
+      "version": "0.1.0",
+      "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt and self-verify. Expect changes.",
+      "category": "productivity",
+      "keywords": [
+        "in-progress",
+        "qa",
+        "verification"
+      ],
+      "skills": [
+        "./skills/in-progress/bug-hunt",
+        "./skills/in-progress/self-verify"
+      ]
+    },
+    {
       "name": "linear-gate",
       "source": "./mods/linear-gate",
       "description": "Holds every Linear write until you allow it.",
