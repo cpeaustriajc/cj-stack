@@ -176,7 +176,7 @@ export const register: Register = on => {
     return (
       <Box flexDirection="column">
         <Box flexDirection="row" gap={1}>
-          <Text bold color={chip}>
+          <Text weight="semibold" color={chip}>
             {label}
           </Text>
           <Box flexGrow={1} flexShrink={1}>
