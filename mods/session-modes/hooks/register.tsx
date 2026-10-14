@@ -286,19 +286,17 @@ export const register: Register = on => {
     }
     const current = await read($, mode)
     const notes: string[] = []
-    if (current !== 'off' && !e.workflow) notes.push(SUBAGENT_NOTE(current))
-    if (!e.workflow) {
-      const held = await read($, agentModes)
-      const links = await read($, parents)
-      const inherited: Active[] = []
-      const seen = new Set<string>()
-      for (let at: string | undefined = parent; at !== undefined && !seen.has(at); at = links[at]) {
-        seen.add(at)
-        const m = held[at]?.subagents
-        if (m && m !== current && !inherited.includes(m)) inherited.push(m)
-      }
-      notes.push(...inherited.map(INHERITED_NOTE))
+    if (current !== 'off') notes.push(SUBAGENT_NOTE(current))
+    const held = await read($, agentModes)
+    const links = await read($, parents)
+    const inherited: Active[] = []
+    const seen = new Set<string>()
+    for (let at: string | undefined = parent; at !== undefined && !seen.has(at); at = links[at]) {
+      seen.add(at)
+      const m = held[at]?.subagents
+      if (m && m !== current && !inherited.includes(m)) inherited.push(m)
     }
+    notes.push(...inherited.map(INHERITED_NOTE))
     const result = await next(notes.length ? { ...e, prompt: `${notes.join(' ')}\n\n${e.prompt}` } : e)
     if (result.agentId) {
       const child = result.agentId

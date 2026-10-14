@@ -50,7 +50,7 @@ Other commands:
 
 While a mode is on, a band above the prompt shows it in the terminal and in the desktop app. The band has the mode name in bold and in the mode's colour, the rule in one line and a "Turn off" button. For `readonly` it reads "Read only Read and report only. Edits, commits, pushes, PRs and tracker writes are blocked." The "Turn off" button does what `/mode off` does. In a band narrower than 60 columns, the band shows the first sentence only. The band hides while a survey is on screen and when no mode is set.
 
-When the mode changes, also by "Turn off", the mod adds a hidden note to your next message. The note says the current mode, for example "Session mode: off. Read only mode has ended; its rules no longer apply". The mod also puts the mode in the system prompt each turn, but the desktop app does not pass that text to the model. A subagent started while a mode is on gets the rule at the top of its task. The mod blocks its tool calls like the main thread's. Workflow agents do not get the note, because their prompt cannot be changed.
+When the mode changes, also by "Turn off", the mod adds a hidden note to your next message. The note says the current mode, for example "Session mode: off. Read only mode has ended; its rules no longer apply". The mod also puts the mode in the system prompt each turn, but the desktop app does not pass that text to the model. A subagent started while a mode is on gets the rule at the top of its task. The mod blocks its tool calls like the main thread's. Workflow agents get it too, from Claude Code 2.1.300. A resumed agent does not, because a hook cannot change a resumed agent's prompt.
 
 ### Modes the model sets
 

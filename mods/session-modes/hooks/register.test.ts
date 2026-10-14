@@ -555,12 +555,13 @@ test('a subagent started with the mode off keeps its prompt', async ($, on) => {
   expect(w.spawned).toEqual(['Find the bug.', 'Find the bug.'])
 })
 
-test('a workflow agent keeps its prompt in readonly mode', async ($, on) => {
+test('a workflow agent gets the mode rule in readonly mode', async ($, on) => {
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'readonly')
   await spawn($, { workflow: { runId: 'wf_x', agentIndex: 1 } })
-  expect(w.spawned).toEqual(['Find the bug.'])
+  expect(w.spawned[0]!.startsWith('The main session is in Read only mode')).toBe(true)
+  expect(w.spawned[0]!.endsWith('\n\nFind the bug.')).toBe(true)
 })
 
 const submit = ($: any, text = 'hello', context?: string[], extra: Record<string, unknown> = {}) =>
@@ -968,13 +969,13 @@ test('/mode alone is unchanged when the model set nothing', async ($, on) => {
   )
 })
 
-test('a workflow agent keeps its prompt but its calls are denied', async ($, on) => {
+test('a workflow agent gets the inherited mode and its calls are denied', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
   const w = world(on)
   await start($ as never)
   await claudeSets($, 'readonly', 'subagents')
   await spawn($, { workflow: { runId: 'wf_x', agentIndex: 1 } })
-  expect(w.spawned).toEqual(['Find the bug.'])
+  expect(w.spawned[0]).toContain(READONLY_NOTE_START)
   expect(blocked(await editAs($, 'a1'))).toBe(true)
 })
 
