@@ -61,5 +61,5 @@ blind spots.
 ## 4. Report, then stop
 
 Show the four groups, each finding with its reviewers, file:line and failure scenario. Ask with the
-ask tool which to fix. Apply nothing until I pick. Save the bundle and the raw reviews in the
-scratchpad and say where they are, so the review can be re-run.
+ask tool which to fix. Apply nothing until I pick. Save the bundle and the raw reviews in
+the ignored work folder (`.claude/work/<topic>/` in Claude Code) and say where they are, so the review can be re-run.

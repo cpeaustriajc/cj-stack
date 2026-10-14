@@ -20,7 +20,7 @@ This is a periodic sweep, not a per-PR gate. For proof that one change works, us
 
 - The scope is what I named (paths, a PR, an issue such as an audit ticket), else the whole repo
   minus generated, vendored and lock files.
-- Write the file list to the scratchpad. Split it into three shards of about equal lines, by
+- Write the file list to the ignored work folder (`.claude/work/<topic>/` in Claude Code). Split it into three shards of about equal lines, by
   area (one feature or package stays in one shard).
 - Read the project's test command, E2E command and its rules on test ids and visible copy first.
   Every hunter gets them.
@@ -55,7 +55,7 @@ Hunter brief (fill in the brackets):
 - Verify each fix yourself: read the diff, run the new test. A diff that fails your review twice
   goes back with a hunter one model tier up.
 - Hand each out-of-shard bug to the hunter that owns that file next round.
-- Add each bug to the ledger in the scratchpad: verified-fixed, unproven, or rejected with one
+- Add each bug to the ledger in the ignored work folder (`.claude/work/<topic>/` in Claude Code): verified-fixed, unproven, or rejected with one
   line why.
 - For each verified bug, write one prevention proposal: a lint rule, test, hook or instruction
   change, in the strongest layer that can hold it, as in `hone`. A proposed lint or test must
@@ -76,4 +76,4 @@ Run the full suite as the project's verify skill says. Report:
 - **Prevention**, one group: the proposal for each verified bug, with its failing check
 - the exact E2E command and where its trace or report is
 
-The ledger and every hunter reply stay in the scratchpad. Say where.
+The ledger and every hunter reply stay in the ignored work folder (`.claude/work/<topic>/` in Claude Code). Say where.
