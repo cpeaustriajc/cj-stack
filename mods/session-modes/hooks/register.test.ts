@@ -222,13 +222,13 @@ test('the prompt gets one session section last while a mode is on', async ($, on
   )
 })
 
-test('each mode states itself in the prompt, chat asks for the result in the reply', async ($, on) => {
+test('each mode states itself in the prompt, chat allows local commits', async ($, on) => {
   world(on)
   await start($ as never)
   await mode($ as never, 'no-pr')
   expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^No-PR mode:.*pull request/)
   await mode($ as never, 'chat')
-  expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Chat mode:.*reply/)
+  expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Chat mode:.*Commit locally/)
 })
 
 test('/mode off replaces the mode section with an off section', async ($, on) => {
@@ -882,7 +882,7 @@ test('the stricter rule wins: the user rule is checked first', async ($, on) => 
   const edit = await editAs($, 'a1')
   expect(edit.deny).toMatch(/^audit mode is on: /)
   const push = await pushAs($, 'a1')
-  expect(push.deny).toBe('chat mode is on: put the result in the reply instead; /mode off to leave.')
+  expect(push.deny).toBe('chat mode is on: commit locally and leave the push and the pull request to the user; /mode off to leave.')
 })
 
 test('a nested subagent inherits the mode through its parent', async ($, on) => {

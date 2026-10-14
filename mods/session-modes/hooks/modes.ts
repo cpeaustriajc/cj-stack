@@ -10,7 +10,7 @@ export function parseMode(args: string): Mode | undefined {
 export const SECTION: Record<Exclude<Mode, 'off'>, string> = {
   audit: 'Audit mode: read and report only. Do not edit files, commit, push or open pull requests; list findings instead.',
   'no-pr': 'No-PR mode: do not open a pull request. Commit on the branch and say so in the reply.',
-  chat: 'Chat mode: do not open a pull request or push. Put the result in the reply, not in a pull request.',
+  chat: 'Chat mode: do not open a pull request or push. Commit locally if the work needs it, report the result in the reply, and leave the push and the pull request to the user.',
   product:
     'Product mode: plan top-down and write no code. Use vision for the product, shape for a project and tickets for its work items, and triage for any open decision. Load the skill for the level before writing to the tracker.',
 }
@@ -127,7 +127,7 @@ function writesCode(tool: string, path: string, command: string): boolean {
 const INSTEAD: Record<Exclude<Mode, 'off'>, string> = {
   audit: 'report the change instead of making it',
   'no-pr': 'commit on the branch and leave the pull request to the user',
-  chat: 'put the result in the reply instead',
+  chat: 'commit locally and leave the push and the pull request to the user',
   product: 'put the plan in the tracker or a Markdown plan file instead',
 }
 
