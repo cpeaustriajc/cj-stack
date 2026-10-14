@@ -7,7 +7,8 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
   const state = {
     commands: [] as string[],
     hints: [] as (string | undefined)[],
-    statuses: [] as (string | undefined)[],
+    statusCalls: [] as unknown[],
+    toasts: [] as string[],
     surfaces,
     writes: [] as { path: string; text: string }[],
     removed: [] as string[],
@@ -17,11 +18,11 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     files: [] as { name: string; kind: string; mtimeMs: number }[],
     env: { HOME: '/home/cj' } as Record<string, string | undefined>,
     now: 100 * 86_400_000,
+    spawned: [] as string[],
+    prompts: [] as { text: string; context?: readonly string[] }[],
   }
   on('session.id', () => ({ value: 'sess1' }) as never)
   on('session.surfaces', () => ({ value: state.surfaces }) as never)
-  on('session.attach', (_$, e) => e as never)
-  on('session.detach', (_$, e) => e as never)
   on('env.get', (_$, e) => ({ value: state.env[(e as { name: string }).name] }) as never)
   on('clock.now', () => ({ value: state.now }) as never)
   on('fs.exists', () => ({ value: true }) as never)
@@ -42,11 +43,22 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
   })
   on('session.start', (_$, e) => e as never)
   on('ui.status', (_$, e) => {
-    state.statuses.push(e.text)
+    state.statusCalls.push(e)
     return { value: undefined } as never
   })
+  on('ui.toast', (_$, e) => {
+    state.toasts.push((e as { text: string }).text)
+    return { value: undefined } as never
+  })
+  on('ui.render', () => ({ type: 'Box', props: {}, children: [] }) as never)
   on('prompt.compose', () => ({ sections: [{ id: 'base', text: 'base', scope: 'shared' }] }) as never)
   on('skill.prompt', (_$, e) => ({ text: (e as { text: string }).text }) as never)
+  on('agent.spawn', (_$, e) => (state.spawned.push((e as { prompt: string }).prompt), { model: 'm', agentId: 'a1' }) as never)
+  on('prompt.submit', (_$, e) => {
+    const input = e as { text: string; context?: readonly string[] }
+    state.prompts.push(input)
+    return { text: input.text, context: input.context } as never
+  })
   return state
 }
 
@@ -56,7 +68,6 @@ const mode = ($: { command: { run: (e: never) => Promise<{ text?: string }> } },
   $.command.run({ command: 'mode', args } as never)
 const bash = ($: { tool: { call: (e: never) => Promise<{ deny?: string }> } }, command: string) =>
   $.tool.call({ tool: 'Bash', command } as never)
-const last = (s: (string | undefined)[]) => s[s.length - 1]
 
 async function setUp(on: On, $: Parameters<typeof start>[0] & Parameters<typeof mode>[0], m: string) {
   const w = world(on)
@@ -173,12 +184,11 @@ test('/mode alone reports the current mode and lists the modes', async ($, on) =
 
 test('an unknown mode lists the modes and changes nothing', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
-  const w = await setUp(on, $ as never, 'audit')
+  await setUp(on, $ as never, 'audit')
   const out = await mode($ as never, 'foo')
   expect(out.text).toMatch(/foo/)
   for (const m of ['audit', 'no-pr', 'chat', 'product', 'off']) expect(out.text).toContain(m)
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
-  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('the mode argument is case and space tolerant', async ($, on) => {
@@ -187,18 +197,6 @@ test('the mode argument is case and space tolerant', async ($, on) => {
   await start($ as never)
   await mode($ as never, '  AUDIT ')
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
-})
-
-test('the status line follows the mode and clears on off', async ($, on) => {
-  const w = world(on)
-  await start($ as never)
-  await mode($ as never, 'no-pr')
-  expect(last(w.statuses)).toBe('no-pr — no pull requests')
-  await mode($ as never, 'chat')
-  expect(last(w.statuses)).toBe('chat — answer here, no PR or push')
-  await mode($ as never, 'off')
-  expect(last(w.statuses)).toBeUndefined()
-  expect(w.statuses).toEqual([undefined, 'no-pr — no pull requests', 'chat — answer here, no PR or push', undefined])
 })
 
 test('the prompt gets one session section last while a mode is on', async ($, on) => {
@@ -223,12 +221,14 @@ test('each mode states itself in the prompt, chat asks for the result in the rep
   expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Chat mode:.*reply/)
 })
 
-test('/mode off removes the prompt section', async ($, on) => {
+test('/mode off replaces the mode section with an off section', async ($, on) => {
   world(on)
   await start($ as never)
   await mode($ as never, 'audit')
   await mode($ as never, 'off')
-  expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.map(s => s.id)).toEqual(['base'])
+  const { sections } = await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)
+  expect(sections.map(s => s.id)).toEqual(['base', 'session-modes:mode'])
+  expect(sections.at(-1)!.text).not.toMatch(/^Audit mode:/)
 })
 
 test('with no mode the prompt is untouched', async ($, on) => {
@@ -254,12 +254,11 @@ test('a non-interactive session, as in the desktop app, still registers /mode', 
   await start($ as never, false)
   expect(w.commands).toEqual(['mode'])
   expect((await mode($ as never, 'audit')).text).toBe('Mode audit on.')
-  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('a non-interactive session still enforces a mode that was set', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
-  const w = world(on)
+  world(on)
   await start($ as never)
   await mode($ as never, 'audit')
   await start($ as never, false)
@@ -267,13 +266,12 @@ test('a non-interactive session still enforces a mode that was set', async ($, o
   expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.length).toBe(2)
 })
 
-test('a second session start keeps the mode and redraws its status', async ($, on) => {
+test('a second session start keeps the mode', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
-  const w = world(on)
+  world(on)
   await start($ as never)
   await mode($ as never, 'audit')
   await start($ as never)
-  expect(last(w.statuses)).toBe('audit — read and report only')
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
 })
 
@@ -356,24 +354,11 @@ test('a non-interactive session writes no state file', async ($, on) => {
   expect(w.writes).toEqual([])
 })
 
-test('a terminal-only session shows the status row', async ($, on) => {
+test('a terminal-only session writes the state file', async ($, on) => {
   const w = world(on, ['terminal'])
   await start($ as never)
   await mode($ as never, 'audit')
-  expect(last(w.statuses)).toBe('audit — read and report only')
   expect(lastWrite(w).path).toBe(FILE)
-})
-
-test('attaching and detaching a desktop surface keeps the status row', async ($, on) => {
-  const w = world(on, ['terminal'])
-  await start($ as never)
-  await mode($ as never, 'audit')
-  w.surfaces = ['terminal', 'desktop']
-  await $.session.attach({ clientId: 'c' } as never)
-  expect(last(w.statuses)).toBe('audit — read and report only')
-  w.surfaces = ['terminal']
-  await $.session.detach({ clientId: 'c' } as never)
-  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('session start removes this mod\'s files older than seven days and keeps the rest', async ($, on) => {
@@ -521,12 +506,245 @@ test('the skill prompt passes through unchanged', async ($, on) => {
   expect(await skill($ as never, 'shape')).toEqual({ text: 'x' })
 })
 
-test('product mode states itself in the prompt and the status line', async ($, on) => {
-  const w = world(on)
+test('product mode states itself in the prompt', async ($, on) => {
+  world(on)
   await start($ as never)
   await mode($ as never, 'product')
-  expect(last(w.statuses)).toBe('product — vision → shape → tickets')
   const text = (await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text
   expect(text).toMatch(/^Product mode: plan top-down/)
   expect(text).toMatch(/triage/)
+})
+
+const COPY: [string, string, string, string][] = [
+  ['audit', 'Audit', 'Read and report only.', 'Edits, commits, pushes and PRs are blocked.'],
+  ['no-pr', 'No PR', 'Commit on the branch.', 'Opening a PR is blocked.'],
+  ['chat', 'Chat', 'Edits and commits are allowed.', 'Pushes and PRs are blocked.'],
+  ['product', 'Product', 'Plan in Markdown and the tracker.', 'Tracker writes wait for vision, shape or tickets.'],
+]
+
+const props = (over: Record<string, unknown> = {}) =>
+  ({ hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 100, scroll: { offset: 0, bodyRows: 10 }, view: {}, ...over }) as never
+
+type Band = { surface: Surface; over?: Record<string, unknown> }
+const mount = ($: any, { surface, over }: Band) =>
+  $.ui.mount({ plugin: 'session-modes', surface, component: 'AbovePrompt', props: props(over) })
+
+for (const surface of ['terminal', 'desktop'] as const) {
+  test(`${surface}: the band draws nothing while the mode is off`, async ($, on) => {
+    world(on, [surface])
+    await start($ as never)
+    const band = await mount($, { surface })
+    expect(await band.find({ type: 'Button', key: 'off' })).toBeUndefined()
+    for (const [, label] of COPY) expect(await band.find({ type: 'Text', text: new RegExp(`^${label}$`) })).toBeUndefined()
+  })
+
+  for (const [name, label, lead, detail] of COPY) {
+    test(`${surface}: the ${name} band shows its chip, lead and detail`, async ($, on) => {
+      world(on, [surface])
+      await start($ as never)
+      await mode($ as never, name)
+      const band = await mount($, { surface })
+      expect(await band.find({ type: 'Text', text: new RegExp(`^${label}$`) })).toBeDefined()
+      expect(await band.find({ text: lead })).toBeDefined()
+      expect(await band.find({ text: detail })).toBeDefined()
+      expect(await band.find({ type: 'Button', key: 'off' })).toBeDefined()
+    })
+  }
+
+  test(`${surface}: the band yields to a survey`, async ($, on) => {
+    world(on, [surface])
+    await start($ as never)
+    await mode($ as never, 'audit')
+    const band = await mount($, { surface, over: { hasSurvey: true } })
+    expect(await band.find({ type: 'Button', key: 'off' })).toBeUndefined()
+    expect(await band.find({ type: 'Text', text: /^Audit$/ })).toBeUndefined()
+  })
+
+  test(`${surface}: a narrow band shows the lead but not the detail`, async ($, on) => {
+    world(on, [surface])
+    await start($ as never)
+    await mode($ as never, 'audit')
+    const band = await mount($, { surface, over: { bodyColumns: 40 } })
+    expect(await band.find({ text: 'Read and report only.' })).toBeDefined()
+    expect(await band.find({ text: 'Edits, commits, pushes and PRs are blocked.' })).toBeUndefined()
+  })
+
+  test(`${surface}: the product band opens its detail after a planning skill`, async ($, on) => {
+    world(on, [surface])
+    await start($ as never)
+    await mode($ as never, 'product')
+    const band = await mount($, { surface })
+    expect(await band.find({ text: 'Tracker writes wait for vision, shape or tickets.' })).toBeDefined()
+    await skill($ as never, 'shape')
+    expect(await band.find({ text: 'Tracker writes are open.' })).toBeDefined()
+    expect(await band.find({ text: 'Tracker writes wait for vision, shape or tickets.' })).toBeUndefined()
+  })
+
+  test(`${surface}: pressing Turn off ends the mode`, async ($, on) => {
+    on('tool.call', () => ({ result: 'ok' }) as never)
+    const w = world(on, [surface])
+    await start($ as never)
+    await mode($ as never, 'audit')
+    expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
+    const band = await mount($, { surface })
+    await band.press({ key: 'off' })
+    expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(false)
+    expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: null })
+    expect(w.toasts).toEqual(['Mode off.'])
+    const fresh = await mount($, { surface })
+    expect(await fresh.find({ type: 'Button', key: 'off' })).toBeUndefined()
+  })
+
+  test(`${surface}: the status row is never used`, async ($, on) => {
+    const w = world(on, [surface])
+    await start($ as never)
+    await mode($ as never, 'audit')
+    await mode($ as never, 'off')
+    await mount($, { surface })
+    expect(w.statusCalls).toEqual([])
+  })
+}
+
+const compose = ($: any) =>
+  $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)
+
+const OFF_AUDIT =
+  'Session mode: off. Audit mode has ended; its rules no longer apply, even if the conversation still shows it on.'
+
+test('after /mode audit then /mode off the prompt says the mode has ended', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'off')
+  const last = (await compose($)).sections.at(-1)
+  expect(last.id).toBe('session-modes:mode')
+  expect(last.scope).toBe('session')
+  expect(last.text).toBe(OFF_AUDIT)
+})
+
+test('after the band Turn off button the prompt says the mode has ended', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  const band = await mount($, { surface: 'desktop' })
+  await band.press({ key: 'off' })
+  const last = (await compose($)).sections.at(-1)
+  expect(last.id).toBe('session-modes:mode')
+  expect(last.text).toBe(OFF_AUDIT)
+})
+
+test('a session that never set a mode gets no mode section', async ($, on) => {
+  world(on)
+  await start($ as never)
+  expect((await compose($)).sections.map((s: { id: string }) => s.id)).not.toContain('session-modes:mode')
+})
+
+test('turning a mode on again drops the off text, and the next off names the new mode', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'off')
+  await mode($ as never, 'chat')
+  expect((await compose($)).sections.at(-1).text).toMatch(/^Chat mode:/)
+  await mode($ as never, 'off')
+  expect((await compose($)).sections.at(-1).text).toBe(
+    'Session mode: off. Chat mode has ended; its rules no longer apply, even if the conversation still shows it on.',
+  )
+})
+
+const spawn = ($: any, extra: Record<string, unknown> = {}) =>
+  $.agent.spawn({ prompt: 'Find the bug.', description: 'd', subagentType: 'general-purpose', fork: false, ...extra } as never)
+
+test('a subagent started in audit mode gets the rule at the top of its task', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await spawn($)
+  expect(w.spawned).toHaveLength(1)
+  expect(w.spawned[0]).toBe(
+    'The main session is in Audit mode, and it applies to you too. Audit mode: read and report only. Do not edit files, commit, push or open pull requests; list findings instead. Tool calls that break it are denied.\n\nFind the bug.',
+  )
+})
+
+test('a subagent started with the mode off keeps its prompt', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await spawn($)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'off')
+  await spawn($)
+  expect(w.spawned).toEqual(['Find the bug.', 'Find the bug.'])
+})
+
+test('a workflow agent keeps its prompt in audit mode', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await spawn($, { workflow: { runId: 'wf_x', agentIndex: 1 } })
+  expect(w.spawned).toEqual(['Find the bug.'])
+})
+
+const submit = ($: any, text = 'hello', context?: string[]) =>
+  $.prompt.submit({ text, wait: false, origin: { kind: 'composer' }, ...(context ? { context } : {}) } as never)
+
+const notes = (w: { prompts: { context?: readonly string[] }[] }, i = -1) => w.prompts.at(i)!.context ?? []
+
+test('a prompt carries no mode note while no mode was ever set', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('the prompt after /mode audit carries the Audit note once', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await submit($)
+  expect(notes(w)).toHaveLength(1)
+  expect(notes(w)[0]).toMatch(/^Session mode: Audit is on\. Audit mode: read and report only\./)
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('the prompt after the band Turn off button carries the off note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await submit($)
+  const band = await mount($, { surface: 'desktop' })
+  await band.press({ key: 'off' })
+  await submit($)
+  expect(notes(w)).toHaveLength(1)
+  expect(notes(w)[0]).toMatch(/^Session mode: off\. Audit mode has ended/)
+})
+
+test('two mode changes before a prompt give one note, the last mode', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'chat')
+  await submit($)
+  expect(notes(w)).toHaveLength(1)
+  expect(notes(w)[0]).toMatch(/^Session mode: Chat is on\. Chat mode:/)
+})
+
+test('a mode set and cleared before any prompt gives no note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'off')
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('the mode note goes after the context a prompt already has', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  const out = await submit($, 'hello', ['x'])
+  expect(notes(w)).toHaveLength(2)
+  expect(notes(w)[0]).toBe('x')
+  expect(notes(w)[1]).toMatch(/^Session mode: Audit is on\./)
+  expect(out.context).toEqual(notes(w))
 })

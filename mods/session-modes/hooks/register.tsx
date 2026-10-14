@@ -1,6 +1,6 @@
 import { atom, read, update } from 'claude-code'
 import type { Hook, Register } from 'claude-code'
-import { SECTION, parseMode, planningSkill, report, verdict } from './modes'
+import { LABEL, MODE_NOTE, OFF_SECTION, SECTION, SUBAGENT_NOTE, parseMode, planningSkill, report, verdict } from './modes'
 import type { Mode } from './modes'
 import { modeSuggestions } from './suggest'
 
@@ -46,20 +46,36 @@ export async function pruneState($: Api): Promise<void> {
   }
 }
 
+type Active = Exclude<Mode, 'off'>
+
 const mode = atom({ plugin: 'session-modes', key: 'mode' } as const, 'off' as Mode)
+const ended = atom({ plugin: 'session-modes', key: 'ended' } as const, null as Active | null)
+const told = atom({ plugin: 'session-modes', key: 'told' } as const, 'off' as Mode)
 // Whether vision, shape or tickets has loaded this session: product mode's key to outside writes.
 const planned = atom({ plugin: 'session-modes', key: 'planned' } as const, false)
 const SECTION_ID = 'session-modes:mode'
 
-const STATUS: Record<Exclude<Mode, 'off'>, string> = {
-  audit: 'audit — read and report only',
-  'no-pr': 'no-pr — no pull requests',
-  chat: 'chat — answer here, no PR or push',
-  product: 'product — vision → shape → tickets',
+const CHIP: Record<Active, string> = {
+  audit: 'planMode',
+  'no-pr': 'suggestion',
+  chat: 'ide',
+  product: 'merged',
 }
 
-async function drawStatus($: Api, current: Mode): Promise<void> {
-  await $.ui.status(current === 'off' ? undefined : STATUS[current])
+const RULE: Record<Exclude<Active, 'product'>, { lead: string; detail: string }> = {
+  audit: { lead: 'Read and report only.', detail: 'Edits, commits, pushes and PRs are blocked.' },
+  'no-pr': { lead: 'Commit on the branch.', detail: 'Opening a PR is blocked.' },
+  chat: { lead: 'Edits and commits are allowed.', detail: 'Pushes and PRs are blocked.' },
+}
+
+const NARROW = 60
+
+async function setMode($: Api, wanted: Mode): Promise<void> {
+  const old = await read($, mode)
+  await update($, mode, () => wanted)
+  if (wanted !== 'off') await update($, ended, () => null)
+  else if (old !== 'off') await update($, ended, () => old)
+  await publishState($, wanted)
 }
 
 export const register: Register = on => {
@@ -72,21 +88,8 @@ export const register: Register = on => {
       argumentHint: 'audit | no-pr | chat | product | off',
     })
     const current = await read($, mode)
-    await drawStatus($, current)
     if (current !== 'off') await publishState($, current)
     await pruneState($)
-    return result
-  })
-
-  on('session.attach', async ($, e, next) => {
-    const result = await next(e)
-    await drawStatus($, await read($, mode))
-    return result
-  })
-
-  on('session.detach', async ($, e, next) => {
-    const result = await next(e)
-    await drawStatus($, await read($, mode))
     return result
   })
 
@@ -94,10 +97,43 @@ export const register: Register = on => {
     const wanted = e.args.trim() === '' ? undefined : parseMode(e.args)
     if (e.args.trim() === '') return { text: report(await read($, mode)) }
     if (!wanted) return { text: `Unknown mode "${e.args.trim()}". ${report(await read($, mode))}` }
-    await update($, mode, () => wanted)
-    await drawStatus($, wanted)
-    await publishState($, wanted)
+    await setMode($, wanted)
     return { text: wanted === 'off' ? 'Mode off.' : `Mode ${wanted} on.` }
+  })
+
+  on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    const current = await read($, mode)
+    if (current === 'off' || e.props.hasSurvey) return next(e)
+    const isPlanned = await read($, planned)
+    const { lead, detail } =
+      current === 'product'
+        ? {
+            lead: 'Plan in Markdown and the tracker.',
+            detail: isPlanned ? 'Tracker writes are open.' : 'Tracker writes wait for vision, shape or tickets.',
+          }
+        : RULE[current]
+    const { Box, Text, Button } = $.ui.resolve(e)
+    return (
+      <Box flexDirection="row" gap={1}>
+        <Text bold color={CHIP[current]}>
+          {LABEL[current]}
+        </Text>
+        <Box flexGrow={1} flexShrink={1}>
+          <Text wrap="truncate-end">
+            {lead}
+            {e.props.bodyColumns < NARROW ? null : <Text dimColor>{' ' + detail}</Text>}
+          </Text>
+        </Box>
+        <Button
+          key="off"
+          label="Turn off"
+          onPress={async () => {
+            await setMode($, 'off')
+            await $.ui.toast('Mode off.')
+          }}
+        />
+      </Box>
+    )
   })
 
   on('skill.prompt', async ($, e, next) => {
@@ -117,8 +153,24 @@ export const register: Register = on => {
   on('prompt.compose', async ($, e, next) => {
     const result = await next(e)
     const current = await read($, mode)
-    if (current === 'off') return result
-    return { sections: [...result.sections, { id: SECTION_ID, text: SECTION[current], scope: 'session' }] }
+    const last = await read($, ended)
+    const text = current !== 'off' ? SECTION[current] : last ? OFF_SECTION(last) : undefined
+    if (text === undefined) return result
+    return { sections: [...result.sections, { id: SECTION_ID, text, scope: 'session' }] }
+  })
+
+  on('prompt.submit', async ($, e, next) => {
+    const current = await read($, mode)
+    if (current === (await read($, told))) return next(e)
+    const note = MODE_NOTE(current, await read($, ended))
+    await update($, told, () => current)
+    return next({ ...e, context: [...(e.context ?? []), note] })
+  })
+
+  on('agent.spawn', async ($, e, next) => {
+    const current = await read($, mode)
+    if (current === 'off' || e.workflow) return next(e)
+    return next({ ...e, prompt: `${SUBAGENT_NOTE(current)}\n\n${e.prompt}` })
   })
 
   on('prompt.autocomplete', async ($, e, next) => {

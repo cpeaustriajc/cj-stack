@@ -15,6 +15,26 @@ export const SECTION: Record<Exclude<Mode, 'off'>, string> = {
     'Product mode: plan top-down and write no code. Use vision for the product, shape for a project and tickets for its work items, and triage for any open decision. Load the skill for the level before writing to the tracker.',
 }
 
+export const LABEL: Record<Exclude<Mode, 'off'>, string> = {
+  audit: 'Audit',
+  'no-pr': 'No PR',
+  chat: 'Chat',
+  product: 'Product',
+}
+
+export const OFF_SECTION = (ended: Exclude<Mode, 'off'>): string =>
+  `Session mode: off. ${LABEL[ended]} mode has ended; its rules no longer apply, even if the conversation still shows it on.`
+
+export const MODE_NOTE = (current: Mode, ended: Exclude<Mode, 'off'> | null): string =>
+  current !== 'off'
+    ? `Session mode: ${LABEL[current]} is on. ${SECTION[current]}`
+    : ended
+      ? OFF_SECTION(ended)
+      : 'Session mode: off.'
+
+export const SUBAGENT_NOTE = (mode: Exclude<Mode, 'off'>): string =>
+  `The main session is in ${LABEL[mode]} mode, and it applies to you too. ${SECTION[mode]} Tool calls that break it are denied.`
+
 // The skills that may write a plan outside the repo in product mode.
 export const PLANNING = new Set(['vision', 'shape', 'tickets'])
 

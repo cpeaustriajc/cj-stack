@@ -43,7 +43,9 @@ Other commands:
 - A name in capital letters or with spaces around it still works.
 - Typing `/mode ` lists the five names in the prompt suggestions.
 
-The status row shows the mode in the terminal and in the desktop app, for example "audit — read and report only".
+While a mode is on, a band above the prompt shows it in the terminal and in the desktop app. The band has the mode name in bold and in the mode's colour, the rule in one line and a "Turn off" button. For `audit` it reads "Audit Read and report only. Edits, commits, pushes and PRs are blocked." The "Turn off" button does what `/mode off` does. In a band narrower than 60 columns, the band shows the first sentence only. The band hides while a survey is on screen and when no mode is set.
+
+When the mode changes, also by "Turn off", the mod adds a hidden note to your next message that says the current mode, for example "Session mode: off. Audit mode has ended; its rules no longer apply". The mod also puts the mode in the system prompt each turn, but the desktop app does not pass that text to the model. A subagent started while a mode is on gets the rule at the top of its task, and its tool calls are blocked like the main thread's. Workflow agents do not get the note, because their prompt cannot be changed.
 
 The mod writes `{ "v": 1, "mode": "audit" }` to `~/.claude/mod-state/<session id>.session-modes.json` for a custom status line to read. With no mode, `mode` is `null`. If `CLAUDE_CONFIG_DIR` is set, the file goes to `$CLAUDE_CONFIG_DIR/mod-state`. At session start, the mod deletes its state files older than seven days.
 
@@ -62,7 +64,7 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 ## More
 
 - [hooks/modes.ts](hooks/modes.ts): the modes, the prompt text and the block rules.
-- [hooks/register.ts](hooks/register.ts): the hook source and the state file.
+- [hooks/register.tsx](hooks/register.tsx): the hook source, the band and the state file.
 - [hooks/suggest.ts](hooks/suggest.ts): the prompt suggestions.
 - [hooks/register.test.ts](hooks/register.test.ts) and [hooks/suggest.test.ts](hooks/suggest.test.ts): the tests.
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
