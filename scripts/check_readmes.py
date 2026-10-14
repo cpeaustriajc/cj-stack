@@ -15,6 +15,8 @@ MAX_STEP_WORDS = 20
 
 def folders():
     for d in sorted(ROOT.glob("skills/*/*/")):
+        if d.name.startswith(".") or "evals" in (d.name, d.parent.name):
+            continue
         yield d, SKILL_HEADINGS, d.parent.name
     for d in sorted(ROOT.glob("mods/*/")):
         if d.name != "archived":

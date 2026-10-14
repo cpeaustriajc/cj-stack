@@ -9,8 +9,9 @@ Use what Claude Code ships before writing your own checks:
 
 - `claude plugin validate .` after any manifest, skill or frontmatter change.
 - `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
-  baseline. It reads cases from `evals/` at the plugin root; a skill's own `evals/evals.json` is
-  skill-creator's format, which it doesn't read.
+  baseline. It reads cases from `evals/` at the plugin root (`skills/` for cj-stack,
+  `skills/<bucket>/` for the opt-in plugins); a skill's own `evals/evals.json` is skill-creator's
+  format, which it doesn't read.
 - `claude plugin details <plugin>` for a plugin's components and projected token cost.
 - `claude plugin test mods/<mod>` for a mod's hook tests.
 - `/doctor prompt-audit` when a new frontier model ships, and `/doctor prompt-audit <path>` after
@@ -35,9 +36,10 @@ Use what Claude Code ships before writing your own checks:
 
 A skill changes bucket in one commit that also updates:
 
-1. its path in the `skills` array of the right plugin in `.claude-plugin/marketplace.json`
+1. its path in the `skills` array of the right plugin's `plugin.json`: `skills/.claude-plugin/` for
+   cj-stack, `skills/<bucket>/.claude-plugin/` for the opt-in plugins
 2. its row in the README Skills table
-3. the plugin's `version` (minor for an added or moved skill, patch for an edit)
+3. the `version` in that `plugin.json` (minor for an added or moved skill, patch for an edit)
 
 Then run `claude plugin validate .`.
 
