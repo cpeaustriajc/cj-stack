@@ -1,9 +1,13 @@
 import { atom, read, update } from 'claude-code'
 import type { Hook, Register } from 'claude-code'
 import {
+  AGENTS_OFF_DENY,
+  AGENTS_OFF_NOTE,
+  AGENTS_ON_NOTE,
   AGENT_TOOL,
   AGENT_TOOL_DESCRIPTION,
   AGENT_TOOL_SCHEMA,
+  CLEARED_NOTE,
   INHERITED_NOTE,
   LABEL,
   MODE_NOTE,
@@ -12,7 +16,9 @@ import {
   SUBAGENT_NOTE,
   agentModeText,
   claudeParts,
+  holdsAny,
   parseMode,
+  parseOverride,
   parseScope,
   planningSkill,
   report,
@@ -71,6 +77,8 @@ const told = atom({ plugin: 'session-modes', key: 'told' } as const, 'off' as Mo
 const planned = atom({ plugin: 'session-modes', key: 'planned' } as const, false)
 const agentModes = atom({ plugin: 'session-modes', key: 'agentModes' } as const, {} as Record<string, Held>)
 const parents = atom({ plugin: 'session-modes', key: 'parents' } as const, {} as Record<string, string>)
+const pending = atom({ plugin: 'session-modes', key: 'pending' } as const, [] as string[])
+const agentsAllowed = atom({ plugin: 'session-modes', key: 'agentsAllowed' } as const, true)
 const SECTION_ID = 'session-modes:mode'
 
 const CHIP: Record<Active, string> = {
@@ -90,10 +98,20 @@ const NARROW = 60
 const MAIN = 'main'
 const NONE: Held = { self: null, subagents: null }
 
+const tell = ($: Api, note: string) => update($, pending, all => [...all, note])
+
+async function clearAgentModes($: Api): Promise<boolean> {
+  const all = await read($, agentModes)
+  if (!holdsAny(all)) return false
+  await update($, agentModes, () => ({}))
+  await tell($, CLEARED_NOTE(claudeParts(all[MAIN]) ?? 'modes set by subagents'))
+  return true
+}
+
 async function setMode($: Api, wanted: Mode): Promise<void> {
   const old = await read($, mode)
   await update($, mode, () => wanted)
-  if (wanted === 'off') await update($, agentModes, () => ({}))
+  if (wanted === 'off') await clearAgentModes($)
   if (wanted !== 'off') await update($, ended, () => null)
   else if (old !== 'off') await update($, ended, () => old)
   await publishState($, wanted)
@@ -124,7 +142,24 @@ export const register: Register = on => {
     const wanted = e.args.trim() === '' ? undefined : parseMode(e.args)
     if (e.args.trim() === '') {
       const held = claudeParts((await read($, agentModes))[MAIN])
-      return { text: report(await read($, mode)) + (held ? ` Set by Claude: ${held}.` : '') }
+      const agentsOff = (await read($, agentsAllowed)) ? '' : ' Agent modes: off.'
+      return { text: report(await read($, mode)) + (held ? ` Set by Claude: ${held}.` : '') + agentsOff }
+    }
+    const override = parseOverride(e.args)
+    if (override === 'clear') {
+      return { text: (await clearAgentModes($)) ? "Cleared Claude's modes." : 'Claude has no modes set.' }
+    }
+    if (override === 'agents-invalid') return { text: 'Use /mode agents off or /mode agents on.' }
+    if (override === 'agents-off') {
+      await update($, agentsAllowed, () => false)
+      await clearAgentModes($)
+      await tell($, AGENTS_OFF_NOTE)
+      return { text: 'Agent modes off. Claude cannot set modes.' }
+    }
+    if (override === 'agents-on') {
+      await update($, agentsAllowed, () => true)
+      await tell($, AGENTS_ON_NOTE)
+      return { text: 'Agent modes on.' }
     }
     if (!wanted) return { text: `Unknown mode "${e.args.trim()}". ${report(await read($, mode))}` }
     await setMode($, wanted)
@@ -136,7 +171,21 @@ export const register: Register = on => {
     const claude = claudeParts((await read($, agentModes))[MAIN])
     if ((current === 'off' && !claude) || e.props.hasSurvey) return next(e)
     const { Box, Text, Button } = $.ui.resolve(e)
-    const claudeRow = claude ? <Text dimColor>{`Set by Claude: ${claude}`}</Text> : null
+    const claudeRow = claude ? (
+      <Box flexDirection="row" gap={1}>
+        <Box flexGrow={1} flexShrink={1}>
+          <Text dimColor wrap="truncate-end">{`Set by Claude: ${claude}`}</Text>
+        </Box>
+        <Button
+          key="clear-agents"
+          label="Clear"
+          onPress={async () => {
+            await clearAgentModes($)
+            await $.ui.toast("Claude's modes cleared.")
+          }}
+        />
+      </Box>
+    ) : null
     if (current === 'off') return <Box flexDirection="column">{claudeRow}</Box>
     const isPlanned = await read($, planned)
     const { lead, detail } =
@@ -186,6 +235,7 @@ export const register: Register = on => {
       if (!wanted || !scope) {
         return { deny: 'agent_mode needs a mode (audit, no-pr, chat, product or off) and a scope (self or subagents).' }
       }
+      if (wanted !== 'off' && !(await read($, agentsAllowed))) return { deny: AGENTS_OFF_DENY }
       const held = (await read($, agentModes))[caller] ?? NONE
       const user = await read($, mode)
       const text = agentModeText(wanted, scope, held[scope], user)
@@ -227,10 +277,18 @@ export const register: Register = on => {
 
   on('prompt.submit', async ($, e, next) => {
     const current = await read($, mode)
-    if (current === (await read($, told))) return next(e)
-    const note = MODE_NOTE(current, await read($, ended))
-    await update($, told, () => current)
-    return next({ ...e, context: [...(e.context ?? []), note] })
+    const extra = await read($, pending)
+    const added: string[] = []
+    if (current !== (await read($, told))) {
+      added.push(MODE_NOTE(current, await read($, ended)))
+      await update($, told, () => current)
+    }
+    if (extra.length) {
+      added.push(...extra)
+      await update($, pending, () => [])
+    }
+    if (added.length === 0) return next(e)
+    return next({ ...e, context: [...(e.context ?? []), ...added] })
   })
 
   on('agent.spawn', async ($, e, next) => {

@@ -1006,14 +1006,16 @@ test('/mode alone reports the modes the model set', async ($, on) => {
   await start($ as never)
   await claudeSets($, 'audit', 'subagents')
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: audit, no-pr, chat, product, off. Set by Claude: Audit for subagents.',
+    'Current mode: off. Modes: audit, no-pr, chat, product, off. Also: clear, agents on, agents off. Set by Claude: Audit for subagents.',
   )
 })
 
 test('/mode alone is unchanged when the model set nothing', async ($, on) => {
   world(on)
   await start($ as never)
-  expect((await mode($ as never)).text).toBe('Current mode: off. Modes: audit, no-pr, chat, product, off.')
+  expect((await mode($ as never)).text).toBe(
+    'Current mode: off. Modes: audit, no-pr, chat, product, off. Also: clear, agents on, agents off.',
+  )
 })
 
 test('a workflow agent keeps its prompt but its calls are denied', async ($, on) => {
@@ -1034,4 +1036,154 @@ test('a mode equal to the user mode is not repeated in the subagent note', async
   await spawn($)
   expect(w.spawned[0]).not.toContain(AUDIT_NOTE_START)
   expect(w.spawned[0]!.startsWith('The main session is in Audit mode')).toBe(true)
+})
+
+const CLEARED_SELF =
+  'Session mode: the user cleared the modes you set (Audit for itself). They no longer apply.'
+const AGENTS_OFF_NOTE = 'Session mode: the user turned off agent_mode. Do not call it.'
+const AGENTS_ON_NOTE = 'Session mode: the user turned agent_mode back on.'
+const AGENTS_OFF_DENY = 'The user turned off agent modes with /mode agents off.'
+
+test('the band Clear button clears the modes the model set and tells the model', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  expect(blocked(await editAs($))).toBe(true)
+  const band = await mount($, { surface: 'desktop' })
+  await band.press({ key: 'clear-agents' })
+  expect(blocked(await editAs($))).toBe(false)
+  expect(w.toasts).toEqual(["Claude's modes cleared."])
+  await submit($)
+  expect(notes(w)).toEqual([CLEARED_SELF])
+})
+
+test('the Clear button is only on the Set by Claude row', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  const band = await mount($, { surface: 'desktop' })
+  expect(await band.find({ type: 'Button', key: 'clear-agents' })).toBeUndefined()
+  await claudeSets($, 'chat', 'subagents')
+  const withClaude = await mount($, { surface: 'desktop' })
+  expect(await withClaude.find({ type: 'Button', key: 'clear-agents' })).toBeDefined()
+  expect(await withClaude.find({ type: 'Button', key: 'off' })).toBeDefined()
+})
+
+test('the Clear button note names subagent modes set by a subagent', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await spawn($)
+  await claudeSets($, 'audit', 'subagents', 'a1')
+  await mode($ as never, 'clear')
+  await submit($)
+  expect(notes(w)).toEqual(['Session mode: the user cleared the modes you set (modes set by subagents). They no longer apply.'])
+})
+
+test('/mode clear removes the model modes and keeps the user mode', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'no-pr')
+  await claudeSets($, 'audit', 'self')
+  expect(blocked(await editAs($))).toBe(true)
+  expect((await mode($ as never, 'clear')).text).toBe("Cleared Claude's modes.")
+  expect(blocked(await editAs($))).toBe(false)
+  expect(blocked(await prAs($))).toBe(true)
+})
+
+test('/mode clear with nothing set says so and adds no note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  expect((await mode($ as never, 'clear')).text).toBe('Claude has no modes set.')
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('/mode off after the model set a mode carries the cleared note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  await mode($ as never, 'off')
+  await submit($)
+  expect(notes(w)).toEqual([CLEARED_SELF])
+})
+
+test('/mode agents off denies agent_mode, clears model modes and tells the model', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'audit', 'self')
+  expect((await mode($ as never, 'agents off')).text).toBe('Agent modes off. Claude cannot set modes.')
+  const out = await $.tool.call({ tool: TOOL, mode: 'audit', scope: 'self' } as never)
+  expect((out as { deny?: string }).deny).toBe(AGENTS_OFF_DENY)
+  expect(blocked(await editAs($))).toBe(false)
+  await submit($)
+  expect(notes(w)).toEqual([CLEARED_SELF, AGENTS_OFF_NOTE])
+})
+
+test('with agent modes off an off call returns the normal result', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'agents off')
+  expect(await claudeSets($, 'off', 'self')).toBe('No mode was set for that scope.')
+})
+
+test('/mode agents on lets the tool work again and tells the model', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'agents off')
+  await submit($)
+  expect((await mode($ as never, 'agents on')).text).toBe('Agent modes on.')
+  expect(await claudeSets($, 'audit', 'subagents')).toBe('Your subagents are now in Audit mode, also those already running.')
+  await submit($)
+  expect(notes(w)).toEqual([AGENTS_ON_NOTE])
+})
+
+test('/mode agents with another value changes nothing', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  expect((await mode($ as never, 'agents maybe')).text).toBe('Use /mode agents off or /mode agents on.')
+  expect((await mode($ as never, 'agents')).text).toBe('Use /mode agents off or /mode agents on.')
+  expect(await claudeSets($, 'audit', 'self')).toMatch(/^You are now in Audit mode/)
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('/mode alone ends with Agent modes: off while agent modes are off', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await mode($ as never, 'agents off')
+  expect((await mode($ as never)).text).toBe(
+    'Current mode: off. Modes: audit, no-pr, chat, product, off. Also: clear, agents on, agents off. Agent modes: off.',
+  )
+})
+
+test('pending notes are sent once', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'agents off')
+  await submit($)
+  expect(notes(w)).toEqual([AGENTS_OFF_NOTE])
+  await submit($)
+  expect(notes(w)).toEqual([])
+})
+
+test('pending notes follow the mode note and the caller context', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'audit')
+  await mode($ as never, 'agents off')
+  await submit($, 'hello', ['x'])
+  expect(notes(w)[0]).toBe('x')
+  expect(notes(w)[1]).toMatch(/^Session mode: Audit is on\./)
+  expect(notes(w)[2]).toBe(AGENTS_OFF_NOTE)
+})
+
+test('the mode argument tolerates case and spaces', async ($, on) => {
+  world(on)
+  await start($ as never)
+  expect((await mode($ as never, '  AGENTS  OFF ')).text).toBe('Agent modes off. Claude cannot set modes.')
+  expect((await mode($ as never, ' Agents   On')).text).toBe('Agent modes on.')
+  expect((await mode($ as never, '  CLEAR ')).text).toBe('Claude has no modes set.')
 })

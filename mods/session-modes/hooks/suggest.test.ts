@@ -3,13 +3,19 @@ import { modeSuggestions } from './suggest'
 
 const names = (rows: { text: string }[]) => rows.map(r => r.text)
 
-test('/mode with a space lists all five modes in order', () => {
-  expect(names(modeSuggestions('/mode ', 6, 'audit'))).toEqual(['audit', 'no-pr', 'chat', 'product', 'off'])
+test('/mode with a space lists all five modes in order, then clear and agents', () => {
+  expect(names(modeSuggestions('/mode ', 6, 'audit'))).toEqual(['audit', 'no-pr', 'chat', 'product', 'off', 'clear', 'agents'])
+})
+
+test('/mode agents with a space lists on and off', () => {
+  expect(names(modeSuggestions('/mode agents ', 13, 'off'))).toEqual(['on', 'off'])
+  expect(names(modeSuggestions('/mode AGENTS of', 15, 'off'))).toEqual(['off'])
+  expect(names(modeSuggestions('/mode agents x', 14, 'off'))).toEqual([])
 })
 
 test('a partial mode name lists only the modes it starts', () => {
   expect(names(modeSuggestions('/mode n', 7, 'off'))).toEqual(['no-pr'])
-  expect(names(modeSuggestions('/mode c', 7, 'off'))).toEqual(['chat'])
+  expect(names(modeSuggestions('/mode c', 7, 'off'))).toEqual(['chat', 'clear'])
 })
 
 test('a partial name that starts no mode lists nothing', () => {
@@ -24,6 +30,8 @@ test('the current mode is marked on its dim line', () => {
     'answer here, no PR or push (on)',
     'plan top-down: vision, shape, tickets',
     'lift the current mode',
+    'clear the modes Claude set',
+    'turn agent_mode on or off',
   ])
 })
 

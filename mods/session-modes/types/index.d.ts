@@ -13,6 +13,8 @@ declare module 'claude-code' {
       planned: boolean
       agentModes: Record<string, Held>
       parents: Record<string, string>
+      pending: string[]
+      agentsAllowed: boolean
     }
   }
 }

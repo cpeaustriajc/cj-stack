@@ -37,11 +37,13 @@ In `product` mode, a tracker write is an MCP tool with a write word in its name,
 
 Other commands:
 
-- `/mode` alone shows "Current mode: off. Modes: audit, no-pr, chat, product, off."
+- `/mode` alone shows "Current mode: off. Modes: audit, no-pr, chat, product, off. Also: clear, agents on, agents off."
 - `/mode off` removes the mode and shows "Mode off."
+- `/mode clear` clears the modes Claude set.
+- `/mode agents off` and `/mode agents on` block and allow the `agent_mode` tool. See "Your overrides".
 - An unknown name shows `Unknown mode "<name>"` and changes nothing.
 - A name in capital letters or with spaces around it still works.
-- Typing `/mode ` lists the five names in the prompt suggestions.
+- Typing `/mode ` lists the five names, `clear` and `agents` in the prompt suggestions. Typing `/mode agents ` lists `on` and `off`.
 
 While a mode is on, a band above the prompt shows it in the terminal and in the desktop app. The band has the mode name in bold and in the mode's colour, the rule in one line and a "Turn off" button. For `audit` it reads "Audit Read and report only. Edits, commits, pushes and PRs are blocked." The "Turn off" button does what `/mode off` does. In a band narrower than 60 columns, the band shows the first sentence only. The band hides while a survey is on screen and when no mode is set.
 
@@ -54,6 +56,18 @@ The mod adds a tool, `agent_mode`, that Claude can call to set a mode for itself
 A call is denied when any rule that applies to the caller denies it, so the stricter rule always wins. Claude cannot loosen your `/mode`: its `off` clears only the modes it set itself. A subagent can set modes for itself and for its own subagents in the same way. `/mode off` and the band's "Turn off" clear every mode Claude set. `/mode audit` does not.
 
 The band shows the modes Claude set on a second row, for example "Set by Claude: Audit for itself and Chat for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
+
+### Your overrides
+
+You can always take control back from a mode Claude set.
+
+- The "Clear" button on the "Set by Claude" row clears every mode Claude set. Your own mode stays.
+- `/mode clear` does the same. It shows "Cleared Claude's modes." or, with nothing set, "Claude has no modes set."
+- `/mode agents off` clears the modes Claude set and blocks the `agent_mode` tool. While it is off, a call with any mode except `off` is denied with "The user turned off agent modes with /mode agents off." `/mode` alone then ends with "Agent modes: off."
+- `/mode agents on` turns the tool back on.
+- Any other value after `agents` shows "Use /mode agents off or /mode agents on." and changes nothing.
+
+Claude is told on your next message. For example, after "Clear" it reads "Session mode: the user cleared the modes you set (Audit for itself). They no longer apply." `/mode off` and the band's "Turn off" send the same note when Claude had set a mode. Each note is sent once.
 
 The mod writes `{ "v": 1, "mode": "audit" }` to `~/.claude/mod-state/<session id>.session-modes.json` for a custom status line to read. With no mode, `mode` is `null`. If `CLAUDE_CONFIG_DIR` is set, the file goes to `$CLAUDE_CONFIG_DIR/mod-state`. At session start, the mod deletes its state files older than seven days.
 

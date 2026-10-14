@@ -158,5 +158,28 @@ export function verdict(mode: Mode, call: Call): string | undefined {
 }
 
 export function report(mode: Mode): string {
-  return `Current mode: ${mode}. Modes: ${MODES.join(', ')}.`
+  return `Current mode: ${mode}. Modes: ${MODES.join(', ')}. Also: clear, agents on, agents off.`
 }
+
+export const CLEARED_NOTE = (parts: string): string =>
+  `Session mode: the user cleared the modes you set (${parts}). They no longer apply.`
+
+export const AGENTS_OFF_NOTE = 'Session mode: the user turned off agent_mode. Do not call it.'
+
+export const AGENTS_ON_NOTE = 'Session mode: the user turned agent_mode back on.'
+
+export const AGENTS_OFF_DENY = 'The user turned off agent modes with /mode agents off.'
+
+export type Override = 'clear' | 'agents-on' | 'agents-off' | 'agents-invalid'
+
+export function parseOverride(args: string): Override | undefined {
+  const words = args.trim().toLowerCase().split(/\s+/)
+  if (words.length === 1 && words[0] === 'clear') return 'clear'
+  if (words[0] !== 'agents') return undefined
+  if (words.length === 2 && words[1] === 'on') return 'agents-on'
+  if (words.length === 2 && words[1] === 'off') return 'agents-off'
+  return 'agents-invalid'
+}
+
+export const holdsAny = (all: Record<string, Held>): boolean =>
+  Object.values(all).some(h => h.self !== null || h.subagents !== null)
