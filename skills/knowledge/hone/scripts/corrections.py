@@ -116,7 +116,8 @@ def main():
                 if (folder, kind, claude, user) in seen:
                     continue
                 seen.add((folder, kind, claude, user))
-                out.write(f"### {kind} {folder}\nCLAUDE: {claude}\nUSER: {user}\n\n")
+                sid = os.path.basename(path)[:-len(".jsonl")][:8]
+                out.write(f"### {kind} s={sid} {folder}\nCLAUDE: {claude}\nUSER: {user}\n\n")
                 stats["hits"] += 1
             if i % 200 == 0 or i == len(files):
                 print(f"[{i}/{len(files)}] files, {stats['hits']} exchanges", flush=True)

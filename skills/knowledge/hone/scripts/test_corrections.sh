@@ -33,6 +33,13 @@ run base "$(printf '%s\n%s\n%s\n%s\n%s' \
 [[ "$out" == *"### REPLY"* && "$out" == *"### INTERRUPT"* && "$summary" == *"1 unreadable lines skipped"* ]] \
   && { pass=$((pass+1)); echo "ok   base"; } || { fail=$((fail+1)); echo "FAIL base: $summary"; }
 
+# header names the session: s= plus the first 8 chars of the transcript file name
+rm -rf "$tmp/root"; mkdir -p "$tmp/root/-proj"
+printf '%s\n%s\n' '{"type":"assistant","message":{"content":[{"type":"text","text":"Should I add a retry?"}]}}' "$(U 'no, I already said we fix the source')" > "$tmp/root/-proj/abcdef12-3456.jsonl"
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" >/dev/null
+[[ "$(head -1 "$tmp/out.md")" == "### REPLY s=abcdef12 -proj" ]] \
+  && { pass=$((pass+1)); echo "ok   header carries s= and 8 chars of the session id"; } || { fail=$((fail+1)); echo "FAIL header carries s= and 8 chars of the session id: $(head -1 "$tmp/out.md")"; }
+
 for form in "cj-stack:ui-polish" "ui-polish"; do
   run "tool $form" "$(SK "$form")${NL}$A${NL}$(U 'no, wrong easing')" --skill ui-polish
   check "tool_use $form matches ui-polish" 1 "wrong easing"
