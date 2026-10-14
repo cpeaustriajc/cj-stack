@@ -1,0 +1,14 @@
+{
+  "name": "cj-jira",
+  "version": "1.1.0",
+  "description": "Archived Jira-era skills: jira-ticket, draft-ticket, github-issue and project-wiki. Install only for a Jira client.",
+  "author": {
+    "name": "CJ"
+  },
+  "skills": [
+    "./jira-ticket",
+    "./draft-ticket",
+    "./github-issue",
+    "./project-wiki"
+  ]
+}

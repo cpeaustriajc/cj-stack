@@ -1,5 +1,5 @@
 .DS_Store
 .workspace/
 __pycache__/
-evals/**/results/
+**/evals/**/results/
 .claude/work/

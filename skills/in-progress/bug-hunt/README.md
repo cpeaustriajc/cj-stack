@@ -31,7 +31,7 @@ This skill is not shipped in any plugin, so you cannot install it yet.
 
 ## What it does
 
-- Claude writes the file list, the bug ledger and every reviewer reply to the session scratchpad. It tells you where.
+- Claude writes the file list, the bug ledger and every reviewer reply to the ignored work folder (`.claude/work/<topic>/` in Claude Code). It tells you where.
 - Each reviewer reads the whole scope but edits only its own shard.
 - A bug without a failing test stays unproven. The reviewer reports it and does not fix it.
 - Claude commits each verified fix on its own, if the project allows commits.

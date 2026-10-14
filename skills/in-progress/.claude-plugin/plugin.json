@@ -1,0 +1,12 @@
+{
+  "name": "cj-lab",
+  "version": "0.2.0",
+  "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt and self-verify. Expect changes.",
+  "author": {
+    "name": "CJ"
+  },
+  "skills": [
+    "./bug-hunt",
+    "./self-verify"
+  ]
+}

@@ -42,7 +42,7 @@ Requirement: Claude must be able to start subagents.
 - The Full reviewer sees the whole bundle. The Blind reviewer sees no description or spec and runs on a model one tier below the session. The Spec reviewer runs only if a spec or issue exists.
 - Claude verifies each finding itself. A reviewer can be confidently wrong.
 - Dismissed findings stay visible with a one-line reason, so you can override them.
-- Claude saves the bundle and the raw reviews in the scratchpad and tells you where they are.
+- Claude saves the bundle and the raw reviews in the ignored work folder (`.claude/work/<topic>/` in Claude Code) and tells you where they are.
 
 ## Limits
 

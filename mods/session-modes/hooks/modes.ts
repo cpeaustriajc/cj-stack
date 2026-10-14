@@ -73,7 +73,10 @@ export type Held = { self: Active | null; subagents: Active | null }
 export const AGENT_TOOL = 'mcp__session-modes__agent_mode'
 
 export const AGENT_TOOL_DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
+
+export const CHECK_NOTE = (own: Active | null): string =>
+  `Session mode check: pick your own mode for this message, as agent_mode describes. Now: ${own ?? 'off'}. If your pick differs, call agent_mode with that mode and scope self before any other tool call.`
 
 export const AGENT_TOOL_SCHEMA = {
   type: 'object',

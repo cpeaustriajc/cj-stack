@@ -73,7 +73,7 @@ answer. Stop each user at the goal, at a dead end, or after about 40 steps.
 
 ## 4. Report, then stop
 
-Write the run into one folder the project ignores, or the scratchpad:
+Write the run into one folder the project ignores:
 `break-it-<date>-<flow>/` with `report.md`, numbered screenshots and the video. `report.md`
 opens with the exact URL, the commit and the users run, so someone else can run it again.
 

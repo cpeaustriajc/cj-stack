@@ -7,6 +7,7 @@ import {
   AGENT_TOOL,
   AGENT_TOOL_DESCRIPTION,
   AGENT_TOOL_SCHEMA,
+  CHECK_NOTE,
   CLEARED_NOTE,
   INHERITED_NOTE,
   LADDER,
@@ -175,7 +176,7 @@ export const register: Register = on => {
     return (
       <Box flexDirection="column">
         <Box flexDirection="row" gap={1}>
-          <Text bold color={chip}>
+          <Text weight="semibold" color={chip}>
             {label}
           </Text>
           <Box flexGrow={1} flexShrink={1}>
@@ -236,7 +237,9 @@ export const register: Register = on => {
       if (aboveDeny) return { deny: reword(aboveDeny, 'set by the agent that started you.') }
     }
     return next(e)
-  })
+  }).catch(($, e, next) =>
+    next.called ? next(e) : { deny: `session-modes: could not check this call, so it is denied (${next.error.message ?? next.error.kind}).` },
+  )
 
   on('prompt.compose', async ($, e, next) => {
     const result = await next(e)
@@ -259,33 +262,52 @@ export const register: Register = on => {
       added.push(...extra)
       await update($, pending, () => [])
     }
+    const kind = e.origin.kind
+    if (
+      (kind === 'composer' || kind === 'bridge' || kind === 'sdk') &&
+      e.isMeta !== true &&
+      (await read($, agentsAllowed)) &&
+      current !== 'readonly'
+    ) {
+      added.push(CHECK_NOTE((await read($, agentModes))[MAIN]?.self ?? null))
+    }
     if (added.length === 0) return next(e)
     return next({ ...e, context: [...(e.context ?? []), ...added] })
   })
 
   on('agent.spawn', async ($, e, next) => {
-    const current = await read($, mode)
     const parent = e.parentAgentId ?? MAIN
-    const notes: string[] = []
-    if (current !== 'off' && !e.workflow) notes.push(SUBAGENT_NOTE(current))
-    if (!e.workflow) {
-      const held = await read($, agentModes)
-      const links = await read($, parents)
-      const inherited: Active[] = []
-      const seen = new Set<string>()
-      for (let at: string | undefined = parent; at !== undefined && !seen.has(at); at = links[at]) {
-        seen.add(at)
-        const m = held[at]?.subagents
-        if (m && m !== current && !inherited.includes(m)) inherited.push(m)
-      }
-      notes.push(...inherited.map(INHERITED_NOTE))
+    if (e.resume) {
+      // The engine ignores a prompt rewrite on a resume, so pass the event on unchanged.
+      const resumed = await next(e)
+      const id = resumed.agentId
+      if (id) await update($, parents, all => (id in all ? all : { ...all, [id]: parent }))
+      return resumed
     }
+    const current = await read($, mode)
+    const notes: string[] = []
+    if (current !== 'off') notes.push(SUBAGENT_NOTE(current))
+    const held = await read($, agentModes)
+    const links = await read($, parents)
+    const inherited: Active[] = []
+    const seen = new Set<string>()
+    for (let at: string | undefined = parent; at !== undefined && !seen.has(at); at = links[at]) {
+      seen.add(at)
+      const m = held[at]?.subagents
+      if (m && m !== current && !inherited.includes(m)) inherited.push(m)
+    }
+    notes.push(...inherited.map(INHERITED_NOTE))
     const result = await next(notes.length ? { ...e, prompt: `${notes.join(' ')}\n\n${e.prompt}` } : e)
     if (result.agentId) {
       const child = result.agentId
       await update($, parents, all => ({ ...all, [child]: parent }))
     }
     return result
+  }).catch(async ($, e, next) => {
+    if (next.error.kind !== 're-entry') {
+      await $.ui.toast(`session-modes: the agent.spawn hook failed (${next.error.message ?? next.error.kind}); mode notes may be missing.`)
+    }
+    return next(e)
   })
 
   on('prompt.autocomplete', async ($, e, next) => {
