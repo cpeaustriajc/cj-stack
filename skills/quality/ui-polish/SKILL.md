@@ -71,5 +71,8 @@ One table with one row per issue, most visible first:
 
 When the issue is in code, "Where" cites `file:line` as well as the screen location. Attach a screenshot when the issue is
 visual. Then give one verdict: **Ship**, **Ship after the top N**, or **Rework** when it is off-
-design. Fix only the rows I name. For a visual change, show me before and after screenshots and
+design. Fix only the rows I name.
+Asked to run until clean, every row is named: fix them all, then run steps 1–3 again in full.
+A pass counts only with its table and verdict. Ask for sign-off once, after a pass with no rows.
+For a visual change, show me before and after screenshots and
 wait for my sign-off before committing.
