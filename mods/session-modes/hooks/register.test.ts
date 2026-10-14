@@ -765,7 +765,8 @@ const DESCRIPTION =
 
 const claudeSets = async ($: any, modeName: string, scope: string, agentId?: string): Promise<string> => {
   const out = await $.tool.call({ tool: TOOL, mode: modeName, scope, ...(agentId ? { agentId } : {}) } as never)
-  return out.result.content[0].text as string
+  expect(typeof out.result).toBe('string')
+  return out.result as string
 }
 const editAs = ($: any, agentId?: string) => $.tool.call({ tool: 'Edit', ...(agentId ? { agentId } : {}) } as never)
 const pushAs = ($: any, agentId?: string) => $.tool.call({ tool: 'Bash', command: 'git push', ...(agentId ? { agentId } : {}) } as never)
@@ -788,6 +789,17 @@ test('the agent_mode tool is registered and not deferred', async ($, on) => {
     },
     required: ['mode', 'scope'],
   })
+})
+
+test('agent_mode with an unknown mode or scope is refused and sets nothing', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  const bad = await $.tool.call({ tool: TOOL, mode: 'strict', scope: 'self' } as never)
+  expect((bad as { deny?: string }).deny).toMatch(/^agent_mode needs a mode/)
+  const noScope = await $.tool.call({ tool: TOOL, mode: 'audit', scope: 'everyone' } as never)
+  expect((noScope as { deny?: string }).deny).toMatch(/^agent_mode needs a mode/)
+  expect(blocked(await editAs($))).toBe(false)
 })
 
 test('a mode the model sets for subagents reaches the next subagent and its calls', async ($, on) => {

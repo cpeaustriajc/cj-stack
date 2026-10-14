@@ -184,7 +184,7 @@ export const register: Register = on => {
       const wanted = typeof input.mode === 'string' ? parseMode(input.mode) : undefined
       const scope = parseScope(input.scope)
       if (!wanted || !scope) {
-        return { result: { content: [{ type: 'text', text: 'agent_mode needs a mode (audit, no-pr, chat, product or off) and a scope (self or subagents).' }], isError: true } } as never
+        return { deny: 'agent_mode needs a mode (audit, no-pr, chat, product or off) and a scope (self or subagents).' }
       }
       const held = (await read($, agentModes))[caller] ?? NONE
       const user = await read($, mode)
@@ -193,7 +193,7 @@ export const register: Register = on => {
         ...all,
         [caller]: { ...(all[caller] ?? NONE), [scope]: wanted === 'off' ? null : wanted },
       }))
-      return { result: { content: [{ type: 'text', text }], isError: false } } as never
+      return { result: text } as never
     }
     const command = e.tool === 'Bash' && typeof input.command === 'string' ? input.command : ''
     const rawPath = input.file_path ?? input.notebook_path
