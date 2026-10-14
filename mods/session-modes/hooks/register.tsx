@@ -237,7 +237,9 @@ export const register: Register = on => {
       if (aboveDeny) return { deny: reword(aboveDeny, 'set by the agent that started you.') }
     }
     return next(e)
-  })
+  }).catch(($, e, next) =>
+    next.called ? next(e) : { deny: `session-modes: could not check this call, so it is denied (${next.error.message ?? next.error.kind}).` },
+  )
 
   on('prompt.compose', async ($, e, next) => {
     const result = await next(e)
@@ -274,8 +276,15 @@ export const register: Register = on => {
   })
 
   on('agent.spawn', async ($, e, next) => {
-    const current = await read($, mode)
     const parent = e.parentAgentId ?? MAIN
+    if (e.resume) {
+      // The engine ignores a prompt rewrite on a resume, so pass the event on unchanged.
+      const resumed = await next(e)
+      const id = resumed.agentId
+      if (id) await update($, parents, all => (id in all ? all : { ...all, [id]: parent }))
+      return resumed
+    }
+    const current = await read($, mode)
     const notes: string[] = []
     if (current !== 'off' && !e.workflow) notes.push(SUBAGENT_NOTE(current))
     if (!e.workflow) {
@@ -296,6 +305,11 @@ export const register: Register = on => {
       await update($, parents, all => ({ ...all, [child]: parent }))
     }
     return result
+  }).catch(async ($, e, next) => {
+    if (next.error.kind !== 're-entry') {
+      await $.ui.toast(`session-modes: the agent.spawn hook failed (${next.error.message ?? next.error.kind}); mode notes may be missing.`)
+    }
+    return next(e)
   })
 
   on('prompt.autocomplete', async ($, e, next) => {

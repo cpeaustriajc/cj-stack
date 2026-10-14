@@ -22,6 +22,8 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
     spawnCount: 0,
     tools: [] as { name: string; description: string; isDeferred?: boolean; inputSchema?: unknown }[],
     prompts: [] as { text: string; context?: readonly string[] }[],
+    throwGet: undefined as string | undefined,
+    throwSet: undefined as string | undefined,
   }
   on('session.id', () => ({ value: 'sess1' }) as never)
   on('session.surfaces', () => ({ value: state.surfaces }) as never)
@@ -57,7 +59,16 @@ function world(on: On, surfaces: Surface[] = ['desktop']) {
   on('agent.spawn', (_$, e) => {
     state.spawned.push((e as { prompt: string }).prompt)
     state.spawnCount += 1
-    return { model: 'm', agentId: `a${state.spawnCount}` } as never
+    const resumed = (e as { resume?: { agentId: string } }).resume
+    return { model: 'm', agentId: resumed?.agentId ?? `a${state.spawnCount}` } as never
+  })
+  on('state.get', (_$, e, next) => {
+    if ((e as { key: string }).key === state.throwGet) return { value: null, version: 1 } as never
+    return next(e)
+  })
+  on('state.set', (_$, e, next) => {
+    if ((e as { key: string }).key === state.throwSet) return { deny: 'no' } as never
+    return next(e)
   })
   on('tool.register', (_$, e) => {
     state.tools.push(e as never)
@@ -1125,4 +1136,57 @@ test('the mode argument tolerates case and spaces', async ($, on) => {
   expect((await mode($ as never, '  AGENTS  OFF ')).text).toBe('Agent modes off. Claude cannot set modes.')
   expect((await mode($ as never, ' Agents   On')).text).toBe('Agent modes on.')
   expect((await mode($ as never, '  CLEAR ')).text).toBe('Claude has no modes set.')
+})
+
+test('a resume by another parent keeps the first parent link', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await spawn($)
+  await spawn($, { parentAgentId: 'a1' })
+  await claudeSets($, 'readonly', 'subagents', 'a1')
+  await spawn($, { prompt: 'Go on.', resume: { agentId: 'a2' } })
+  expect(blocked(await editAs($, 'a2'))).toBe(true)
+})
+
+test('a resume of an agent with no link records the resumer as its parent', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  world(on)
+  await start($ as never)
+  await spawn($)
+  await claudeSets($, 'readonly', 'subagents')
+  await spawn($, { prompt: 'Go on.', resume: { agentId: 'a9' } })
+  expect(blocked(await editAs($, 'a9'))).toBe(true)
+})
+
+test('a tool call fails closed when the guard cannot read its state', async ($, on) => {
+  on('tool.call', () => ({ result: 'ok' }) as never)
+  const w = world(on)
+  await start($ as never)
+  await claudeSets($, 'readonly', 'self')
+  expect(blocked(await editAs($))).toBe(true)
+  w.throwGet = 'agentModes'
+  const out = await editAs($)
+  expect(out.deny).toMatch(/^session-modes: /)
+})
+
+test('a spawn that fails before next passes the task on and shows a toast', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'readonly')
+  w.throwGet = 'agentModes'
+  const out = await spawn($)
+  expect(w.spawned).toEqual(['Find the bug.'])
+  expect(out.agentId).toBe('a1')
+  expect(w.toasts.some(t => t.startsWith('session-modes: '))).toBe(true)
+})
+
+test('a spawn that fails after next starts the agent once and shows a toast', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  w.throwSet = 'parents'
+  const out = await spawn($)
+  expect(w.spawnCount).toBe(1)
+  expect(out.agentId).toBe('a1')
+  expect(w.toasts.some(t => t.startsWith('session-modes: '))).toBe(true)
 })
