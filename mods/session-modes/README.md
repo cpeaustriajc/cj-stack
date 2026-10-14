@@ -58,6 +58,10 @@ The mod adds a tool, `agent_mode`. Claude can call it to set a mode for itself (
 
 A call is denied when any rule that applies to the caller denies it, so the stricter rule always wins. Claude cannot loosen your `/mode`: its `off` clears only the modes it set itself. A subagent can set modes for itself and for its own subagents in the same way. `/mode off` and the band's "Turn off" clear every mode Claude set. `/mode readonly` does not.
 
+Claude also picks its own mode for each message you send. The mod adds a hidden note that asks for the pick and names Claude's current mode. Claude calls `agent_mode` with scope `self` when the pick differs. The note goes on messages you type in the terminal, in the desktop app or through Remote Control. It does not go on task notifications, scheduled prompts or messages from other sessions. The mod skips the note while your own mode is `readonly`.
+
+Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "ok, fix it". Claude sets `edit`. You type "fix it and open a PR". Claude sets `off`.
+
 The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Edit for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
 
 ### Your overrides
@@ -66,7 +70,7 @@ You can always take control back from a mode Claude set.
 
 - The "Clear" button on the "Set by Claude" row clears every mode Claude set. Your own mode stays.
 - `/mode clear` does the same. It shows "Cleared Claude's modes." or, with nothing set, "Claude has no modes set."
-- `/mode agents off` clears the modes Claude set and blocks the `agent_mode` tool. While it is off, the mod denies a call with any mode except `off`. The reason is "The user turned off agent modes with /mode agents off." `/mode` alone then ends with "Agent modes: off."
+- `/mode agents off` clears the modes Claude set and blocks the `agent_mode` tool. It also stops the hidden note that asks for Claude's pick. While it is off, the mod denies a call with any mode except `off`. The reason is "The user turned off agent modes with /mode agents off." `/mode` alone then ends with "Agent modes: off."
 - `/mode agents on` turns the tool back on.
 - Any other value after `agents` shows "Use /mode agents off or /mode agents on." and changes nothing.
 
@@ -80,6 +84,7 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 
 ## Limits
 
+- Claude picks the mode, and the mod does not check the pick. The "Set by Claude" row in the band shows it.
 - `readonly` does not block a Bash command that writes without a redirect, such as `sed -i`.
 - The mod judges an MCP tool by its name only. A tool with no write word in the name passes in every mode.
 - The mod finds a Bash redirect and the commands above by their text. A command inside a script or an alias passes.

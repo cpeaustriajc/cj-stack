@@ -552,10 +552,14 @@ test('a workflow agent keeps its prompt in readonly mode', async ($, on) => {
   expect(w.spawned).toEqual(['Find the bug.'])
 })
 
-const submit = ($: any, text = 'hello', context?: string[]) =>
-  $.prompt.submit({ text, wait: false, origin: { kind: 'composer' }, ...(context ? { context } : {}) } as never)
+const submit = ($: any, text = 'hello', context?: string[], extra: Record<string, unknown> = {}) =>
+  $.prompt.submit({ text, wait: false, origin: { kind: 'composer' }, ...(context ? { context } : {}), ...extra } as never)
 
-const notes = (w: { prompts: { context?: readonly string[] }[] }, i = -1) => w.prompts.at(i)!.context ?? []
+const CHECK = 'Session mode check:'
+type Prompts = { prompts: { context?: readonly string[] }[] }
+const all = (w: Prompts, i = -1) => w.prompts.at(i)!.context ?? []
+const notes = (w: Prompts, i = -1) => all(w, i).filter(n => !n.startsWith(CHECK))
+const checks = (w: Prompts, i = -1) => all(w, i).filter(n => n.startsWith(CHECK))
 
 test('a prompt carries no mode note while no mode was ever set', async ($, on) => {
   const w = world(on)
@@ -617,9 +621,86 @@ test('the mode note goes after the context a prompt already has', async ($, on) 
   expect(out.context).toEqual(notes(w))
 })
 
+test('a composer prompt with nothing set carries one check note, last, with Now: off.', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await submit($)
+  expect(checks(w)).toHaveLength(1)
+  expect(all(w).at(-1)).toBe(checks(w)[0])
+  expect(checks(w)[0]).toMatch(/Now: off\./)
+})
+
+test('after agent_mode readonly self, the next check note says Now: readonly.', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await $.tool.call({ tool: 'mcp__session-modes__agent_mode', mode: 'readonly', scope: 'self' } as never)
+  await submit($)
+  expect(checks(w)).toHaveLength(1)
+  expect(checks(w)[0]).toMatch(/Now: readonly\./)
+})
+
+test('the check note goes after the context and the mode note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'edit')
+  const out = await submit($, 'hello', ['x'])
+  expect(all(w)).toHaveLength(3)
+  expect(all(w)[0]).toBe('x')
+  expect(all(w)[1]).toMatch(/^Session mode: Edit is on\./)
+  expect(all(w)[2]).toMatch(/^Session mode check:/)
+  expect(out.context).toEqual(all(w))
+})
+
+for (const kind of ['bridge', 'sdk']) {
+  test(`a ${kind} prompt carries the check note`, async ($, on) => {
+    const w = world(on)
+    await start($ as never)
+    await submit($, 'hello', undefined, { origin: { kind } })
+    expect(checks(w)).toHaveLength(1)
+  })
+}
+
+for (const kind of ['task-notification', 'scheduled-trigger', 'peer']) {
+  test(`a ${kind} prompt carries no check note`, async ($, on) => {
+    const w = world(on)
+    await start($ as never)
+    await submit($, 'hello', undefined, { origin: { kind } })
+    expect(checks(w)).toEqual([])
+  })
+}
+
+test('a meta prompt carries no check note', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await submit($, 'hello', undefined, { isMeta: true })
+  expect(checks(w)).toEqual([])
+})
+
+test('/mode agents off stops the check note and /mode agents on brings it back', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'agents off')
+  await submit($)
+  expect(checks(w)).toEqual([])
+  await mode($ as never, 'agents on')
+  await submit($)
+  expect(checks(w)).toHaveLength(1)
+})
+
+test('the check note is skipped while the user mode is readonly, not for research', async ($, on) => {
+  const w = world(on)
+  await start($ as never)
+  await mode($ as never, 'readonly')
+  await submit($)
+  expect(checks(w)).toEqual([])
+  await mode($ as never, 'research')
+  await submit($)
+  expect(checks(w)).toHaveLength(1)
+})
+
 const TOOL = 'mcp__session-modes__agent_mode'
 const DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
 
 const claudeSets = async ($: any, modeName: string, scope: string, agentId?: string): Promise<string> => {
   const out = await $.tool.call({ tool: TOOL, mode: modeName, scope, ...(agentId ? { agentId } : {}) } as never)

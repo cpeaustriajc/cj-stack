@@ -7,6 +7,7 @@ import {
   AGENT_TOOL,
   AGENT_TOOL_DESCRIPTION,
   AGENT_TOOL_SCHEMA,
+  CHECK_NOTE,
   CLEARED_NOTE,
   INHERITED_NOTE,
   LADDER,
@@ -258,6 +259,15 @@ export const register: Register = on => {
     if (extra.length) {
       added.push(...extra)
       await update($, pending, () => [])
+    }
+    const kind = e.origin.kind
+    if (
+      (kind === 'composer' || kind === 'bridge' || kind === 'sdk') &&
+      e.isMeta !== true &&
+      (await read($, agentsAllowed)) &&
+      current !== 'readonly'
+    ) {
+      added.push(CHECK_NOTE((await read($, agentModes))[MAIN]?.self ?? null))
     }
     if (added.length === 0) return next(e)
     return next({ ...e, context: [...(e.context ?? []), ...added] })
