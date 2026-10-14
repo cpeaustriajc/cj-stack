@@ -20,6 +20,10 @@ Open the project's spec. If it is Draft, stop: only prototype items for its Demo
 and say what would confirm it. Otherwise list its requirements and which ones existing items
 already cite.
 
+Read the facts an item rests on from the trunk, not the current branch: fetch it first, and search
+open and recently closed items for the same work. A branch behind the trunk files work that is
+already done.
+
 ## 2. Cut the next slice
 
 Cut the next slice only, not the whole spec: the spec lasts, while items are cut as the work
