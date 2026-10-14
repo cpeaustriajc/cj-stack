@@ -1,4 +1,4 @@
-export type Mode = 'off' | 'audit' | 'no-pr' | 'chat' | 'product'
+export type Mode = 'off' | 'readonly' | 'research' | 'edit'
 
 export type Active = Exclude<Mode, 'off'>
 
@@ -10,7 +10,6 @@ declare module 'claude-code' {
       mode: Mode
       ended: Active | null
       told: Mode
-      planned: boolean
       agentModes: Record<string, Held>
       parents: Record<string, string>
       pending: string[]

@@ -9,10 +9,10 @@ import {
   AGENT_TOOL_SCHEMA,
   CLEARED_NOTE,
   INHERITED_NOTE,
-  LABEL,
+  LADDER,
   MODE_NOTE,
+  MODES,
   OFF_SECTION,
-  SECTION,
   SUBAGENT_NOTE,
   agentModeText,
   claudeParts,
@@ -20,7 +20,6 @@ import {
   parseMode,
   parseOverride,
   parseScope,
-  planningSkill,
   report,
   reword,
   verdict,
@@ -73,26 +72,11 @@ export async function pruneState($: Api): Promise<void> {
 const mode = atom({ plugin: 'session-modes', key: 'mode' } as const, 'off' as Mode)
 const ended = atom({ plugin: 'session-modes', key: 'ended' } as const, null as Active | null)
 const told = atom({ plugin: 'session-modes', key: 'told' } as const, 'off' as Mode)
-// Whether vision, shape or tickets has loaded this session: product mode's key to outside writes.
-const planned = atom({ plugin: 'session-modes', key: 'planned' } as const, false)
 const agentModes = atom({ plugin: 'session-modes', key: 'agentModes' } as const, {} as Record<string, Held>)
 const parents = atom({ plugin: 'session-modes', key: 'parents' } as const, {} as Record<string, string>)
 const pending = atom({ plugin: 'session-modes', key: 'pending' } as const, [] as string[])
 const agentsAllowed = atom({ plugin: 'session-modes', key: 'agentsAllowed' } as const, true)
 const SECTION_ID = 'session-modes:mode'
-
-const CHIP: Record<Active, string> = {
-  audit: 'planMode',
-  'no-pr': 'suggestion',
-  chat: 'ide',
-  product: 'merged',
-}
-
-const RULE: Record<Exclude<Active, 'product'>, { lead: string; detail: string }> = {
-  audit: { lead: 'Read and report only.', detail: 'Edits, commits, pushes and PRs are blocked.' },
-  'no-pr': { lead: 'Commit on the branch.', detail: 'Opening a PR is blocked.' },
-  chat: { lead: 'Edits and commits are allowed.', detail: 'Pushes and PRs are blocked.' },
-}
 
 const NARROW = 60
 const MAIN = 'main'
@@ -129,8 +113,8 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: 'mode',
-      description: 'Set the session mode: audit, no-pr, chat, product or off',
-      argumentHint: 'audit | no-pr | chat | product | off',
+      description: 'Set the session mode: readonly, research, edit or off',
+      argumentHint: 'readonly | research | edit | off',
     })
     const current = await read($, mode)
     if (current !== 'off') await publishState($, current)
@@ -187,19 +171,12 @@ export const register: Register = on => {
       </Box>
     ) : null
     if (current === 'off') return <Box flexDirection="column">{claudeRow}</Box>
-    const isPlanned = await read($, planned)
-    const { lead, detail } =
-      current === 'product'
-        ? {
-            lead: 'Plan in Markdown and the tracker.',
-            detail: isPlanned ? 'Tracker writes are open.' : 'Tracker writes wait for vision, shape or tickets.',
-          }
-        : RULE[current]
+    const { label, chip, lead, detail } = LADDER[current]
     return (
       <Box flexDirection="column">
         <Box flexDirection="row" gap={1}>
-          <Text bold color={CHIP[current]}>
-            {LABEL[current]}
+          <Text bold color={chip}>
+            {label}
           </Text>
           <Box flexGrow={1} flexShrink={1}>
             <Text wrap="truncate-end">
@@ -221,11 +198,6 @@ export const register: Register = on => {
     )
   })
 
-  on('skill.prompt', async ($, e, next) => {
-    if (planningSkill(e.skill)) await update($, planned, () => true)
-    return next(e)
-  })
-
   on('tool.call', async ($, e, next) => {
     const input = e as { command?: unknown; file_path?: unknown; notebook_path?: unknown; mode?: unknown; scope?: unknown }
     const caller = e.agentId ?? MAIN
@@ -233,7 +205,7 @@ export const register: Register = on => {
       const wanted = typeof input.mode === 'string' ? parseMode(input.mode) : undefined
       const scope = parseScope(input.scope)
       if (!wanted || !scope) {
-        return { deny: 'agent_mode needs a mode (audit, no-pr, chat, product or off) and a scope (self or subagents).' }
+        return { deny: `agent_mode needs a mode (${MODES.join(', ')}) and a scope (self or subagents).` }
       }
       if (wanted !== 'off' && !(await read($, agentsAllowed))) return { deny: AGENTS_OFF_DENY }
       const held = (await read($, agentModes))[caller] ?? NONE
@@ -248,7 +220,7 @@ export const register: Register = on => {
     const command = e.tool === 'Bash' && typeof input.command === 'string' ? input.command : ''
     const rawPath = input.file_path ?? input.notebook_path
     const path = typeof rawPath === 'string' ? rawPath : ''
-    const call = { tool: e.tool, command, path, planned: await read($, planned) }
+    const call = { tool: e.tool, command, path }
     const user = verdict(await read($, mode), call)
     if (user) return { deny: user }
     const held = await read($, agentModes)
@@ -270,7 +242,7 @@ export const register: Register = on => {
     const result = await next(e)
     const current = await read($, mode)
     const last = await read($, ended)
-    const text = current !== 'off' ? SECTION[current] : last ? OFF_SECTION(last) : undefined
+    const text = current !== 'off' ? LADDER[current].section : last ? OFF_SECTION(last) : undefined
     if (text === undefined) return result
     return { sections: [...result.sections, { id: SECTION_ID, text, scope: 'session' }] }
   })

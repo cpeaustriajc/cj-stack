@@ -111,7 +111,7 @@
     {
       "name": "session-modes",
       "source": "./mods/session-modes",
-      "description": "/mode audit, no-pr, chat or product, enforced for the rest of the session.",
+      "description": "/mode readonly, research or edit, enforced for the rest of the session.",
       "category": "productivity"
     },
     {

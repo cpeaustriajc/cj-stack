@@ -1,41 +1,70 @@
-export type Mode = 'off' | 'audit' | 'no-pr' | 'chat' | 'product'
+type Row = {
+  label: string
+  chip: string
+  section: string
+  instead: string
+  lead: string
+  detail: string
+  hint: string
+}
 
-export const MODES = ['audit', 'no-pr', 'chat', 'product', 'off'] as const
+// Key order is the ladder, strictest first: need() compares positions.
+export const LADDER = {
+  readonly: {
+    label: 'Read only',
+    chip: 'planMode',
+    section:
+      'Read only mode: read and report only. Do not edit files, commit, push, open pull requests or write to trackers; list findings instead.',
+    instead: 'report the change instead of making it',
+    lead: 'Read and report only.',
+    detail: 'Edits, commits, pushes, PRs and tracker writes are blocked.',
+    hint: 'read and report only',
+  },
+  research: {
+    label: 'Research',
+    chip: 'merged',
+    section:
+      'Research mode: write no code. Put findings and plans in Markdown files or the tracker, and commit them if the work needs it. Do not push or open pull requests.',
+    instead: 'put the finding or plan in a Markdown file or the tracker instead',
+    lead: 'Notes, plans and tracker items only.',
+    detail: 'Code edits, pushes and PRs are blocked.',
+    hint: 'notes and plans, no code',
+  },
+  edit: {
+    label: 'Edit',
+    chip: 'ide',
+    section:
+      'Edit mode: edit and commit locally. Do not push or open pull requests; report the result in the reply and leave the push and the pull request to the user.',
+    instead: 'commit locally and leave the push and the pull request to the user',
+    lead: 'Edits and commits are allowed.',
+    detail: 'Pushes and PRs are blocked.',
+    hint: 'edit and commit, no push or PR',
+  },
+} as const satisfies Record<string, Row>
+
+export type Active = keyof typeof LADDER
+
+export type Mode = Active | 'off'
+
+export const MODES: readonly Mode[] = [...(Object.keys(LADDER) as Active[]), 'off']
 
 export function parseMode(args: string): Mode | undefined {
   const name = args.trim().toLowerCase()
   return (MODES as readonly string[]).includes(name) ? (name as Mode) : undefined
 }
 
-export const SECTION: Record<Exclude<Mode, 'off'>, string> = {
-  audit: 'Audit mode: read and report only. Do not edit files, commit, push or open pull requests; list findings instead.',
-  'no-pr': 'No-PR mode: do not open a pull request. Commit on the branch and say so in the reply.',
-  chat: 'Chat mode: do not open a pull request or push. Commit locally if the work needs it, report the result in the reply, and leave the push and the pull request to the user.',
-  product:
-    'Product mode: plan top-down and write no code. Use vision for the product, shape for a project and tickets for its work items, and triage for any open decision. Load the skill for the level before writing to the tracker.',
-}
+export const OFF_SECTION = (ended: Active): string =>
+  `Session mode: off. ${LADDER[ended].label} mode has ended; its rules no longer apply, even if the conversation still shows it on.`
 
-export const LABEL: Record<Exclude<Mode, 'off'>, string> = {
-  audit: 'Audit',
-  'no-pr': 'No PR',
-  chat: 'Chat',
-  product: 'Product',
-}
-
-export const OFF_SECTION = (ended: Exclude<Mode, 'off'>): string =>
-  `Session mode: off. ${LABEL[ended]} mode has ended; its rules no longer apply, even if the conversation still shows it on.`
-
-export const MODE_NOTE = (current: Mode, ended: Exclude<Mode, 'off'> | null): string =>
+export const MODE_NOTE = (current: Mode, ended: Active | null): string =>
   current !== 'off'
-    ? `Session mode: ${LABEL[current]} is on. ${SECTION[current]}`
+    ? `Session mode: ${LADDER[current].label} is on. ${LADDER[current].section}`
     : ended
       ? OFF_SECTION(ended)
       : 'Session mode: off.'
 
-export const SUBAGENT_NOTE = (mode: Exclude<Mode, 'off'>): string =>
-  `The main session is in ${LABEL[mode]} mode, and it applies to you too. ${SECTION[mode]} Tool calls that break it are denied.`
-
-export type Active = Exclude<Mode, 'off'>
+export const SUBAGENT_NOTE = (mode: Active): string =>
+  `The main session is in ${LADDER[mode].label} mode, and it applies to you too. ${LADDER[mode].section} Tool calls that break it are denied.`
 
 export type Scope = 'self' | 'subagents'
 
@@ -44,7 +73,7 @@ export type Held = { self: Active | null; subagents: Active | null }
 export const AGENT_TOOL = 'mcp__session-modes__agent_mode'
 
 export const AGENT_TOOL_DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: audit (read and report only), no-pr (no pull requests), chat (no push or PR), product (plan only, no code). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins.'
 
 export const AGENT_TOOL_SCHEMA = {
   type: 'object',
@@ -60,41 +89,35 @@ export function parseScope(raw: unknown): Scope | undefined {
 }
 
 export const INHERITED_NOTE = (mode: Active): string =>
-  `The agent that started you set ${LABEL[mode]} mode for its subagents, and it applies to you. ${SECTION[mode]} Tool calls that break it are denied.`
+  `The agent that started you set ${LADDER[mode].label} mode for its subagents, and it applies to you. ${LADDER[mode].section} Tool calls that break it are denied.`
 
 export const agentModeText = (wanted: Mode, scope: Scope, before: Active | null, user: Mode): string => {
-  const kept = scope === 'self' && user !== 'off' ? ` The user's ${LABEL[user]} mode stays on.` : ''
+  const kept = scope === 'self' && user !== 'off' ? ` The user's ${LADDER[user].label} mode stays on.` : ''
   if (wanted === 'off') {
     if (!before) return `No mode was set for that scope.${kept}`
-    return `Cleared the ${LABEL[before]} mode you set for ${scope === 'self' ? 'yourself' : 'your subagents'}.${kept}`
+    return `Cleared the ${LADDER[before].label} mode you set for ${scope === 'self' ? 'yourself' : 'your subagents'}.${kept}`
   }
-  if (scope === 'self') return `You are now in ${LABEL[wanted]} mode. ${SECTION[wanted]}${kept}`
-  return `Your subagents are now in ${LABEL[wanted]} mode, also those already running.`
+  if (scope === 'self') return `You are now in ${LADDER[wanted].label} mode. ${LADDER[wanted].section}${kept}`
+  return `Your subagents are now in ${LADDER[wanted].label} mode, also those already running.`
 }
 
 export function claudeParts(held: Held | undefined): string | undefined {
   if (!held) return undefined
   const parts = [
-    held.self ? `${LABEL[held.self]} for itself` : null,
-    held.subagents ? `${LABEL[held.subagents]} for subagents` : null,
+    held.self ? `${LADDER[held.self].label} for itself` : null,
+    held.subagents ? `${LADDER[held.subagents].label} for subagents` : null,
   ].filter((p): p is string => p !== null)
   return parts.length ? parts.join(' and ') : undefined
 }
 
 export const reword = (text: string, tail: string): string => text.replace('/mode off to leave.', tail)
 
-// The skills that may write a plan outside the repo in product mode.
-export const PLANNING = new Set(['vision', 'shape', 'tickets'])
-
-// A prefix other than cj-stack means someone else's skill of the same name.
-export function planningSkill(raw: string): boolean {
-  const parts = raw.trim().replace(/^\//, '').split(':')
-  return (parts.length === 1 || parts[0] === 'cj-stack') && PLANNING.has(parts[parts.length - 1])
-}
-
-const PR_CREATE = /\bgh\s+pr\s+create\b/
-const PUSH = /\bgit\s+push\b/
-const AUDIT_BASH = /\bgit\s+commit\b|\bgit\s+push\b|\bgh\s+pr\s+(create|merge)\b/
+const COMMIT = /\bgit\s+commit\b/
+const PUBLISH = /\bgit\s+push\b|\bgh\s+pr\s+(create|merge)\b/
+const GH_API = /\bgh\s+api\b/
+const PULLS_PATH = /\/pulls\b/
+const API_WRITE = /(?:-X|--method)[\s=]*(?:POST|PATCH|PUT|DELETE)\b|\s(?:-f|-F|--field|--raw-field|--input)(?=[\s=]|$)/i
+const API_GET = /(?:-X|--method)[\s=]*GET\b/i
 const WRITE_VERB =
   /^(create|save|update|delete|add|remove|set|edit|write|post|move|archive|close|reopen|assign|link|unlink|merge|upsert|patch|put|push|transition|submit|publish|batch)$/
 // Tracker CLIs the shape adapters name; an MCP tool is judged by its name alone.
@@ -102,59 +125,40 @@ const TRACKER_CLI =
   /\bgh\s+(issue|project|label|milestone)\s+(create|edit|close|reopen|delete|comment|transfer|item-add|item-edit|item-archive|field-create|link)\b|\bgh\s+api\b.*(-X|--method)\s*(POST|PATCH|PUT|DELETE)\b|\bacli\s+jira\s+\S+\s+(create|edit|delete|transition|assign|comment|link)\b/
 const PLAN_FILE = /\.(md|markdown)$/i
 const HARMLESS_REDIRECT = /\d*>&\d+|\d*>>?\s*\/dev\/null/g
-const FILE_REDIRECT = />>?\s*[^\s>&|;]/
+const REDIRECT_TARGET = />>?\s*([^\s>&|;]+)/g
+const PART_SPLIT = /&&|\|\|?|;|\n/
 
-export function redirectsToFile(command: string): boolean {
-  return FILE_REDIRECT.test(command.replace(HARMLESS_REDIRECT, ''))
+const top = (needs: Mode[]): Mode => needs.reduce((a, b) => (MODES.indexOf(b) > MODES.indexOf(a) ? b : a), 'readonly')
+
+function bashPartNeed(part: string): Mode {
+  const pullsWrite = GH_API.test(part) && PULLS_PATH.test(part) && API_WRITE.test(part) && !API_GET.test(part)
+  if (PUBLISH.test(part) || pullsWrite) return 'off'
+  const targets = [...part.replace(HARMLESS_REDIRECT, '').matchAll(REDIRECT_TARGET)].map(m => m[1])
+  if (targets.some(t => !PLAN_FILE.test(t))) return 'edit'
+  return targets.length > 0 || COMMIT.test(part) || TRACKER_CLI.test(part) ? 'research' : 'readonly'
 }
 
-// mcp__server__create_issue or mcp__server__createIssue: any word of the tool's own name is a write verb.
-export function writesOutside(tool: string, command: string): boolean {
-  if (tool === 'Bash') return TRACKER_CLI.test(command)
+// mcp__server__create_issue or mcp__server__createIssue: any word of the tool's own name is a verb.
+function mcpNeed(tool: string): Mode {
   const name = /^mcp__.+?__(.+)$/.exec(tool)?.[1]
-  if (!name) return false
+  if (!name) return 'readonly'
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().split(/[_\-.]+/)
-  return words.some(w => WRITE_VERB.test(w))
+  const writes = words.some(w => WRITE_VERB.test(w))
+  if (words.includes('push') || (writes && words.includes('pull') && words.includes('request'))) return 'off'
+  return writes ? 'research' : 'readonly'
 }
 
-function writesCode(tool: string, path: string, command: string): boolean {
-  if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit') return !PLAN_FILE.test(path)
-  if (tool !== 'Bash') return false
-  const target = />>?\s*([^\s>&|;]+)/.exec(command.replace(HARMLESS_REDIRECT, ''))?.[1]
-  return target !== undefined && !PLAN_FILE.test(target)
-}
+export type Call = { tool: string; command?: string; path?: string }
 
-const INSTEAD: Record<Exclude<Mode, 'off'>, string> = {
-  audit: 'report the change instead of making it',
-  'no-pr': 'commit on the branch and leave the pull request to the user',
-  chat: 'commit locally and leave the push and the pull request to the user',
-  product: 'put the plan in the tracker or a Markdown plan file instead',
+export function need({ tool, command = '', path = '' }: Call): Mode {
+  if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit') return PLAN_FILE.test(path) ? 'research' : 'edit'
+  if (tool === 'Bash') return top(command.replace(/\\\n/g, ' ').split(PART_SPLIT).map(bashPartNeed))
+  return mcpNeed(tool)
 }
-
-function isBlocked(mode: Exclude<Mode, 'off'>, tool: string, command: string, path: string): boolean {
-  if (mode === 'product') {
-    if (tool.endsWith('create_pull_request')) return true
-    return writesCode(tool, path, command) || (tool === 'Bash' && (PR_CREATE.test(command) || PUSH.test(command)))
-  }
-  if (mode === 'audit') {
-    if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit') return true
-    return tool === 'Bash' && (AUDIT_BASH.test(command) || redirectsToFile(command))
-  }
-  if (tool.endsWith('create_pull_request')) return true
-  if (tool !== 'Bash') return false
-  return PR_CREATE.test(command) || (mode === 'chat' && PUSH.test(command))
-}
-
-export type Call = { tool: string; command?: string; path?: string; planned?: boolean }
 
 export function verdict(mode: Mode, call: Call): string | undefined {
-  const { tool, command = '', path = '', planned = false } = call
-  if (mode === 'off') return undefined
-  if (isBlocked(mode, tool, command, path)) return `${mode} mode is on: ${INSTEAD[mode]}; /mode off to leave.`
-  if (mode === 'product' && !planned && writesOutside(tool, command)) {
-    return 'product mode is on: load the planning skill for the level you are writing first (vision for the product, shape for a project, tickets for work items); /mode off to leave.'
-  }
-  return undefined
+  if (mode === 'off' || MODES.indexOf(need(call)) <= MODES.indexOf(mode)) return undefined
+  return `${mode} mode is on: ${LADDER[mode].instead}; /mode off to leave.`
 }
 
 export function report(mode: Mode): string {

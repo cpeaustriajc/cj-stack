@@ -68,7 +68,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 |---|---|---|
 | [linear-gate](mods/linear-gate/README.md) | holds every Linear write until you allow it | by default |
 | [usage-pace](mods/usage-pace/README.md) | weekly usage in the status line, and whether it lasts until your reset | optional |
-| [session-modes](mods/session-modes/README.md) | `/mode audit`, `no-pr`, `chat` or `product` (plan top-down, no code, tracker writes only after a planning skill loads), enforced for the session | optional |
+| [session-modes](mods/session-modes/README.md) | `/mode readonly`, `research` or `edit`, enforced for the session | optional |
 | [denial-explainer](mods/denial-explainer/README.md) | names the rule behind an auto-mode denial and the allow rule that would cover it | optional |
 | [loop-brake](mods/loop-brake/README.md) | ends a turn after N forced Stop-hook continuations | optional |
 | [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |

@@ -1,14 +1,8 @@
 import type { PromptAutocompleteSuggestion } from 'claude-code'
-import { MODES } from './modes'
+import { LADDER, MODES } from './modes'
 import type { Mode } from './modes'
 
-const DIM: Record<Mode, string> = {
-  audit: 'read and report only',
-  'no-pr': 'no pull requests',
-  chat: 'answer here, no PR or push',
-  product: 'plan top-down: vision, shape, tickets',
-  off: 'lift the current mode',
-}
+const hint = (m: Mode): string => (m === 'off' ? 'lift the current mode' : LADDER[m].hint)
 
 const EXTRA = [
   { text: 'clear', description: 'clear the modes Claude set' },
@@ -35,7 +29,7 @@ export function modeSuggestions(text: string, cursor: number, current: Mode): Pr
   const partial = found[1].toLowerCase()
   const modes = MODES.filter(m => m.startsWith(partial)).map(m => ({
     text: m,
-    description: m !== current ? DIM[m] : m === 'off' ? 'no mode is on' : `${DIM[m]} (on)`,
+    description: m !== current ? hint(m) : m === 'off' ? 'no mode is on' : `${hint(m)} (on)`,
   }))
   return [...modes, ...EXTRA.filter(x => x.text.startsWith(partial))]
 }
