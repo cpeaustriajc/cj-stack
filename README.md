@@ -74,7 +74,6 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
 | [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list | optional |
-| [secret-guard](mods/secret-guard/README.md) | keeps secret values out of Claude's context: redacts tool output, denies encode-or-test tricks; needs `python3` | recommended |
 
 ## Other plugins
 

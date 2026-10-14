@@ -1,5 +1,9 @@
 # secret-guard
 
+> Archived: not maintained.
+
+Its pattern-based deny rules blocked normal work, such as edits under `.claude/` and reads of `settings.json`. Auto mode's built-in credential rules cover the same risks by intent.
+
 A mod (a plugin that adds hooks to Claude Code) that keeps secret values out of Claude's context. It hides values in tool output and denies commands that would encode, test or send a secret.
 
 ## Why
@@ -10,12 +14,7 @@ secret-guard has two parts. A hook (a script that runs on a Claude Code event) c
 
 ## Install
 
-```
-/plugin marketplace add cpeaustriajc/cj-stack
-/plugin install secret-guard@cj-stack
-```
-
-The mod needs `python3`. To see that it is on, run `claude plugin list` and look for `secret-guard`. The `cj-stack` plugin does not install this mod. The root README marks it as recommended.
+It is not installable from the marketplace. No plugin in `.claude-plugin/marketplace.json` lists it, so no cj-stack plugin ships it.
 
 ## Example
 
@@ -69,4 +68,4 @@ If Claude runs that command, the mod denies it.
 - [docs/](docs/): design specs and handoff notes.
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
 
-To run the tests from the repo root, run `python3 mods/secret-guard/tests/secret_hooks_test.py --hooks-dir mods/secret-guard/hooks`.
+To run the tests from the repo root, run `python3 mods/archived/secret-guard/tests/secret_hooks_test.py --hooks-dir mods/archived/secret-guard/hooks`.

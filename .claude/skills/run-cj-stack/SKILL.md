@@ -72,9 +72,6 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 
 ## Not in the driver
 
-- **secret-guard's suite** (`python3 mods/secret-guard/tests/secret_hooks_test.py --hooks-dir
-  mods/secret-guard/hooks`) is left out of `all`: some cases need macOS `sandbox-exec`, and those
-  haven't been separated from real failures on Linux.
 - **`claude plugin eval <plugin>`** reads cases from `evals/` at the plugin root, not from a
   skill's `evals/`; in the driver only `routing` runs it, and `all` leaves it out.
 - **Trigger checks.** Each skill's `evals/triggers.json` holds should-trigger and near-miss prompts
