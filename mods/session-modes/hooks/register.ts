@@ -59,15 +59,13 @@ const STATUS: Record<Exclude<Mode, 'off'>, string> = {
 }
 
 async function drawStatus($: Api, current: Mode): Promise<void> {
-  const surfaces = await $.session.surfaces()
-  const shown = current !== 'off' && surfaces.some(s => s !== 'terminal')
-  await $.ui.status(shown ? STATUS[current as Exclude<Mode, 'off'>] : undefined)
+  await $.ui.status(current === 'off' ? undefined : STATUS[current])
 }
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     const result = await next(e)
-    if (e.isInteractive === false) return result
+    // The desktop app runs sessions through the SDK, so isInteractive is false there.
     await $.command.register({
       name: 'mode',
       description: 'Set the session mode: audit, no-pr, chat, product or off',

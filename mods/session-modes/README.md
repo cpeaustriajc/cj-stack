@@ -43,7 +43,7 @@ Other commands:
 - A name in capital letters or with spaces around it still works.
 - Typing `/mode ` lists the five names in the prompt suggestions.
 
-When a desktop or phone surface is attached, the status row shows the mode, for example "audit — read and report only". A terminal-only session shows no status row.
+The status row shows the mode in the terminal and in the desktop app, for example "audit — read and report only".
 
 The mod writes `{ "v": 1, "mode": "audit" }` to `~/.claude/mod-state/<session id>.session-modes.json` for a custom status line to read. With no mode, `mode` is `null`. If `CLAUDE_CONFIG_DIR` is set, the file goes to `$CLAUDE_CONFIG_DIR/mod-state`. At session start, the mod deletes its state files older than seven days.
 
@@ -57,7 +57,6 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - `no-pr` and `chat` check only the pull request and push commands above. They do not block edits.
 - `product` mode judges an MCP tool by its name only. A tracker tool with no write word in the name passes.
 - After you load a planning skill, tracker writes stay open for the rest of the session.
-- A non-interactive session has no `/mode` command and no status row. It still enforces a mode that was set.
 - If the mod cannot find a home directory, it writes and prunes no state file. If a write fails, the hook throws "session-modes: could not publish state for the status line". If a prune fails, it throws "session-modes: could not prune old state files".
 
 ## More

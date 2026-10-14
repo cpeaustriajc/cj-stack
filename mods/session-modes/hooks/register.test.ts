@@ -249,11 +249,12 @@ test('the mode command hints its five arguments', async ($, on) => {
   expect(w.hints).toEqual(['audit | no-pr | chat | product | off'])
 })
 
-test('a non-interactive session registers no command and draws no status', async ($, on) => {
+test('a non-interactive session, as in the desktop app, still registers /mode', async ($, on) => {
   const w = world(on)
   await start($ as never, false)
-  expect(w.commands).toEqual([])
-  expect(w.statuses).toEqual([])
+  expect(w.commands).toEqual(['mode'])
+  expect((await mode($ as never, 'audit')).text).toBe('Mode audit on.')
+  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('a non-interactive session still enforces a mode that was set', async ($, on) => {
@@ -261,11 +262,9 @@ test('a non-interactive session still enforces a mode that was set', async ($, o
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'audit')
-  const before = w.statuses.length
   await start($ as never, false)
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
   expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.length).toBe(2)
-  expect(w.statuses.length).toBe(before)
 })
 
 test('a second session start keeps the mode and redraws its status', async ($, on) => {
@@ -357,15 +356,15 @@ test('a non-interactive session writes no state file', async ($, on) => {
   expect(w.writes).toEqual([])
 })
 
-test('a terminal-only session draws no status row so the host warning row stays away', async ($, on) => {
+test('a terminal-only session shows the status row', async ($, on) => {
   const w = world(on, ['terminal'])
   await start($ as never)
   await mode($ as never, 'audit')
-  expect(w.statuses.filter(s => s !== undefined)).toEqual([])
+  expect(last(w.statuses)).toBe('audit — read and report only')
   expect(lastWrite(w).path).toBe(FILE)
 })
 
-test('attaching a non-terminal surface shows the status and detaching clears it', async ($, on) => {
+test('attaching and detaching a desktop surface keeps the status row', async ($, on) => {
   const w = world(on, ['terminal'])
   await start($ as never)
   await mode($ as never, 'audit')
@@ -374,7 +373,7 @@ test('attaching a non-terminal surface shows the status and detaching clears it'
   expect(last(w.statuses)).toBe('audit — read and report only')
   w.surfaces = ['terminal']
   await $.session.detach({ clientId: 'c' } as never)
-  expect(last(w.statuses)).toBeUndefined()
+  expect(last(w.statuses)).toBe('audit — read and report only')
 })
 
 test('session start removes this mod\'s files older than seven days and keeps the rest', async ($, on) => {
