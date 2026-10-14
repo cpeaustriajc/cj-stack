@@ -74,6 +74,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
 | [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list | optional |
+| [kill-guard](mods/kill-guard/README.md) | denies a shell command that stops processes by name or port, which can also stop another checkout's dev server | optional |
 
 ## Other plugins
 

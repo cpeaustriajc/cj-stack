@@ -143,6 +143,12 @@
       "source": "./mods/work-folder",
       "description": "Denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside .claude/work/, which is gitignored, with a per-repo allow list.",
       "category": "productivity"
+    },
+    {
+      "name": "kill-guard",
+      "source": "./mods/kill-guard",
+      "description": "Denies a Bash command that stops processes by name or by port, because it can also stop another checkout's dev server; a kill of a named PID passes.",
+      "category": "productivity"
     }
   ]
 }
