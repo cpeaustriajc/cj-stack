@@ -1,6 +1,6 @@
 {
   "name": "session-modes",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "/mode readonly, research and edit: a working mode enforced for the whole session",
   "author": { "name": "CJ" },
   "types": "./types/index.d.ts"

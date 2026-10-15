@@ -3,8 +3,8 @@ import { modeSuggestions } from './suggest'
 
 const names = (rows: { text: string }[]) => rows.map(r => r.text)
 
-test('/mode with a space lists all four modes in order, then clear and agents', () => {
-  expect(names(modeSuggestions('/mode ', 6, 'readonly'))).toEqual(['readonly', 'research', 'edit', 'off', 'clear', 'agents'])
+test('/mode with a space lists all five modes in order, then clear and agents', () => {
+  expect(names(modeSuggestions('/mode ', 6, 'readonly'))).toEqual(['readonly', 'research', 'prototype', 'edit', 'off', 'clear', 'agents'])
 })
 
 test('/mode agents with a space lists on and off', () => {
@@ -27,6 +27,7 @@ test('the current mode is marked on its dim line', () => {
   expect(rows.map(r => r.description)).toEqual([
     'read and report only',
     'notes and plans, no code',
+    'designs and prototypes, no app code',
     'edit and commit, no push or PR (on)',
     'lift the current mode',
     'clear the modes Claude set',

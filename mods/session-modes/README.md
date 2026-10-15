@@ -26,27 +26,28 @@ To see that it is on, run `claude plugin list` and look for `session-modes`. The
 
 ## What it does
 
-The modes form a ladder, from the strictest to the loosest: `readonly`, `research`, `edit`, `off`. Each tool call needs one level. A mode blocks a call that needs a higher level than the mode.
+The modes form a ladder, from the strictest to the loosest: `readonly`, `research`, `prototype`, `edit`, `off`. Each tool call needs one level. A mode blocks a call that needs a higher level than the mode.
 
 | Mode | Allows | Blocks |
 |---|---|---|
 | `readonly` | Reading, `git status`, `git log`, redirects to `/dev/null` | Everything in the rows below |
-| `research` | Edits to `.md` and `.markdown` files, a redirect to such a file, `git commit`, tracker writes | Edits to any other file, a redirect to any other file, `git push`, pull requests |
+| `research` | Edits to `.md` and `.markdown` files, a redirect to such a file, `git commit`, tracker writes, an Artifact publish | Edits to any other file, a redirect to any other file, `git push`, pull requests |
+| `prototype` | Edits to any file under `.claude/work/`, a redirect to such a file, and the Claude Design artifacts Claude publishes there | Edits to app code, the rows below |
 | `edit` | Edits to any file, redirects to any file | `git push`, `gh pr create`, `gh pr merge`, pull request writes through `gh api` or an MCP tool |
 
-A tracker write is an MCP tool with a write word in its name, such as `save_issue` or `createJiraIssue`. It is also `gh issue create`, a `gh api` call with `-X POST`, or `acli jira workitem create`. A pull request write is an MCP tool such as `create_pull_request`, or a `gh api` call on a `/pulls` path with `-X POST` or a field flag. An MCP tool with `push` in its name needs `/mode off`.
+A tracker write is an MCP tool with a write word in its name, such as `save_issue` or `createJiraIssue`. It is also `gh issue create`, a `gh api` call with `-X POST`, or `acli jira workitem create`. A pull request write is an MCP tool such as `create_pull_request`, or a `gh api` call on a `/pulls` path with `-X POST` or a field flag. An MCP tool with `push` in its name needs `/mode off`. The `Artifact` tool needs `research` to publish; reading, listing and opening an artifact need `readonly`.
 
 A Bash command with several parts, such as `git commit -m x && git push`, needs the highest level of its parts.
 
 Other commands:
 
-- `/mode` alone shows "Current mode: off. Modes: readonly, research, edit, off. Also: clear, agents on, agents off."
+- `/mode` alone shows "Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off."
 - `/mode off` removes the mode and shows "Mode off."
 - `/mode clear` clears the modes Claude set.
 - `/mode agents off` and `/mode agents on` block and allow the `agent_mode` tool. See "Your overrides".
 - An unknown name shows `Unknown mode "<name>"` and changes nothing.
 - A name in capital letters or with spaces around it still works.
-- Typing `/mode ` lists the four names, `clear` and `agents` in the prompt suggestions. Typing `/mode agents ` lists `on` and `off`.
+- Typing `/mode ` lists the five names, `clear` and `agents` in the prompt suggestions. Typing `/mode agents ` lists `on` and `off`.
 
 While a mode is on, a band above the prompt shows it in the terminal and in the desktop app. The band has the mode name in bold and in the mode's colour, the rule in one line and a "Turn off" button. For `readonly` it reads "Read only Read and report only. Edits, commits, pushes, PRs and tracker writes are blocked." The "Turn off" button does what `/mode off` does. In a band narrower than 60 columns, the band shows the first sentence only. The band hides while a survey is on screen and when no mode is set.
 
@@ -60,7 +61,7 @@ A call is denied when any rule that applies to the caller denies it, so the stri
 
 Claude also picks its own mode for each message you send. The mod adds a hidden note that asks for the pick and names Claude's current mode. Claude calls `agent_mode` with scope `self` when the pick differs. The note goes on messages you type in the terminal, in the desktop app or through Remote Control. It does not go on task notifications, scheduled prompts or messages from other sessions. The mod skips the note while your own mode is `readonly`.
 
-Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "ok, fix it". Claude sets `edit`. You type "fix it and open a PR". Claude sets `off`.
+Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "how would a wider band look?". Claude sets `prototype` and builds a Claude Design artifact. You type "ok, fix it". Claude sets `edit`. You type "fix it and open a PR". Claude sets `off`.
 
 The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Edit for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
 
@@ -87,7 +88,7 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - Claude picks the mode, and the mod does not check the pick. The "Set by Claude" row in the band shows it.
 - `readonly` does not block a Bash command that writes without a redirect, such as `sed -i`.
 - The mod judges an MCP tool by its name only. A tool with no write word in the name passes in every mode.
-- The mod finds a Bash redirect and the commands above by their text. A command inside a script or an alias passes.
+- The mod finds a Bash redirect and the commands above by their text. A command inside a script or an alias passes, and the same words inside a quoted string or a heredoc are blocked.
 - A subagent that is already running gets no new task note when a mode above it changes. The new rule applies to its tool calls at once, and only the deny message tells it.
 - If the mod cannot find a home directory, it writes and prunes no state file. If a write fails, the hook throws "session-modes: could not publish state for the status line". If a prune fails, it throws "session-modes: could not prune old state files".
 
@@ -95,6 +96,5 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 
 - [hooks/modes.ts](hooks/modes.ts): the modes, the prompt text and the block rules.
 - [hooks/register.tsx](hooks/register.tsx): the hook source, the band and the state file.
-- [hooks/suggest.ts](hooks/suggest.ts): the prompt suggestions.
-- [hooks/register.test.ts](hooks/register.test.ts) and [hooks/suggest.test.ts](hooks/suggest.test.ts): the tests.
+- [hooks/suggest.ts](hooks/suggest.ts): the prompt suggestions, tested in [hooks/suggest.test.ts](hooks/suggest.test.ts); [hooks/register.test.ts](hooks/register.test.ts): the other tests.
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.

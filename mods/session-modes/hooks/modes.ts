@@ -30,6 +30,16 @@ export const LADDER = {
     detail: 'Code edits, pushes and PRs are blocked.',
     hint: 'notes and plans, no code',
   },
+  prototype: {
+    label: 'Prototype',
+    chip: 'suggestion',
+    section:
+      'Prototype mode: show the design before any app code. Build it as a Claude Design artifact (Artifact quickstart, intent design) or as HTML in .claude/work/<topic>/. Do not edit app code, push or open pull requests.',
+    instead: 'build it in a Claude Design artifact or in .claude/work/ instead',
+    lead: 'Designs and prototypes only.',
+    detail: 'App code edits, pushes and PRs are blocked.',
+    hint: 'designs and prototypes, no app code',
+  },
   edit: {
     label: 'Edit',
     chip: 'ide',
@@ -73,7 +83,7 @@ export type Held = { self: Active | null; subagents: Active | null }
 export const AGENT_TOOL = 'mcp__session-modes__agent_mode'
 
 export const AGENT_TOOL_DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), prototype (a Claude Design artifact or files in .claude/work/; no app code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; prototype for a UI idea, a layout choice or a design to see before the build; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
 
 export const CHECK_NOTE = (own: Active | null): string =>
   `Session mode check: pick your own mode for this message, as agent_mode describes. Now: ${own ?? 'off'}. If your pick differs, call agent_mode with that mode and scope self before any other tool call.`
@@ -127,6 +137,8 @@ const WRITE_VERB =
 const TRACKER_CLI =
   /\bgh\s+(issue|project|label|milestone)\s+(create|edit|close|reopen|delete|comment|transfer|item-add|item-edit|item-archive|field-create|link)\b|\bgh\s+api\b.*(-X|--method)\s*(POST|PATCH|PUT|DELETE)\b|\bacli\s+jira\s+\S+\s+(create|edit|delete|transition|assign|comment|link)\b/
 const PLAN_FILE = /\.(md|markdown)$/i
+const WORK_FILE = /(^|[\\/])\.claude[\\/]work[\\/]/
+const ARTIFACT_READS = new Set(['read', 'list', 'quickstart', 'open', 'pin', 'unpin'])
 const HARMLESS_REDIRECT = /\d*>&\d+|\d*>>?\s*\/dev\/null/g
 const REDIRECT_TARGET = />>?\s*([^\s>&|;]+)/g
 const PART_SPLIT = /&&|\|\|?|;|\n/
@@ -137,7 +149,8 @@ function bashPartNeed(part: string): Mode {
   const pullsWrite = GH_API.test(part) && PULLS_PATH.test(part) && API_WRITE.test(part) && !API_GET.test(part)
   if (PUBLISH.test(part) || pullsWrite) return 'off'
   const targets = [...part.replace(HARMLESS_REDIRECT, '').matchAll(REDIRECT_TARGET)].map(m => m[1])
-  if (targets.some(t => !PLAN_FILE.test(t))) return 'edit'
+  if (targets.some(t => !PLAN_FILE.test(t) && !WORK_FILE.test(t))) return 'edit'
+  if (targets.some(t => !PLAN_FILE.test(t))) return 'prototype'
   return targets.length > 0 || COMMIT.test(part) || TRACKER_CLI.test(part) ? 'research' : 'readonly'
 }
 
@@ -151,10 +164,12 @@ function mcpNeed(tool: string): Mode {
   return writes ? 'research' : 'readonly'
 }
 
-export type Call = { tool: string; command?: string; path?: string }
+export type Call = { tool: string; command?: string; path?: string; action?: string }
 
-export function need({ tool, command = '', path = '' }: Call): Mode {
-  if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit') return PLAN_FILE.test(path) ? 'research' : 'edit'
+export function need({ tool, command = '', path = '', action = '' }: Call): Mode {
+  if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit')
+    return PLAN_FILE.test(path) ? 'research' : WORK_FILE.test(path) ? 'prototype' : 'edit'
+  if (tool === 'Artifact') return ARTIFACT_READS.has(action) ? 'readonly' : 'research'
   if (tool === 'Bash') return top(command.replace(/\\\n/g, ' ').split(PART_SPLIT).map(bashPartNeed))
   return mcpNeed(tool)
 }

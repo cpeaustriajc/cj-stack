@@ -114,8 +114,8 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: 'mode',
-      description: 'Set the session mode: readonly, research, edit or off',
-      argumentHint: 'readonly | research | edit | off',
+      description: 'Set the session mode: readonly, research, prototype, edit or off',
+      argumentHint: 'readonly | research | prototype | edit | off',
     })
     const current = await read($, mode)
     if (current !== 'off') await publishState($, current)
@@ -221,7 +221,8 @@ export const register: Register = on => {
     const command = e.tool === 'Bash' && typeof input.command === 'string' ? input.command : ''
     const rawPath = input.file_path ?? input.notebook_path
     const path = typeof rawPath === 'string' ? rawPath : ''
-    const call = { tool: e.tool, command, path }
+    const action = (e as { action?: unknown }).action
+    const call = { tool: e.tool, command, path, action: typeof action === 'string' ? action : '' }
     const user = verdict(await read($, mode), call)
     if (user) return { deny: user }
     const held = await read($, agentModes)

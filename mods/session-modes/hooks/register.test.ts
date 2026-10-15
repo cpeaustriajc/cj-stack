@@ -98,8 +98,8 @@ async function setUp(on: On, $: Parameters<typeof start>[0] & Parameters<typeof 
 
 const blocked = (out: { deny?: string }) => typeof out.deny === 'string'
 
-type Need = 'readonly' | 'research' | 'edit' | 'off'
-const LADDER_ORDER: Need[] = ['readonly', 'research', 'edit', 'off']
+type Need = 'readonly' | 'research' | 'prototype' | 'edit' | 'off'
+const LADDER_ORDER: Need[] = ['readonly', 'research', 'prototype', 'edit', 'off']
 
 const bashCall = (command: string) => ({ tool: 'Bash', command })
 const NEEDS: [string, Record<string, unknown>, Need][] = [
@@ -120,6 +120,15 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
   ...['mcp__linear-server__save_issue', 'mcp__linear-server__save_milestone', 'mcp__atlassian__createJiraIssue',
     'mcp__asana__asana_create_task', 'mcp__notion__notion-update-page',
   ].map(t => [t, { tool: t }, 'research'] as [string, Record<string, unknown>, Need]),
+  ...['read', 'list', 'quickstart', 'open'].map(a => [`Artifact ${a}`, { tool: 'Artifact', action: a }, 'readonly'] as [string, Record<string, unknown>, Need]),
+  ['Artifact publish', { tool: 'Artifact', file_path: '/repo/.claude/work/x/page.html' }, 'research'],
+  ['Artifact publish by action', { tool: 'Artifact', action: 'publish', type_url: 'https://claude.ai/t/design' }, 'research'],
+  ['Write /repo/.claude/work/dividends/proto.html', { tool: 'Write', file_path: '/repo/.claude/work/dividends/proto.html' }, 'prototype'],
+  ['Edit .claude/work/cart/app.tsx', { tool: 'Edit', file_path: '.claude/work/cart/app.tsx' }, 'prototype'],
+  ['Write C:\\repo\\.claude\\work\\a.css', { tool: 'Write', file_path: 'C:\\repo\\.claude\\work\\a.css' }, 'prototype'],
+  ['echo x > .claude/work/a/b.html', bashCall('echo x > .claude/work/a/b.html'), 'prototype'],
+  ['Write /repo/.claude/workflows/x.js', { tool: 'Write', file_path: '/repo/.claude/workflows/x.js' }, 'edit'],
+  ['Write /repo/src/.claude/work-notes.ts', { tool: 'Write', file_path: '/repo/src/.claude/work-notes.ts' }, 'edit'],
   ...['echo hi > out.txt', 'echo hi >out.txt', 'echo hi >> notes/out.txt', 'echo x > src/app.ts'].map(
     c => [c, bashCall(c), 'edit'] as [string, Record<string, unknown>, Need],
   ),
@@ -137,7 +146,7 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
   ].map(t => [t, { tool: t }, 'off'] as [string, Record<string, unknown>, Need]),
 ]
 
-for (const name of ['readonly', 'research', 'edit'] as const) {
+for (const name of ['readonly', 'research', 'prototype', 'edit'] as const) {
   for (const [label, input, need] of NEEDS) {
     const denied = LADDER_ORDER.indexOf(need) > LADDER_ORDER.indexOf(name)
     test(`${name} mode ${denied ? 'denies' : 'allows'} ${label}`, async ($, on) => {
@@ -258,10 +267,10 @@ test('an interactive session registers the mode command', async ($, on) => {
   expect(w.commands).toEqual(['mode'])
 })
 
-test('the mode command hints its five arguments', async ($, on) => {
+test('the mode command hints its six arguments', async ($, on) => {
   const w = world(on)
   await start($ as never)
-  expect(w.hints).toEqual(['readonly | research | edit | off'])
+  expect(w.hints).toEqual(['readonly | research | prototype | edit | off'])
 })
 
 test('a non-interactive session, as in the desktop app, still registers /mode', async ($, on) => {
@@ -712,7 +721,7 @@ test('the check note is skipped while the user mode is readonly, not for researc
 
 const TOOL = 'mcp__session-modes__agent_mode'
 const DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), prototype (a Claude Design artifact or files in .claude/work/; no app code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; prototype for a UI idea, a layout choice or a design to see before the build; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
 
 const claudeSets = async ($: any, modeName: string, scope: string, agentId?: string): Promise<string> => {
   const out = await $.tool.call({ tool: TOOL, mode: modeName, scope, ...(agentId ? { agentId } : {}) } as never)
@@ -735,7 +744,7 @@ test('the agent_mode tool is registered and not deferred', async ($, on) => {
   expect(w.tools[0]!.inputSchema).toEqual({
     type: 'object',
     properties: {
-      mode: { type: 'string', enum: ['readonly', 'research', 'edit', 'off'] },
+      mode: { type: 'string', enum: ['readonly', 'research', 'prototype', 'edit', 'off'] },
       scope: { type: 'string', enum: ['self', 'subagents'] },
     },
     required: ['mode', 'scope'],
@@ -957,7 +966,7 @@ test('/mode alone reports the modes the model set', async ($, on) => {
   await start($ as never)
   await claudeSets($, 'readonly', 'subagents')
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, edit, off. Also: clear, agents on, agents off. Set by Claude: Read only for subagents.',
+    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off. Set by Claude: Read only for subagents.',
   )
 })
 
@@ -965,7 +974,7 @@ test('/mode alone is unchanged when the model set nothing', async ($, on) => {
   world(on)
   await start($ as never)
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, edit, off. Also: clear, agents on, agents off.',
+    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off.',
   )
 })
 
@@ -1106,7 +1115,7 @@ test('/mode alone ends with Agent modes: off while agent modes are off', async (
   await start($ as never)
   await mode($ as never, 'agents off')
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, edit, off. Also: clear, agents on, agents off. Agent modes: off.',
+    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off. Agent modes: off.',
   )
 })
 
