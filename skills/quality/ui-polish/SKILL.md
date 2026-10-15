@@ -18,7 +18,8 @@ Before judging anything, find the design: a mockup, a Figma frame, a design-tool
 screenshot I gave you, or the closest existing screen in the same app. **The design wins over
 your taste.** A design plan
 I approved counts as the design, even when it departs from the existing screens. If there is
-no design, say so and judge against the existing screens.
+no design, say so and judge against the existing screens and the taste references in
+`references/quality-bar.md`.
 
 Look at the real thing in a browser, at the real width and at 375px, in light and dark if the
 app has both. Reading the code is not enough.

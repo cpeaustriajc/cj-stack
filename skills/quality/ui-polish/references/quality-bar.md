@@ -3,6 +3,13 @@
 Rules for any web app's designs, prototypes and screens. The project's own design system and
 decision records win where they say more.
 
+**Taste references**
+
+Where the project's design says nothing, compare with the shipped products of: Apple, Linear,
+A24, Notion, teenage engineering, Runway, Figma, fal, Anthropic, ElevenLabs, Nothing, Supabase,
+Stripe, Magnific, Midjourney, Ramp, Mercury, Cursor, Sandbar and Airbnb (Cosign's "High taste
+companies"). Name the product and screen you compared with; never copy its brand.
+
 **Artboards and pages**
 - One artboard is one page in one viewport and one state: `<Page> / <Viewport> / <State>`.
   Never two screens or two states in one artboard; an overlay, panel or sign-in step gets its own.
