@@ -98,8 +98,8 @@ async function setUp(on: On, $: Parameters<typeof start>[0] & Parameters<typeof 
 
 const blocked = (out: { deny?: string }) => typeof out.deny === 'string'
 
-type Need = 'readonly' | 'research' | 'prototype' | 'edit' | 'off'
-const LADDER_ORDER: Need[] = ['readonly', 'research', 'prototype', 'edit', 'off']
+type Need = 'readonly' | 'research' | 'prototype' | 'build' | 'off'
+const LADDER_ORDER: Need[] = ['readonly', 'research', 'prototype', 'build', 'off']
 
 const bashCall = (command: string) => ({ tool: 'Bash', command })
 const NEEDS: [string, Record<string, unknown>, Need][] = [
@@ -127,15 +127,15 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
   ['Edit .claude/work/cart/app.tsx', { tool: 'Edit', file_path: '.claude/work/cart/app.tsx' }, 'prototype'],
   ['Write C:\\repo\\.claude\\work\\a.css', { tool: 'Write', file_path: 'C:\\repo\\.claude\\work\\a.css' }, 'prototype'],
   ['echo x > .claude/work/a/b.html', bashCall('echo x > .claude/work/a/b.html'), 'prototype'],
-  ['Write /repo/.claude/workflows/x.js', { tool: 'Write', file_path: '/repo/.claude/workflows/x.js' }, 'edit'],
-  ['Write /repo/src/.claude/work-notes.ts', { tool: 'Write', file_path: '/repo/src/.claude/work-notes.ts' }, 'edit'],
+  ['Write /repo/.claude/workflows/x.js', { tool: 'Write', file_path: '/repo/.claude/workflows/x.js' }, 'build'],
+  ['Write /repo/src/.claude/work-notes.ts', { tool: 'Write', file_path: '/repo/src/.claude/work-notes.ts' }, 'build'],
   ...['echo hi > out.txt', 'echo hi >out.txt', 'echo hi >> notes/out.txt', 'echo x > src/app.ts'].map(
-    c => [c, bashCall(c), 'edit'] as [string, Record<string, unknown>, Need],
+    c => [c, bashCall(c), 'build'] as [string, Record<string, unknown>, Need],
   ),
-  ['Edit /repo/src/app.ts', { tool: 'Edit', file_path: '/repo/src/app.ts' }, 'edit'],
-  ['Write /repo/src/new.tsx', { tool: 'Write', file_path: '/repo/src/new.tsx' }, 'edit'],
-  ['NotebookEdit /repo/a.ipynb', { tool: 'NotebookEdit', notebook_path: '/repo/a.ipynb' }, 'edit'],
-  ['Edit with no path', { tool: 'Edit' }, 'edit'],
+  ['Edit /repo/src/app.ts', { tool: 'Edit', file_path: '/repo/src/app.ts' }, 'build'],
+  ['Write /repo/src/new.tsx', { tool: 'Write', file_path: '/repo/src/new.tsx' }, 'build'],
+  ['NotebookEdit /repo/a.ipynb', { tool: 'NotebookEdit', notebook_path: '/repo/a.ipynb' }, 'build'],
+  ['Edit with no path', { tool: 'Edit' }, 'build'],
   ...[
     'git push origin main', 'gh pr create --fill', 'gh pr merge 4', 'gh api repos/o/r/pulls -X POST -f title=x',
     'gh api repos/o/r/pulls -f title=x -f head=b -f base=main', 'gh api repos/o/r/pulls/4/merge -X PUT',
@@ -146,7 +146,7 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
   ].map(t => [t, { tool: t }, 'off'] as [string, Record<string, unknown>, Need]),
 ]
 
-for (const name of ['readonly', 'research', 'prototype', 'edit'] as const) {
+for (const name of ['readonly', 'research', 'prototype', 'build'] as const) {
   for (const [label, input, need] of NEEDS) {
     const denied = LADDER_ORDER.indexOf(need) > LADDER_ORDER.indexOf(name)
     test(`${name} mode ${denied ? 'denies' : 'allows'} ${label}`, async ($, on) => {
@@ -191,7 +191,7 @@ test('/mode off lifts enforcement', async ($, on) => {
 test('switching mode replaces the old one instead of stacking', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
   await setUp(on, $ as never, 'readonly')
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(false)
   expect(blocked(await bash($ as never, 'gh pr create'))).toBe(true)
 })
@@ -201,9 +201,9 @@ test('/mode alone reports the current mode and lists the modes', async ($, on) =
   await start($ as never)
   const none = await mode($ as never)
   expect(none.text).toMatch(/off/)
-  for (const m of ['readonly', 'research', 'edit', 'off']) expect(none.text).toContain(m)
-  await mode($ as never, 'edit')
-  expect((await mode($ as never)).text).toMatch(/current mode: edit/i)
+  for (const m of ['readonly', 'research', 'build', 'off']) expect(none.text).toContain(m)
+  await mode($ as never, 'build')
+  expect((await mode($ as never)).text).toMatch(/current mode: build/i)
 })
 
 test('an unknown mode lists the modes and changes nothing', async ($, on) => {
@@ -211,7 +211,7 @@ test('an unknown mode lists the modes and changes nothing', async ($, on) => {
   await setUp(on, $ as never, 'readonly')
   const out = await mode($ as never, 'foo')
   expect(out.text).toMatch(/foo/)
-  for (const m of ['readonly', 'research', 'edit', 'off']) expect(out.text).toContain(m)
+  for (const m of ['readonly', 'research', 'build', 'off']) expect(out.text).toContain(m)
   expect(blocked(await $.tool.call({ tool: 'Edit' } as never))).toBe(true)
 })
 
@@ -241,8 +241,8 @@ test('each mode states itself in the prompt, edit allows local commits', async (
   await start($ as never)
   await mode($ as never, 'research')
   expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Research mode:.*Do not push or open pull requests/)
-  await mode($ as never, 'edit')
-  expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Edit mode:.*commit locally/)
+  await mode($ as never, 'build')
+  expect((await $.prompt.compose({ model: 'm', promptModel: 'm', surfaces: [], tools: [], outputStyle: null, traits: [] } as never)).sections.at(-1)!.text).toMatch(/^Build mode:.*commit locally/)
 })
 
 test('/mode off replaces the mode section with an off section', async ($, on) => {
@@ -270,7 +270,7 @@ test('an interactive session registers the mode command', async ($, on) => {
 test('the mode command hints its six arguments', async ($, on) => {
   const w = world(on)
   await start($ as never)
-  expect(w.hints).toEqual(['readonly | research | prototype | edit | off'])
+  expect(w.hints).toEqual(['readonly | research | prototype | build | off'])
 })
 
 test('a non-interactive session, as in the desktop app, still registers /mode', async ($, on) => {
@@ -316,8 +316,8 @@ test('changing the mode rewrites the file with the new mode', async ($, on) => {
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'readonly')
-  await mode($ as never, 'edit')
-  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'edit' })
+  await mode($ as never, 'build')
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'build' })
 })
 
 test('turning the mode off marks the state file off instead of deleting it', async ($, on) => {
@@ -409,16 +409,16 @@ test('a failed prune never breaks the mode command', async ($, on) => {
 test('a resumed session with a mode on republishes its file at start', async ($, on) => {
   const w = world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   w.writes.length = 0
   await start($ as never)
-  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'edit' })
+  expect(JSON.parse(lastWrite(w).text)).toEqual({ v: 1, mode: 'build' })
 })
 
 const COPY: [string, string, string, string][] = [
   ['readonly', 'Read only', 'Read and report only.', 'Edits, commits, pushes, PRs and tracker writes are blocked.'],
   ['research', 'Research', 'Notes, plans and tracker items only.', 'Code edits, pushes and PRs are blocked.'],
-  ['edit', 'Edit', 'Edits and commits are allowed.', 'Pushes and PRs are blocked.'],
+  ['build', 'Build', 'Edits and commits are allowed.', 'Pushes and PRs are blocked.'],
 ]
 
 const props = (over: Record<string, unknown> = {}) =>
@@ -532,11 +532,11 @@ test('turning a mode on again drops the off text, and the next off names the new
   await start($ as never)
   await mode($ as never, 'readonly')
   await mode($ as never, 'off')
-  await mode($ as never, 'edit')
-  expect((await compose($)).sections.at(-1).text).toMatch(/^Edit mode:/)
+  await mode($ as never, 'build')
+  expect((await compose($)).sections.at(-1).text).toMatch(/^Build mode:/)
   await mode($ as never, 'off')
   expect((await compose($)).sections.at(-1).text).toBe(
-    'Session mode: off. Edit mode has ended; its rules no longer apply, even if the conversation still shows it on.',
+    'Session mode: off. Build mode has ended; its rules no longer apply, even if the conversation still shows it on.',
   )
 })
 
@@ -616,10 +616,10 @@ test('two mode changes before a prompt give one note, the last mode', async ($, 
   const w = world(on)
   await start($ as never)
   await mode($ as never, 'readonly')
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   await submit($)
   expect(notes(w)).toHaveLength(1)
-  expect(notes(w)[0]).toMatch(/^Session mode: Edit is on\. Edit mode:/)
+  expect(notes(w)[0]).toMatch(/^Session mode: Build is on\. Build mode:/)
 })
 
 test('a mode set and cleared before any prompt gives no note', async ($, on) => {
@@ -663,11 +663,11 @@ test('after agent_mode readonly self, the next check note says Now: readonly.', 
 test('the check note goes after the context and the mode note', async ($, on) => {
   const w = world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   const out = await submit($, 'hello', ['x'])
   expect(all(w)).toHaveLength(3)
   expect(all(w)[0]).toBe('x')
-  expect(all(w)[1]).toMatch(/^Session mode: Edit is on\./)
+  expect(all(w)[1]).toMatch(/^Session mode: Build is on\./)
   expect(all(w)[2]).toMatch(/^Session mode check:/)
   expect(out.context).toEqual(all(w))
 })
@@ -721,7 +721,7 @@ test('the check note is skipped while the user mode is readonly, not for researc
 
 const TOOL = 'mcp__session-modes__agent_mode'
 const DESCRIPTION =
-  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), prototype (a Claude Design artifact or files in .claude/work/; no app code), edit (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; prototype for a UI idea, a layout choice or a design to see before the build; edit for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
+  'Set a working mode for yourself (scope "self") or for your subagents (scope "subagents"); it applies at once, also to subagents already running, and subagents you start later get it in their task text. Modes: readonly (read and report only), research (notes, plans and tracker items; no code), prototype (a Claude Design artifact or files in .claude/work/; no app code), build (edit and commit; no push or PR). "off" clears the mode you set in that scope. You can only add limits: a mode the user set with /mode stays in force, and the stricter rule always wins. Pick your own mode at the start of each user message, read with the conversation: readonly for a question, a review, an explanation or "do not change anything"; research for a plan, a spec, notes or tickets; prototype for a UI idea, a layout choice or a design to see before the build; build for a code or config change; off only when the message asks you to push, or to open or merge a pull request. A short reply such as "yes" or "go ahead" takes the mode of the work it approves.'
 
 const claudeSets = async ($: any, modeName: string, scope: string, agentId?: string): Promise<string> => {
   const out = await $.tool.call({ tool: TOOL, mode: modeName, scope, ...(agentId ? { agentId } : {}) } as never)
@@ -744,7 +744,7 @@ test('the agent_mode tool is registered and not deferred', async ($, on) => {
   expect(w.tools[0]!.inputSchema).toEqual({
     type: 'object',
     properties: {
-      mode: { type: 'string', enum: ['readonly', 'research', 'prototype', 'edit', 'off'] },
+      mode: { type: 'string', enum: ['readonly', 'research', 'prototype', 'build', 'off'] },
       scope: { type: 'string', enum: ['self', 'subagents'] },
     },
     required: ['mode', 'scope'],
@@ -801,8 +801,8 @@ test('the model clears the mode it set for subagents', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
   world(on)
   await start($ as never)
-  await claudeSets($, 'edit', 'subagents')
-  expect(await claudeSets($, 'off', 'subagents')).toBe('Cleared the Edit mode you set for your subagents.')
+  await claudeSets($, 'build', 'subagents')
+  expect(await claudeSets($, 'off', 'subagents')).toBe('Cleared the Build mode you set for your subagents.')
 })
 
 test('off with nothing set says so', async ($, on) => {
@@ -826,33 +826,33 @@ test('the model cannot loosen the mode the user set', async ($, on) => {
 test('a self result names the user mode that stays on', async ($, on) => {
   world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
-  expect(await claudeSets($, 'readonly', 'self')).toMatch(/The user's Edit mode stays on\.$/)
+  await mode($ as never, 'build')
+  expect(await claudeSets($, 'readonly', 'self')).toMatch(/The user's Build mode stays on\.$/)
 })
 
 test('the stricter rule wins: the user rule is checked first', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
   const w = world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   await claudeSets($, 'readonly', 'subagents')
   await spawn($)
-  expect(w.spawned[0]!.startsWith('The main session is in Edit mode')).toBe(true)
+  expect(w.spawned[0]!.startsWith('The main session is in Build mode')).toBe(true)
   expect(w.spawned[0]).toContain(READONLY_NOTE_START)
   const edit = await editAs($, 'a1')
   expect(edit.deny).toMatch(/^readonly mode is on: /)
   const push = await pushAs($, 'a1')
-  expect(push.deny).toBe('edit mode is on: commit locally and leave the push and the pull request to the user; /mode off to leave.')
+  expect(push.deny).toBe('build mode is on: commit locally and leave the push and the pull request to the user; /mode off to leave.')
 })
 
 test('a nested subagent inherits the mode through its parent', async ($, on) => {
   on('tool.call', () => ({ result: 'ok' }) as never)
   const w = world(on)
   await start($ as never)
-  await claudeSets($, 'edit', 'subagents')
+  await claudeSets($, 'build', 'subagents')
   await spawn($)
   await spawn($, { parentAgentId: 'a1' })
-  expect(w.spawned[1]).toMatch(/^The agent that started you set Edit mode for its subagents, and it applies to you\. Edit mode:/)
+  expect(w.spawned[1]).toMatch(/^The agent that started you set Build mode for its subagents, and it applies to you\. Build mode:/)
   expect(blocked(await prAs($, 'a2'))).toBe(true)
   expect(blocked(await editAs($, 'a2'))).toBe(false)
 })
@@ -906,7 +906,7 @@ test('the band Turn off button clears the modes the model set', async ($, on) =>
   on('tool.call', () => ({ result: 'ok' }) as never)
   world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   await claudeSets($, 'readonly', 'self')
   const band = await mount($, { surface: 'desktop' })
   await band.press({ key: 'off' })
@@ -918,7 +918,7 @@ test('setting a user mode keeps the modes the model set', async ($, on) => {
   world(on)
   await start($ as never)
   await claudeSets($, 'readonly', 'self')
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   expect(blocked(await editAs($))).toBe(true)
 })
 
@@ -936,21 +936,21 @@ test('the band shows the user mode row and a Set by Claude row', async ($, on) =
   world(on)
   await start($ as never)
   await mode($ as never, 'readonly')
-  await claudeSets($, 'edit', 'subagents')
+  await claudeSets($, 'build', 'subagents')
   const band = await mount($, { surface: 'desktop' })
   expect(await band.find({ type: 'Text', text: /^Read only$/ })).toBeDefined()
   expect(await band.find({ text: 'Read and report only.' })).toBeDefined()
   expect(await band.find({ type: 'Button', key: 'off' })).toBeDefined()
-  expect(await band.find({ text: 'Set by Claude: Edit for subagents' })).toBeDefined()
+  expect(await band.find({ text: 'Set by Claude: Build for subagents' })).toBeDefined()
 })
 
 test('the Set by Claude row joins both scopes', async ($, on) => {
   world(on)
   await start($ as never)
   await claudeSets($, 'readonly', 'self')
-  await claudeSets($, 'edit', 'subagents')
+  await claudeSets($, 'build', 'subagents')
   const band = await mount($, { surface: 'desktop' })
-  expect(await band.find({ text: 'Set by Claude: Read only for itself and Edit for subagents' })).toBeDefined()
+  expect(await band.find({ text: 'Set by Claude: Read only for itself and Build for subagents' })).toBeDefined()
 })
 
 test('the Set by Claude row yields to a survey', async ($, on) => {
@@ -966,7 +966,7 @@ test('/mode alone reports the modes the model set', async ($, on) => {
   await start($ as never)
   await claudeSets($, 'readonly', 'subagents')
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off. Set by Claude: Read only for subagents.',
+    'Current mode: off. Modes: readonly, research, prototype, build, off. Also: clear, agents on, agents off. Set by Claude: Read only for subagents.',
   )
 })
 
@@ -974,7 +974,7 @@ test('/mode alone is unchanged when the model set nothing', async ($, on) => {
   world(on)
   await start($ as never)
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off.',
+    'Current mode: off. Modes: readonly, research, prototype, build, off. Also: clear, agents on, agents off.',
   )
 })
 
@@ -1024,7 +1024,7 @@ test('the Clear button is only on the Set by Claude row', async ($, on) => {
   await mode($ as never, 'readonly')
   const band = await mount($, { surface: 'desktop' })
   expect(await band.find({ type: 'Button', key: 'clear-agents' })).toBeUndefined()
-  await claudeSets($, 'edit', 'subagents')
+  await claudeSets($, 'build', 'subagents')
   const withClaude = await mount($, { surface: 'desktop' })
   expect(await withClaude.find({ type: 'Button', key: 'clear-agents' })).toBeDefined()
   expect(await withClaude.find({ type: 'Button', key: 'off' })).toBeDefined()
@@ -1044,7 +1044,7 @@ test('/mode clear removes the model modes and keeps the user mode', async ($, on
   on('tool.call', () => ({ result: 'ok' }) as never)
   world(on)
   await start($ as never)
-  await mode($ as never, 'edit')
+  await mode($ as never, 'build')
   await claudeSets($, 'readonly', 'self')
   expect(blocked(await editAs($))).toBe(true)
   expect((await mode($ as never, 'clear')).text).toBe("Cleared Claude's modes.")
@@ -1115,7 +1115,7 @@ test('/mode alone ends with Agent modes: off while agent modes are off', async (
   await start($ as never)
   await mode($ as never, 'agents off')
   expect((await mode($ as never)).text).toBe(
-    'Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off. Agent modes: off.',
+    'Current mode: off. Modes: readonly, research, prototype, build, off. Also: clear, agents on, agents off. Agent modes: off.',
   )
 })
 

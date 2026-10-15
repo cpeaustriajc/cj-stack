@@ -4,7 +4,7 @@ import { modeSuggestions } from './suggest'
 const names = (rows: { text: string }[]) => rows.map(r => r.text)
 
 test('/mode with a space lists all five modes in order, then clear and agents', () => {
-  expect(names(modeSuggestions('/mode ', 6, 'readonly'))).toEqual(['readonly', 'research', 'prototype', 'edit', 'off', 'clear', 'agents'])
+  expect(names(modeSuggestions('/mode ', 6, 'readonly'))).toEqual(['readonly', 'research', 'prototype', 'build', 'off', 'clear', 'agents'])
 })
 
 test('/mode agents with a space lists on and off', () => {
@@ -23,7 +23,7 @@ test('a partial name that starts no mode lists nothing', () => {
 })
 
 test('the current mode is marked on its dim line', () => {
-  const rows = modeSuggestions('/mode ', 6, 'edit')
+  const rows = modeSuggestions('/mode ', 6, 'build')
   expect(rows.map(r => r.description)).toEqual([
     'read and report only',
     'notes and plans, no code',

@@ -1,4 +1,4 @@
-export type Mode = 'off' | 'readonly' | 'research' | 'prototype' | 'edit'
+export type Mode = 'off' | 'readonly' | 'research' | 'prototype' | 'build'
 
 export type Active = Exclude<Mode, 'off'>
 

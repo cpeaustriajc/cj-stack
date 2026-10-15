@@ -114,8 +114,8 @@ export const register: Register = on => {
     })
     await $.command.register({
       name: 'mode',
-      description: 'Set the session mode: readonly, research, prototype, edit or off',
-      argumentHint: 'readonly | research | prototype | edit | off',
+      description: 'Set the session mode: readonly, research, prototype, build or off',
+      argumentHint: 'readonly | research | prototype | build | off',
     })
     const current = await read($, mode)
     if (current !== 'off') await publishState($, current)

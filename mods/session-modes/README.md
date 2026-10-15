@@ -4,7 +4,7 @@ A mod (a plugin that adds hooks to Claude Code) that adds the `/mode` command. A
 
 ## Why
 
-An instruction in a prompt can fade in a long session. With `/mode readonly`, Claude cannot edit a file, even if you forget to repeat the rule. With `/mode edit`, Claude cannot push or open a pull request.
+An instruction in a prompt can fade in a long session. With `/mode readonly`, Claude cannot edit a file, even if you forget to repeat the rule. With `/mode build`, Claude cannot push or open a pull request.
 
 Each mode also adds one sentence to the system prompt (the instructions Claude reads each turn). Claude knows the rule before the hook has to block anything.
 
@@ -26,14 +26,14 @@ To see that it is on, run `claude plugin list` and look for `session-modes`. The
 
 ## What it does
 
-The modes form a ladder, from the strictest to the loosest: `readonly`, `research`, `prototype`, `edit`, `off`. Each tool call needs one level. A mode blocks a call that needs a higher level than the mode.
+The mode for code changes is `build`, not `edit`, so it is not confused with the `Edit` tool. The modes form a ladder, from the strictest to the loosest: `readonly`, `research`, `prototype`, `build`, `off`. Each tool call needs one level. A mode blocks a call that needs a higher level than the mode.
 
 | Mode | Allows | Blocks |
 |---|---|---|
 | `readonly` | Reading, `git status`, `git log`, redirects to `/dev/null` | Everything in the rows below |
 | `research` | Edits to `.md` and `.markdown` files, a redirect to such a file, `git commit`, tracker writes, an Artifact publish | Edits to any other file, a redirect to any other file, `git push`, pull requests |
 | `prototype` | Edits to any file under `.claude/work/`, a redirect to such a file, and the Claude Design artifacts Claude publishes there | Edits to app code, the rows below |
-| `edit` | Edits to any file, redirects to any file | `git push`, `gh pr create`, `gh pr merge`, pull request writes through `gh api` or an MCP tool |
+| `build` | Edits to any file, redirects to any file | `git push`, `gh pr create`, `gh pr merge`, pull request writes through `gh api` or an MCP tool |
 
 A tracker write is an MCP tool with a write word in its name, such as `save_issue` or `createJiraIssue`. It is also `gh issue create`, a `gh api` call with `-X POST`, or `acli jira workitem create`. A pull request write is an MCP tool such as `create_pull_request`, or a `gh api` call on a `/pulls` path with `-X POST` or a field flag. An MCP tool with `push` in its name needs `/mode off`. The `Artifact` tool needs `research` to publish; reading, listing and opening an artifact need `readonly`.
 
@@ -41,7 +41,7 @@ A Bash command with several parts, such as `git commit -m x && git push`, needs 
 
 Other commands:
 
-- `/mode` alone shows "Current mode: off. Modes: readonly, research, prototype, edit, off. Also: clear, agents on, agents off."
+- `/mode` alone shows "Current mode: off. Modes: readonly, research, prototype, build, off. Also: clear, agents on, agents off."
 - `/mode off` removes the mode and shows "Mode off."
 - `/mode clear` clears the modes Claude set.
 - `/mode agents off` and `/mode agents on` block and allow the `agent_mode` tool. See "Your overrides".
@@ -61,9 +61,9 @@ A call is denied when any rule that applies to the caller denies it, so the stri
 
 Claude also picks its own mode for each message you send. The mod adds a hidden note that asks for the pick and names Claude's current mode. Claude calls `agent_mode` with scope `self` when the pick differs. The note goes on messages you type in the terminal, in the desktop app or through Remote Control. It does not go on task notifications, scheduled prompts or messages from other sessions. The mod skips the note while your own mode is `readonly`.
 
-Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "how would a wider band look?". Claude sets `prototype` and builds a Claude Design artifact. You type "ok, fix it". Claude sets `edit`. You type "fix it and open a PR". Claude sets `off`.
+Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "how would a wider band look?". Claude sets `prototype` and builds a Claude Design artifact. You type "ok, fix it". Claude sets `build`. You type "fix it and open a PR". Claude sets `off`.
 
-The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Edit for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
+The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Build for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
 
 ### Your overrides
 
