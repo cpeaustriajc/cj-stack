@@ -63,7 +63,7 @@ Claude also picks its own mode for each message you send. The mod adds a hidden 
 
 Example: you type "why does the band hide at 50 columns? do not change anything". Claude sets `readonly` for itself, and a later `Edit` is denied. You type "how would a wider band look?". Claude sets `prototype` and builds a Claude Design artifact. You type "ok, fix it". Claude sets `build`. You type "fix it and open a PR". Claude sets `off`.
 
-The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Build for subagents". With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
+The band shows the modes Claude set on a second row, for example "Set by Claude: Read only for itself and Build for subagents". Each mode name has the same colour as on your own row. With your mode off, that row is all the band shows. `/mode` alone adds the same text to its report.
 
 ### Your overrides
 

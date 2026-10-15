@@ -153,13 +153,27 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const current = await read($, mode)
-    const claude = claudeParts((await read($, agentModes))[MAIN])
+    const held = (await read($, agentModes))[MAIN]
+    const claude = claudeParts(held)
     if ((current === 'off' && !claude) || e.props.hasSurvey) return next(e)
     const { Box, Text, Button } = $.ui.resolve(e)
     const claudeRow = claude ? (
       <Box flexDirection="row" gap={1}>
         <Box flexGrow={1} flexShrink={1}>
-          <Text dimColor wrap="truncate-end">{`Set by Claude: ${claude}`}</Text>
+          <Text wrap="truncate-end">
+            <Text dimColor>Set by Claude: </Text>
+            {(['self', 'subagents'] as const)
+              .filter(scope => held?.[scope])
+              .map((scope, i) => (
+                <Text key={scope}>
+                  {i ? <Text dimColor> and </Text> : null}
+                  <Text weight="semibold" color={LADDER[held![scope]!].chip}>
+                    {LADDER[held![scope]!].label}
+                  </Text>
+                  <Text dimColor>{scope === 'self' ? ' for itself' : ' for subagents'}</Text>
+                </Text>
+              ))}
+          </Text>
         </Box>
         <Button
           key="clear-agents"

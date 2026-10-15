@@ -929,7 +929,19 @@ test('a mode set by the model alone shows one row and no Turn off button', async
   const band = await mount($, { surface: 'desktop' })
   expect(await band.find({ text: 'Set by Claude: Read only for itself' })).toBeDefined()
   expect(await band.find({ type: 'Button', key: 'off' })).toBeUndefined()
-  expect(await band.find({ type: 'Text', text: /^Read only$/ })).toBeUndefined()
+  expect(await band.find({ text: 'Read and report only.' })).toBeUndefined()
+})
+
+test('each mode on the Set by Claude row is drawn in its own colour, as on the user row', async ($, on) => {
+  world(on)
+  await start($ as never)
+  await claudeSets($, 'readonly', 'self')
+  await claudeSets($, 'build', 'subagents')
+  const band = await mount($, { surface: 'desktop' })
+  const own = (await band.find({ type: 'Text', text: /^Read only$/ })) as { props: { color?: string } } | undefined
+  const subs = (await band.find({ type: 'Text', text: /^Build$/ })) as { props: { color?: string } } | undefined
+  expect(own?.props.color).toBe('planMode')
+  expect(subs?.props.color).toBe('ide')
 })
 
 test('the band shows the user mode row and a Set by Claude row', async ($, on) => {
