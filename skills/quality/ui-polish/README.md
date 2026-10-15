@@ -38,7 +38,7 @@ Requirement: a browser that Claude can drive, so it sees the real screen.
 - The design is the source of truth: a mockup, a Figma frame, a screenshot you give, or the closest screen in the app.
 - Claude checks the screen in light and dark, if the app has both.
 - A row cites `file:line` when the issue is in code, and carries a screenshot when the issue is visual.
-- For a visual change, Claude shows before and after screenshots and waits for your sign-off before it commits.
+- For a visual change, Claude puts before and after screenshots in the PR body, and you sign off when you review the PR. Claude waits before it commits only when the project requires that, or when the commit goes straight to the trunk.
 
 ## Limits
 

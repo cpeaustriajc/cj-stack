@@ -74,5 +74,6 @@ visual. Then give one verdict: **Ship**, **Ship after the top N**, or **Rework**
 design. Fix only the rows I name.
 Asked to run until clean, every row is named: fix them all, then run steps 1–3 again in full.
 A pass counts only with its table and verdict. Ask for sign-off once, after a pass with no rows.
-For a visual change, show me before and after screenshots and
-wait for my sign-off before committing.
+For a visual change, put before and after screenshots in the PR
+body; the PR review is the sign-off. Wait before committing only when the project requires it or
+the commit goes to the trunk.
