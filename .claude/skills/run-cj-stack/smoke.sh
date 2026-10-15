@@ -4,7 +4,7 @@
 # `all` skips routing: it costs about $2 of model calls per run.
 set -uo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"; cd "$root"
-step="${1:-all}"; failed=0
+step="${1:-all}"; failed=0; blocked=0
 say() { printf '\n== %s\n' "$*"; }
 run() { "$@" || { failed=1; echo "FAILED: $*"; }; }
 
@@ -21,10 +21,16 @@ validate() { say "validate"; run claude plugin validate .; }
 tests() {
   for mod in mods/*/; do
     compgen -G "$mod/hooks/*.test.ts*" >/dev/null || continue
-    say "mod tests: $mod"; run bash -c "claude plugin test '$mod' 2>&1 | tail -3"
+    say "mod tests: $mod"; run bash -c "set -o pipefail; claude plugin test '$mod' 2>&1 | tail -3"
   done
+  say "claude-owned: no mod denies or approves what Claude Code decides"
+  run python3 tests/claude-owned/run.py
+  say "READMEs"
+  run python3 -I scripts/check_readmes.py
   say "skill descriptions: valid YAML, at most 500 characters, third person (plugin-dev's rules)"
-  run python3 - <<'PY'
+  local py=(python3 -)
+  python3 -c 'import yaml' 2>/dev/null || py=(uv run --quiet --no-project --with pyyaml python3 -)
+  run "${py[@]}" <<'PY'
 import glob, sys, yaml
 bad = 0
 for f in sorted(glob.glob("skills/*/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
@@ -46,7 +52,9 @@ PY
 
 doctor() {
   say "/skill-doctor with cj-stack installed"; installed
-  run bash -c "CLAUDE_CONFIG_DIR='$cfg' claude -p '/skill-doctor' --max-budget-usd 1 | grep -v anthropic-skills"
+  local out; out="$(CLAUDE_CONFIG_DIR="$cfg" claude -p '/skill-doctor' --max-budget-usd 1 2>&1)"; local st=$?
+  if grep -q 'Not logged in' <<<"$out"; then echo "BLOCKED: the throwaway config is not signed in"; blocked=1; return; fi
+  grep -v anthropic-skills <<<"$out"; [[ $st -eq 0 ]] || { failed=1; echo "FAILED: /skill-doctor exit $st"; }
 }
 
 details() { say "plugin details"; installed; run env CLAUDE_CONFIG_DIR="$cfg" claude plugin details cj-stack; }
@@ -56,13 +64,14 @@ details() { say "plugin details"; installed; run env CLAUDE_CONFIG_DIR="$cfg" cl
 routing() {
   say "routing evals: each request loads its own skill and no neighbour"
   local p; p="$(mktemp -d)"; mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
-  python3 -c "import json;m=json.load(open('.claude-plugin/marketplace.json'));print('\n'.join(next(x for x in m['plugins'] if x['name']=='cj-stack')['skills']))" |
-    while read -r s; do ln -s "$root/${s#./}" "$p/skills/$(basename "$s")"; done
+  local list; list="$(python3 -c "import json;print('\n'.join(json.load(open('skills/.claude-plugin/plugin.json'))['skills']))")" || { failed=1; echo "FAILED: read skills/.claude-plugin/plugin.json"; return; }
+  while read -r s; do ln -s "$root/skills/${s#./}" "$p/skills/$(basename "$s")"; done <<<"$list"
+  [[ -n "$(ls "$p/skills")" ]] || { failed=1; echo "FAILED: no skills linked into the eval plugin"; return; }
   # In-progress skills with routing cases join the eval plugin only; they still don't ship.
   for s in drive scout; do ln -s "$root/skills/in-progress/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
-  cp -r evals/routing "$p/evals/"
-  (cd "$p" && claude plugin eval . --eval-dir evals/routing --runs "${RUNS:-2}" --ablation none \
+  cp -r skills/evals/. "$p/evals/"
+  (cd "$p" && claude plugin eval . --eval-dir evals --runs "${RUNS:-2}" --ablation none \
     --trust-plugin --no-publish --max-cost-usd 10 -j 4) || { failed=1; echo "FAILED: routing evals"; }
   rm -rf "$p"
 }
@@ -70,7 +79,9 @@ routing() {
 case "$step" in
   validate|tests|doctor|details|routing) "$step" ;;
   all) validate; tests; details; doctor ;;
-  *) echo "usage: $0 [validate|tests|doctor|details|routing|all]" >&2; exit 2 ;;
+  *) echo "usage: $0 [validate|tests|doctor|details|routing|all]" >&2; exit 64 ;;
 esac
 find skills -name __pycache__ -prune -exec rm -rf {} +
-exit $failed
+(( failed )) && exit 1
+(( blocked )) && exit 2
+exit 0

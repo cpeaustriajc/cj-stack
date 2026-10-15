@@ -16,22 +16,22 @@ Paths here are relative to the repo root.
 
 ## Prerequisites
 
-`claude`, `python3` and `bash`. Nothing to install or build.
+`claude`, `python3` and `bash`, plus PyYAML or `uv` (the descriptions check uses `uv run --with pyyaml` when `python3` lacks it). Nothing to build.
 
 ## Run (agent path)
 
 ```bash
-.claude/skills/run-cj-stack/smoke.sh all       # everything, about 20 s; exit 0 when all pass
+.claude/skills/run-cj-stack/smoke.sh all       # everything, about 20 s; exit 0 pass, 1 fail, 2 blocked
 .claude/skills/run-cj-stack/smoke.sh validate  # claude plugin validate .
 .claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
 .claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
 .claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with cj-stack installed
-.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
+.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on skills/evals, about $2; RUNS=1 halves it
 ```
 
 `routing` checks that each request loads its own skill and not its nearest neighbour, with every
 shipped skill installed together, plus `drive` and `scout` from `in-progress` (linked into the
-eval plugin only), and that the typed-only `commit` and `create-pr` never load on their own. Each case in `evals/routing/<case>/` is a `prompt.md` plus
+eval plugin only), and that the typed-only `commit` and `create-pr` never load on their own. Each case in `skills/evals/<case>/` is a `prompt.md` plus
 `tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
 an old one's.
 
@@ -54,8 +54,8 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
   (`.claude-plugin/marketplace.json` with `"source": "./"`, `"strict": false`), not a plugin, so
   skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
   as the driver does.
-- **A fresh `CLAUDE_CONFIG_DIR` still authenticates** in this container, so the throwaway install
-  works for `claude -p` too.
+- **A fresh `CLAUDE_CONFIG_DIR` is signed out on macOS** (the sign-in is in the keychain under the
+  default config), so `doctor` prints `BLOCKED` and smoke exits 2. In a container it authenticates.
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.

@@ -1,6 +1,6 @@
 {
   "name": "cj-lab",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify and recall. Expect changes.",
   "author": {
     "name": "CJ"

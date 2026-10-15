@@ -5,7 +5,7 @@ description: >
   codebase", "hunt for bugs until clean", "run N rounds of review" or "find and fix every bug".
   Three parallel hunters search the whole scope for real bugs, fix each one test-first in files
   they own, and search again, round after round, until a round where all three find zero. Run it
-  as a periodic sweep (nightly, weekly or on demand), not per PR; per-PR proof is self-verify.
+  as a periodic sweep, not per PR; per-PR proof is self-verify.
   For a report-only review of one diff, use interrogate instead.
 ---
 
