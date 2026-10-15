@@ -26,8 +26,9 @@ app has both. Reading the code is not enough.
 ## 2. Check against the mistake list
 
 Read `references/motion.md` when the change has motion, `references/interaction.md` when it has
-controls, forms, loading or navigation, and `references/app-ui.md` for dashboards, admin,
-settings or other dense app screens. Every row in the report names the rule it breaks.
+controls, forms, loading or navigation, `references/app-ui.md` for dashboards, admin,
+settings or other dense app screens, and `references/quality-bar.md` for a design, artboard or
+prototype. Every row in the report names the rule it breaks.
 
 **Layout and content**
 - Drifts from the design: spacing, radius, weight, colour, order, or components the design

@@ -2,7 +2,7 @@
 name: playbooks
 description: >
   This skill should be used when fixing a bug, refactoring, chasing a performance problem or
-  building a feature from a ticket, at the start of any such task bigger than a one-line change.
+  building a feature from a ticket or prototyping a design, at the start of any such task bigger than a one-line change.
   It routes the work to its playbook and copies the steps into the task list, so each kind of work
   carries its own proof: a reproduced bug, pinned behaviour, a measured baseline or a verified
   slice.
@@ -12,7 +12,8 @@ description: >
 
 Each kind of work fails in its own way, so each has a fixed order that carries its own proof.
 
-1. Pick the playbook: `references/bug.md`, `refactor.md`, `perf.md` or `feature.md`. Say which
+1. Pick the playbook: `references/bug.md`, `refactor.md`, `perf.md`, `feature.md` or
+   `prototype.md`. Say which
    one in one line. If the task is two kinds, such as a bug fix that needs a refactor, run the
    bug playbook first and treat the refactor as its own task.
 2. Copy the playbook's steps **verbatim** into the task list as the first items. A step you

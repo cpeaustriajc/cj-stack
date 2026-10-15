@@ -96,6 +96,8 @@ Use the backend's own link syntax: `[[Page]]` on a wiki or in Obsidian, a page m
 3. Report the current decision first, then whatever it replaced.
 4. Quote its date and its page name, so the user can check it.
 5. If nothing matches, say so. Don't answer from the code or from memory as if it were the record.
+6. The latest commit or page is not the authority by being latest; the decision chain is.
+7. When a code change follows the answer, end with four lines: Preserve, Change, Avoid, Risk.
 
 **Record a decision.**
 1. Read the index and take the next number (skip this where the adapter has no numbers).

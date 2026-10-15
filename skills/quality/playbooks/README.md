@@ -1,6 +1,6 @@
 # playbooks
 
-A skill that gives Claude a fixed list of steps for four kinds of work: bug fix, refactor, performance fix and feature. Each list ends in proof you can check.
+A skill that gives Claude a fixed list of steps for five kinds of work: bug fix, refactor, performance fix, feature and prototype. Each list ends in proof you can check.
 
 ## When to use it
 
@@ -10,6 +10,7 @@ Claude loads this skill at the start of a task bigger than a one-line change. Us
 - Refactor: today's behaviour is pinned before the code changes.
 - Performance fix: a measured baseline exists before the first change.
 - Feature: each slice is checked in the running app.
+- Prototype: you see the design options before any app code.
 
 Do not use it to split a spec into tickets: use `tickets`. Do not use it to hunt for bugs as a careless user: use `break-it`. Do not use it to explain code.
 
@@ -56,5 +57,5 @@ The feature playbook also runs `triage` first, and `ui-polish` and `break-it` fo
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
-- [references/bug.md](references/bug.md), [refactor.md](references/refactor.md), [perf.md](references/perf.md) and [feature.md](references/feature.md): the four playbooks.
+- [references/bug.md](references/bug.md), [refactor.md](references/refactor.md), [perf.md](references/perf.md), [feature.md](references/feature.md) and [prototype.md](references/prototype.md): the five playbooks.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.

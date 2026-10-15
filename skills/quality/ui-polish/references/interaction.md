@@ -9,8 +9,8 @@ Check each rule against the change. A row in the report names the rule it breaks
 
 **Hit targets**
 - At least 24x24 CSS px (WCAG 2.2 SC 2.5.8). Smaller targets pass only with the spacing, equivalent, inline, user-agent or essential exception.
-- At least 44x44 on touch.
-- The target extends past the visual, so a drifting pointer doesn't cancel.
+- At least 44x44 at every viewport, not only on touch (the Apple HIG minimum). A row a person selects is at least 44 tall.
+- Draw the control at its full target size. No invisible hit area around a small control: at a card edge it covers a neighbour.
 - A checkbox or radio and its label form one target.
 
 **Drag and hover**
@@ -21,7 +21,9 @@ Check each rule against the change. A row in the report names the rule it breaks
 - Hover triggers sit on a stable parent so the menu doesn't flicker.
 
 **Loading**
-- A spinner or skeleton appears only after 150-300ms, then stays at least 300-500ms.
+- No spinner for a wait under 1s. Show it after 500ms and keep it at least 200ms.
+- A wait over 10s shows a percent bar and a Cancel button.
+- An empty state shows only after loading stops, with one next action.
 - Use optimistic UI where a failure is safe to roll back.
 
 **Focus**

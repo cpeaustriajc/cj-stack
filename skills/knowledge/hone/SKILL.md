@@ -21,6 +21,9 @@ calls, dismissed forms, and replies that open with "no", "why", "I already said"
 "don't". Stop-hook feedback comes out as `HOOK`: a loop there is a lesson too, but not my words. Scope it with `--project <substring>` and `--since <YYYY-MM-DD>`. It prints progress and
 writes one markdown file of exchanges.
 
+Also read the project's reverts (`git log --grep=Revert`) and pull request review comments
+(`gh`): a correction made in review is a lesson too.
+
 `/hone <skill>` runs it with `--skill <skill>`, which keeps only corrections made while that skill
 was active (a plugin prefix is fine). Read that skill's SKILL.md and references before judging.
 
