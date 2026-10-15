@@ -1,5 +1,14 @@
 import { expect, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
+import type { Engine } from 'claude-code/testing'
+
+// These tests drive the dialog: an on-shift clock in UTC, and a dialog for every write.
+type Body = ($: Engine, on: On) => unknown
+const asking = (name: string, body: Body) =>
+  test(name, { options: { timeZone: 'UTC', onShift: 'ask' } }, (($: Engine, on: On) => {
+    on('clock.now', () => ({ value: Date.UTC(2026, 9, 15, 10) }) as never)
+    return body($, on)
+  }) as never)
 
 function world(on: On, surfaces: readonly string[]) {
   const asked: string[] = []
@@ -20,7 +29,7 @@ function world(on: On, surfaces: readonly string[]) {
 
 const write = { tool: 'mcp__linear-server__save_issue', id: 'ABC-1', state: 'Done' }
 
-test('a Linear write in a host with no surfaces is left to the host\'s approval', async ($, on) => {
+asking('a Linear write in a host with no surfaces is left to the host\'s approval', async ($, on) => {
   const w = world(on, [])
   await $.session.start({ cwd: '/tmp', isInteractive: false } as never)
   const out = await $.tool.call(write as never)
@@ -29,7 +38,7 @@ test('a Linear write in a host with no surfaces is left to the host\'s approval'
   expect(out.deny).toBe(undefined)
 })
 
-test('a non-interactive session that still has a surface asks about a Linear write', async ($, on) => {
+asking('a non-interactive session that still has a surface asks about a Linear write', async ($, on) => {
   const w = world(on, ['terminal'])
   await $.session.start({ cwd: '/tmp', isInteractive: false } as never)
   const out = await $.tool.call(write as never)

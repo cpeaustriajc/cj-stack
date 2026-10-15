@@ -2,6 +2,14 @@ import { expect, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
+// These tests drive the dialog: an on-shift clock in UTC, and a dialog for every write.
+type Body = ($: Engine, on: On) => unknown
+const asking = (name: string, body: Body) =>
+  test(name, { options: { timeZone: 'UTC', onShift: 'ask' } }, (($: Engine, on: On) => {
+    on('clock.now', () => ({ value: Date.UTC(2026, 9, 15, 10) }) as never)
+    return body($, on)
+  }) as never)
+
 const LINEAR = 'mcp__linear-server__'
 const DOC = 'c089f90f-4944-4052-9616-e8fdc66839f3'
 const SURFACES = ['terminal', 'desktop'] as const
@@ -42,7 +50,7 @@ const swap = {
 }
 
 for (const surface of SURFACES) {
-  test(`${surface}: removed rows draw red and added rows draw green`, async ($, on) => {
+  asking(`${surface}: removed rows draw red and added rows draw green`, async ($, on) => {
     engine(on)
     const seen = gate($, on, surface)
     await $.tool.call(swap as never)
@@ -52,7 +60,7 @@ for (const surface of SURFACES) {
     expect(color('  + CJ')).toBe('green')
   })
 
-  test(`${surface}: the dialog gets the question exactly as asked, so a typed note comes back`, async ($, on) => {
+  asking(`${surface}: the dialog gets the question exactly as asked, so a typed note comes back`, async ($, on) => {
     engine(on)
     const seen = gate($, on, surface, 'remove the locked-decisions reference')
     const out = await $.tool.call(swap as never)
@@ -61,21 +69,21 @@ for (const surface of SURFACES) {
     expect(out.deny).toMatch(/Their note: remove the locked-decisions reference/)
   })
 
-  test(`${surface}: an approval comes back too`, async ($, on) => {
+  asking(`${surface}: an approval comes back too`, async ($, on) => {
     engine(on)
     gate($, on, surface, 'Update document "Decision: Cart"')
     const out = await $.tool.call(swap as never)
     expect(out.deny).toBe(undefined)
   })
 
-  test(`${surface}: a delete shows its warning in yellow`, async ($, on) => {
+  asking(`${surface}: a delete shows its warning in yellow`, async ($, on) => {
     engine(on)
     const seen = gate($, on, surface)
     await $.tool.call({ tool: `${LINEAR}delete_comment`, id: 'c1' } as never)
     expect(seen[0].texts.find(t => t.text.startsWith('⚠'))?.props.color).toBe('yellow')
   })
 
-  test(`${surface}: another dialog is left alone`, async ($, on) => {
+  asking(`${surface}: another dialog is left alone`, async ($, on) => {
     engine(on)
     const drawn = await $.ui.mount({
       plugin: 'linear-gate', surface, component: 'AskUserQuestion', requestId: `q${++mounts}`,
@@ -109,7 +117,7 @@ function world(on: On, lookup: 'title' | 'error' | 'throw' | 'garbage' | 'hang')
 
 const edit = { tool: `${LINEAR}save_document`, id: DOC, patch: [{ op: 'append', text: 'x' }] }
 
-test('a document edit names the document by its title', async ($, on) => {
+asking('a document edit names the document by its title', async ($, on) => {
   const w = world(on, 'title')
   const out = await $.tool.call(edit as never)
   expect(w.looked).toEqual([`linear-server/get_document/${DOC}`])
@@ -119,7 +127,7 @@ test('a document edit names the document by its title', async ($, on) => {
 })
 
 for (const lookup of ['error', 'throw', 'garbage', 'hang'] as const) {
-  test(`a failed title lookup (${lookup}) falls back to the short id`, async ($, on) => {
+  asking(`a failed title lookup (${lookup}) falls back to the short id`, async ($, on) => {
     if (lookup === 'hang') on('clock.sleep', () => ({ value: undefined }) as never)
     const w = world(on, lookup)
     await $.tool.call(edit as never)
@@ -127,13 +135,13 @@ for (const lookup of ['error', 'throw', 'garbage', 'hang'] as const) {
   })
 }
 
-test('a new document makes no lookup', async ($, on) => {
+asking('a new document makes no lookup', async ($, on) => {
   const w = world(on, 'title')
   await $.tool.call({ tool: `${LINEAR}save_document`, title: 'New', project: 'P' } as never)
   expect(w.looked).toEqual([])
 })
 
-test('a long title gives a short button without a cut-off phrase', async ($, on) => {
+asking('a long title gives a short button without a cut-off phrase', async ($, on) => {
   on('session.surfaces', () => ({ value: ['terminal'] }) as never)
   on('mcp.call', () => ({ value: { content: [{ type: 'text', text: JSON.stringify({ title: 'Decision: Checkout for Afternic and other partners' }) }], isError: false } }) as never)
   const labels: string[] = []

@@ -24,6 +24,23 @@ const BUTTON_MAX = 40
 // which would show only the staged question and hide the body.
 const ROWS_MAX = 12
 const NARROW = 60
+const DEFAULT_START = '09:00'
+const DEFAULT_END = '18:00'
+const ON_SHIFT = new Set(['host', 'drastic', 'ask'])
+
+function minutesOf(v: unknown): number | undefined {
+  const m = typeof v === 'string' ? /^([01]\d|2[0-3]):([0-5]\d)$/.exec(v) : null
+  return m ? Number(m[1]) * 60 + Number(m[2]) : undefined
+}
+
+function minuteOfDay(ms: number, zone: string | undefined): number {
+  const [h, m] = new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .format(new Date(ms)).split(':').map(Number)
+  return h * 60 + m
+}
+
+const inShift = (now: number, start: number, end: number) =>
+  start <= end ? now >= start && now < end : now >= start || now < end
 
 function linearWrite(tool: string): string | undefined {
   const m = /^mcp__(.+?)__(.+)$/.exec(tool)
@@ -280,12 +297,22 @@ function diffColor(line: string, current: string | undefined): string | undefine
   return undefined
 }
 
-export const register: Register = on => {
+export const register: Register = (on, options) => {
+  const set = minutesOf(options.shiftStart) !== undefined && minutesOf(options.shiftEnd) !== undefined
+  const [from, to] = set ? [options.shiftStart as string, options.shiftEnd as string] : [DEFAULT_START, DEFAULT_END]
+  const [start, end] = [minutesOf(from)!, minutesOf(to)!]
+  const zone = typeof options.timeZone === 'string' && options.timeZone ? options.timeZone : undefined
+  const onShift = ON_SHIFT.has(options.onShift as string) ? (options.onShift as string) : 'drastic'
+
   on('tool.call', async ($, e, next) => {
     let args = e as unknown as Record<string, unknown>
 
     const name = linearWrite(e.tool)
     if (!name) return next(e)
+    const now = minuteOfDay(await $.clock.now(), zone)
+    if (!inShift(now, start, end))
+      return { deny: `${$.plugin.name}: off shift (${from}-${to}); a Linear write notifies the team's Slack. Do not retry: draft it in the chat for the next shift.` }
+    if (onShift === 'host' || (onShift === 'drastic' && !isDrastic(name, args))) return next(e)
     if ((await $.session.surfaces()).length === 0) return next(e)
 
     const server = /^mcp__(.+?)__/.exec(e.tool)![1]

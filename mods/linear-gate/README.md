@@ -1,12 +1,12 @@
 # linear-gate
 
-A mod (a plugin that adds a hook to Claude Code) that holds every Linear write until you allow it. Claude can read Linear freely, but it cannot change anything without your answer.
+A mod (a plugin that adds a hook to Claude Code) that blocks Linear writes outside your shift. On shift, your permission mode decides, and the mod asks you only before a delete, retire or cancel.
 
 ## Why
 
-A Linear write is visible to your whole team. A comment, a status change or a deleted document cannot be taken back quietly.
+A Linear write is visible to your whole team, and Linear can post it to Slack. After your shift, one write can notify your team at night.
 
-The usual permission prompt shows a tool name and raw arguments. linear-gate shows a plain description of the change instead, and a diff for a document edit.
+On shift, a dialog for every write costs you many clicks. Auto mode can decide most writes. linear-gate keeps a dialog only for writes that remove or cancel work, and shows a plain description with a diff.
 
 ## Install
 
@@ -19,29 +19,30 @@ To see that it is on, run `claude plugin list` and look for `linear-gate`. The i
 
 ## Example
 
-1. Claude calls the Linear tool `save_comment` on issue MP-77.
-2. The mod holds the call and opens a dialog.
-3. You pick "Post comment", or you pick "Leave it", or you type a note.
+1. At 20:35, after your 18:00 shift end, Claude calls the Linear tool `save_issue`.
+2. The mod denies the call. No dialog opens.
+3. Claude reads the reason and puts the draft in the chat.
 
-The dialog asks "Comment on issue MP-77 — apply this change?" and shows the comment text. If you allow the write, you see the toast "✔ Comment on issue MP-77". If you pick "Leave it", Claude reads:
+Claude reads:
 
 ```
-linear-gate: the user denied this Linear write (Comment on issue MP-77).
+linear-gate: off shift (09:00-18:00); a Linear write notifies the team's Slack. Do not retry: draft it in the chat for the next shift.
 ```
 
-If you type a note, Claude reads it too, after "Their note:".
+At 10:00, the same call goes to your permission mode. A call that moves MP-77 to Canceled opens the dialog "Cancel issue MP-77 — apply this change?". You pick "Cancel issue MP-77" or "Leave it", or you type a note.
 
 ## What it does
 
 | Event | Decision |
 |---|---|
-| Claude calls a Linear write tool | Ask you in a dialog. |
+| Claude or a subagent calls a Linear write tool off shift | Deny it, also in a headless session. |
+| Claude calls a Linear write tool on shift | Leave it to your permission mode. |
+| Claude calls a delete, retire or cancel on shift | Ask you in a dialog. |
 | Claude calls a Linear read tool | Let it pass. |
-| A subagent calls a Linear write tool | Ask you, as for Claude. |
 | You allow the write | Run it, then show a toast with the result. |
 | You pick "Leave it" or type a note | Deny the call. Claude reads the reason. |
 | You close the dialog | Deny the call. |
-| No surface (an interface) is attached to the session | Ask nothing. The host decides. |
+| No surface (an interface) is attached to the session on shift | Ask nothing. The host decides. |
 
 The dialog names the action, such as "Create issue" or "Merge PR". It lists the changed fields. For a document edit, it shows removed text in red and added text in green.
 
@@ -51,7 +52,14 @@ The mod treats a tool as a write if its name is in the list in `hooks/register.t
 
 ## Settings
 
-No settings.
+| Option | Default | Meaning |
+|---|---|---|
+| `shiftStart` | `09:00` | The local time your shift starts, 24-hour. |
+| `shiftEnd` | `18:00` | The local time your shift ends. A start after the end crosses midnight. |
+| `timeZone` | empty | An IANA zone such as `Asia/Manila`. Empty uses the zone of your machine. |
+| `onShift` | `drastic` | `host`: your permission mode decides every write. `drastic`: ask before a delete, retire or cancel. `ask`: ask before every write. |
+
+An hour that is not `HH:MM` makes both hours fall back to 09:00 and 18:00. Run `claude plugin configure linear-gate@cj-stack` to set them on your machine.
 
 To turn the mod off, run `claude plugin disable linear-gate@cj-stack`.
 
@@ -69,4 +77,5 @@ To turn the mod off, run `claude plugin disable linear-gate@cj-stack`.
 - [hooks/register.test.ts](hooks/register.test.ts): the tests for the questions and the decisions.
 - [hooks/dialog.test.ts](hooks/dialog.test.ts): the tests for the dialog colors.
 - [hooks/headless.test.ts](hooks/headless.test.ts): the tests for sessions with no surface.
+- [hooks/shift.test.ts](hooks/shift.test.ts): the tests for the shift hours and the `onShift` option.
 - [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
