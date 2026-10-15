@@ -3,6 +3,13 @@
 When a new frontier model ships (Fable or Opus tier), audit the stack with the instruction-file
 tools below and trim before you add: cut any rule you would follow without being told.
 
+## Prior art
+
+Before adding or changing a skill or mod, research how public AI-coding practitioners solve it:
+their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan's pstack
+(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy only what fits a limited
+token budget: gstack assumes heavy parallel spend.
+
 ## Authoring tools
 
 Use what Claude Code ships before writing your own checks:
