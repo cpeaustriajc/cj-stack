@@ -14,8 +14,13 @@ A short brief of where the work stands, cheap enough to run at the start of any 
 
 1. Scope: the current project, the last 7 days, and the topic if I named one.
 2. Search the transcripts once with grep for the topic or for branch names, issue keys and PR
-   numbers; read only the matching regions. No subagents. Where they live:
-   `references/<tool>.md`.
+   numbers, and count the matching sessions. Where they live: `references/<tool>.md`.
+   - 5 or fewer: read only the matching regions yourself. No subagents.
+   - More than 5: start read-only Haiku subagents (`model: haiku`) in parallel, one per group
+     of about 5 sessions. Each returns its threads with the session id, a proposed tag from
+     step 4 and the evidence lines. Never Opus.
+   - Two transcripts disagree about one thread: one Sonnet subagent reads only that conflict.
+   - Merge the threads yourself before step 3.
 3. Check each thread against the live state: `git branch`, `git log`, `git worktree list` and
    the pull request list. The live state wins over a transcript.
 4. Write the brief in the chat:
