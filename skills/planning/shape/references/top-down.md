@@ -8,7 +8,7 @@ The shared core of `vision`, `shape` and `tickets`. Each of them reads this file
 | `shape` | Project | Spec with requirements R1…Rn, testing seams, milestones |
 | `tickets` | Work item | One slice, citing the requirements it meets |
 
-`triage` asks the open questions at the project level; `vision` grills the product itself.
+`grill` asks the open questions at the project level; `vision` grills the product itself.
 Questions thin out going down, because each level inherits what the one above settled.
 
 ## Five rules

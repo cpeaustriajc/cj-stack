@@ -3,7 +3,7 @@
 The feature request is the go for every step below. A step ends in a question only for a fact
 no tool can find, or a call of taste or business.
 
-1. Run `triage`. Settle what done looks like as an observable outcome before any code.
+1. Run `grill`. Settle what done looks like as an observable outcome before any code.
 2. Find the spec, the design and the closest existing pattern in the app. Follow them. Where the
    spec is silent, use the closest existing pattern and name it in the PR. Ask only when the spec
    and a recorded decision conflict. For UI with no approved design, run the prototype playbook

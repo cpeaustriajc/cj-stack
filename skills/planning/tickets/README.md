@@ -10,7 +10,7 @@ Use it when a spec is confirmed and you need the next piece of work. Use it also
 - You say "file these bugs as issues" or "rewrite this ticket".
 - A ticket does two things and needs a split.
 
-Do not use it to write the spec or the milestones: use `shape`. Do not use it to plan a whole product: use `vision`. Do not use it to ask questions about an approach: use `triage`. Do not use it to fix the ticket's code.
+Do not use it to write the spec or the milestones: use `shape`. Do not use it to plan a whole product: use `vision`. Do not use it to ask questions about an approach: use `grill`. Do not use it to fix the ticket's code.
 
 ## Example
 

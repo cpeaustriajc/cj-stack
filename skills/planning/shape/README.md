@@ -11,7 +11,7 @@ Use it when planning goes wrong in predictable ways: a spec filed as a ticket, r
 - A spec arrives pasted into one ticket.
 - Direction changes after a demo, or you need a project status update.
 
-Do not use it for a vague product idea: use `vision`. Do not use it to cut tickets from a confirmed spec: use `tickets`. Do not use it to ask questions about one change: use `triage`.
+Do not use it for a vague product idea: use `vision`. Do not use it to cut tickets from a confirmed spec: use `tickets`. Do not use it to ask questions about one change: use `grill`.
 
 ## Example
 

@@ -1,5 +1,5 @@
 ---
-name: triage-poke-holes
+name: grill-poke-holes
 runs: 2
 max_turns: 3
 allowed_tools: [Skill, Read, Glob, Grep]

@@ -1,6 +1,6 @@
 {
   "name": "hone-nudge",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run",
   "author": { "name": "CJ" }
 }

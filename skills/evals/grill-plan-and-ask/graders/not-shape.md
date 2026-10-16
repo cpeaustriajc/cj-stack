@@ -6,4 +6,4 @@ min: 0
 max: 0
 ---
 
-The shape skill was not loaded: this request belongs to triage.
+The shape skill was not loaded: this request belongs to grill.

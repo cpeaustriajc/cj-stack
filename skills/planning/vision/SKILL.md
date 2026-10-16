@@ -16,7 +16,7 @@ Product row), and how writes are made and checked.
 
 ## 1. Grill me
 
-Run the interview from `../triage/SKILL.md`, from **Grilling** to **Ending**: the ledger, rounds
+Run the interview from `../grill/SKILL.md`, from **Grilling** to **Ending**: the ledger, rounds
 of questions with recommended answers, lookups before asking. Skip its sizing; a product idea is
 always grilled. An idea handed over from `scout` arrives with its filter scores, which answer
 section 2's Real, Reach and copies rows; start the ledger from them and ask only what scored

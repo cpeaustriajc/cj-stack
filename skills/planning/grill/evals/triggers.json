@@ -12,7 +12,7 @@
   "should_trigger": true
  },
  {
-  "query": "triage this: users say the search is 'weird' on mobile",
+  "query": "users say the search is 'weird' on mobile. ask me questions first before you change anything",
   "should_trigger": true
  },
  {
@@ -45,6 +45,10 @@
  },
  {
   "query": "what's my most repeated correction to claude lately",
+  "should_trigger": false
+ },
+ {
+  "query": "triage #272 and tell me if an agent can take it alone",
   "should_trigger": false
  }
 ]

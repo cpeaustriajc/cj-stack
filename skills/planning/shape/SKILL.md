@@ -35,7 +35,7 @@ and how writes are made and checked.
 1. **Read the parent.** Quote the product feature this project serves; the project's Done must
    deliver it.
 2. **Settle what is still open, and only that.** The product already settled who it is for, the
-   destination and this feature's outcome; carry them in as Settled. Run `triage` on what
+   destination and this feature's outcome; carry them in as Settled. Run `grill` on what
    remains; many open questions mean the product was too vague, so say so and offer to revisit
    `vision`. The spec records decisions and
    invents nothing to fill a section.

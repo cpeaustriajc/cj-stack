@@ -1,5 +1,5 @@
 ---
-name: triage-plan-and-ask
+name: grill-plan-and-ask
 runs: 2
 max_turns: 3
 allowed_tools: [Skill, Read, Glob, Grep]

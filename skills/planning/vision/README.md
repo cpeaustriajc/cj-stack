@@ -11,7 +11,7 @@ Use it when an idea is still vague and you want an honest answer before any spec
 - Something you built for yourself might sell.
 - You want a product-level status update.
 
-Do not use it to grill one change or design: use `triage`. Do not use it to write the spec for one feature: use `shape`. Do not use it to cut tickets: use `tickets`.
+Do not use it to grill one change or design: use `grill`. Do not use it to write the spec for one feature: use `shape`. Do not use it to cut tickets: use `tickets`.
 
 ## Example
 
@@ -38,7 +38,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## What it does
 
 - Claude finds your tracker (Linear, Jira, GitHub or another) from `CLAUDE.md`, `AGENTS.md` or the connected tools. If it finds none, it asks once.
-- Claude runs the interview from `triage` and asks the worth-it question first. A product idea is always grilled, never only sized.
+- Claude runs the interview from `grill` and asks the worth-it question first. A product idea is always grilled, never only sized.
 - Claude puts a vague answer under "Not yet specified" and does not press it into a feature.
 - Claude makes the riskiest unknown the first item of the first project, if a lookup or prototype can settle it.
 - Claude writes the product with these parts: Status, Destination, Worth it, Success, Features, Sequence, Not yet specified and Out of scope.
@@ -58,5 +58,5 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 
 - [SKILL.md](SKILL.md): the method Claude follows.
 - [../shape/references/top-down.md](../shape/references/top-down.md): the five planning rules and the tracker lookup.
-- [../triage/SKILL.md](../triage/SKILL.md): the interview method.
+- [../grill/SKILL.md](../grill/SKILL.md): the interview method.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.

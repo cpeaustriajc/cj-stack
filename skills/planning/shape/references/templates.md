@@ -5,7 +5,7 @@ is missing a section below, use these shapes.
 
 ## Spec
 
-Written from decisions already made (`triage`), never to make new ones. A section with nothing
+Written from decisions already made (`grill`), never to make new ones. A section with nothing
 real to say is left out rather than filled.
 
 ```markdown

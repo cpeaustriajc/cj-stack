@@ -11,7 +11,7 @@
     {
       "name": "cj-stack",
       "source": "./skills",
-      "description": "vision, shape and tickets for top-down planning in any tracker, triage, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
+      "description": "vision, shape and tickets for top-down planning in any tracker, grill, project-knowledge and hone; break-it, ui-polish, feature-files, playbooks and interrogate for proving the work; /commit and /create-pr for the terminal.",
       "category": "productivity",
       "keywords": [
         "planning",

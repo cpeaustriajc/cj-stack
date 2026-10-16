@@ -1,4 +1,4 @@
-# triage
+# grill
 
 A skill that sizes a change, then interviews you in short rounds of questions. Each question has a recommended answer. It stops when no decision is open.
 
@@ -6,7 +6,7 @@ A skill that sizes a change, then interviews you in short rounds of questions. E
 
 Use it before you build, when a design or change has decisions nobody made yet. Claude looks up facts itself and asks you only what is yours to decide.
 
-- You say "triage this", "grill me", "ask me questions first" or "stress-test this".
+- You say "grill me", "ask me questions first" or "stress-test this".
 - You say "poke holes in this" or "plan and ask me".
 - A change touches 3 or more files, has several approaches or has unclear scope.
 
@@ -14,7 +14,7 @@ Do not use it for a whole product idea or for "is this worth building?": use `vi
 
 ## Example
 
-You say: "Triage this: users say the search is 'weird' on mobile."
+You say: "Grill me on this: users say the search is 'weird' on mobile."
 
 1. Claude looks up the code and names a tier in one line: trivial, small or grill.
 2. Claude posts a short ledger of what is settled and what it assumed.

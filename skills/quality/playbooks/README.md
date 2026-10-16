@@ -45,7 +45,7 @@ The skill writes no files of its own. It changes how Claude plans and reports.
 - Evidence is a command you can re-run, plus its trace, screenshots or video.
 - Claude reads the project's feature file first, if one exists. The `feature-files` skill writes it.
 
-The feature playbook also runs `triage` first, and `ui-polish` and `break-it` for anything with UI.
+The feature playbook also runs `grill` first, and `ui-polish` and `break-it` for anything with UI.
 
 ## Limits
 

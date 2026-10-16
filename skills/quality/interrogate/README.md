@@ -11,7 +11,7 @@ Say "interrogate", "second opinion" or "cross-check this".
 - For a quick single-pass review, ask Claude directly.
 - To test a flow as a careless user, use `break-it`.
 - To review a UI against a design, use `ui-polish`.
-- To question a plan before you build, use `triage`.
+- To question a plan before you build, use `grill`.
 
 ## Example
 
