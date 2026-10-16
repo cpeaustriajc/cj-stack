@@ -68,7 +68,7 @@ routing() {
   while read -r s; do ln -s "$root/skills/${s#./}" "$p/skills/$(basename "$s")"; done <<<"$list"
   [[ -n "$(ls "$p/skills")" ]] || { failed=1; echo "FAILED: no skills linked into the eval plugin"; return; }
   # In-progress skills with routing cases join the eval plugin only; they still don't ship.
-  for s in drive scout; do ln -s "$root/skills/in-progress/$s" "$p/skills/$s"; done
+  for s in drive scout triage; do ln -s "$root/skills/in-progress/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
   cp -r skills/evals/. "$p/evals/"
   (cd "$p" && claude plugin eval . --eval-dir evals --runs "${RUNS:-2}" --ablation none \

@@ -52,7 +52,7 @@
     {
       "name": "cj-lab",
       "source": "./skills/in-progress",
-      "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify and recall. Expect changes.",
+      "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall and triage. Expect changes.",
       "category": "productivity",
       "keywords": [
         "in-progress",
