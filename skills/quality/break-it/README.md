@@ -39,6 +39,7 @@ Requirement: a browser skill or tool that Claude can drive. Video or GIF recordi
 
 - Claude runs only against localhost, a preview deploy, staging or a sandbox. If the URL looks like production, Claude stops and asks.
 - Claude uses throwaway test accounts and the payment provider's test cards. It sends no real email, SMS or webhook.
+- For worst-case data, Claude first finds each field's limit in the schema, then seeds values from the catalog through a dev-only fixture. The fixture stays as a regression test.
 - Claude gives each user type one goal and notes what that user expected and what happened. It checks the console and failed network requests.
 - Claude writes `break-it-<date>-<flow>/` with `report.md`, numbered screenshots and the video. The report starts with the URL, the commit and the users run.
 - The chat summary adds Decisions for you and What held up.
@@ -55,4 +56,5 @@ Requirement: a browser skill or tool that Claude can drive. Video or GIF recordi
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/catalog.md](references/catalog.md): the worst-case values Claude seeds, by field type.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.

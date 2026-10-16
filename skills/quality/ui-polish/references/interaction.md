@@ -65,7 +65,15 @@ Check each rule against the change. A row in the report names the rule it breaks
 - `-webkit-tap-highlight-color: transparent` only when the control has its own visible pressed
   state.
 - A `theme-color` meta for each colour scheme, light and dark, using its `media` attribute.
+- A `color-scheme` meta (or CSS property) names the schemes the page supports, so native controls
+  and scrollbars match.
+- The viewport meta has `viewport-fit=cover` wherever `env(safe-area-inset-*)` is used; without
+  it the insets are 0. Add `interactive-widget=resizes-content` when inputs sit at the bottom, so
+  the Android keyboard resizes the layout as iOS does.
+- `-webkit-touch-callout: none` on links and images that act as controls, never on content.
+- A horizontal carousel or swipe surface sets `touch-action: pan-y`, so the page still scrolls
+  vertically through it. `touch-action: none` only where the element owns every axis.
 - `user-select: none` only on controls such as buttons, tabs and drag handles, never on content.
 - Check on a real phone, not only a narrow desktop window.
 
-Sources: https://vercel.com/design/guidelines, https://github.com/vercel-labs/web-interface-guidelines, https://rauno.me/craft/interaction-design, https://developer.apple.com/videos/play/wwdc2018/803/, https://www.joshwcomeau.com/animation/css-transitions/, https://www.w3.org/TR/WCAG22/, https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html
+Sources: https://vercel.com/design/guidelines, https://github.com/vercel-labs/web-interface-guidelines, https://rauno.me/craft/interaction-design, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/mobile-native/SKILL.md, https://developer.apple.com/videos/play/wwdc2018/803/, https://www.joshwcomeau.com/animation/css-transitions/, https://www.w3.org/TR/WCAG22/, https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html

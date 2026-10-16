@@ -31,6 +31,13 @@ Check each rule against the change. A row in the report names the rule it breaks
 - On the web that means the Web Animations API or a JS spring. CSS keyframes don't carry velocity.
 - On release, project the endpoint from the velocity instead of snapping to the nearest point.
 - Edges rubberband instead of stopping hard.
+- An interrupted or reversed motion starts from the element's live on-screen value, not its
+  target. A jump at the reversal is a mistake.
+- 2D motion runs one spring per axis. One spring on the combined distance drifts off when X and
+  Y move at different speeds.
+- A drag captures the pointer once it starts, so it keeps tracking outside the element.
+- Once a drag starts, extra touches are ignored. A second finger must not make the element jump.
+- A drag commits to a direction only after about 10px of movement, then tracks 1:1.
 
 **Origin and space**
 - Popovers scale from their trigger with `transform-origin`.
@@ -41,9 +48,12 @@ Check each rule against the change. A row in the report names the rule it breaks
 **Feedback and hover**
 - `:active` scales the control to about 0.97.
 - Hover effects sit behind `@media (hover: hover) and (pointer: fine)`.
+- A press-and-hold fills slowly while held and snaps back fast on release. Release is never slower
+  than press.
 
 **Reduced motion and theme**
 - Reduced motion keeps opacity and colour changes and drops movement. Crossfade instead of moving.
+- A crossfade that still shows both states at once gets a brief blur of about 2px to merge them.
 - A crossfade blur stays near 2px, never near 20px.
 - The theme toggle switches instantly, with transitions suppressed during the switch.
 
@@ -54,11 +64,17 @@ Check each rule against the change. A row in the report names the rule it breaks
 
 **Implementation**
 - Name the transitioned properties. `transition: all` is a mistake.
-- `will-change` appears only on elements that actually animate.
+- `will-change` appears only on elements that actually animate, and only to fix a problem seen
+  in the browser, such as a 1px shift at the start or end. Added up front, it is a mistake.
+- A child's transform is set on the child, not through a CSS variable on its parent. An
+  inherited variable recalculates every descendant each frame, so the motion slows as content grows.
+- Framer Motion's `x`, `y` and `scale` shorthands run on the main thread. Where they drop frames
+  under load, the full `transform` string is used.
+- An animated shadow uses `filter: drop-shadow()`, not `box-shadow`, which repaints every frame.
 - Values that change every frame, such as drag position or scroll-linked progress, are written
   straight to the element's style, not routed through framework state that re-renders.
 
 **How to check**
 - Watch the motion at 2-5x slow motion in DevTools. Judge the origin, the easing and any overlap there, not at full speed.
 
-Sources: https://emilkowal.ski/ui/great-animations, https://github.com/emilkowalski/skill, https://developer.apple.com/videos/play/wwdc2018/803/, https://developer.apple.com/videos/play/wwdc2023/10158/, https://www.joshwcomeau.com/animation/css-transitions/, https://paco.me/writing/disable-theme-transitions, https://rauno.me/craft/interaction-design
+Sources: https://emilkowal.ski/ui/great-animations, https://github.com/emilkowalski/skill, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/review-animations/STANDARDS.md, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/animation-performance/SKILL.md, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/apple-design/SKILL.md, https://raw.githubusercontent.com/emilkowalski/skill/main/performance-cheatsheet.md, https://developer.apple.com/videos/play/wwdc2018/803/, https://developer.apple.com/videos/play/wwdc2023/10158/, https://www.joshwcomeau.com/animation/css-transitions/, https://paco.me/writing/disable-theme-transitions, https://rauno.me/craft/interaction-design

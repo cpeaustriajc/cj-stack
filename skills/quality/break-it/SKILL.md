@@ -50,9 +50,9 @@ allows.
 | Thumb | 320px wide, 200% zoom, slow 3G, offline mid-flow, landscape |
 | Nosy | Edits IDs in the URL, tries another account's resource, replays a finished step |
 
-Then add **worst-case data**: seed or toggle the screen with the longest real names, an empty
-list, a single item, thousands of items, missing images, a zero price and the largest price.
-Use a dev-only toggle or fixture, never a change the user can see.
+Then add **worst-case data**: map each rendered field to its schema limit, then seed the
+screen from `references/catalog.md`. Use a dev-only toggle or fixture, never a change the user
+can see, and keep the fixture as a regression test.
 
 ## 3. The loop
 
