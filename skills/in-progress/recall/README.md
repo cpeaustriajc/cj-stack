@@ -31,7 +31,9 @@ The opt-in `cj-lab` plugin ships it:
 
 ## What it does
 
-- Reads the transcripts of the current project with one search, and no subagents.
+- Reads the transcripts of the current project with one search.
+- Reads up to 5 matching sessions itself. For more, it starts Haiku subagents, one per group of about 5 sessions.
+- Starts one Sonnet subagent only if two transcripts disagree about one thread.
 - Runs `git` and the pull request list. The live state wins over a transcript.
 - Writes nothing to disk. The brief stays in the chat.
 
