@@ -11,7 +11,8 @@ no tool can find, or a call of taste or business.
 3. Cut the work into slices that each end in a state you can check in the running app, each
    touching about 2-3 files. Prefer more, smaller slices.
 4. Per slice: build it, run its end-to-end check, save the evidence, commit. Never commit
-   red.
+   red. Take each expected value in a check from the spec, a literal or a worked example,
+   never by computing it the way the code does: such a check cannot fail.
 5. For anything with UI, run `ui-polish` against the design, then `break-it` on the finished
    flow. Fix every row, then run them again until clean.
 6. Create or update the feature file for the area.

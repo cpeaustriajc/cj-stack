@@ -1,0 +1,6 @@
+{
+  "name": "git-guard",
+  "version": "0.1.0",
+  "description": "Denies a Bash git command that loses work Claude Code does not already guard: git branch -D, a force push to main or master, and git checkout -- . or git restore . on a dirty tree; each deny names the safe alternative",
+  "author": { "name": "CJ" }
+}

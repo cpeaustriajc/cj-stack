@@ -75,6 +75,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list | optional |
 | [kill-guard](mods/kill-guard/README.md) | denies a shell command that stops processes by name or port, which can also stop another checkout's dev server | optional |
+| [git-guard](mods/git-guard/README.md) | denies `git branch -D`, a force push to main or master, and `git checkout -- .` or `git restore .` on a dirty tree; names the safe alternative | optional |
 
 ## Other plugins
 
