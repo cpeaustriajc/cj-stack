@@ -1,7 +1,7 @@
 {
   "name": "cj-lab",
-  "version": "0.5.0",
-  "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall, triage and why. Expect changes.",
+  "version": "0.6.0",
+  "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall, triage, why and principles. Expect changes.",
   "author": {
     "name": "CJ"
   },
@@ -10,6 +10,7 @@
     "./self-verify",
     "./recall",
     "./triage",
-    "./why"
+    "./why",
+    "./principles"
   ]
 }
