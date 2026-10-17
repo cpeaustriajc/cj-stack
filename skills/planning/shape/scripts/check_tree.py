@@ -11,6 +11,10 @@ MAX_CHARS = 1500
 DONE_WHEN = range(1, 6)
 
 
+def quoted_len(rid, req):
+    return len(f'- [ ] {rid}: "{req.get("text", "")}"\n')
+
+
 def check(tree, launch=False):
     problems, notes = [], []
     product = tree.get("product")
@@ -68,8 +72,11 @@ def check(tree, launch=False):
                 problems.append(f"{iid}: no 'you see' line")
             if item.get("done_when") is not None and item["done_when"] not in DONE_WHEN:
                 problems.append(f"{iid}: {item['done_when']} Done When checks; at most 5, so split it")
-            if item.get("chars", 0) > MAX_CHARS:
-                problems.append(f"{iid}: body is {item['chars']} characters; over {MAX_CHARS}, so split it")
+            body = item.get("chars", 0)
+            quoted = sum(quoted_len(r, reqs[r]) for r in set(cited) if r in reqs)
+            if body - quoted > MAX_CHARS:
+                problems.append(f"{iid}: body is {body} characters, {quoted} of them quoted requirements; "
+                                f"the rest is over {MAX_CHARS}, so split it")
 
         open_reqs = sorted(r for r in live - covered if not reqs[r].get("deferred"))
         if confirmed and open_reqs:

@@ -82,6 +82,17 @@ case("an item citing a dropped requirement fails",
 case("a build item without a you-see line fails", seti(you_see=" "), "no 'you see'")
 case("six Done When checks fail", seti(done_when=6), "split it")
 case("an over-long body fails", seti(chars=1600), "1600 characters")
+LONG = "A returning buyer who saved a domain to the watch list gets an email when its price drops, and the link in that email opens checkout with the domain already in the cart and the new price shown."
+
+
+def renav_287(t):
+    P(t)["requirements"] = [{"id": f"R{n}", "text": LONG} for n in (1, 2, 3)]
+    I(t).update(requirements=["R1", "R2", "R3"], chars=1963)
+    P(t)["items"].pop()
+
+
+case("quoted requirement lines do not count toward the limit (renav #287)", renav_287, None)
+case("an over-long body names its quoted part", seti(chars=1600), "14 of them quoted")
 case("an unsliced requirement is only a note before Launch",
      lambda t: P(t)["items"].pop(), None)
 case("an unsliced requirement fails at Launch",
