@@ -46,6 +46,7 @@ A GitHub wiki needs the `gh` CLI signed in. Notion and Linear need their MCP ser
 - Research pages carry a date, and unconfirmed facts are marked UNVERIFIED. Replaced findings move under a `## History` heading.
 - A decision date comes from a commit, an issue or your word. If none exists, Claude writes the month only.
 - Claude does not invent a reason. If the record does not say why, the page says so and Claude asks you.
+- Before it publishes, Claude reads each page for AI-sounding prose, such as arrows and metaphor nouns, and rewrites it.
 - For a GitHub wiki, `scripts/ghwiki.sh` keeps one managed clone under `~/.cache/project-knowledge/github/<owner>/<repo>`.
 
 ## Limits

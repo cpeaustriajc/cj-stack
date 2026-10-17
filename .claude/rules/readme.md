@@ -9,7 +9,7 @@ paths:
 
 Each skill folder and each mod folder has a `README.md`. A person reads it, not Claude: Claude
 loads `SKILL.md` and the hooks, never the README. `python3 -I scripts/check_readmes.py` checks
-the structure and the sentence lengths.
+the structure, the sentence lengths and the banned words in Sentences.
 
 ## Reader
 

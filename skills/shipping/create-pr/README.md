@@ -42,6 +42,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - If a PR is already open for the branch, it pushes and reports the URL. It does not open a duplicate.
 - The PR body follows the repo's template. Otherwise it holds a short summary, a `Related` line, an `Evidence` line and a `Merge danger` line.
 - It links the issue as related and never writes `Closes`, `Fixes` or `Resolves`.
+- Before it opens the PR, Claude reads the title and body for AI-sounding prose, such as arrows and metaphor nouns, and rewrites it.
 
 ## Limits
 
