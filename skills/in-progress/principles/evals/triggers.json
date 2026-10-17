@@ -1,0 +1,12 @@
+[
+  {"query": "apply prove it works: show me the import really wrote the rows", "should_trigger": true},
+  {"query": "subtract before you add here, there are already three adapters", "should_trigger": true},
+  {"query": "two fixes for the flaky upload test failed, both blamed the timeout. attack the premise", "should_trigger": true},
+  {"query": "which principle says we should validate only at the boundary?", "should_trigger": true},
+  {"query": "this test still passes if total() returns 0. should we keep it?", "should_trigger": true},
+  {"query": "you say the cache made search 40% faster. how sure are you of that number?", "should_trigger": true},
+  {"query": "fix the failing login test", "should_trigger": false},
+  {"query": "review this diff before I open the PR", "should_trigger": false},
+  {"query": "break this spec into tickets", "should_trigger": false},
+  {"query": "rename the getUser function to fetchUser", "should_trigger": false}
+]
