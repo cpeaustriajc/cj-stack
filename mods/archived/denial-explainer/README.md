@@ -1,5 +1,9 @@
 # denial-explainer
 
+> Archived: not maintained.
+
+The newer Claude Code interface shows auto-mode denials well enough on its own, so the toast added little.
+
 A mod (a plugin that adds a hook to Claude Code) that explains an auto-mode denial. It names the rule that blocked the action and shows the allow rule that would cover it.
 
 ## Why
@@ -10,12 +14,7 @@ denial-explainer shows a toast (a short message in the interface) after each cla
 
 ## Install
 
-```
-/plugin marketplace add cpeaustriajc/cj-stack
-/plugin install denial-explainer@cj-stack
-```
-
-To see that it is on, run `claude plugin list` and look for `denial-explainer`. The mod is optional: `cj-stack` does not install it.
+It is not installable from the marketplace. No plugin in `.claude-plugin/marketplace.json` lists it, so no cj-stack plugin ships it.
 
 ## Example
 
@@ -55,8 +54,6 @@ The allow rule depends on the tool:
 ## Settings
 
 No settings.
-
-To turn the mod off, run `claude plugin disable denial-explainer@cj-stack`.
 
 ## Limits
 
