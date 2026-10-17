@@ -71,6 +71,8 @@ routing() {
   for s in drive scout triage; do ln -s "$root/skills/in-progress/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
   cp -r skills/evals/. "$p/evals/"
+  # Cases with a scaffold_script test behaviour, not routing, and fail without --scaffold.
+  grep -l scaffold_script "$p"/evals/*/case.yaml 2>/dev/null | while read -r c; do rm -rf "$(dirname "$c")"; done
   (cd "$p" && claude plugin eval . --eval-dir evals --runs "${RUNS:-2}" --ablation none \
     --trust-plugin --no-publish --max-cost-usd 10 -j 4) || { failed=1; echo "FAILED: routing evals"; }
   rm -rf "$p"
