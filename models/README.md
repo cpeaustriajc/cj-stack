@@ -45,3 +45,16 @@ falls back to `interrogate` with fresh Claude reviewers.
 | Find files and call sites | Haiku 5.5 (Explore) |
 | Read the web and weigh sources | Sonnet 5.5 (researcher) |
 | Final PR review | GPT-6.1 sol on workdays; Claude-only `interrogate` otherwise |
+
+## Cache-friendly subagents
+
+Each call reads the whole context again. Cached input is cheap, but it is not free.
+
+- In a subagent brief, put the stable part first and the variable part last. Then parallel agents of
+  the same type share a cached prefix up to the first difference.
+- To start new work, start a fresh thread with a short spec. Do not revive a long thread: each of
+  its calls reads all of its history again.
+- A thread that waits on a background run ends its turn once. A turn that only reports progress
+  reads the whole context again and does no work.
+- Use one subagent per independent concern, not many small ones. Each subagent loads its own system
+  prompt and tools again.

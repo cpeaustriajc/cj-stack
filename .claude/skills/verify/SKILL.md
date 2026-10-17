@@ -27,15 +27,15 @@ Map the diff to features with `.claude/skills/verify/select.sh [base]` (default 
 
 ## Drive
 
-For each selected feature, run its command under bash and read the runner's own exit code:
+Run the selected features in order:
 
 ```
-set -o pipefail
-mkdir -p .claude/work/verify/<short sha>
-<command> 2>&1 | tee .claude/work/verify/<short sha>/<feature>.log
-status=${PIPESTATUS[0]}
-echo "exit=$status"
+.claude/skills/verify/select.sh [base] | .claude/skills/verify/drive.sh
 ```
+
+`drive.sh` runs each command under bash with `tee` to `.claude/work/verify/<short sha>/<feature>.log`.
+It keeps the command's own exit code, and prints and logs one line per feature, such as
+`[3/8] ✔ skills (19s)` or `[4/8] ✘ routing (42s, exit 1)`. It exits 1 if any command failed.
 
 - A mod's log must show `N pass` with N > 0 and `0 fail`; zero tests is NOT VERIFIED.
 - `routing` costs about $2; run it with `RUNS=1` unless a routing case changed. Over budget or
