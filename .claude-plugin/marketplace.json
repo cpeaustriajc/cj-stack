@@ -119,6 +119,12 @@
       "source": "./mods/git-guard",
       "description": "Denies a Bash git command that loses work: git branch -D, a force push to main or master, and git checkout -- . or git restore . on a dirty tree; each deny names the safe alternative.",
       "category": "productivity"
+    },
+    {
+      "name": "bash-trim",
+      "source": "./mods/bash-trim",
+      "description": "Cuts a long successful Bash output to its first 2,000 and last 3,000 characters with a cut count; read-like commands, failures and saved outputs pass whole.",
+      "category": "productivity"
     }
   ]
 }
