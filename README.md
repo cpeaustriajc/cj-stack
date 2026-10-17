@@ -8,6 +8,7 @@ CJ's skills and mods for Claude Code.
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
 - [Other plugins](#other-plugins): opt-in skill sets
 - [Models](models/README.md): which model does what, and why cross-vendor review stays
+- [Scope](SCOPE.md): what cj-stack is, and the ideas it rejects with the reason for each
 - [painting-craft: before and after](#painting-craft-before-and-after)
 
 ## Install
