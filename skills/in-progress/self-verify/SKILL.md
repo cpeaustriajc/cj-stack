@@ -43,6 +43,14 @@ A proof is a command that a person can re-run. The proof leaves evidence that a 
   already isolates.
 - Write one result line per feature: `VERIFIED`, `NOT VERIFIED` or `BLOCKED`, plus the command.
 - Save the report, screenshots or trace in a path the reviewer can open. Print the path.
+- Each capture gets a reviewer before you write its result line. A capture is a screenshot, a
+  video end frame or saved output. The reviewer is a new read-only agent on the smallest model
+  tier. An agent that has read the log or the steps is not fresh, and that includes a PR
+  verifier. Read `references/claude-code.md` first. Give the reviewer only the capture and the
+  end state that the claim names. It answers one question: does the capture show that state? For
+  a repro, that is the broken state; for a fix, the fixed state. VERIFIED needs its "yes"; "no"
+  or "cannot tell" makes the line NOT VERIFIED. A new capture gets a new reviewer; never ask
+  again about the same capture.
 
 ## No fake tests
 
@@ -72,9 +80,21 @@ When a verify run fails:
 ## Weekly audit
 
 Run the verify skill on the default branch once a week, by a scheduled routine or a desktop
-scheduled task. Mechanics: `references/claude-code.md`. The audit:
+scheduled task. Mechanics: `references/claude-code.md`. Do these steps in this order:
 
-- Drives every feature once in the live app.
+1. **Source wave.** Read `references/claude-code.md` first. Start one read-only reader on the
+   smallest model tier for each feature file, all at the same time. Each reader compares its
+   feature file with the code on the **Code** line. It returns each drift
+   as the code's `file:line` and the feature-file line that the code contradicts, or "no drift".
+   A reader never drives the app and never edits.
+2. **Churn sweep.** List the paths that the commits since the last audit changed. One more
+   reader of the same kind finds the user-facing surfaces in them (routes, commands, screens) that no feature
+   file lists. Drop each finding that has no source path.
+3. **Live pass.** Drive every feature once in the live app, also when the source wave found no
+   drift. A reader's drift is a lead: fix a feature file only after the live pass confirms it.
+
+The audit:
+
 - Ends in exactly one result:
   - **clean**: no PR.
   - **changed**: one PR that fixes only feature files and the verify skill.
@@ -82,6 +102,7 @@ scheduled task. Mechanics: `references/claude-code.md`. The audit:
 - Never edits product code.
 - Sorts each mismatch into doc drift, harness gap or product regression. Doc drift and harness
   gaps go into the PR. A product regression goes to the tracker, not into the map.
+- Treats an unlisted surface as doc drift: the PR adds its feature file, proved in the live pass.
 
 ## PR verdict
 

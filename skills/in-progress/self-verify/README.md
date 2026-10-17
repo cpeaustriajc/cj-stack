@@ -38,7 +38,9 @@ This skill is not shipped in any plugin, so you cannot install it yet.
 
 - Claude rejects tests that pass without proof, such as a test whose only assertion is `toBeTruthy`.
 - Claude reads the real exit code of the test runner. Zero tests run counts as `NOT VERIFIED`.
-- A weekly audit drives every feature in the live app. It ends as clean, changed (one PR for feature files and the verify skill only) or blocked.
+- A fresh agent looks at each screenshot or output before the result line. If it cannot see the claimed state, the line is `NOT VERIFIED`.
+- A weekly audit first starts one read-only agent per feature file to compare the file with the code. Another agent lists new routes, commands and screens that no feature file names.
+- The audit then drives every feature in the live app. It ends as clean, changed (one PR for feature files and the verify skill only) or blocked.
 - A fresh agent posts a PR verdict: `PASS`, `PASS+NOTES`, `FAIL` or `BLOCKED`. The comment holds the head SHA and the `git patch-id`.
 - Each `FAIL` ends with one prevention proposal. Nothing is applied until you accept it.
 
@@ -53,6 +55,7 @@ This skill is not shipped in any plugin, so you cannot install it yet.
 ## More
 
 - [SKILL.md](SKILL.md): the method.
-- [references/claude-code.md](references/claude-code.md): the pre-commit run, the weekly audit and the stronger gates.
+- [references/claude-code.md](references/claude-code.md): the pre-commit run, the weekly audit, the agent models and the stronger gates.
 - [references/verify-template.md](references/verify-template.md): the template for the project's `verify` skill.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
+- [../evals/self-verify-audit-drift](../evals/self-verify-audit-drift) and [../evals/self-verify-wrong-capture](../evals/self-verify-wrong-capture): `claude plugin eval` cases for the audit and the evidence review.

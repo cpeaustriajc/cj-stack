@@ -44,6 +44,14 @@ Read the exit code. Zero tests run in the log is NOT VERIFIED.
 Save the report to `<report dir>/<feature>/`. Include the screenshot or trace.
 Print the path. The reviewer re-runs the command shown on the result line.
 
+## Evidence review
+
+Before you write a feature's result line, start one new read-only reviewer per capture:
+`<reviewer call from self-verify references/claude-code.md>`. Give it only the capture path and
+the end state that the claim names. Ask: "Does this capture show <end state>? Answer yes, no or
+cannot tell, then name what you see." VERIFIED needs "yes"; "no" or "cannot tell" makes the
+line NOT VERIFIED.
+
 ## Cleanup
 
 Stop only what this run started. Stop it by the PID or container name recorded at Launch. Never
