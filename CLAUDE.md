@@ -20,6 +20,11 @@ Use what Claude Code ships before writing your own checks:
   baseline. It reads cases from `evals/` at the plugin root (`skills/` for cj-stack,
   `skills/<bucket>/` for the opt-in plugins); a skill's own `evals/evals.json` is skill-creator's
   format, which it doesn't read.
+  - While you iterate, run one case with `--case <name> --runs 1 --max-cost-usd 3`. Run the
+    full suite at the default runs once, at the end.
+  - After a grader fix, rerun only the cases that grader scores (`--case`).
+  - If the no-plugin baseline passes a case, the case cannot show a gain. Make it harder or
+    drop it; do not rerun it.
 - `claude plugin details <plugin>` for a plugin's components and projected token cost.
 - `claude plugin test mods/<mod>` for a mod's hook tests.
 - `/doctor prompt-audit` when a new frontier model ships, and `/doctor prompt-audit <path>` after
