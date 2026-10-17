@@ -1,0 +1,10 @@
+[
+  {"query": "why is MAX_RETRIES set to 7 in src/sync.ts? seems random", "should_trigger": true},
+  {"query": "can I delete this null check in parseOrder, it looks pointless", "should_trigger": true},
+  {"query": "what's the history behind the 30s timeout in the payments client", "should_trigger": true},
+  {"query": "why is the cache keyed by tenant and not by user? I assume it was for performance", "should_trigger": true},
+  {"query": "what did we decide about the cart drawer", "should_trigger": false},
+  {"query": "where was I on the checkout work", "should_trigger": false},
+  {"query": "how does the retry loop in sync.ts work", "should_trigger": false},
+  {"query": "fix the failing login test", "should_trigger": false}
+]
