@@ -84,7 +84,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 |---|---|---|
 | `cj-paint` | painting-craft | where you paint in code |
 | `cj-jira` | archived Jira-era skills | only for a Jira client |
-| `cj-lab` | in-progress skills: [bug-hunt](skills/in-progress/bug-hunt/README.md), [self-verify](skills/in-progress/self-verify/README.md), [recall](skills/in-progress/recall/README.md), [why](skills/in-progress/why/README.md), [principles](skills/in-progress/principles/README.md) | to try them before they ship |
+| `cj-lab` | in-progress skills: [bug-hunt](skills/in-progress/bug-hunt/README.md), [self-verify](skills/in-progress/self-verify/README.md), [recall](skills/in-progress/recall/README.md), [why](skills/in-progress/why/README.md), [principles](skills/in-progress/principles/README.md), [implement](skills/in-progress/implement/README.md) | to try them before they ship |
 
 ## painting-craft: before and after
 
