@@ -49,7 +49,9 @@ run includes its project and that project's items.
   shaped); `deferred: true` marks a feature or requirement consciously left out of this round.
 - `kind`: `build`, `bug`, `chore` or `prototype`. A prototype item may sit under a Draft spec and
   cites no requirement.
-- `done_when`: the number of Done When checks; `chars`: the body's length.
+- `done_when`: the number of Done When checks; `chars`: the whole body's length. The check
+  subtracts the quoted lines of the cited requirements, computed from their `text`, before it
+  compares against 1,500.
 
 Run it as `top-down.md` says; add `--launch` when the project is entering Launch, so a
 requirement with no item fails instead of being listed as not yet sliced.

@@ -77,7 +77,8 @@ being settled inside a ticket, where nobody would find it again.
   one **You see** line says what the verifier observes. No click-by-click steps, no "record only"
   measurements, no "deliberately absent" lists.
 - **Out of Scope:** 0–3 bullets.
-- **Whole body:** under about 1,500 characters. Longer means split it.
+- **Whole body:** under about 1,500 characters. Longer means split it. Quoted requirement lines do
+  not count; the tree check subtracts them, computed from the cited requirements.
 - **No file paths or code**: they go stale. A prototype's snippet that pins a decision may be
   inlined, marked as from a prototype.
 - **An item is self-contained**: someone who never saw the conversation can pick it up from the
