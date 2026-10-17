@@ -79,12 +79,6 @@
       "category": "productivity"
     },
     {
-      "name": "denial-explainer",
-      "source": "./mods/denial-explainer",
-      "description": "Names the rule behind an auto-mode denial and the narrowest allow rule that would cover it.",
-      "category": "productivity"
-    },
-    {
       "name": "loop-brake",
       "source": "./mods/loop-brake",
       "description": "Ends a turn after N forced Stop-hook continuations, so a goal hook can't burn your usage.",
