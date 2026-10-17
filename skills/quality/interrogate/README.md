@@ -8,7 +8,7 @@ Use it before you open a PR on a risky change, such as auth, money, data migrati
 
 Say "interrogate", "second opinion" or "cross-check this".
 
-- For a quick single-pass review, ask Claude directly.
+- For a quick single-pass review, run the built-in `/code-review` command.
 - To test a flow as a careless user, use `break-it`.
 - To review a UI against a design, use `ui-polish`.
 - To question a plan before you build, use `grill`.
@@ -43,6 +43,7 @@ Requirement: Claude must be able to start subagents.
 - Claude verifies each finding itself. A reviewer can be confidently wrong.
 - Dismissed findings stay visible with a one-line reason, so you can override them.
 - Claude saves the bundle and the raw reviews in the ignored work folder (`.claude/work/<topic>/` in Claude Code) and tells you where they are.
+- If you ask for a quality pass, a fresh reviewer reads the diff for reuse, quality and efficiency after your fixes. In Claude Code, this pass is the built-in `/simplify` skill.
 
 ## Limits
 
@@ -54,4 +55,5 @@ Requirement: Claude must be able to start subagents.
 ## More
 
 - [SKILL.md](SKILL.md): the method and the reviewer prompt.
+- [references/claude-code.md](references/claude-code.md): how the reviewers and the quality pass run in Claude Code.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.

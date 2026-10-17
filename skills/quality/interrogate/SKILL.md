@@ -25,7 +25,8 @@ what the change is meant to do. Reviewers get only their slice of this bundle an
 ## 2. Run the reviewers
 
 Read-only subagents with fresh context, none of which has seen this conversation, run in
-parallel. Diversity comes from what each one sees, never from personas:
+parallel. Diversity comes from what each one sees, never from personas. Tool mechanics:
+`references/claude-code.md`.
 
 - **Full**: the whole bundle, on the session's own model.
 - **Blind**: the diff and the changed files with no description or spec, one model tier below
@@ -48,8 +49,7 @@ Every reviewer gets the same prompt:
 Merge duplicates and note which reviewers raised each finding. Then verify each one against the
 code yourself, since a reviewer can be confidently wrong. Sort them into:
 
-- **Act on**: verified, real and in scope. Five at most; more means you aren't filtering
-  hard enough.
+- **Act on**: verified, real and in scope.
 - **Consider**: plausible but unverified, or real but a judgment call.
 - **Noted**: true, out of scope or minor. One line each.
 - **Dismissed**: wrong or irrelevant. Keep each one visible with a one-line reason so I can
@@ -63,3 +63,11 @@ blind spots.
 Show the four groups, each finding with its reviewers, file:line and failure scenario. Ask with the
 ask tool which to fix. Apply nothing until I pick. Save the bundle and the raw reviews in
 the ignored work folder (`.claude/work/<topic>/` in Claude Code) and say where they are, so the review can be re-run.
+
+## 5. Quality pass, only when I ask
+
+When I ask for it ("check quality too", "simplify it"), run it after the report, and after the
+fixes I picked if I picked any. A fresh reviewer that did not write the code reads the diff for
+reuse, quality and efficiency, never for defects. Its changes stay uncommitted so I can read and
+revert them. Tool mechanics, such as a built-in that already does this pass:
+`references/claude-code.md`.
