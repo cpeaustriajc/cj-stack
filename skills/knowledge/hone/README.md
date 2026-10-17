@@ -1,6 +1,6 @@
 # hone
 
-A skill that reads your past Claude Code transcripts, finds the corrections you repeat, and proposes where each lesson should live. It changes nothing until you approve.
+A skill that reads your past Claude Code transcripts, finds repeated corrections and failures nobody corrected, and proposes where each lesson should live. It changes nothing until you approve.
 
 ## When to use it
 
@@ -41,9 +41,13 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - It runs `scripts/corrections.py`, which needs Python 3, prints progress and writes one markdown file of exchanges.
 - The script flags interrupted requests, rejected tool calls, dismissed forms and replies that open with "no", "why", "stop" or "don't".
 - Stop-hook feedback appears as `HOOK`, so a hook loop can become a lesson too.
+- A lens pass reads every turn (`corrections.py --turns`) in parallel with the correction pass. It finds failures nobody corrected: "done" with no proof, pasted context Claude could fetch, commands found again, skipped checks, and missed skills.
+- Each lens chunk goes to a Haiku subagent at medium effort.
 - The script accepts `--project <substring>`, `--since <YYYY-MM-DD>` and `--skill <skill>` to narrow the search.
 - A lesson qualifies when it shows up in 2 or more sessions, or once with an obvious cost.
-- Each proposal names a place, from strongest to weakest: code, lint, hook, test, skill, agent definition, instruction file.
+- Each proposal names a place, from strongest to weakest: code, lint, hook, test, skill, agent definition, instruction file. It says why each stronger place cannot hold the lesson.
+- A skill that should have loaded gets a description edit and a trigger case, proven with `claude plugin eval`.
+- A lint for a pattern that is already common fails only on a change that adds more.
 - A proposed lint, test or hook must first fail on a real past instance of the mistake.
 - It also proposes lines to remove, starting from `/doctor prompt-audit` for Claude Code.
 
@@ -61,4 +65,5 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - [references/claude-code.md](references/claude-code.md): the Claude Code audit commands it starts from.
 - [scripts/corrections.py](scripts/corrections.py) and [scripts/test_corrections.sh](scripts/test_corrections.sh): the extractor and its test.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
+- [tests/hone-lens](../../../tests/hone-lens/): `claude plugin eval` cases with fixture transcripts that hold no correction; `tests/hone-lens/run.sh` runs them against a no-plugin baseline.
 - [mods/hone-nudge](../../../mods/hone-nudge/): the optional mod that suggests `/hone <skill>`.
