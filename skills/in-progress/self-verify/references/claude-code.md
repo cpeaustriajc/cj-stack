@@ -21,6 +21,20 @@ Mechanics for Claude Code. Read the current docs when a detail matters, since th
 
 - Use a scheduled cloud routine (`schedule` skill).
 - Or use a desktop scheduled task.
+- Source wave: send one `Agent` call per feature file in one message, so they run in parallel.
+  Set `subagent_type: "Explore"` (no edit tools), `model: "haiku"` and `effort: "medium"`. Ask it
+  to find each route, label and command that the feature file names, and report each one that is
+  missing or different.
+- Churn sweep: run `git log --since=<last audit> --name-only --format=` in the session, since a
+  custom `Explore` can lack a shell. Give the paths to one more reader with the same settings.
+- Open each cited `file:line` before you act on it. If a reader misread one, run that feature
+  file again with `model: "sonnet"`.
+
+## Evidence review
+
+- One `Agent` call per capture: `subagent_type: "Explore"`, `model: "haiku"`, `effort: "medium"`.
+  Its `Read` tool shows images. Put the capture path and the end state in the prompt, nothing else.
+- `Read` cannot open a video. Pass the end frame: `ffmpeg -sseof -1 -i <video> -frames:v 1 end.png`.
 
 ## PR verdict
 
