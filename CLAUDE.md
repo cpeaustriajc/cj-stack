@@ -9,7 +9,7 @@ Before adding or changing a skill or mod, research how public AI-coding practiti
 their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan's pstack
 (`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy fan-outs too, with each
 agent on the cheapest model that can do its job (see `models/README.md`). Skip only what needs
-another vendor's models or a fleet of agents.
+another vendor's models or a fleet of agents. Check `SCOPE.md` before adding a skill or mod.
 
 ## Authoring tools
 
