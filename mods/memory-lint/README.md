@@ -34,11 +34,11 @@ The mod checks the Write and Edit tools on Markdown files in the memory director
 
 | Check | Example |
 |---|---|
-| Task state | "currently", "next step", "today", "just fixed" |
-| One-off reference | "PR #412", a commit hash, a `claude/` branch |
+| Task state | `currently`, `next step`, `today`, `just fixed` |
+| One-off reference | `PR #412`, a commit hash, a `claude/` branch |
 | Repo detail | `src/api/client.ts:42`, a code block |
-| Short-lived fact | "next week", "still pending", a `/tmp` path, a plan path |
-| Dated status | "since 2026-09-04", "as of 2026" |
+| Short-lived fact | `next week`, `still pending`, a `/tmp` path, a plan path |
+| Dated status | `since 2026-09-04`, `as of 2026` |
 | Size | a topic file or a `MEMORY.md` line over a set length |
 
 The size limits are in `hooks/register.ts`. A Write is checked whole, without its frontmatter. An Edit is checked only on the lines it adds, so removing or shortening memory always passes.

@@ -11,6 +11,7 @@ STATUS = {"archived": "> Archived: not maintained.", "in-progress": "> In progre
 MAX_LINES = 100
 MAX_WORDS = 25
 MAX_STEP_WORDS = 20
+BANNED = re.compile(r"\b(?:simply|just|powerful|seamless)\b|\b(?:e\.g|i\.e)\.|[\U0001F000-\U0001FAFF]|.\uFE0F", re.I)
 
 
 def folders():
@@ -57,6 +58,21 @@ def prose(lines):
             yield n, line, MAX_WORDS
 
 
+def banned(lines):
+    """Returns (line number, match) for each word or sign that .claude/rules/readme.md forbids."""
+    fenced = False
+    found = []
+    for n, line in enumerate(lines, 1):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        text = re.sub(r"\]\([^)]*\)", "]", re.sub(r"`[^`]*`", " ", line))
+        found += [(n, m.group()) for m in BANNED.finditer(text)]
+    return found
+
+
 def check(folder, headings, bucket):
     rel = folder.relative_to(ROOT)
     readme = folder / "README.md"
@@ -78,6 +94,8 @@ def check(folder, headings, bucket):
         for s in sentences(text):
             if words(s) > limit:
                 errors.append(f"{path}:{n}: {words(s)} words, at most {limit}: {s[:60]}...")
+    for n, match in banned(lines):
+        errors.append(f"{path}:{n}: banned \"{match}\" (see .claude/rules/readme.md)")
     return errors
 
 
