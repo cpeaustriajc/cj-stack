@@ -99,4 +99,20 @@ cp "$tmp/root/-proj/s.jsonl" "$tmp/root/-proj/resumed.jsonl"
 summary="$(python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" | tail -1)"; out="$(cat "$tmp/out.md")"
 check "a resumed session repeating the same exchange is written once" 1 "fix the source"
 
+# --turns: every turn, corrected or not, with its tool calls, for the lens pass
+BASH() { printf '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"b1","name":"Bash","input":{"command":"%s"}}]}}' "$1"; }
+DONE='{"type":"assistant","message":{"content":[{"type":"text","text":"Done, the tests pass."}]}}'
+SIDE='{"type":"assistant","isSidechain":true,"message":{"content":[{"type":"tool_use","id":"s1","name":"Bash","input":{"command":"sidechain-only"}}]}}'
+run turns "$(U 'add the export button')${NL}$(BASH 'npm run lint')${NL}$(SK release-notes)${NL}$SIDE${NL}$DONE${NL}$(U 'great, thanks')${NL}$A" --turns
+check "every turn is written, uncorrected ones too" 2 "### TURN" "USER: add the export button" "USER: great, thanks"
+[[ "$out" == *"TOOLS: Bash npm run lint; Skill release-notes"* ]] && { pass=$((pass+1)); echo "ok   tool calls listed in order"; } || { fail=$((fail+1)); echo "FAIL tool calls listed in order"; }
+[[ "$out" == *"CLAUDE: Done, the tests pass."* ]] && { pass=$((pass+1)); echo "ok   claude's last words kept"; } || { fail=$((fail+1)); echo "FAIL claude's last words kept"; }
+[[ "$out" != *"sidechain-only"* ]] && { pass=$((pass+1)); echo "ok   subagent calls left out"; } || { fail=$((fail+1)); echo "FAIL subagent calls left out"; }
+
+run plain "$(U 'add the export button')${NL}$DONE${NL}$(U 'great, thanks')"
+check "without --turns an uncorrected turn is not written" 0
+
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --turns --skill x >/dev/null 2>&1
+[[ $? -ne 0 ]] && { pass=$((pass+1)); echo "ok   --turns with --skill is refused"; } || { fail=$((fail+1)); echo "FAIL --turns with --skill is refused"; }
+
 echo "$pass passed, $fail failed"; (( fail == 0 ))
