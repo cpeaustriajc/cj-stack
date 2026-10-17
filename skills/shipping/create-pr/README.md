@@ -36,6 +36,8 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - If you are on the default branch, it creates a `claude/<short-topic>` branch first, because a hook requires the prefix.
 - It keeps your existing commits and never squashes them.
 - It commits loose changes in small slices, in the repo's message style.
+- Before the checks, a separate reader reads the diff for comments only. It keeps a comment only if the comment warns about a trap: something that breaks if the next person edits the code blindly.
+- Claude removes or shortens each comment that the reader lists, and commits that change as its own slice.
 - It runs the fast checks that the repo's `CLAUDE.md` names. If one fails, it stops and opens no PR.
 - If a PR is already open for the branch, it pushes and reports the URL. It does not open a duplicate.
 - The PR body follows the repo's template. Otherwise it holds a short summary, a `Related` line, an `Evidence` line and a `Merge danger` line.
@@ -52,4 +54,5 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/claude-code.md](references/claude-code.md): how the comment reader runs in Claude Code.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not match the skill.
