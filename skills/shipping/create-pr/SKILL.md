@@ -23,12 +23,21 @@ means open it as a draft. Any other word is the base branch.
    changes are still uncommitted, commit them in small logical slices, with messages in the
    repo's style taken from `git log`. Never commit `.env`, credentials or files in
    `.gitignore`. Add no AI attribution, co-author trailers or "Generated with" lines.
-3. **Check.** Run the project's fast checks (lint, typecheck, tests the repo's CLAUDE.md
+3. **Comments.** A fresh read-only reader on the cheapest model, which did not write the
+   code, reads the branch diff against the base for added or changed comments only. A comment
+   stays only when it names a trap (something that breaks if the next reader edits blindly),
+   in one line of at most two sentences and about 20 words. A comment rule in the repo's
+   CLAUDE.md or AGENTS.md wins over this one. The reader lists every other comment with
+   file:line and the reason. Remove or shorten each one it lists, commit that as its own
+   slice, and don't argue for a listed comment: the author defends its own comments, which is
+   why a separate reader checks them.
+   Mechanics: `references/claude-code.md`.
+4. **Check.** Run the project's fast checks (lint, typecheck, tests the repo's CLAUDE.md
    names). If one fails, stop and report it. Don't open a PR on red.
-4. **Push** with `-u`.
-5. **Existing PR.** If one is already open for this branch, push and report its URL. Don't
+5. **Push** with `-u`.
+6. **Existing PR.** If one is already open for this branch, push and report its URL. Don't
    open a duplicate, and don't change its draft or ready state.
-6. **Open it** with `gh pr create`, adding `--draft` only when asked. Pass `--base` when a base
+7. **Open it** with `gh pr create`, adding `--draft` only when asked. Pass `--base` when a base
    was given or the branch was cut from one other than the default and it exists on origin
    (check with `git ls-remote --heads origin <base>`).
    - **Title**: what changed, in the repo's commit style.
