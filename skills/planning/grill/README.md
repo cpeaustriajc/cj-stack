@@ -37,9 +37,10 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## What it does
 
 - A trivial change gets one line with Claude's plan and the question "go?". A small change gets one question. Only a grill runs rounds. You can change the tier.
-- Claude sends read-only subagents to look up code, specs, the tracker and docs before it asks you a fact.
-- Each round opens with a ledger: Settled, Assumed (you can veto any item) and the count of open decisions.
+- Claude looks up code, specs, the tracker and docs before it asks you a fact. When a recommendation depends on a fact, Claude runs a small probe first.
+- Each round opens with a ledger: Settled, Assumed, Out of scope and the count of open decisions. You can veto any Assumed or Out of scope item, and each cut has a reason that Claude checked.
 - Claude asks through the `AskUserQuestion` form, with a concrete scenario in each question.
+- A flow, a state change or a structure comes as a diagram: an inline widget where the visualize tools exist, else a mermaid block.
 - Round 1 settles what "done" looks like as something you can observe.
 - Claude never re-asks a Settled item. If new evidence conflicts with one, it asks about that conflict only.
 - Claude recommends the smallest version that ships.
@@ -54,4 +55,5 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/claude-code.md](references/claude-code.md): the Claude Code tools for the form and the diagrams.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
