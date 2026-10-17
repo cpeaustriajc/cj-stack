@@ -37,7 +37,7 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [grill](skills/planning/grill/README.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
 | [project-knowledge](skills/knowledge/project-knowledge/README.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
 | [hone](skills/knowledge/hone/README.md) | knowledge | mining past transcripts for my repeated corrections and the failures nobody corrected, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
-| [playbooks](skills/quality/playbooks/README.md) | quality | bug, refactor, performance and feature playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline) |
+| [playbooks](skills/quality/playbooks/README.md) | quality | bug, refactor, performance, feature, prototype and design playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline, two compared sketches) |
 | [break-it](skills/quality/break-it/README.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
 | [ui-polish](skills/quality/ui-polish/README.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
 | [feature-files](skills/quality/feature-files/README.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |

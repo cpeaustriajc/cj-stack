@@ -16,6 +16,10 @@
   "should_trigger": true
  },
  {
+  "query": "design the API for adding a second payment provider before we build it, the Stripe calls are spread over three modules",
+  "should_trigger": true
+ },
+ {
   "query": "break the export spec into tickets",
   "should_trigger": false
  },

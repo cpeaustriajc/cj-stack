@@ -1,6 +1,6 @@
 # playbooks
 
-A skill that gives Claude a fixed list of steps for five kinds of work: bug fix, refactor, performance fix, feature and prototype. Each list ends in proof you can check.
+A skill that gives Claude a fixed list of steps for six kinds of work: bug fix, refactor, performance fix, feature, prototype and design. Each list ends in proof you can check.
 
 ## When to use it
 
@@ -11,6 +11,7 @@ Claude loads this skill at the start of a task bigger than a one-line change. Us
 - Performance fix: a measured baseline exists before the first change.
 - Feature: each slice is checked in the running app.
 - Prototype: you see the design options before any app code.
+- Design: two code shapes are compared before code that crosses a module boundary.
 
 Do not use it to split a spec into tickets: use `tickets`. Do not use it to hunt for bugs as a careless user: use `break-it`. Do not use it to explain code.
 
@@ -40,12 +41,14 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 The skill writes no files of its own. It changes how Claude plans and reports.
 
 - Claude picks one playbook and says which one. If the task has two kinds, the bug playbook runs first and the refactor becomes its own task.
+- If no playbook fits, Claude writes a list of phases first, and each phase ends in a check.
 - Claude copies the playbook steps into the task list. A skipped step stays in the list with the reason.
 - A check ends as VERIFIED, NOT VERIFIED or INCONCLUSIVE. INCONCLUSIVE never counts as a pass.
 - Evidence is a command you can re-run, plus its trace, screenshots or video.
 - Claude reads the project's feature file first, if one exists. The `feature-files` skill writes it.
 
 The feature playbook also runs `grill` first, and `ui-polish` and `break-it` for anything with UI.
+The design playbook starts two read-only Sonnet subagents in parallel. Each writes one sketch, and Claude compares them.
 
 ## Limits
 
@@ -57,5 +60,6 @@ The feature playbook also runs `grill` first, and `ui-polish` and `break-it` for
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
-- [references/bug.md](references/bug.md), [refactor.md](references/refactor.md), [perf.md](references/perf.md), [feature.md](references/feature.md) and [prototype.md](references/prototype.md): the five playbooks.
+- [references/bug.md](references/bug.md), [refactor.md](references/refactor.md), [perf.md](references/perf.md), [feature.md](references/feature.md), [prototype.md](references/prototype.md) and [design.md](references/design.md): the six playbooks.
+- [references/claude-code.md](references/claude-code.md): how Claude Code runs the two design sketches.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
