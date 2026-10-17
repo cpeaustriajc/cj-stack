@@ -7,8 +7,9 @@ tools below and trim before you add: cut any rule you would follow without being
 
 Before adding or changing a skill or mod, research how public AI-coding practitioners solve it:
 their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan's pstack
-(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy only what fits a limited
-token budget: gstack assumes heavy parallel spend.
+(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy fan-outs too, with each
+agent on the cheapest model that can do its job (see `models/README.md`). Skip only what needs
+another vendor's models or a fleet of agents.
 
 ## Authoring tools
 
