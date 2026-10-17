@@ -21,7 +21,7 @@ You say: "Cross-check this payments refactor with fresh reviewers before I push.
 2. Claude runs two or three read-only reviewers in parallel and checks each finding against the code.
 3. Claude asks which findings you want fixed.
 
-You get four groups: Act on, Consider, Noted and Dismissed. Each finding lists its reviewers, `file:line` and a failure scenario.
+You get four groups: Act on, Consider, Noted and Dismissed. Each finding lists its reviewers, `file:line`, a proof level and a failure scenario.
 
 ## Install
 
@@ -41,6 +41,7 @@ Requirement: Claude must be able to start subagents.
 - Claude writes a bundle file with the diff, the full changed files with line numbers, the spec if one exists, and a short description.
 - The Full reviewer sees the whole bundle. The Blind reviewer sees no description or spec and runs on a model one tier below the session. The Spec reviewer runs only if a spec or issue exists.
 - Claude verifies each finding itself. A reviewer can be confidently wrong.
+- Each finding has a proof level: stated, pointed at the line, walked through or run. Act on takes only walked through or run. A real finding with less proof goes to Consider, with a note on what would raise it.
 - Dismissed findings stay visible with a one-line reason, so you can override them.
 - Claude saves the bundle and the raw reviews in the ignored work folder (`.claude/work/<topic>/` in Claude Code) and tells you where they are.
 - If you ask for a quality pass, a fresh reviewer reads the diff for reuse, quality and efficiency after your fixes. In Claude Code, this pass is the built-in `/simplify` skill.
