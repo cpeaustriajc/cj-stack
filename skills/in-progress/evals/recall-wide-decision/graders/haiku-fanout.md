@@ -5,4 +5,4 @@ input_match: '"model"\s*:\s*"haiku"'
 min: 2
 ---
 
-At least two Haiku subagents read the 20 sessions in groups.
+The 7 matching sessions over a month went to Haiku miners.
