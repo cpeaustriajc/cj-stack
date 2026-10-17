@@ -3,7 +3,9 @@
 A prototype answers one design question before any app code. It is throwaway.
 
 1. Name the one question the prototype must answer. If there is no decision to make, skip to
-   the feature playbook.
+   the feature playbook. If the question is about behaviour or timing, not about the look,
+   write the smallest script that exercises it in `.claude/work/<topic>/`, run it, and save its
+   logged output as the evidence. Then go to step 6.
 2. Read the design system, the closest existing screen and any decision record for the area.
    Ask what a top designer would show that the request did not name; compare with the taste
    references in `ui-polish`'s `references/quality-bar.md`.

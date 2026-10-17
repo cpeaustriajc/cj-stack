@@ -7,7 +7,8 @@ no tool can find, or a call of taste or business.
 2. Find the spec, the design and the closest existing pattern in the app. Follow them. Where the
    spec is silent, use the closest existing pattern and name it in the PR. Ask only when the spec
    and a recorded decision conflict. For UI with no approved design, run the prototype playbook
-   first, so I see the look before the build.
+   first, so I see the look before the build. If the change crosses a module boundary or is
+   costly to undo, run `design.md` before the first slice.
 3. Cut the work into slices that each end in a state you can check in the running app, each
    touching about 2-3 files. Prefer more, smaller slices.
 4. Per slice: build it, run its end-to-end check, save the evidence, commit. Never commit
