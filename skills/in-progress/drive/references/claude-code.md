@@ -17,7 +17,8 @@ clear` ends it.
   evaluator judges it from the conversation. Use `--max-budget-usd` for a hard spend cap on a
   headless run.
 - **Compile section 2 into one condition**: the Done when line as pasted check output, the Holds
-  throughout lines, the Floor, and the Budget clause, in that order.
+  throughout lines, the Floor, and the Budget clause, in that order. End it with "and the report
+  opens with section 8's Attention list", or the goal clears before the audit runs.
 - **It doesn't change permissions.** An unattended run needs auto mode, or the loop stalls on the
   first prompt.
 - **It survives `--resume`**, but its turn count and timer start over, so a turn budget restarts
@@ -31,6 +32,22 @@ checker. Agent hooks are experimental; a command hook running the check script a
 
 Claude Code overrides a Stop hook after it blocks eight times in a row with no tool call in
 between; `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` changes that.
+
+## The handback audit
+
+`/goal`'s evaluator can't do section 8: it calls no tools, reads only the conversation, and returns
+a verdict with one short reason. No built-in audits a log. Start one `general-purpose` `Agent`
+with `model: "sonnet"`, never `haiku`: weighing each row against scattered tool calls is reading
+and judging, which is Sonnet's job; Haiku finds files.
+
+- **Transcripts** are `~/.claude/projects/<cwd with / and . as ->/<session id>.jsonl`, one JSON
+  object per line. The current session is the newest file there; the resume note lists the
+  earlier ones. Point the auditor at `"type":"tool_use"` lines for the commands and edits, and at
+  `"tool_result"` lines for their output, and have it cite `grep -n` line numbers.
+- **Give it only** the paths of the log, the plan and the transcripts, and section 8's three flags
+  and line shape. Not the diff, not your summary: it must read the trail, not your story.
+- **Paste its list as it came back.** Don't drop or soften a flag; answer one under it in the
+  report.
 
 ## Waiting on something outside
 

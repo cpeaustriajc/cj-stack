@@ -79,8 +79,9 @@ me, not into this run.
   delete or rewrite items; a plan that has gone stale is regenerated once, as a logged pass.
 - **Log**: one row per pass in a gitignored `drive.tsv`: time, hypothesis, change, check before,
   check after, kept or reverted, and a pointer to the evidence (commit, output file), not prose.
-- **Resume note**: when the run pauses, the next pass, what is uncommitted, and how to restart.
-  Stop at a clean boundary: commit or revert first.
+- **Resume note**: when the run pauses, the next pass, what is uncommitted, how to restart, and
+  the transcript path of every session the run has used. Stop at a clean boundary: commit or
+  revert first.
 
 ## 6. Brake on progress, not on turns
 
@@ -100,10 +101,32 @@ The worker never grades itself. The exit is the check's output, and for a run th
 second reviewer, a fresh agent or a different model given the predicate, the diff and the log,
 confirms done before I'm told it is. Inconclusive is not a pass.
 
-## 8. Report
+## 8. Audit the trail
+
+Before the report, one fresh agent that did none of the work, on the model the adapter names,
+audits the log against the transcript of every session the run used. It gets the log, the plan
+and the transcript paths, edits nothing, and flags:
+
+- **Unsupported**: a log row the transcript does not show happening (the change, the check run,
+  the keep or revert), or an evidence pointer that doesn't resolve (no such commit or file).
+- **Unlogged**: an action in the transcript the log leaves out: a kept or reverted change, a
+  change of approach, an edit to the check or its tests, a skipped step.
+- **No artifact**: a "done", "passes" or "fixed" claim, in the log or the transcript, with no
+  check output, commit or file behind it.
+
+Each flag is one Attention line: the item, the evidence (log or transcript line, quoted), and what
+I must check. The list goes at the top of the report as the auditor wrote it. No flags means
+"Attention: nothing to check", with no padding and no cap on the count. An audit that could not
+read a transcript is an Attention line, not a clean list.
+
+Section 7's reviewer still confirms done: it judges the diff against the predicate, and this audit
+judges whether the log tells what happened.
+
+## 9. Report
 
 When the run ends, in this order:
 
+- The Attention list from section 8.
 - The predicate's state, with the check's last output.
 - Passes kept and reverted, and the budget used.
 - Why it stopped: met, stuck, budget or dead end.

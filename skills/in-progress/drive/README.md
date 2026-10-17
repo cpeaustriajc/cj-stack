@@ -24,7 +24,7 @@ You say: "Drive cart.test.ts to green overnight, keep going until every test pas
 2. Claude runs the check on the untouched code and records the baseline.
 3. Claude makes one change per pass, then keeps it or reverts it, and logs the row.
 
-You get a report with the check's last output, the passes kept and reverted, why the run stopped, and the log path.
+You get a report. It opens with an Attention list of what to check. Then it gives the check's last output, the passes kept and reverted, why the run stopped, and the log path.
 
 ## Install
 
@@ -37,6 +37,7 @@ This skill is not shipped in any plugin, so you cannot install it yet. The repo'
 - Claude writes a plan file, a gitignored `drive.tsv` log and a resume note.
 - A run stops when it is stuck, out of budget or blocked by a rule it must keep.
 - A fresh reviewer confirms a run that matters before Claude says it is done.
+- Before the report, a fresh Sonnet agent compares the log with the session transcript. It lists each log row that did not happen, each action the log leaves out and each "done" with no proof. An empty list says "nothing to check".
 
 The Claude Code adapter turns the exit check into a `/goal` condition. It can also add a Stop hook that runs the check itself.
 
@@ -51,5 +52,6 @@ The Claude Code adapter turns the exit check into a `/goal` condition. It can al
 ## More
 
 - [SKILL.md](SKILL.md): the method.
-- [references/claude-code.md](references/claude-code.md): how to run the loop with `/goal`, Stop hooks and `/loop`.
+- [references/claude-code.md](references/claude-code.md): how to run the loop with `/goal`, Stop hooks and `/loop`, and how to start the audit agent.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
+- [evals/handback/](evals/handback/): two `claude plugin eval` cases for the audit, one log that claims a pass the transcript never ran and one clean log. Run `skills/in-progress/drive/evals/handback/run.sh` from the repo root.
