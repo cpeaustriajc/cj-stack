@@ -41,17 +41,29 @@ Every reviewer gets the same prompt:
 > Review this change for real defects only: wrong behaviour, regressions, broken edge cases,
 > security holes, data loss, divergence from the spec. No style, naming or "consider adding"
 > notes. For each finding give: file:line, a one-line defect, a concrete failure scenario
-> (input or state → wrong result), and your confidence (high, medium or low). If you find
-> nothing real, say "no findings".
+> (input or state → wrong result), your confidence (high, medium or low), and the highest proof
+> level that is true:
+>
+> - stated: claimed, with no location.
+> - pointed at the line: file:line given.
+> - walked through: the call path traced by hand, with the inputs that trigger it. Give the path.
+> - run: a command, test or repro executed. Give the command and its output.
+>
+> If you find nothing real, say "no findings".
 
 ## 3. Judge: filter, don't aggregate
 
 Merge duplicates and note which reviewers raised each finding. Then verify each one against the
-code yourself, since a reviewer can be confidently wrong. Sort them into:
+code yourself, since a reviewer can be confidently wrong. Your check sets the final proof level:
+raise it when you trace the path or run a repro yourself, lower it when the reviewer's path or
+output does not hold. Sort them into:
 
-- **Act on**: verified, real and in scope.
-- **Consider**: plausible but unverified, or real but a judgment call.
-- **Noted**: true, out of scope or minor. One line each.
+- **Act on**: real, in scope, and walked through or run. Example: a null deref at cart.ts:42
+  whose call path was traced but not run is walked through, so it can go here.
+- **Consider**: plausible, or real but a judgment call. A real finding that is only stated or
+  pointed at the line goes here, with a note on what would raise it, such as "run refund with
+  an amount equal to the charge".
+- **Noted**: true, out of scope or minor. One short row each.
 - **Dismissed**: wrong or irrelevant. Keep each one visible with a one-line reason so I can
   override.
 
@@ -60,9 +72,10 @@ blind spots.
 
 ## 4. Report, then stop
 
-Show the four groups, each finding with its reviewers, file:line and failure scenario. Ask with the
-ask tool which to fix. Apply nothing until I pick. Save the bundle and the raw reviews in
-the ignored work folder (`.claude/work/<topic>/` in Claude Code) and say where they are, so the review can be re-run.
+Show the four groups as tables, one row per finding with its reviewers, file:line, proof level
+and failure scenario. Every row has a proof level, in Noted and Dismissed too. Ask with the ask tool which to fix. Apply nothing until I pick. Save the
+bundle and the raw reviews in the ignored work folder (`.claude/work/<topic>/` in Claude Code)
+and say where they are, so the review can be re-run.
 
 ## 5. Quality pass, only when I ask
 
