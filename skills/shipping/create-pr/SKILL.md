@@ -70,5 +70,29 @@ means open it as a draft. Any other word is the base branch.
      Leave the Evidence line out when no E2E run happened; don't invent one. No headings,
      checklists or test-plan sections unless the template asks for them. Keep it short.
 
+     Then read the title and body against **Plain prose** below, and rewrite each hit.
+
 Report the PR URL on its own line, plus one line on anything skipped, such as "no issue
 found" or "no evidence linked".
+
+## Plain prose
+
+A check cannot match these, so read for them. Rewrite each one in the title and body:
+
+- **"Not only X but also Y", "not just X".** Say Y. "Not just a linter, it is a guard" becomes
+  "It blocks the write."
+- **Synonym cycling.** One name per thing. "the hook ... the guard ... the checker" becomes "the
+  hook" each time.
+- **Real names.** Use the name in the code. "the config loader" becomes `loadConfig`.
+- **Abstract metaphor nouns** (surface, substrate, wedge, primitive, flywheel, north star). Name
+  the thing. "the auth surface" becomes "the login and token endpoints".
+- **Mannered prose** (aphorisms, code with feelings, "rides along"). "The cache quietly
+  remembers" becomes "The cache keeps each result for 5 minutes."
+- **Arrows and symbol-speak.** Write the sentence. "login → token → retry" becomes "After
+  login, the client gets a token and retries once."
+- **Dropped articles.** Keep "the" and "a" in sentences. "Fixes bug in parser" becomes "This
+  fixes a bug in the parser."
+- **"-ing" tails.** Split them off. "It adds a cache, ensuring fast reads" becomes "It adds a
+  cache. Reads take 5 ms."
+- **Feelings, not facts.** Give the measure. "This greatly improves search" becomes "Search
+  takes 80 ms, not 900 ms." Test: could the sentence sit unchanged in another project's docs?
