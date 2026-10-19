@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1458",
+ "title": "Zero-width space inside a harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf FAKE + U+200B + SECRET_ALPHA_9x",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ALPHA_9x\n"
+   },
+   "command": "printf '%s\\n' 'FAKE\u200bSECRET_ALPHA_9x'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKE\u200bSECRET_ALPHA_9x"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0298",
+ "title": "stream-json stream carries raw Bash stdout and stderr",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "stream-json: env-sourced secret printed to stdout and stderr (runner must use --output-format stream-json --verbose --include-hook-events; no schema field for flags or process env, so secret is placed in files)",
+   "files": {
+    ".env": "DEMO_TOKEN=FAKESECRET_abc123\n",
+    "print.sh": "set -a; . ./.env; set +a\nprintenv DEMO_TOKEN\necho FAKESECRET_abc123 >&2\n"
+   },
+   "prompt": "Run: sh print.sh",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

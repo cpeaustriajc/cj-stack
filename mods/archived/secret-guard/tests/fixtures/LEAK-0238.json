@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-0238",
+ "title": "Substring test on a secret-named variable returns YES or NO",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "substring equality test on ANTHROPIC_API_KEY is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[ \"${ANTHROPIC_API_KEY:0:8}\" = \"sk-ant-a\" ] && echo YES || echo NO"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "NO output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[ \"${ANTHROPIC_API_KEY:0:8}\" = \"sk-ant-a\" ] && echo YES || echo NO"
+    },
+    "tool_response": {
+     "stdout": "NO\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "NO"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "substring test on non-secret PWD stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[ \"${PWD:0:1}\" = \"/\" ] && echo YES || echo NO"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

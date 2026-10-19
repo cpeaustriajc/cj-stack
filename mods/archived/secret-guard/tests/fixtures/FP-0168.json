@@ -1,0 +1,80 @@
+{
+ "case_id": "FP-0168",
+ "title": "False-positive guard: public-key outputs must pass through unredacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh-keygen -y prints a public key: allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh-keygen -y -f FAKESECRET_key"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "openssl rsa -pubout: allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl rsa -in FAKESECRET_key.pem -pubout"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "openssl x509 -text certificate output: stdout unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl x509 -in FAKESECRET_cert.pem -noout -text"
+    },
+    "tool_response": {
+     "stdout": "Certificate:\n    Data:\n        Subject: CN = example.io\n-----BEGIN CERTIFICATE-----\nMIIBFAKEcertbody\n-----END CERTIFICATE-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Subject: CN = example.io",
+    "-----BEGIN CERTIFICATE-----"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ssh-keygen -e public key output: stdout unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh-keygen -e -f FAKESECRET_pub"
+    },
+    "tool_response": {
+     "stdout": "ssh-ed25519 AAAAC3FAKESECRETkeybody comment@example.io\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "ssh-ed25519",
+    "comment@example.io"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

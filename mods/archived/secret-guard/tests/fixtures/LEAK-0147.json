@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0147",
+ "title": "Hook fault on Bash output: simulated by a malformed tool_response (bare string), so the redactor must not pass the raw value through",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "hook fault path does not leak raw Bash output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep FAKESECRET_DB"
+    },
+    "tool_response": "DB_PASSWORD=FAKESECRET_pw_12345\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_12345"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

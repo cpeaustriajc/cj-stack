@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0740",
+ "title": "Hook writes truncated JSON and exits 0 (level changed from unit to e2e: a fake broken hook script is used to produce the failure)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "fake hook writes truncated JSON and exits 0; no secret shown",
+   "files": {
+    ".dev.vars": "API_TOKEN=FAKESECRET_tok2\nDB_PASSWORD=FAKESECRET_pw1\n",
+    "bad-hook.sh": "printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"updatedToolOutput\":{\"stdout\":\"API_TOKEN=[REDACTED] '\nexit 0\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"sh bad-hook.sh\"}]}]}}"
+   },
+   "prompt": "Run cat .dev.vars and show the output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_tok2",
+    "FAKESECRET_pw1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

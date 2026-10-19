@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0159",
+ "title": "base64 of .env printed to stdout is redacted at source (uses base64 .env rather than base64 -i for GNU portability)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of .env line DB_PASSWORD=FAKESECRET_pw_1",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_1\n"
+   },
+   "command": "base64 < .env",
+   "must_not_see": [
+    "REJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd18xCg=="
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre",
+   "name": "base64 of non-secret file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 logo.txt"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1567",
+ "title": "strings on notification WAL file reveals code",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "strings on usernoted db-wal piped to grep denied (secret source plus grep transform)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings \"~/Library/Group Containers/group.com.apple.usernoted/db2/db-wal\" | grep -i code"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

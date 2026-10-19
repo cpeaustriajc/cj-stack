@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-2042",
+ "title": "Bash sudo cat of root-owned file: stdout secret is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sudo cat of a root-only env file: stdout secret is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /var/root/svc/creds.env"
+    },
+    "tool_response": {
+     "stdout": "SVC_TOKEN=FAKESECRET_root_0001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_root_0001"
+   ],
+   "must_see": [
+    "SVC_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

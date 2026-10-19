@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1175",
+ "title": "npx dotenvx run prints a server config with a DB URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O masks URL userinfo password on successful output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx dotenvx run -- npm run dev"
+    },
+    "tool_response": {
+     "stdout": "Error: postgres://app:FAKESECRET_pw@db/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failing command writes DB URL to stderr, redacted at source",
+   "files": {},
+   "command": "printf 'Error: postgres://app:FAKESECRET_pw@db/app\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

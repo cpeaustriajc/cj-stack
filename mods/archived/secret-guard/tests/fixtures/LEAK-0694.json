@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0694",
+ "title": "grep over a session transcript directory recovers raw tool output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep over synthetic transcript dir: secret value redacted, path kept",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tr_94\n",
+    "transcripts/session.jsonl": "{\"type\":\"tool_result\",\"output\":\"API_TOKEN=FAKESECRET_tr_94\"}\n"
+   },
+   "command": "grep -r 'FAKESECRET_' transcripts | head -5",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tr_94"
+   ],
+   "must_see": [
+    "transcripts/session.jsonl"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

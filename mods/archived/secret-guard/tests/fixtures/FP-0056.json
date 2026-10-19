@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0056",
+ "title": "False positive: keyboard identifier in grep output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep-keyboard-unchanged",
+   "files": {
+    "src/ui/layout.ts": "\n\n\n\n\n\n\n\n\n\n\nconst keyboard = 'us';\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n keyboard src/ui/layout.ts"
+    },
+    "tool_response": {
+     "stdout": "12:const keyboard = 'us';\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "12:const keyboard = 'us';"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep-keyboard-real-run",
+   "files": {
+    "src/ui/layout.ts": "\n\n\n\n\n\n\n\n\n\n\nconst keyboard = 'us';\n"
+   },
+   "command": "grep -n keyboard src/ui/layout.ts",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "12:const keyboard = 'us';"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

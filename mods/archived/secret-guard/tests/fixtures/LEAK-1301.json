@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1301",
+ "title": "gradlew build --info prints repository password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "gradlew stubbed as an sh script (no exec bit) so the command runs; output line is redacted at source",
+   "files": {
+    "gradlew": "#!/bin/sh\nprintf 'Repository auth: password=FAKESECRET_gradleinfo0026\\n'\nprintf 'BUILD SUCCESSFUL\\n'\n"
+   },
+   "command": "sh ./gradlew build --info",
+   "must_not_see": [
+    "FAKESECRET_gradleinfo0026"
+   ],
+   "must_see": [
+    "Repository auth: password=",
+    "BUILD SUCCESSFUL"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

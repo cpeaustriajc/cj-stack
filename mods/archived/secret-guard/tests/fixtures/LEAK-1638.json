@@ -1,0 +1,68 @@
+{
+ "case_id": "LEAK-1638",
+ "title": "Read of ~/.claude/settings.local.json (tilde form; output format UNVERIFIED so two shapes)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON env block read via tilde path",
+   "files": {
+    ".claude/settings.local.json": "{\"env\":{\"LOCAL_TOKEN\":\"FAKESECRET_LOCAL_0001\"}}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.claude/settings.local.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.claude/settings.local.json",
+      "content": "{\"env\":{\"LOCAL_TOKEN\":\"FAKESECRET_LOCAL_0001\"}}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LOCAL_0001"
+   ],
+   "must_see": [
+    "LOCAL_TOKEN"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "plain env line read via tilde path",
+   "files": {
+    ".claude/settings.local.json": "env: LOCAL_TOKEN=FAKESECRET_LOCAL_0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.claude/settings.local.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.claude/settings.local.json",
+      "content": "env: LOCAL_TOKEN=FAKESECRET_LOCAL_0001",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LOCAL_0001"
+   ],
+   "must_see": [
+    "LOCAL_TOKEN"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

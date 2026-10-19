@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1862",
+ "title": "Base64 re-encoding by the agent before the output reaches the hook",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xattr download-source read piped to base64 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -p com.apple.metadata:kMDItemWhereFroms ~/Downloads/FAKESECRET_report.pdf | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

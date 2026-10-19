@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0088",
+ "title": "Bash git log -1 --format with a UUID echo: SHA, subject and UUID pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "git-log-style line and UUID echo (printf stand-in, no repo in temp project)",
+   "files": {},
+   "command": "printf '%s %s\\n' 3f9c2e8d7a1b4c6e9d0f2a5b8c1d4e7f0a3b6c9d 'fix: trim whitespace' && echo 6f1d2c3b-4a5e-4f7a-8b9c-0d1e2f3a4b5c",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "3f9c2e8d7a1b4c6e9d0f2a5b8c1d4e7f0a3b6c9d",
+    "fix: trim whitespace",
+    "6f1d2c3b-4a5e-4f7a-8b9c-0d1e2f3a4b5c"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

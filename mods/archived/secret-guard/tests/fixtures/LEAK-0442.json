@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0442",
+ "title": "Failed Bash call may not trigger the PostToolUse-only hook (routing gap)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed cat of .env.test with exit 1 must have stdout redacted at source",
+   "files": {
+    ".env.test": "DATABASE_URL=postgres://app_user:FAKESECRET_dbpw_42@db.internal/app\n"
+   },
+   "command": "cat .env.test; exit 1",
+   "must_not_see": [
+    "FAKESECRET_dbpw_42"
+   ],
+   "must_see": [
+    "db.internal/app"
+   ],
+   "exit_code": 1
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: failed Bash call prints .env.test; routing of the redactor for failed calls",
+   "files": {
+    ".env.test": "DATABASE_URL=postgres://app_user:FAKESECRET_dbpw_42@db.internal/app\n"
+   },
+   "prompt": "Run `cat .env.test; exit 1` with Bash and print the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_dbpw_42"
+   ],
+   "must_see": [
+    "db.internal/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

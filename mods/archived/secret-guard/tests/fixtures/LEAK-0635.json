@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0635",
+ "title": "ssh systemctl show exposes Environment= one-line list",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "JWT_SECRET and DSN password redacted on one space-separated line; NODE_ENV kept",
+   "files": {},
+   "command": "ssh() { printf 'Environment=NODE_ENV=production DATABASE_URL=postgres://app:FAKESECRET_pw4@db:5432/app JWT_SECRET=FAKESECRET_jwt_5\\n'; }; ssh ops@prod-web-1 'sudo systemctl show app-api -p Environment'",
+   "must_not_see": [
+    "FAKESECRET_pw4",
+    "FAKESECRET_jwt_5"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "JWT_SECRET=[REDACTED]",
+    "@db:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

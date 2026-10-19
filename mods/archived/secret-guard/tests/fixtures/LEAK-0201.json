@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0201",
+ "title": "Bash terraform apply with TF_LOG=TRACE prints provider HTTP body",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "debug body password redacted, body: label kept (simulated)",
+   "files": {
+    "tf.out": "2025-01-01 provider: body: {\"password\":\"FAKESECRET_trace_35\"}\n"
+   },
+   "command": "cat tf.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_trace_35"
+   ],
+   "must_see": [
+    "body:"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "TF_LOG=TRACE tee output via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "TF_LOG=TRACE terraform apply 2>&1 | tee tf.log"
+    },
+    "tool_response": {
+     "stdout": "2025-01-01 provider: body: {\"password\":\"FAKESECRET_trace_35\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_trace_35"
+   ],
+   "must_see": [
+    "body:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1498",
+ "title": "ssh journalctl log line contains token= value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-sim journalctl: token= value replaced, surrounding text kept",
+   "files": {},
+   "command": "printf 'INFO request token=FAKESECRET_log_tok ok\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_log_tok"
+   ],
+   "must_see": [
+    "INFO request",
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

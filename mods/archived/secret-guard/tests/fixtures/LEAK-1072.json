@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-1072",
+ "title": "Bash base64 of .env.local with 0, 1 and 2 prepended bytes: all alignments covered",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printf 'X' prefix then base64 of .env.local: deny",
+   "files": {
+    ".env.local": "V=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'X' | cat - .env.local | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "printf 'XY' prefix then base64 of .env.local: deny",
+   "files": {
+    ".env.local": "V=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'XY' | cat - .env.local | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "base64 < .env.local: deny",
+   "files": {
+    ".env.local": "V=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < .env.local"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

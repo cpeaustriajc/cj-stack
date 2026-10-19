@@ -1,0 +1,46 @@
+{
+ "case_id": "FP-0021",
+ "title": "Bash printf of KEY, TOKEN and AUTH substrings is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printf output with KEYBOARD, TOKEN_LIMIT, MONKEY and AUTHOR lines stays unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'AUTHOR_NAME=cj\\nKEYBOARD_LAYOUT=us\\nTOKEN_LIMIT=4000\\nMONKEY_PATCH=1\\n'"
+    },
+    "tool_response": {
+     "stdout": "AUTHOR_NAME=cj\nKEYBOARD_LAYOUT=us\nTOKEN_LIMIT=4000\nMONKEY_PATCH=1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "AUTHOR_NAME=cj",
+    "KEYBOARD_LAYOUT=us",
+    "TOKEN_LIMIT=4000",
+    "MONKEY_PATCH=1"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "same printf run through the guard filter: four lines survive",
+   "files": {},
+   "command": "printf 'AUTHOR_NAME=cj\\nKEYBOARD_LAYOUT=us\\nTOKEN_LIMIT=4000\\nMONKEY_PATCH=1\\n'",
+   "exit_code": 0,
+   "must_see": [
+    "AUTHOR_NAME=cj",
+    "KEYBOARD_LAYOUT=us",
+    "TOKEN_LIMIT=4000",
+    "MONKEY_PATCH=1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

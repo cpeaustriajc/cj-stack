@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-0011",
+ "title": "git submodule foreach runs cat and grep inside each submodule [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "submodule foreach running cat and grep is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git submodule foreach 'cat .env 2>/dev/null; grep -r PASSWORD . || true'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "submodule foreach running only git subcommands stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git submodule foreach 'git status --short'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "key=value and grep output redacted, Entering progress line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git submodule foreach 'cat .env 2>/dev/null; grep -r PASSWORD . || true'"
+    },
+    "tool_response": {
+     "stdout": "Entering 'libs/sub'\nAPI=FAKESECRET_FE_006\n./cfg.ini:PASSWORD=FAKESECRET_FE_007\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FE_006",
+    "FAKESECRET_FE_007"
+   ],
+   "must_see": [
+    "Entering 'libs/sub'",
+    "API=",
+    "./cfg.ini:PASSWORD=",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

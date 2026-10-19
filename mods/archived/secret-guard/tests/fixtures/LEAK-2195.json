@@ -1,0 +1,77 @@
+{
+  "case_id": "LEAK-2195",
+  "title": "Grep count and file-list modes over a secret file deny a pattern that is not a key name",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "pre",
+      "name": "count of a value prefix over a project folder that holds .env is denied",
+      "files": {
+        ".env": "APP_NAME=demo\nSTRIPE_SECRET_KEY=sk_live_FAKESECRETgrep4x7Q2m9Z\n",
+        "src/app.ts": "export const a = 1\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Grep",
+        "tool_input": {
+          "pattern": "sk_live_FAKESECRETgr",
+          "path": "{PROJECT}",
+          "output_mode": "count"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "default file list of a value fragment on .env is denied",
+      "files": {
+        ".env": "APP_NAME=demo\nSTRIPE_SECRET_KEY=sk_live_FAKESECRETgrep4x7Q2m9Z\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Grep",
+        "tool_input": {
+          "pattern": "sk_live",
+          "path": "{PROJECT}/.env"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "files_with_matches with a glob that selects .env is denied",
+      "files": {
+        ".env": "APP_NAME=demo\nSTRIPE_SECRET_KEY=sk_live_FAKESECRETgrep4x7Q2m9Z\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Grep",
+        "tool_input": {
+          "pattern": "FAKE",
+          "path": "{PROJECT}",
+          "glob": ".env*",
+          "output_mode": "files_with_matches"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "count of a lowercase guess with no path, from a project holding .env, is denied",
+      "files": {
+        ".env": "APP_NAME=demo\nSTRIPE_SECRET_KEY=sk_live_FAKESECRETgrep4x7Q2m9Z\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Grep",
+        "tool_input": {
+          "pattern": "4x7q",
+          "-i": true,
+          "output_mode": "count"
+        }
+      },
+      "expect": "deny"
+    }
+  ]
+}

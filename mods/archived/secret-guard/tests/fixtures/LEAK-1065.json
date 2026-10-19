@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1065",
+ "title": "Positive control: AUTH_HEADER value is still redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "AUTH_HEADER value redacted in Read output",
+   "files": {
+    ".env.fixture": "AUTH_HEADER=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".env.fixture"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".env.fixture",
+      "content": "AUTH_HEADER=FAKESECRET_abc123\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ],
+   "must_see": [
+    "AUTH_HEADER=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

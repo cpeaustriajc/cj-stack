@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0079",
+ "title": "Bash cat .env runs with no PreToolUse deny layer",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of .env (cat, no transform). Owner decision allows plain display; redactor hides values.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

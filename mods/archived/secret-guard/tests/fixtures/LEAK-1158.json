@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1158",
+ "title": "openssl pkcs8 -nocrypt writes plaintext key and inline passphrase",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies -nocrypt and inline pass: literal",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs8 -in deploy.enc.key -nocrypt -passin pass:FAKESECRET_pp"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "O masks PEM body and pass value if reached",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs8 -in deploy.enc.key -nocrypt -passin pass:FAKESECRET_pp"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_pem1\n-----END PRIVATE KEY-----\n",
+     "stderr": "passin pass:FAKESECRET_pp\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pem1",
+    "FAKESECRET_pp"
+   ],
+   "must_see": [
+    "-----BEGIN PRIVATE KEY-----"
+   ]
+  }
+ ]
+}

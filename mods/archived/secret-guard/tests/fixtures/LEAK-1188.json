@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1188",
+ "title": "ssh printenv combined with reading a process environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printenv line plus NUL-split environ line",
+   "files": {},
+   "command": "printf 'ANTHROPIC_API_KEY=FAKESECRET_a1\\n'; printf 'SERVICE_TOKEN=FAKESECRET_s2\\000PORT=3000\\000' | tr '\\000' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_a1",
+    "FAKESECRET_s2"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

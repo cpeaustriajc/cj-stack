@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1751",
+ "title": "Read ~/.git-credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "credential line replaced on Read",
+   "files": {
+    ".git-credentials": "https://cj:FAKESECRET_CRED_01@github.com\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.git-credentials"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.git-credentials",
+      "content": "https://cj:FAKESECRET_CRED_01@github.com\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CRED_01"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

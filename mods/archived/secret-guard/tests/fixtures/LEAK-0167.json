@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0167",
+ "title": "Secret literal piped into a persistent write is denied; literal used only for an API call is allowed; file-sourced value allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printf of literal secret piped to vercel env add is denied",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_vercel_6\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_vercel_6' | vercel env add API_KEY production"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "R5: value planted in a harvested .env so the known-value layer identifies it. R3: piping a secret literal into vercel env add writes it to a persistent store, so deny."
+  },
+  {
+   "kind": "pre",
+   "name": "secret-format literal GitHub token in curl command is allowed (token only calls an API, output shown)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -H \"Authorization: token ghp_FAKE0123456789abcdefghijklmnopqrstUV\" https://api.github.com/user"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a token typed into an auth header that only calls an API, with its output shown, is allowed."
+  },
+  {
+   "kind": "pre",
+   "name": "vercel env add reading value from a file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "vercel env add API_KEY production < key-source.txt"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

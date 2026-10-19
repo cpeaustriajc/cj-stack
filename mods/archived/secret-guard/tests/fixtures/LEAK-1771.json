@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1771",
+ "title": "Session JSONL after git show of a secret file (JSONL on-disk grep is not expressible in runner format)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "secrets.yml read (simulates git show HEAD:config/secrets.yml), value replaced in stdout",
+   "files": {
+    "config/secrets.yml": "api_key: FAKESECRET_BLOB_01\n"
+   },
+   "command": "cat config/secrets.yml",
+   "must_not_see": [
+    "FAKESECRET_BLOB_01"
+   ],
+   "must_see": [
+    "api_key:"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "e2e",
+   "name": "Real session runs git show of a committed secret; tool_result and reply must not contain the value",
+   "files": {
+    "config/secrets.yml": "api_key: FAKESECRET_BLOB_01\n"
+   },
+   "prompt": "Run this exact command in the project and paste its complete output in your reply: git init -q && git add -A && git -c user.email=t@example.com -c user.name=t commit -qm init && git show HEAD:config/secrets.yml",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_BLOB_01"
+   ],
+   "must_see": []
+  }
+ ]
+}

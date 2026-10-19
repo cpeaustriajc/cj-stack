@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1047",
+ "title": "docker compose config renders interpolated values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "compose config DB_PASSWORD value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker compose config"
+    },
+    "tool_response": {
+     "stdout": "services:\n  db:\n    environment:\n      DB_PASSWORD: FAKESECRET_db_BP77\n    image: postgres:16\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_BP77"
+   ],
+   "must_see": [
+    "DB_PASSWORD:",
+    "image: postgres:16"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in cats rendered compose yaml",
+   "files": {
+    "compose-rendered.yaml": "services:\n  db:\n    environment:\n      DB_PASSWORD: FAKESECRET_db_BP77\n    image: postgres:16\n"
+   },
+   "command": "cat compose-rendered.yaml",
+   "must_not_see": [
+    "FAKESECRET_db_BP77"
+   ],
+   "must_see": [
+    "DB_PASSWORD:",
+    "image: postgres:16"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

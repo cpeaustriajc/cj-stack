@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0013",
+ "title": "False positive: pickaxe subject line with a secret-ish word but no value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "legitimate name-only pickaxe search stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -S 'DB_PASSWORD' --oneline"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "commit subject containing DB_PASSWORD word is unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -S 'DB_PASSWORD' --oneline"
+    },
+    "tool_response": {
+     "stdout": "a1b2c3d fix: move DB_PASSWORD into vault\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "a1b2c3d fix: move DB_PASSWORD into vault"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

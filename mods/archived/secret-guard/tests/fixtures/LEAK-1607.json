@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1607",
+ "title": "Hook returns string replacement for Bash output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash output replacement keeps object shape",
+   "files": {
+    "secret.txt": "PASSWORD=FAKESECRET_pw7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat secret.txt"
+    },
+    "tool_response": {
+     "stdout": "PASSWORD=FAKESECRET_pw7",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    },
+    "tool_use_id": "toolu_1607"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw7"
+   ],
+   "must_see": [
+    "isImage",
+    "interrupted",
+    "stderr",
+    "stdout"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

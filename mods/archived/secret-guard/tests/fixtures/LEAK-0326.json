@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0326",
+ "title": "Privileged output written to predictable /tmp path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo cat redirect to /tmp denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo cat /var/root/app.env > /tmp/app-config-latest.txt"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sudo ls redirect to /tmp denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo ls -la /var/root > /tmp/root-listing.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Redirects a directory listing of /var/root to /tmp; no secret content is copied.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

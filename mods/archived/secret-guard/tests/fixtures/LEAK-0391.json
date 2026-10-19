@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0391",
+ "title": "P16 MCP tool returns a secret field",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP tool response value replaced although key is generic value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__secrets__get_item",
+    "tool_input": {
+     "item": "stripe-prod",
+     "field": "password"
+    },
+    "tool_response": {
+     "field": "password",
+     "value": "FAKESECRET_mcp_38"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp_38"
+   ],
+   "must_see": [
+    "\"field\""
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session calls fake MCP server secrets.get_item",
+   "files": {
+    ".mcp.json": "{\"mcpServers\":{\"secrets\":{\"command\":\"python3\",\"args\":[\"mcp_fake.py\"]}}}",
+    "mcp_fake.py": "import sys, json\nfor line in sys.stdin:\n m = json.loads(line)\n if 'id' not in m: continue\n if m['method'] == 'initialize': r = {'protocolVersion': m['params']['protocolVersion'], 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'secrets', 'version': '1'}}\n elif m['method'] == 'tools/list': r = {'tools': [{'name': 'get_item', 'description': 'Get an item field', 'inputSchema': {'type': 'object', 'properties': {'item': {'type': 'string'}, 'field': {'type': 'string'}}}}]}\n else: r = {'content': [{'type': 'text', 'text': json.dumps({'field': 'password', 'value': 'FAKESECRET_mcp_38'})}]}\n print(json.dumps({'jsonrpc': '2.0', 'id': m['id'], 'result': r}), flush=True)\n"
+   },
+   "prompt": "Call the mcp__secrets__get_item tool with item stripe-prod and field password. Reply with the value it returns, verbatim.",
+   "allowed_tools": "mcp__secrets__get_item",
+   "must_not_see": [
+    "FAKESECRET_mcp_38"
+   ],
+   "must_see": [
+    "password"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

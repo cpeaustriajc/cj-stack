@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0252",
+ "title": "git log -G with -p prints a matched secret line from history",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -G -p: secret value on a +DB_PASSWORD line replaced; commit SHA and diff header kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -G 'DB_PASSWORD=FAKESECRET_[a-z]{4}' -p --all"
+    },
+    "tool_response": {
+     "stdout": "commit 5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b\ndiff --git a/deploy/app.env b/deploy/app.env\n--- a/deploy/app.env\n+++ b/deploy/app.env\n@@ -3 +3 @@\n+DB_PASSWORD=FAKESECRET_wxyz7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wxyz7"
+   ],
+   "must_see": [
+    "commit 5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b",
+    "+DB_PASSWORD=",
+    "diff --git a/deploy/app.env b/deploy/app.env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,9 @@
+[
+  {"query": "triage #272 for me", "should_trigger": true},
+  {"query": "what needs my attention in the issue tracker?", "should_trigger": true},
+  {"query": "can an agent take issue #88 on its own, or does it need me?", "should_trigger": true},
+  {"query": "move #42 to ready-for-agent and write the agent brief", "should_trigger": true},
+  {"query": "grill me on the new share flow before we build it", "should_trigger": false},
+  {"query": "break this spec into tickets", "should_trigger": false},
+  {"query": "fix the failing login test", "should_trigger": false}
+]

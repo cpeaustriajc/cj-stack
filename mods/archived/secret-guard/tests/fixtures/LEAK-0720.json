@@ -1,0 +1,29 @@
+{
+ "case_id": "LEAK-0720",
+ "title": "Read result is a plain string; hook must not throw and leak",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response is a plain string with secret",
+   "files": {
+    "notes.txt": "FAKESECRET_pw4 printed as text\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_pw4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/fixture/notes.txt"
+    },
+    "tool_response": "FAKESECRET_pw4 printed as text"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw4"
+   ],
+   "must_see": [],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0867",
+ "title": "Two PostToolUse hooks race on updatedToolOutput (redactor vs plugin); winner depends on live config",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat notes.txt with the real hook set",
+   "files": {
+    "notes.txt": "POSTGRES_PASSWORD=FAKESECRET_pg1"
+   },
+   "prompt": "Run cat notes.txt with Bash and reply with its exact output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

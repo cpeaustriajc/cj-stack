@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0453",
+ "title": "[10] xattr -l on a browser-downloaded CSV prints a signed download URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "xattr -l output (simulated) with X-Amz-Signature in URL",
+   "files": {
+    "xattr-out.txt": "com.apple.metadata:kMDItemWhereFroms\n  https://files.example.com/dl/abc?X-Amz-Credential=FAKE&X-Amz-Signature=FAKESECRET_sig10\n"
+   },
+   "command": "cat xattr-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_sig10"
+   ],
+   "must_see": [
+    "files.example.com/dl/abc"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

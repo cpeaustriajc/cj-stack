@@ -1,0 +1,65 @@
+{
+ "case_id": "LEAK-0003",
+ "title": "ssh remote openssl pkcs12 -nodes prints a private key PEM block into the local Bash tool result (i=2)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh with remote openssl pkcs12 -nodes is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-web-1 'sudo openssl pkcs12 -in /etc/ssl/private/wildcard.p12 -nodes -passin env:P12_PASS'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "PEM block over the SSH channel is replaced in the Bash tool result",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-web-1 'sudo openssl pkcs12 -in /etc/ssl/private/wildcard.p12 -nodes -passin env:P12_PASS'"
+    },
+    "tool_response": {
+     "stdout": "Bag Attributes\n    localKeyID: FAKESECRET_LKID\n-----BEGIN PRIVATE KEY-----\nFAKESECRET_KEYLINE1\nFAKESECRET_KEYLINE2\n-----END PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYLINE1",
+    "FAKESECRET_KEYLINE2"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "fake-ssh stand-in prints the PEM block; output is redacted at source",
+   "files": {
+    "fake-ssh.sh": "printf 'Bag Attributes\\n    localKeyID: FAKESECRET_LKID\\n-----BEGIN PRIVATE KEY-----\\nFAKESECRET_KEYLINE1\\nFAKESECRET_KEYLINE2\\n-----END PRIVATE KEY-----\\n'\n"
+   },
+   "command": "sh ./fake-ssh.sh deploy@prod-web-1 'sudo cat /etc/ssl/private/wildcard.crt'",
+   "must_not_see": [
+    "FAKESECRET_KEYLINE1",
+    "FAKESECRET_KEYLINE2"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0,
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

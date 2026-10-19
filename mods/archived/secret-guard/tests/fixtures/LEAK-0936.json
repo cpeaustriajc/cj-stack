@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0936",
+ "title": "Google AIza key in a bare log line is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "AIza key with a 35-character body in a bare printf line",
+   "files": {},
+   "command": "printf 'upstream error for AIzaFAKESECRET0123456789abcdefghijKLMNO at step 3\\n'",
+   "must_not_see": [
+    "AIzaFAKESECRET0123456789abcdefghijKLMNO"
+   ],
+   "must_see": [
+    "upstream error for",
+    "at step 3"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

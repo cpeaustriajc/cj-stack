@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0765",
+ "title": "base64 of a secret with no trailing newline",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 without trailing newline redacted",
+   "files": {
+    ".env": "PW=FAKESECRET_PW1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_PW1' | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9QVzE=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9QVzE=",
+    "FAKESECRET_PW1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

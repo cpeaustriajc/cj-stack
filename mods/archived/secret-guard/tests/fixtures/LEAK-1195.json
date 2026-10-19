@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1195",
+ "title": "ssh ps auxww combined with a process environ read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "argv --token value and NUL-split environ DB_URL password",
+   "files": {},
+   "command": "printf '%s\\n' 'deploy 912 0.4 1.2 /srv/myapp/bin/myapp --token=FAKESECRET_t4'; printf 'DB_URL=postgres://u:FAKESECRET_p5@h\\000' | tr '\\000' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_t4",
+    "FAKESECRET_p5"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

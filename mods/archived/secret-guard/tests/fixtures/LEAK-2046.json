@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2046",
+ "title": "Root-only secret with no key-name pattern: value-only redaction misses it when the value is unknown",
+ "level": "not-testable",
+ "reason_not_testable": "The catalog lists unit, but the expected outcome is an unverified known leak for a value that is neither registered nor pattern-matched. The spec has no known-gap verdict, and a fixture asserting the leak would pass only by encoding a failure. Non-hook control: keep root-only plists free of secrets and rotate any value that appears in a tool result. Possible plist-key pattern rules are not testable as a pass.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

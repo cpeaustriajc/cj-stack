@@ -1,0 +1,34 @@
+[
+ {
+  "query": "get a second opinion on my diff before I open the PR, it touches auth",
+  "should_trigger": true
+ },
+ {
+  "query": "interrogate this change, it's a data migration and I'm nervous",
+  "should_trigger": true
+ },
+ {
+  "query": "cross-check this payments refactor with fresh reviewers before I push",
+  "should_trigger": true
+ },
+ {
+  "query": "review my current branch with reviewers who haven't seen our conversation, it changes concurrency in the job queue",
+  "should_trigger": true
+ },
+ {
+  "query": "grill me on whether to use a queue or cron before I build",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the lint errors in this file",
+  "should_trigger": false
+ },
+ {
+  "query": "review the UI of the new settings page against the design",
+  "should_trigger": false
+ },
+ {
+  "query": "what did we decide about the job queue last month",
+  "should_trigger": false
+ }
+]

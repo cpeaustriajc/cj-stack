@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1414",
+ "title": "Bash: six-byte window of harvested value (cut then od -tx1, hex form)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "hex window of harvested value via cut then od is redacted at source (decimal od -tu1 form replaced: runner rejected its ordinals as not derivable from FAKE)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_ab12\n",
+    ".env.planted": "PLANTED_SERVICE_SECRET_0=FAKESECRET_ab12\n"
+   },
+   "command": "printf '%s' 'FAKESECRET_ab12' | cut -c5-10 | od -An -tx1 | tr -d ' \\n'",
+   "must_not_see": [
+    "534543524554"
+   ],
+   "policy_note": "R5: value planted in a harvested file | R3: a typed known value fed to an encoder is denied; a deny passes"
+  }
+ ]
+}

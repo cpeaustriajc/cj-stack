@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1306",
+ "title": "pod trunk me and pod repo list print account data",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pod trunk subcommand is denied (policy)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pod trunk me; pod repo list"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "If run, the Token value is redacted (output format is a stub, UNVERIFIED against real pod)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pod trunk me; pod repo list"
+    },
+    "tool_response": {
+     "stdout": "Name: ci-bot\nEmail: ci@corp.example\nToken: FAKESECRET_podtrunk0030\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_podtrunk0030"
+   ],
+   "must_see": [
+    "Name: ci-bot",
+    "Email: ci@corp.example",
+    "Token:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

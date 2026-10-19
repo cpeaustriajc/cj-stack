@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1778",
+ "title": "Read ~/.npmrc with a literal _authToken",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read ~/.npmrc, _authToken value replaced, registry URL kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.npmrc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.npmrc",
+      "content": "registry=https://registry.npmjs.org/\n//registry.npmjs.org/:_authToken=npm_FAKESECRET_NPM_01\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "npm_FAKESECRET_NPM_01"
+   ],
+   "must_see": [
+    "registry=https://registry.npmjs.org/",
+    "//registry.npmjs.org/:_authToken="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

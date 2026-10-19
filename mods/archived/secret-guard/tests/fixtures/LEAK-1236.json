@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1236",
+ "title": "Include pulls a LocalCommand from an agent-written conf.d file",
+ "level": "not-testable",
+ "reason_not_testable": "The Include target is resolved inside ssh's config parsing, which the command text does not show, so no PreToolUse fixture can prove the included file is covered. The stdout-redaction half is the same mechanism as LEAK-1230 and LEAK-1234. Non-hook controls: config writes are denied (TAMP-0071 fixtures) and the hook cannot inspect included files.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

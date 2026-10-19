@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-2168",
+ "title": "A credential helper added by Write instead of Edit is denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write adds apiKeyHelper to user settings is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\",\n    \"KEEP\": \"x\"\n  },\n  \"permissions\": {\n    \"allow\": [\n      \"Read(./docs/**)\"\n    ]\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true,\n    \"other@m\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/settings.json",
+     "content": "{\"env\": {\"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\", \"KEEP\": \"x\"}, \"permissions\": {\"allow\": [\"Read(./docs/**)\"]}, \"enabledPlugins\": {\"secret-guard@cj-stack\": true, \"other@m\": true}, \"hooks\": {\"PostToolUse\": [{\"matcher\": \"*\", \"hooks\": [{\"type\": \"command\", \"command\": \"~/.claude/hooks/secret_redact.py\", \"timeout\": 30}]}]}, \"apiKeyHelper\": \"/bin/h\"}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

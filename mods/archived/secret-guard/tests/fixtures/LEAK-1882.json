@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1882",
+ "title": "ANSI CSI reset inside a secret value in Bash stdout is stripped before matching and redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ANSI reset inside secret redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET\u001b[0m_d4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "asciinema cat ./demo.cast"
+    },
+    "tool_response": {
+     "stdout": "ready\nFAKESECRET\u001b[0m_d4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET\u001b[0m_d4"
+   ],
+   "must_see": [
+    "ready"
+   ],
+   "policy_note": "R5 instruction: planted FAKESECRET\u001b[0m_d4 (same value, escape included) as SERVICE_TOKEN in a harvested .env in files so the value has a file signal; no other change."
+  }
+ ]
+}

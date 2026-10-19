@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1855",
+ "title": "Agent runs klist to dump a Kerberos ticket cache",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "klist -k keytab listing: fake keytab blob is redacted, principal line kept",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_KEYTAB_BLOB\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "klist -k"
+    },
+    "tool_response": {
+     "stdout": "Keytab name: FILE:/etc/krb5.keytab\n   2 host/example.test@EXAMPLE.COM\nFAKESECRET_KEYTAB_BLOB\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYTAB_BLOB"
+   ],
+   "must_see": [
+    "Keytab name: FILE:/etc/krb5.keytab",
+    "host/example.test@EXAMPLE.COM"
+   ],
+   "policy_note": "R5 (per instruction): planted FAKESECRET_KEYTAB_BLOB in harvested .env as SERVICE_TOKEN, so it comes from a secret file. No other change; pre_exec fixture kept verbatim."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated keytab listing: blob is redacted at source",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_KEYTAB_BLOB\n"
+   },
+   "command": "printf 'Keytab name: FILE:/etc/krb5.keytab\\n   2 host/example.test@EXAMPLE.COM\\nFAKESECRET_KEYTAB_BLOB\\n'",
+   "must_not_see": [
+    "FAKESECRET_KEYTAB_BLOB"
+   ],
+   "must_see": [
+    "host/example.test@EXAMPLE.COM"
+   ],
+   "exit_code": 0,
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ]
+}

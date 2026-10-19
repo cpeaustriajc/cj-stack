@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-2162",
+ "title": "Unwrapping the filter wrapper keeps secret context for a secret-reading command",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo of a secret-named variable is still read in secret context through the wrapper",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "__sg_py=$(command -v python3 || command -v python) || __sg_py=python3\n__sg_d=$(mktemp -d \"${TMPDIR:-/tmp}/sg.XXXXXX\") && mkfifo \"$__sg_d/o\" \"$__sg_d/e\" || { echo '[REDACTED: output withheld (filter unavailable)]' >&2; false; }\n( \"$__sg_py\" '/home/u/.claude/plugins/cache/cj-stack/secret-guard/0.1.2/hooks/secret_filter.py' 1 < \"$__sg_d/o\" & echo $! > \"$__sg_d/po\" )\n( \"$__sg_py\" '/home/u/.claude/plugins/cache/cj-stack/secret-guard/0.1.2/hooks/secret_filter.py' 1 < \"$__sg_d/e\" >&2 & echo $! > \"$__sg_d/pe\" )\nexec 7>&1 8>&2\nexec >\"$__sg_d/o\" 2>\"$__sg_d/e\"\n__sg_ue=; __sg_done=\ntrap() { if [ $# -eq 2 ] && { [ \"$2\" = EXIT ] || [ \"$2\" = 0 ]; }; then __sg_ue=$1; else builtin trap \"$@\"; fi; }\n__sg_fin() { { set +x; } 2>/dev/null; __sg_rc=$?; [ -n \"$__sg_done\" ] && return $__sg_rc; __sg_done=1; if [ -n \"$__sg_ue\" ]; then __sg_u=$__sg_ue; __sg_ue=; eval \"$__sg_u\"; fi; exec >&7 2>&8 7>&- 8>&-; __sg_po=$(cat \"$__sg_d/po\" 2>/dev/null); __sg_pe=$(cat \"$__sg_d/pe\" 2>/dev/null); __sg_n=0; while { kill -0 $__sg_po 2>/dev/null || kill -0 $__sg_pe 2>/dev/null; } && [ $__sg_n -lt 100 ]; do sleep 0.1; __sg_n=$((__sg_n+1)); done; kill $__sg_po $__sg_pe 2>/dev/null; rm -rf \"$__sg_d\"; return $__sg_rc; }\n__sg_exit() { __sg_ec=$?; __sg_fin; exit $__sg_ec; }\nbuiltin trap __sg_exit EXIT\necho $DB_PASSWORD\n__sg_x=$?; __sg_fin; (exit $__sg_x)\n",
+     "description": "x"
+    },
+    "tool_response": {
+     "stdout": "FAKEbare_q8Zr2LmXv7TcQ9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKEbare_q8Zr2LmXv7TcQ9"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0100",
+ "title": "V0872 nohup/disown background process writes DATABASE_URL to a log that Read then returns",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of worker.log: credential in DATABASE_URL is redacted (either redaction form accepted)",
+   "files": {
+    "worker.log": "DATABASE_URL=postgres://FAKEUSER:FAKESECRET_DBPW@fakehost:5432/db\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "worker.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "worker.log",
+      "content": "DATABASE_URL=postgres://FAKEUSER:FAKESECRET_DBPW@fakehost:5432/db\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DBPW"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

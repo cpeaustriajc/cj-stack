@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0790",
+ "title": "Truncated PEM key (BEGIN line, body line, key line without END) is not shown; body line is a fake base64-looking line carrying the FAKE marker",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "head -n 3 of a private key: BEGIN, body and key lines not shown",
+   "files": {
+    "deploy_key": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE\nFAKESECRET_KEYLINE8\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "head -n 3 deploy_key"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE\nFAKESECRET_KEYLINE8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE",
+    "FAKESECRET_KEYLINE8"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

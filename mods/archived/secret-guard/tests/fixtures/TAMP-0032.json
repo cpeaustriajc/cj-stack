@@ -1,0 +1,37 @@
+{
+ "case_id": "TAMP-0032",
+ "title": "PreToolUse guard denies an Edit that removes the redactor from settings.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit removes redactor line from test-HOME settings.json",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/private/tmp/secret-hooks-fixture-home/.claude/settings.json",
+     "old_string": "redactor",
+     "new_string": ""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write replaces test-HOME settings.json without the redactor",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/private/tmp/secret-hooks-fixture-home/.claude/settings.json",
+     "content": "{\"hooks\":{}}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

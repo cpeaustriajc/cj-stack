@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0756",
+ "title": "PostToolUseFailure: curl error text with a secret in stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command with secret in stderr (curl-style text simulated with echo, no network)",
+   "files": {
+    ".env": "CURL_PASSWORD=FAKESECRET_pw_1\n"
+   },
+   "command": "echo 'curl: (6) Could not resolve host: svc.invalid (auth deploy:FAKESECRET_pw_1)' 1>&2; exit 6",
+   "exit_code": 6,
+   "must_not_see": [
+    "FAKESECRET_pw_1"
+   ],
+   "must_see": [
+    "Could not resolve host: svc.invalid"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0153",
+ "title": "fold -w4 of an .npmrc token: whole value withheld across folded lines; cat | fold is denied as secret source plus transform",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat .npmrc piped to fold is denied",
+   "files": {
+    ".npmrc": "//x/:_authToken=FAKESECRET_npm_xyz987\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .npmrc | fold -w4"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "folded token fragments withheld",
+   "files": {
+    ".npmrc": "//x/:_authToken=FAKESECRET_npm_xyz987\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .npmrc | fold -w4"
+    },
+    "tool_response": {
+     "stdout": "//x/\n:_au\nthTo\nken=\nFAKE\nSECR\nET_n\npm_x\nyz98\n7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKE\nSECR\nET_n\npm_x\nyz98\n7"
+   ]
+  }
+ ]
+}

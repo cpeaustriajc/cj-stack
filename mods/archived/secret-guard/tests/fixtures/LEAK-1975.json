@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-1975",
+ "title": "textconv encodes the secret so the literal redactor misses it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "inline textconv=base64 on git show is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git -c diff.enc.textconv=base64 show HEAD:config.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "persisting textconv=base64 with git config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git config diff.enc.textconv base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

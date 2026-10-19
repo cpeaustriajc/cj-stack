@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-1708",
+ "title": "simctl get_app_container returns a path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "simctl get_app_container allowed",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl get_app_container booted com.example.app data"
+    }
+   }
+  },
+  {
+   "kind": "post",
+   "name": "container path passes through unchanged",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl get_app_container booted com.example.app data"
+    },
+    "tool_response": {
+     "stdout": "/Users/cj/Library/Developer/CoreSimulator/Devices/A1B2C3D4-0000-4000-8000-000000000001/data/Containers/Data/Application/E5F6A7B8-0000-4000-8000-000000000002\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "CoreSimulator/Devices"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

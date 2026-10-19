@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0553",
+ "title": "cat .envrc: export NAME=value lines redacted, export keyword and names kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "two export lines redacted",
+   "files": {
+    ".envrc": "export GEM_API_KEY=FAKESECRET_gem16\nexport DOCKERHUB_TOKEN=FAKESECRET_dh16\n"
+   },
+   "command": "cat .envrc",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_gem16",
+    "FAKESECRET_dh16"
+   ],
+   "must_see": [
+    "export GEM_API_KEY=[REDACTED]",
+    "export DOCKERHUB_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1031",
+ "title": "docker inspect Config.Env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker inspect Env array value redacted inside JSON string",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect api | jq '.[0].Config.Env'"
+    },
+    "tool_response": {
+     "stdout": "[\"STRIPE_KEY=FAKESECRET_sk_AZ59\", \"NODE_ENV=production\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_AZ59"
+   ],
+   "must_see": [
+    "NODE_ENV=production"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints Env JSON array",
+   "files": {},
+   "command": "printf '[\"STRIPE_KEY=FAKESECRET_sk_AZ59\", \"NODE_ENV=production\"]\\n'",
+   "must_not_see": [
+    "FAKESECRET_sk_AZ59"
+   ],
+   "must_see": [
+    "NODE_ENV=production"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

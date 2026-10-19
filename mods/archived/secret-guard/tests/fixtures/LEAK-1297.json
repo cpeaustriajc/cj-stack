@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-1297",
+ "title": "Read of ~/.gradle/gradle.properties",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.gradle/gradle.properties is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.gradle/gradle.properties"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.gradle/gradle.properties; owner decision allows it (redactor hides values).)"
+  },
+  {
+   "kind": "post",
+   "name": "If the Read is allowed, both values are redacted and key names remain",
+   "files": {
+    ".gradle/gradle.properties": "nexusPassword=FAKESECRET_gradlenexus0023\ngpr.token=FAKESECRET_gprtok0023\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<fixture HOME>/.gradle/gradle.properties"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<fixture HOME>/.gradle/gradle.properties",
+      "content": "nexusPassword=FAKESECRET_gradlenexus0023\ngpr.token=FAKESECRET_gprtok0023\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    },
+    "tool_use_id": "toolu_fake_1297"
+   },
+   "must_not_see": [
+    "FAKESECRET_gradlenexus0023",
+    "FAKESECRET_gprtok0023"
+   ],
+   "must_see": [
+    "nexusPassword=",
+    "gpr.token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0403",
+ "title": "L12 sudo keyctl dump of another session keyring",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sudo keyctl session print inside ssh string, stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-db-01 'sudo keyctl session - keyctl print $(sudo keyctl search @u user db_pass)'"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_keyctl_49\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_keyctl_49"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated sudo keyctl session print withheld at source",
+   "files": {},
+   "command": "ssh() { printf 'FAKESECRET_keyctl_49\\n'; }; ssh prod-db-01 'sudo keyctl session - keyctl print $(sudo keyctl search @u user db_pass)'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_keyctl_49"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

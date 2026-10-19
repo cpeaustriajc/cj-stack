@@ -1,0 +1,53 @@
+{
+ "case_id": "TAMP-0145",
+ "title": "enabledPlugins edits that turn secret-guard off are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "user settings flips secret-guard to false",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "~/.claude/settings.json",
+     "old_string": "\"secret-guard@cj-stack\": true",
+     "new_string": "\"secret-guard@cj-stack\": false",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "project local settings disables it",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/p/.claude/settings.local.json",
+     "old_string": "\"enabledPlugins\": {",
+     "new_string": "\"enabledPlugins\": {\"secret-guard@cj-stack\": false,",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq rewrite of enabledPlugins",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq '.enabledPlugins[\"secret-guard@cj-stack\"]=false' ~/.claude/settings.json > /tmp/s && mv /tmp/s ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

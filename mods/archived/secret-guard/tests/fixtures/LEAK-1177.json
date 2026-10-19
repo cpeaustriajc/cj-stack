@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1177",
+ "title": "ssh cat of a secret-bearing file returns KEY=value lines (the P best-effort ssh deny may block the pre_exec fixture; the post fixture proves the output path)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O masks API_TOKEN and URL password in ssh output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web 'cat /srv/app/.env'"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_tok1\nDB_URL=postgres://u:FAKESECRET_pw1@db/x",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok1",
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "postgres://u:[REDACTED]@db/x"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote .env output redacted at source",
+   "files": {},
+   "command": "ssh() { printf 'API_TOKEN=FAKESECRET_tok1\\nDB_URL=postgres://u:FAKESECRET_pw1@db/x\\n'; }; ssh prod-web 'cat /srv/app/.env'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok1",
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "postgres://u:[REDACTED]@db/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

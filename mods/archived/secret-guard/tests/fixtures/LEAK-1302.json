@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1302",
+ "title": "gem env and cat of ~/.gem/credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "gem env && cat of ~/.gem/credentials is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gem env && cat $HOME/.gem/credentials"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (gem env and cat of ~/.gem/credentials, display-only chain; allowed as plain display. Borderline; flagged for owner.)"
+  },
+  {
+   "kind": "post",
+   "name": "If run, the rubygems_api_key value is redacted and the YAML key remains",
+   "files": {
+    ".gem/credentials": "---\n:rubygems_api_key: FAKESECRET_gemkey0027\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gem env && cat $HOME/.gem/credentials"
+    },
+    "tool_response": {
+     "stdout": "RUBYGEMS VERSION: 3.5.22\nRUBY VERSION: 3.3.0\n---\n:rubygems_api_key: FAKESECRET_gemkey0027\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gemkey0027"
+   ],
+   "must_see": [
+    "RUBYGEMS VERSION",
+    ":rubygems_api_key:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

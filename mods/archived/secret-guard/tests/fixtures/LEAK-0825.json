@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0825",
+ "title": "Redactor raises on a non-UTF-8 byte and prints a traceback to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf with a 0xff byte after a secret is redacted at source",
+   "files": {},
+   "command": "printf 'DB_PASSWORD=FAKESECRET_pw_3\\n\\xff\\n'",
+   "must_not_see": [
+    "FAKESECRET_pw_3"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "stdout with an undecodable code unit after a secret is withheld or redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DB_PASSWORD=FAKESECRET_pw_3\\n\\xff\\n'"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_3\n\udcff\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_3"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

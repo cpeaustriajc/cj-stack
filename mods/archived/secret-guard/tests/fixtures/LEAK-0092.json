@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0092",
+ "title": "Value split across two cut calls (fixture covers call 2 only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cut -c14-40 .env second call emits ESECRET_org_9f8e7d",
+   "files": {
+    ".env": "POLAR_ORG=FAKESECRET_org_9f8e7d\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c14-40 .env"
+    },
+    "tool_response": {
+     "stdout": "ESECRET_org_9f8e7d\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "ESECRET_org_"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

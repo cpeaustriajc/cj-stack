@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1804",
+ "title": "pip install -v prints index URL with user:password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "pip -v index URL userinfo",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pip install -v -r requirements.txt"
+    },
+    "tool_response": {
+     "stdout": "Looking in indexes: https://cj:FAKESECRET_PIPV_01@pypi.example.com/simple\nRequirement already satisfied: requests in ./.venv/lib/site-packages (2.32.0)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PIPV_01"
+   ],
+   "must_see": [
+    "Looking in indexes: https://cj:",
+    "@pypi.example.com/simple",
+    "Requirement already satisfied"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "pip -v at source, local script stands in",
+   "files": {
+    "pip-install-sim.sh": "echo \"Looking in indexes: https://cj:FAKESECRET_PIPV_01@pypi.example.com/simple\"\necho \"Requirement already satisfied: requests in ./.venv/lib/site-packages (2.32.0)\"\n"
+   },
+   "command": "sh ./pip-install-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_PIPV_01"
+   ],
+   "must_see": [
+    "Looking in indexes: https://cj:",
+    "@pypi.example.com/simple",
+    "Requirement already satisfied"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

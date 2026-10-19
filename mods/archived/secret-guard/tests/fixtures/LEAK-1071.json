@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1071",
+ "title": "Bash base64 .env wrapped across lines: value not recoverable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 .env is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 .env"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

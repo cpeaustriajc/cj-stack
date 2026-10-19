@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0716",
+ "title": "PostToolBatch payload may contain raw tool_response (runner does not assert on log or transcript files; only recorded tool_response and final reply)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "three parallel Bash calls, cat .env is call 1",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW_1A\n"
+   },
+   "prompt": "Issue these three Bash tool calls in one message, all in parallel: `cat .env`, `echo one`, `echo two`. Then reply with the exact output of the `cat .env` call.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_PW_1A"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

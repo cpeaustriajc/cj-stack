@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0589",
+ "title": "Read of addon log file with headers",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of mitm.log Authorization line redacted, other line kept",
+   "files": {
+    "fixtures/mitm.log": "12:00:01 GET /v1/me\nAuthorization: Bearer FAKESECRET_log53\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "fixtures/mitm.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "fixtures/mitm.log",
+      "content": "12:00:01 GET /v1/me\nAuthorization: Bearer FAKESECRET_log53\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_log53"
+   ],
+   "must_see": [
+    "GET /v1/me",
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

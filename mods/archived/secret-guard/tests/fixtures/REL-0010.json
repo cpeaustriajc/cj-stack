@@ -1,0 +1,51 @@
+{
+ "case_id": "REL-0010",
+ "title": "D7 Glob enumerates plist paths",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plist path list returned unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "**/*.plist",
+     "path": "/Users/example/Library/Preferences"
+    },
+    "tool_response": {
+     "filenames": [
+      "/Users/example/Library/Preferences/com.example.devtool.plist",
+      "/Users/example/Library/Preferences/com.apple.finder.plist"
+     ],
+     "durationMs": 5,
+     "numFiles": 2,
+     "truncated": false,
+     "totalMatches": 2,
+     "countIsComplete": true
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "com.example.devtool.plist",
+    "com.apple.finder.plist"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Glob of plist paths stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "**/*.plist",
+     "path": "/Users/example/Library/Preferences"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

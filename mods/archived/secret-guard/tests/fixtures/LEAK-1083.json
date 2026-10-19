@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1083",
+ "title": "Bash cat .env | fold -w 8: value wrapped across lines is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of secret .env piped to fold is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "PW=FAKESECRET_pw1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /srv/app/.env | fold -w 8"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

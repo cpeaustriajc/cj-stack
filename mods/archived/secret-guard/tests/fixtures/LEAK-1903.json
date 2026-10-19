@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1903",
+ "title": "defaults read of an app domain prints a token value under a secret-looking key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "defaults read output masks apiToken value and keeps tilesize",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read com.example.FAKEAPP"
+    },
+    "tool_response": {
+     "stdout": "{\n    apiToken = \"FAKESECRET_tok_0001\";\n    tilesize = 48;\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_0001"
+   ],
+   "must_see": [
+    "apiToken = ",
+    "tilesize = 48;"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated defaults read output run through the guard wrapper",
+   "files": {
+    "defaults-app.txt": "{\n    apiToken = \"FAKESECRET_tok_0001\";\n    tilesize = 48;\n}\n"
+   },
+   "command": "cat defaults-app.txt",
+   "must_not_see": [
+    "FAKESECRET_tok_0001"
+   ],
+   "must_see": [
+    "tilesize = 48;"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

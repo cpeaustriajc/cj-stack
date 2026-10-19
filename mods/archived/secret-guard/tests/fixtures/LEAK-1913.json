@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1913",
+ "title": "Failed Bash call (non-zero exit) carries secret in stderr outside PostToolUse; failure path must be redacted at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command stderr redacted at source",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_NC_0005\n"
+   },
+   "command": "printf 'Error: row for FAKESECRET_NC_0005 malformed\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_NC_0005"
+   ],
+   "must_see": [
+    "Error: row for",
+    "malformed"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

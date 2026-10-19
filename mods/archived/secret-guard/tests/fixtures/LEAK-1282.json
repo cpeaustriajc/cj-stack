@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1282",
+ "title": "OAuth callback URL with code parameter returned by MCP tool",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp-callback-code-query-redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__auth__auth_status",
+    "tool_input": {},
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "Visit https://auth.example.test/callback?code=FAKESECRET_oauthcode0013&state=FAKESTATE0013"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oauthcode0013"
+   ],
+   "must_see": [
+    "https://auth.example.test/callback",
+    "state=FAKESTATE0013"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1186",
+ "title": "ssh vault kv get piped to grep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "aligned table value cell replaced by [REDACTED]",
+   "files": {},
+   "command": "printf 'Key                    Value\\naws_secret_access_key   FAKESECRET_v1\\n' | grep aws",
+   "must_not_see": [
+    "FAKESECRET_v1"
+   ],
+   "must_see": [
+    "aws_secret_access_key",
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

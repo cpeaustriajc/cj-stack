@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0584",
+ "title": "Grep -a over binary pcap bytes surfaces token (lenient decoding; no fail-open)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep -a content with lone-surrogate bytes around the token (stands in for non-UTF-8 bytes)",
+   "files": {
+    "fixtures/downloads/capture.bin": "x Authorization: Bearer FAKESECRET_bin49 y"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Authorization: Bearer",
+     "path": "fixtures/downloads",
+     "-a": true,
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "\udcff\udcfe Authorization: Bearer FAKESECRET_bin49 \udc80",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bin49"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -a over capture bytes redacted at source (text-safe bytes only; invalid UTF-8 not expressible in JSON files)",
+   "files": {
+    "fixtures/downloads/capture.bin": "\u0000\u00ff\u00fe Authorization: Bearer FAKESECRET_bin49\n\u0080\n"
+   },
+   "command": "cat fixtures/downloads/capture.bin | grep -a 'Authorization: Bearer'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_bin49"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

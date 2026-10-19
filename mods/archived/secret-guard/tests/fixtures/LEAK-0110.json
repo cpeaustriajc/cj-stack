@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0110",
+ "title": "Assistant reply echoes a token, exported when assistant responses are on (i3)",
+ "level": "not-testable",
+ "reason_not_testable": "Model prose, not tool output. PostToolUse and PreToolUse do not see assistant text. Non-hook controls: instruction-level rule that the model never restates a value, and rotation after any echo.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

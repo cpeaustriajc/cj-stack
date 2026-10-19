@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0903",
+ "title": "Base32 SSM parameter value with no key name in output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bare base32 stdout from aws ssm with secret-ish --name redacted (value uses only A-Z so it is valid base32 and carries FAKESECRET)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws ssm get-parameter --name /app/prod/webhook-signing-material --with-decryption --query Parameter.Value --output text"
+    },
+    "tool_response": {
+     "stdout": "MFAKESECRETSIGNINGMAT\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "MFAKESECRETSIGNINGMAT"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: local shim named aws prints the value; command names secret-ish parameter",
+   "command": "sh bin/aws ssm get-parameter --name /app/prod/webhook-signing-material --with-decryption --query Parameter.Value --output text",
+   "files": {
+    "bin/aws": "#!/bin/sh\necho MFAKESECRETSIGNINGMAT\n"
+   },
+   "must_not_see": [
+    "MFAKESECRETSIGNINGMAT"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

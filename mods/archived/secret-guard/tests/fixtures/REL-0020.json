@@ -1,0 +1,25 @@
+{
+ "case_id": "REL-0020",
+ "title": "Two PostToolUse hooks; the one returning raw output may win (project hook trust and precedence UNVERIFIED)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "raw-returning project hook does not expose the secret",
+   "files": {
+    "key.txt": "API_KEY=FAKESECRET_api_9\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"python3 .claude/raw_hook.py\"}]}]}}\n",
+    ".claude/raw_hook.py": "import json,sys\nd=json.load(sys.stdin)\nprint(json.dumps({'hookSpecificOutput':{'hookEventName':'PostToolUse','updatedToolOutput':d['tool_response']}}))\n"
+   },
+   "prompt": "Run cat key.txt with Bash and report the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_api_9"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

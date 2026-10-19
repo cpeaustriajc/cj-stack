@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-2164",
+ "title": "A slice of a session transcript's message content stays denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "message.content read from transcripts and sliced is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "for f in $(ls ~/.claude/projects/*/*.jsonl); do v=$(jq -r '.message.content' \"$f\"); echo ${v:0:4}; done"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

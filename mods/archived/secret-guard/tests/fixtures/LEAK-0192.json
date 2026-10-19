@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0192",
+ "title": "terraform console evaluates a sensitive variable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "bare quoted console value redacted or withheld (simulated)",
+   "files": {
+    "console.out": "\"FAKESECRET_console_29\"\n",
+    ".env": "DB_PASSWORD=FAKESECRET_console_29\n"
+   },
+   "command": "cat console.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_console_29"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "terraform console bare value via PostToolUse Bash",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_console_29\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo 'var.db_password' | terraform console"
+    },
+    "tool_response": {
+     "stdout": "\"FAKESECRET_console_29\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_console_29"
+   ]
+  }
+ ]
+}

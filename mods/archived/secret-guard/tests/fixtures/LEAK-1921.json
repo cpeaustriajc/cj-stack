@@ -1,0 +1,57 @@
+{
+ "case_id": "LEAK-1921",
+ "title": "MCP tool returns Electron-app token in its result; PostToolUse on mcp__.* redacts for any server",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "slack MCP result token redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__slack__read_session",
+    "tool_input": {
+     "session_id": "S0FAKE"
+    },
+    "tool_response": {
+     "messages": [
+      {
+       "user": "U0FAKE",
+       "text": "token FAKESECRET_xoxb-token"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xoxb-token"
+   ],
+   "must_see": [
+    "messages",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "unknown future MCP server result redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__newserver__fetch_doc",
+    "tool_input": {
+     "doc_id": "D0FAKE"
+    },
+    "tool_response": {
+     "body": "api key FAKESECRET_mcp_newsrv"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp_newsrv"
+   ],
+   "must_see": [
+    "body",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

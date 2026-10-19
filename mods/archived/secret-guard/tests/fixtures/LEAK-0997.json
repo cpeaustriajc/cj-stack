@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0997",
+ "title": "env | grep for Atlassian/Jira/MCP names",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "two NAME=value lines with secret-ish names masked, names kept",
+   "files": {
+    "env.txt": "JIRA_API_TOKEN=FAKESECRET_jira_W20\nMCP_TOKEN=FAKESECRET_mcp_W20b\n"
+   },
+   "command": "grep -E 'ATLASSIAN|JIRA|MCP' env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_jira_W20",
+    "FAKESECRET_mcp_W20b"
+   ],
+   "must_see": [
+    "JIRA_API_TOKEN=[REDACTED]",
+    "MCP_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

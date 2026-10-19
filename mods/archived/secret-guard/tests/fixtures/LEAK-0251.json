@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0251",
+ "title": "git log -S existence oracle with a guessed value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "deny git log -S with a secret-shaped value literal (oracle)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -S 'FAKESECRET_guess6' --oneline --all"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "output with no secret value passes unchanged (existence signal is the pre-guard's job)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -S 'FAKESECRET_guess6' --oneline --all"
+    },
+    "tool_response": {
+     "stdout": "4b8e2f1 chore: add deploy env\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "4b8e2f1 chore: add deploy env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0841",
+ "title": "docker inspect Env array: STRIPE_SECRET_KEY redacted, NODE_ENV and PORT kept (simulated with printf, pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Env-array line with STRIPE_SECRET_KEY printed via printf",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\n"
+   },
+   "command": "printf '%s\\n' '[\"NODE_ENV=production\",\"STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc123\",\"PORT=3000\"]'",
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc123"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "PORT=3000",
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

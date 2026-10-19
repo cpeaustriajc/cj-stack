@@ -1,0 +1,30 @@
+{
+ "case_id": "FP-0087",
+ "title": "Bash grep -rn over src/ for tokenizer, primaryKey, keyboardLayout and author: lines pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -rn over src/ with four name patterns",
+   "files": {
+    "src/nlp/index.ts": "// a\n// b\n// c\nimport { tokenizer } from './tokenizer';\n",
+    "src/db/schema.ts": "// 1\n// 2\n// 3\n// 4\n// 5\n// 6\n// 7\n// 8\n  primaryKey: 'id',\n",
+    "src/ui/keys.ts": "// keys\nconst keyboardLayout = \"us\";\n",
+    "src/blog/post.ts": "// post\n// by\nauthor: Jane Doe\n"
+   },
+   "command": "grep -rn \"tokenizer\\|primaryKey\\|keyboardLayout\\|author\" src/",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "src/nlp/index.ts:4:",
+    "src/db/schema.ts:9:",
+    "src/ui/keys.ts:2:",
+    "src/blog/post.ts:3:",
+    "keyboardLayout",
+    "primaryKey",
+    "author: Jane Doe"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

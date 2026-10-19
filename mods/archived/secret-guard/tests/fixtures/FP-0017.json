@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0017",
+ "title": "False positive: git diff --numstat matches the numeric table shape",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "numstat output unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git diff --numstat HEAD~1 HEAD"
+    },
+    "tool_response": {
+     "stdout": "12\t3\tsrc/app.ts\n0\t45\tdocs/old.md\n7\t7\tpackage.json\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "src/app.ts",
+    "docs/old.md",
+    "package.json"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "control: git diff --numstat is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git diff --numstat HEAD~1 HEAD"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

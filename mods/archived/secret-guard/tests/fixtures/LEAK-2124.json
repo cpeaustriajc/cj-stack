@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2124",
+ "title": "Secret typed with spaces or a split encoding evades the pattern (evasion by user or model)",
+ "level": "not-testable",
+ "reason_not_testable": "Detection gap in a prompt detector that test-spec.md does not define. The runner cannot place a split or encoded value into a prompt. The case itself classes this as a known limitation. Non-hook control: credential rotation and not relying on the redactor as the only defence.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

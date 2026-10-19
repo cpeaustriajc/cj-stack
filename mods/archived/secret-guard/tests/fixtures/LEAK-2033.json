@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2033",
+ "title": "Redacted output is not redacted in OpenTelemetry or analytics export",
+ "level": "not-testable",
+ "reason_not_testable": "PostToolUse runs after the original output is captured, so the telemetry sink receives the raw output regardless of the hook. Whether the exporter includes tool content is UNVERIFIED on the settings page. Non-hook control: keep OpenTelemetry tool-content export off (setting key UNVERIFIED here) and keep secrets out of clipboard history that tools read.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,40 @@
+{
+ "case_id": "TAMP-0058",
+ "title": "Write a new file that contains a known secret value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write new file whose content holds a harvested secret value",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "scratch-fixtures/leak.txt",
+     "content": "token=FAKESECRET_pg1\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write of a benign file stays allowed",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "notes/hello.txt",
+     "content": "hello world\n"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1112",
+ "title": "PowerShell Get-Content or Select-String on a dotenv file (via Bash)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Get-Content on deploy/.env piped to Select-String is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "Get-Content deploy/.env | Select-String -Pattern KIS|PAPER"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Get-Content of a named secret file (deploy/.env) with a pattern filter. Owner allows display of named secret files; filter treated like the Grep tool.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Get-Content on .env piped to Select-String is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "Get-Content .env | Select-String BROKER"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Get-Content of a named secret file (.env) with a pattern filter. Owner allows display of named secret files.)"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, KIS_KEY value is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1112",
+    "tool_input": {
+     "command": "Get-Content deploy/.env | Select-String -Pattern KIS|PAPER"
+    },
+    "tool_response": {
+     "stdout": "KIS_KEY=FAKESECRET_kis\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kis"
+   ],
+   "must_see": [
+    "KIS_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

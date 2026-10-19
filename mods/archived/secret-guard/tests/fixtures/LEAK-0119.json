@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0119",
+ "title": "Editor swap or lock file holds a copy of the secret (i12)",
+ "level": "not-testable",
+ "reason_not_testable": "Editor-created .env.swp and .#.env lock symlinks are not agent tool calls, so no PreToolUse or PostToolUse event fires. Non-hook control: keep secrets out of synced roots and exclude swap and lock names from sync at the client.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

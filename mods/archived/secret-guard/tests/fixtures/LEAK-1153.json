@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1153",
+ "title": "git log -p on secret paths (incl. --all): deny; redact + lines at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git log -p on .env denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -- .env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain git history display of .env with nothing combined; owner allows plain display of secret sources.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git log -p --all on p8 key path denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p --all -- fastlane/AuthKey_XXXXXXXXXX.p8"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain git history display of a p8 key path with nothing combined; owner allows plain display.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated + line from history redacted at source",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_old\n"
+   },
+   "command": "printf '%s\\n' '+API_KEY=FAKESECRET_old'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_old"
+   ],
+   "must_see": [
+    "+API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

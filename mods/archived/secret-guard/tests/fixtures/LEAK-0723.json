@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0723",
+ "title": "Character-spaced secret from docker inspect (sed 's/./& /g')",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "char-spaced DB_PASSWORD line",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect app | sed 's/./& /g'"
+    },
+    "tool_response": {
+     "stdout": "D B _ P A S S W O R D = F A K E S E C R E T _ p w 6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "F A K E S E C R E T _ p w 6"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

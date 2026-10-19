@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1805",
+ "title": "curl -v echoes Authorization header to stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl -v Authorization line on stderr",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -v -H \"Authorization: Bearer $DEPLOY_TOKEN\" https://api.example.com/deploy"
+    },
+    "tool_response": {
+     "stdout": "{\"deployed\":true}\n",
+     "stderr": "*   Trying 93.184.216.34:443...\n> Authorization: Bearer FAKESECRET_DEPLOY_01\n> POST /deploy HTTP/2\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DEPLOY_01"
+   ],
+   "must_see": [
+    "> Authorization: Bearer ",
+    "POST /deploy",
+    "deployed"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "curl -v stderr at source, local script stands in",
+   "files": {
+    "curl-sim.sh": "export DEPLOY_TOKEN=FAKESECRET_DEPLOY_01\necho \"> Authorization: Bearer $DEPLOY_TOKEN\" >&2\necho '{\"deployed\":true}'\n"
+   },
+   "command": "sh ./curl-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DEPLOY_01"
+   ],
+   "must_see": [
+    "> Authorization: Bearer ",
+    "deployed"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

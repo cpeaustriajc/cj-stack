@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0250",
+ "title": "git grep across all revisions prints a historical value with a SHA prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git grep over all revs: value after DB_PASSWORD= replaced; 40-hex SHA, path and line number kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git grep -n 'DB_PASSWORD' $(git rev-list --all)"
+    },
+    "tool_response": {
+     "stdout": "9d07a1d3b2c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8:deploy/app.env:4:DB_PASSWORD=FAKESECRET_grep5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_grep5"
+   ],
+   "must_see": [
+    "9d07a1d3b2c4e5f6a7b8c9d0e1f2a3b4c5d6e7f8:deploy/app.env:4:DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

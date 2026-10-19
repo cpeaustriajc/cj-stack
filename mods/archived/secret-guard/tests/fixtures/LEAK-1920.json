@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1920",
+ "title": "macOS keychain Safe Storage key printed for Electron cookie decryption; guard denies -w and -g reads",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "security find-generic-password -w is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"Slack Safe Storage\" -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Keychain CLI -w is a plain display; item 4 denies keychain only when combined.)"
+  },
+  {
+   "kind": "pre",
+   "name": "security find-generic-password -g is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"Slack Safe Storage\" -g"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Keychain CLI -g is a plain display; item 4 denies keychain only when combined.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0134",
+ "title": "Read of a cloudflared tunnel credentials JSON (i26)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.cloudflared/*.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.cloudflared/FAKESECRET_tunnel_id.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a cloudflared JSON file. Owner decision allows plain reads.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, TunnelSecret value in Read tool_response is redacted and key names kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.cloudflared/FAKESECRET_tunnel_id.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.cloudflared/FAKESECRET_tunnel_id.json",
+      "content": "{\"AccountTag\":\"FAKESECRET_acct\",\"TunnelSecret\":\"FAKESECRET_ts\",\"TunnelID\":\"FAKESECRET_tid\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ts"
+   ],
+   "must_see": [
+    "TunnelSecret",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,71 @@
+{
+ "case_id": "LEAK-1098",
+ "title": "Read returns a string updatedToolOutput: the raw secret reaches the model",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .env.local: keep the Read object shape, redact the value",
+   "files": {
+    ".env.local": "API_KEY=FAKESECRET_api_key_9z\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".env.local"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".env.local",
+      "content": "API_KEY=FAKESECRET_api_key_9z\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_api_key_9z"
+   ],
+   "must_see": [
+    "\"file\"",
+    "\"content\"",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Read of config/services.php: keep key names, redact the Stripe value",
+   "files": {
+    "config/services.php": "<?php\nreturn [\n    'stripe_secret' => 'FAKESECRET_sk_live_123',\n];\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "config/services.php"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "config/services.php",
+      "content": "<?php\nreturn [\n    'stripe_secret' => 'FAKESECRET_sk_live_123',\n];\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_123"
+   ],
+   "must_see": [
+    "'stripe_secret' =>",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

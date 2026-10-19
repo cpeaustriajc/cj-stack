@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1656",
+ "title": "simctl io screenshot of simulator screen",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "simctl io screenshot is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl io booted screenshot /private/tmp/claude-501/shot.png"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (simctl screenshot not covered by item 4; no secret source or transform.)"
+  },
+  {
+   "kind": "pre",
+   "name": "simctl io recordVideo is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl io booted recordVideo /private/tmp/claude-501/rec.mov"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (simctl recordVideo not covered by item 4; no secret source or transform.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

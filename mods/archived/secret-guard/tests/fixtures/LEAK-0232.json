@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0232",
+ "title": "sha256sum of a whole secret file yields a checkable digest",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sha256sum on .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sha256sum .env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "shasum -a 256 on .dev.vars is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "shasum -a 256 .dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "md5sum on .npmrc is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "md5sum .npmrc"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "REL-0050",
+ "title": "Git checkout restores the original settings and undoes a guard change",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git checkout of protected settings path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git checkout -- .claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "git restore from HEAD of protected settings path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git restore --source=HEAD .claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "git reset --hard is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git reset --hard"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

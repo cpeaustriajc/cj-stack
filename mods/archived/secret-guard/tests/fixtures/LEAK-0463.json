@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0463",
+ "title": "[18] ssh to a remote Mac runs xattr -l on a download",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xattr -l inside an ssh command string is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh admin@mac-mini.local 'xattr -l /Users/admin/Downloads/keys-export.json'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Single plain xattr -l display over ssh; no pipe, redirect or secret source named in item 4. Flagged as disputed.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "remote stdout (simulated) with sig= is redacted at source",
+   "files": {
+    "ssh-out.txt": "https://keys.example/?sig=FAKESECRET_mm18\n"
+   },
+   "command": "cat ssh-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_mm18"
+   ],
+   "must_see": [
+    "keys.example/"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

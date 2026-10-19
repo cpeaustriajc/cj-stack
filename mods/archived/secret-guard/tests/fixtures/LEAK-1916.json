@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1916",
+ "title": "Grep over Electron store returns matching lines; hook must keep the exact Grep result shape while redacting",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep result object kept and match redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "xoxc-",
+     "path": "$HOME/Library/Application Support/Slack"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "Local Storage/leveldb/000003.log:token=FAKESECRET_xoxc-0000-1111-abcdef",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xoxc-0000-1111-abcdef"
+   ],
+   "must_see": [
+    "numLines",
+    "totalLines",
+    "000003.log",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

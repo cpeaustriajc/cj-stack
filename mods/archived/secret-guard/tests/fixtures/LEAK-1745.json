@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1745",
+ "title": "git fetch origin <sha> then git show -p",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "diff value replaced, fetch progress on stderr kept",
+   "files": {
+    "fetch-progress.txt": "remote: Enumerating objects: 5, done.\n",
+    "show-p.out": "diff --git a/config/secret.env b/config/secret.env\n@@ -1 +1 @@\n-SECRET=FAKESECRET_FETCH_01\n+SECRET=<rotated>\n"
+   },
+   "command": "cat fetch-progress.txt >&2; cat show-p.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_FETCH_01"
+   ],
+   "must_see": [
+    "remote: Enumerating objects: 5, done.",
+    "-SECRET=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git fetch then git show -p stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git fetch origin 3f9a1c2e8b7d6f5a4e3c2b1a0f9e8d7c6b5a4f3e && git show 3f9a1c2e8b7d6f5a4e3c2b1a0f9e8d7c6b5a4f3e -p"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

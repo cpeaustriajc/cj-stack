@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0855",
+ "title": "Async redactor: printf DB_PASSWORD with async and onFailure block. Expected to fail while async is set; fixture asserts absence.",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "script prints DB_PASSWORD via Bash",
+   "files": {
+    "print-secret.sh": "echo DB_PASSWORD=FAKESECRET_pw7"
+   },
+   "prompt": "Run sh print-secret.sh with Bash and reply with its exact output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw7"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

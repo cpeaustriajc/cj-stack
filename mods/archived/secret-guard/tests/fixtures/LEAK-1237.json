@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1237",
+ "title": "KnownHostsCommand writes a secret to verbose stderr (simulated locally)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "stderr carrying oauth_token is redacted at source; command exits 1",
+   "files": {
+    "config/gh/hosts.yml": "github.com:\n    oauth_token: FAKESECRET_g3\n    user: fakeuser\n"
+   },
+   "command": "cat config/gh/hosts.yml >&2; exit 1",
+   "must_not_see": [
+    "FAKESECRET_g3"
+   ],
+   "must_see": [
+    "oauth_token:"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

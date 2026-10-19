@@ -1,0 +1,43 @@
+{
+ "case_id": "REL-0001",
+ "title": "MCP tool result replaced with Bash-shaped object",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plain-text MCP result without secret must remain visible as text",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__docs__search",
+    "tool_input": {
+     "query": "rotate keys"
+    },
+    "tool_response": "Rotate keys via the docs page"
+   },
+   "must_see": [
+    "Rotate keys via the docs page"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "plain-text MCP result with a secret keeps text shape after redaction",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__docs__search",
+    "tool_input": {
+     "query": "rotate keys"
+    },
+    "tool_response": "Rotate keys via the docs page. DB_PASSWORD=FAKESECRET_db_58"
+   },
+   "must_not_see": [
+    "FAKESECRET_db_58"
+   ],
+   "must_see": [
+    "Rotate keys via the docs page"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

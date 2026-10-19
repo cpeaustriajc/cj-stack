@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1125",
+ "title": "Session-start .env auto-load with no tool call",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "project .env values loaded at session start appear masked in later Bash output",
+   "files": {
+    ".env": "HTTP_PROXY=FAKESECRET_proxy\nAPI_KEY=FAKESECRET_k\n"
+   },
+   "prompt": "Use the Bash tool to run `env | grep -i key` and reply with its output exactly.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_k"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

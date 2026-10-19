@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0568",
+ "title": "gh run view --log-failed output with DATABASE_URL password: password redacted, line intact (gh simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ENV DATABASE_URL password redacted through tail",
+   "files": {
+    "bin/gh.sh": "echo 'ENV DATABASE_URL=postgres://ci:FAKESECRET_ci32@db/x'\necho 'ENV CI=true'\n"
+   },
+   "command": "sh bin/gh.sh run view 123456 --log-failed | tail -n 500",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ci32"
+   ],
+   "must_see": [
+    "ENV DATABASE_URL=postgres://ci:[REDACTED]@db/x",
+    "ENV CI=true"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

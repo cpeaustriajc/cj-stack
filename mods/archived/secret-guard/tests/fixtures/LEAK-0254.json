@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0254",
+ "title": "Base64 encoding of a historical .env bypasses the harvest",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 of the historical DATABASE_URL line must not reveal the password",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~7:.env | base64"
+    },
+    "tool_response": {
+     "stdout": "REFUQUJBU0VfVVJMPXBvc3RncmVzOi8vYXBwOkZBS0VTRUNSRVRfcHdfaGlzdDFAZGIuaW50ZXJuYWw6NTQzMi9hcHAK\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_hist1"
+   ],
+   "policy_note": "Reversed: the fixture must never require a leak (R6). Base64 of an env file must not reach the model"
+  },
+  {
+   "kind": "pre",
+   "name": "deny git show of a secret-bearing .env piped to base64 (layer P mitigation)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~7:.env | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

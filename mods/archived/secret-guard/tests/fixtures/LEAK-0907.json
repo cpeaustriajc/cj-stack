@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0907",
+ "title": "PEM tail -n +3 of a key file: body line and unmatched END",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tail -n +3 output: body line not visible",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tail -n +3 ~/keys/deploy.pem"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pem_line_two_EEEEFFFFGGGG\n-----END PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pem_line_two_EEEEFFFFGGGG"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: tail -n +3 of project-relative key file",
+   "command": "tail -n +3 keys/deploy.pem",
+   "files": {
+    "keys/deploy.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_pem_line_one_AAAABBBBCCCCDDDD\nFAKESECRET_pem_line_two_EEEEFFFFGGGG\n-----END PRIVATE KEY-----\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_pem_line_two_EEEEFFFFGGGG"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

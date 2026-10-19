@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1246",
+ "title": "CI validator allowlist reads an environment file with tac",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "tac on a secret-named file (deny)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a17\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tac .env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (tac on .env is a plain display that only reorders lines; no encoder, slicer or oracle, and the redactor hides values in the output. Judgment call.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "allowlisted read-only command output is redacted (expand used because tac is absent on macOS)",
+   "files": {
+    "notes.txt": "API_KEY=FAKESECRET_a17\n"
+   },
+   "command": "expand notes.txt",
+   "must_not_see": [
+    "FAKESECRET_a17"
+   ],
+   "must_see": [
+    "API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

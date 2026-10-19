@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0752",
+ "title": "Hook added mid-session: earlier raw output already visible",
+ "level": "not-testable",
+ "reason_not_testable": "Needs a user to add the PostToolUse hook to settings between two tool calls in one live session. A claude -p run cannot inject that, and a must_not_see across all recorded responses would fail on the first (pre-activation) read by design. Non-hook control: start sessions with the hook already in place and run the canary check (LEAK-0753) before any sensitive read.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

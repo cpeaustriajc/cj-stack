@@ -1,0 +1,7 @@
+{
+ "case_id": "FP-0040",
+ "title": "Valid JSON with surrounding whitespace must still apply the rewrite",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0704"
+}

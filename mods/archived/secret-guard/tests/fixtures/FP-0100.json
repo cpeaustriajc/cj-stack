@@ -1,0 +1,22 @@
+{
+ "case_id": "FP-0100",
+ "title": "Bash grep over tests/ returns a Stripe documentation example key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -rn stripeKey tests/ (FLAG: stand-in value, documented Stripe example string UNVERIFIED)",
+   "files": {
+    "tests/billing.test.ts": "import { charge } from './charge';\nconst stripeKey = 'sk_test_FAKE4eC39HqLyjWDarjtT1zdp7dc';\n"
+   },
+   "command": "grep -rn stripeKey tests/",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "tests/billing.test.ts:2:",
+    "stripeKey"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

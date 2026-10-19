@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1814",
+ "title": "gh run view --log grep for long base64-looking lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep for long base64 line; the 48-char base64 line (base64 of FAKESECRET_DB64_01, repeated twice) is redacted by the output filter",
+   "files": {
+    "run-log.txt": "build\tStep 2\tchecking out\nRkFLRVNFQ1JFVF9EQjY0XzAxRkFLRVNFQ1JFVF9EQjY0XzAx\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=RkFLRVNFQ1JFVF9EQjY0XzAx\n"
+   },
+   "command": "grep -E '^[A-Za-z0-9+/=]{40,}$' run-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9EQjY0XzAx"
+   ],
+   "must_see": [],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ]
+}

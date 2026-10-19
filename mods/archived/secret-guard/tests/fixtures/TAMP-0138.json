@@ -1,0 +1,65 @@
+{
+ "case_id": "TAMP-0138",
+ "title": "Agent writes a startup file into home or repo, then runs an interpreter",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write sitecustomize.py in project is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "sitecustomize.py",
+     "content": "import os; print(os.environ)"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write ~/.Rprofile is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "~/.Rprofile",
+     "content": "print(Sys.getenv())"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit .envrc in a subdirectory is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "project/.envrc",
+     "old_string": "export A=1",
+     "new_string": "export A=1\nenv"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Ordinary source file write stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "src/app.py",
+     "content": "print('hello')"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

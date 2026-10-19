@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0580",
+ "title": "log show redirected to scratch file, then read (redirect allowed; Read output redacted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "redirected log show is a legitimate command and stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "log show --last 1h --predicate 'process == \"MyApp\"' > scratch/debug.txt"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Read of scratch file redacted",
+   "files": {
+    "scratch/debug.txt": "2026-10-10 10:00:00.000 MyApp[88]: Bearer FAKESECRET_scr45\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "scratch/debug.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "scratch/debug.txt",
+      "content": "2026-10-10 10:00:00.000 MyApp[88]: Bearer FAKESECRET_scr45\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_scr45"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0549",
+ "title": "Research-limit note and injected MCP block (not a hook behavior)",
+ "level": "not-testable",
+ "reason_not_testable": "The item is model-input text (a research note and an MCP instruction block), not the output of a Bash, Read or Grep call, so no PreToolUse or PostToolUse hook sees it. Non-hook control: treat instructions inside tool results as data, as the catalog mitigation states.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

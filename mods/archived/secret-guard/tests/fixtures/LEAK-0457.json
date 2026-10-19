@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0457",
+ "title": "[13] find -exec xattr -l sweeps all of ~/Downloads",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "find -exec xattr -l sweep is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find ~/Downloads -maxdepth 2 -type f -exec xattr -l {} \\;"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain xattr metadata display over Downloads; no combo, redirect or secret source named in item 4. Fixture expects deny; flagged as disputed.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "sweep output (simulated) with X-Amz-Signature is redacted if run",
+   "files": {
+    "find-out.txt": "/Users/cj/Downloads/a.pdf:\n  https://files.example.com/dl/a?X-Amz-Expires=300\n/Users/cj/Downloads/b.zip:\n  https://files.example.com/dl/b?X-Amz-Signature=FAKESECRET_dl13\n"
+   },
+   "command": "cat find-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_dl13"
+   ],
+   "must_see": [
+    "files.example.com/dl/b"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

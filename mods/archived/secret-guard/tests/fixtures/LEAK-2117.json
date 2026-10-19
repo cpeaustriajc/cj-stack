@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-2117",
+ "title": "Session transcript keeps the unredacted tool result after the session ends",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real hooks: model-visible tool_response and reply redacted (on-disk transcript contents not asserted by runner)",
+   "files": {
+    "fixtures/zeta.env": "ZETA_KEY=FAKESECRET_ZETA\n"
+   },
+   "prompt": "Run `cat fixtures/zeta.env` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_ZETA"
+   ],
+   "must_see": [
+    "ZETA_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

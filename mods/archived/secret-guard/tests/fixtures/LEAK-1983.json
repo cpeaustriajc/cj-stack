@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1983",
+ "title": "FIFO plus background writer relays a secret through captured stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mkfifo plus backgrounded cat of a protected file is denied",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mkfifo pipe && (cat secret.env > pipe &) && cat pipe"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "captured stdout of a shell reader of the protected file is redacted at source",
+   "files": {
+    "secret.env": "API_KEY=FAKESECRET_aaa111\n"
+   },
+   "command": "cat secret.env",
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

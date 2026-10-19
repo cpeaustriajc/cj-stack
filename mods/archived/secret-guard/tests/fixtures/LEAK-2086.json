@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-2086",
+ "title": "Bash wrapper forms run heap without matching a plain command-name check",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "absolute path /usr/bin/heap (xcrun and sudo forms not covered: 4-fixture cap)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/bin/heap 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: plain display by a tool with no secret source combined with a transform or oracle; allowed, output redacted."
+  },
+  {
+   "kind": "pre",
+   "name": "env wrapper",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env heap 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: env here runs heap and prints no environment; no transform or oracle; plain display allowed, output redacted."
+  },
+  {
+   "kind": "pre",
+   "name": "bash -c string recursion",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bash -c 'heap 4242'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: plain display by a tool through bash -c; no secret source combined with a transform or oracle; allowed, output redacted."
+  },
+  {
+   "kind": "pre",
+   "name": "command substitution builds the command name",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "$(printf he)ap 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: command substitution that builds a name is not a secret source combined with a transform or oracle; plain display allowed, output redacted."
+  }
+ ]
+}

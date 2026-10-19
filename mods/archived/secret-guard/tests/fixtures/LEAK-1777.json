@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1777",
+ "title": "Read /proc/self/environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "If allowed, NUL-separated DSN password replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/proc/self/environ"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/proc/self/environ",
+      "content": "PATH=/usr/bin\u0000DATABASE_URL=postgres://app:FAKESECRET_PROC_01@db/x\u0000HOME=/Users/cj\u0000",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PROC_01"
+   ],
+   "must_see": [
+    "PATH=/usr/bin",
+    "HOME=/Users/cj",
+    "DATABASE_URL=postgres://app:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0970",
+ "title": "Windows cmd set output with quoted assignment and CRLF (ssh simulated by a local script)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated winbox cmd set output redacted at source (no real ssh)",
+   "files": {
+    "remote_cmd_set.sh": "#!/bin/sh\nprintf 'set \"API_TOKEN=FAKESECRET_win_1\"\\r\\nDB_PASSWORD=FAKESECRET_win_2\\r\\n'\n"
+   },
+   "command": "sh remote_cmd_set.sh",
+   "must_not_see": [
+    "FAKESECRET_win_1",
+    "FAKESECRET_win_2"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "DB_PASSWORD=[REDACTED]"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "ssh winbox cmd set output (event only, no ssh run): both lines redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh winbox \"cmd /c set\""
+    },
+    "tool_response": {
+     "stdout": "set \"API_TOKEN=FAKESECRET_win_1\"\r\nDB_PASSWORD=FAKESECRET_win_2\r\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_win_1",
+    "FAKESECRET_win_2"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

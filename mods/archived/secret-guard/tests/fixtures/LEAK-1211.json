@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1211",
+ "title": "case-insensitive recursive grep for password or api_key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "password with spaces around = redacted (remote simulated with printf)",
+   "files": {},
+   "command": "printf '/etc/myapp/db.conf:3:password = FAKESECRET_p7\\n'",
+   "must_not_see": [
+    "FAKESECRET_p7"
+   ],
+   "must_see": [
+    "/etc/myapp/db.conf:3:password = "
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "grep -rn -i output with spaced password redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app1 'grep -rn -i \"password\\|api_key\" /srv/myapp /etc/myapp'"
+    },
+    "tool_response": {
+     "stdout": "/etc/myapp/db.conf:3:password = FAKESECRET_p7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p7"
+   ],
+   "must_see": [
+    "/etc/myapp/db.conf:3:password = "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

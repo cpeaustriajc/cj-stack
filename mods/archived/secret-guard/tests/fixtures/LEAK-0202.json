@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0202",
+ "title": "Read of the TRACE log file written by tee",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bearer token in log Read redacted, header kept",
+   "files": {
+    "tf.log": "Authorization: Bearer FAKESECRET_bearer_35\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "tf.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "tf.log",
+      "content": "Authorization: Bearer FAKESECRET_bearer_35\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bearer_35"
+   ],
+   "must_see": [
+    "Authorization: Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

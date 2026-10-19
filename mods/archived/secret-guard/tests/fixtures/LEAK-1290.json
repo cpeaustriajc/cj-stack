@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1290",
+ "title": "Project settings apiKeyHelper runs before trust in claude -p",
+ "level": "not-testable",
+ "reason_not_testable": "The helper runs as a settings-driven process outside tool dispatch, so no PreToolUse or PostToolUse hook sees it. The e2e format asserts only on recorded tool_response values and the final reply, so the required check (canary file not created, no credential file read) cannot be expressed. Covered by non-hook controls: Claude Code trust behaviour (UNVERIFIED for the current version) and a policy against running claude -p in untrusted clones.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

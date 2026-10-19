@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-1759",
+ "title": "Grep tool for JWT prefix eyJhbGci in dist/",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "whole JWT (all three segments) replaced",
+   "files": {
+    "dist/index.js": "const t='eyJhbGciOiJIUzI1NiJ9.FAKESECRET_JWT_01.sig';\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_JWT_01\nPLANTED_SERVICE_SECRET_1=eyJhbGciOiJIUzI1NiJ9.FAKESECRET_JWT_01.sig\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "eyJhbGci",
+     "path": "dist/",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "dist/index.js:1:const t='eyJhbGciOiJIUzI1NiJ9.FAKESECRET_JWT_01.sig';",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "eyJhbGciOiJIUzI1NiJ9.FAKESECRET_JWT_01.sig",
+    "FAKESECRET_JWT_01"
+   ],
+   "must_see": [
+    "dist/index.js:1:const t='"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1261",
+ "title": "diff of a remote secret against a local file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "both diff value lines are redacted (diff output simulated with printf)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a24\n"
+   },
+   "command": "printf '< API_KEY=FAKESECRET_a23\\n> API_KEY=FAKESECRET_a24\\n'; true",
+   "must_not_see": [
+    "FAKESECRET_a23",
+    "FAKESECRET_a24"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

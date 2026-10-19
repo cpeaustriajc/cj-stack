@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1672",
+ "title": "Read of Discord settings.json with token field",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of unlisted Application Support app settings is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Library/Application Support/discord/settings.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of an app settings file; owner allows Read; not an item-4 combo.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, token value in Read output is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Library/Application Support/discord/settings.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/test/Library/Application Support/discord/settings.json",
+      "content": "{\"token\": \"FAKESECRET_DISCORD_0001\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DISCORD_0001"
+   ],
+   "must_see": [
+    "token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

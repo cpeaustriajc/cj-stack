@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1713",
+ "title": "xcresulttool piped to grep authorization",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xcresulttool on DerivedData Logs denied",
+   "expect": "deny",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun xcresulttool get --path '/Users/cj/Library/Developer/Xcode/DerivedData/Renav-abcdef0123/Logs/Test/0_test.xcresult' --format json | grep -i authorization"
+    }
+   }
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Bearer value in spaced JSON redacted at source",
+   "files": {},
+   "command": "echo '  \"value\" : \"Authorization: Bearer FAKESECRET_XCR_0001\"' | grep -i authorization",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET"
+   ],
+   "must_see": [
+    "Authorization"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

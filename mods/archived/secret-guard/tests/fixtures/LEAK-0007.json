@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0007",
+ "title": "git log -p --all -S searches history and prints a secret removed from HEAD [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "history hunk line is redacted, key name and SHA survive",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p --all -S 'FAKESECRET_HIST'"
+    },
+    "tool_response": {
+     "stdout": "commit 6a1d0e4b9f2c\n\ndiff --git a/config/app.env b/config/app.env\n--- a/config/app.env\n+++ /dev/null\n@@ -1 +0,0 @@\n-API_KEY=FAKESECRET_HIST_001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HIST_001"
+   ],
+   "must_see": [
+    "API_KEY=",
+    "6a1d0e4b9f2c"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "history output (simulated with printf) contains the removed value; rewritten output must not",
+   "files": {
+    "config/app.env": "API_KEY=FAKESECRET_HIST_001\n"
+   },
+   "command": "printf 'commit 6a1d0e4b9f2c\\n-API_KEY=FAKESECRET_HIST_001\\n+API_KEY=FAKESECRET_HIST_001\\n'",
+   "must_not_see": [
+    "FAKESECRET_HIST_001"
+   ],
+   "exit_code": 0
+  }
+ ]
+}

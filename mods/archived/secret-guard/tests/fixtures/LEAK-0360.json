@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0360",
+ "title": "K14 git credential fill prints stored password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git credential fill password line withheld or redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'protocol=https\\nhost=github.com\\n\\n' | git credential fill"
+    },
+    "tool_response": {
+     "stdout": "protocol=https\nhost=github.com\nusername=cj\npassword=FAKESECRET_git_7\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_git_7"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

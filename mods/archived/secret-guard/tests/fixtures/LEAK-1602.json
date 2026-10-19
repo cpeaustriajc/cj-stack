@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1602",
+ "title": "Edit tool response may echo harvested value",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Edit response with structuredPatch containing harvested value",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n",
+    "w1.txt": "threshold_a=FAKESECRET_HARVESTED_0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "w1.txt",
+     "old_string": "threshold_a=0",
+     "new_string": "threshold_a=FAKESECRET_HARVESTED_0001"
+    },
+    "tool_response": {
+     "filePath": "w1.txt",
+     "oldString": "threshold_a=0",
+     "newString": "threshold_a=FAKESECRET_HARVESTED_0001",
+     "originalFile": "threshold_a=0\n",
+     "structuredPatch": [
+      {
+       "oldStart": 1,
+       "oldLines": 1,
+       "newStart": 1,
+       "newLines": 1,
+       "lines": [
+        "-threshold_a=0",
+        "+threshold_a=FAKESECRET_HARVESTED_0001"
+       ]
+      }
+     ],
+     "userModified": false,
+     "replaceAll": false
+    },
+    "tool_use_id": "toolu_edit1602"
+   },
+   "must_not_see": [
+    "FAKESECRET_HARVESTED_0001"
+   ],
+   "must_see": [
+    "threshold_a="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1901",
+ "title": "multi-line private key from .envrc printed across lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PEM body lines in env output are all masked, not only the first",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env"
+    },
+    "tool_response": {
+     "stdout": "FAKE_SIGNING_KEY=-----BEGIN FAKE PRIVATE KEY-----\nFAKESECRET_ddd444\nFAKESECRET_eee555\n-----END FAKE PRIVATE KEY-----\nHOME=/Users/fake\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ddd444",
+    "FAKESECRET_eee555"
+   ],
+   "must_see": [
+    "HOME=/Users/fake"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated env output containing a PEM block, run through the guard wrapper",
+   "files": {
+    "signing-env.txt": "FAKE_SIGNING_KEY=-----BEGIN FAKE PRIVATE KEY-----\nFAKESECRET_ddd444\nFAKESECRET_eee555\n-----END FAKE PRIVATE KEY-----\nHOME=/Users/fake\n"
+   },
+   "command": "cat signing-env.txt",
+   "must_not_see": [
+    "FAKESECRET_ddd444",
+    "FAKESECRET_eee555"
+   ],
+   "must_see": [
+    "HOME=/Users/fake"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0964",
+ "title": "plist key and string split across lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read plist: string element redacted, key kept",
+   "files": {
+    "LaunchAgents/com.example.agent.plist": "<dict>\n\t<key>API_TOKEN</key>\n\t<string>FAKESECRET_plist_1</string>\n</dict>\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/LaunchAgents/com.example.agent.plist"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Library/LaunchAgents/com.example.agent.plist",
+      "content": "<dict>\n\t<key>API_TOKEN</key>\n\t<string>FAKESECRET_plist_1</string>\n</dict>\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plist_1"
+   ],
+   "must_see": [
+    "<key>API_TOKEN</key>",
+    "<string>[REDACTED]</string>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

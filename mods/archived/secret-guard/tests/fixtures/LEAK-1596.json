@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1596",
+ "title": "Novel secret with no name, format or harvest match passes (documented gap; fixture asserts pass-through is recorded)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Unnamed FAKESECRET value passes through unchanged (gap recorded)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "w3.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "w3.txt",
+      "content": "x_1=FAKESECRET_UNKNOWN_0002\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_see": [
+    "x_1=FAKESECRET_UNKNOWN_0002"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

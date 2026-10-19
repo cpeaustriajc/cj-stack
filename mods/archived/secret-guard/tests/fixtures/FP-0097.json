@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0097",
+ "title": "Bash grep NEXT_PUBLIC_ .env.local: pk_test publishable key passes unchanged (policy-dependent)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep NEXT_PUBLIC_ with pk_test publishable key (policy: pk_ is not a secret, UNVERIFIED policy)",
+   "files": {
+    ".env.local": "NEXT_PUBLIC_STRIPE_KEY=pk_test_FAKESECRET0000000000\n"
+   },
+   "command": "grep NEXT_PUBLIC_ .env.local",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "NEXT_PUBLIC_STRIPE_KEY=pk_test_FAKESECRET0000000000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

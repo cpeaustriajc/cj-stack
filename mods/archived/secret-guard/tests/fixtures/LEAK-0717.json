@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0717",
+ "title": "User cancels a running Bash loop: PostToolUse never fires (cancel not reproducible; checks the guard's pipe-through path on the same loop without sleep)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "loop echoing DB_PASSWORD through guard pipeline",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "for i in 1 2 3; do echo \"DB_PASSWORD=FAKESECRET_pw1\"; done",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

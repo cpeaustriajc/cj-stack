@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0735",
+ "title": "Cold-start harvest walks the repo tree and exceeds timeout on a small output (timeout part is e2e only; harvest walk of node_modules is not reproducible in a fixture)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat .env is allowed (read, output filtered)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "about 2 KB output containing STRIPE_KEY is redacted",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_sk_test_77\n"
+   },
+   "command": "(head -c 2000 /dev/zero | tr '\\0' '#'; echo; cat .env)",
+   "must_not_see": [
+    "FAKESECRET_sk_test_77"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "cat .env under real hooks: no secret shown",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_sk_test_77\n"
+   },
+   "prompt": "Run cat .env and show the output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_sk_test_77"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

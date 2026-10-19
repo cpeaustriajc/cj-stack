@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-2072",
+ "title": "Read of a simulator app container plist with random UUID path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of simulator app container plist with fake UUIDs is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Library/Developer/CoreSimulator/Devices/FAKEUDID-0000/data/Containers/Data/Application/FAKEAPPUUID/Library/Preferences/com.example.app.plist"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read tool call on a plist; Read is allowed by the owner and no listed deny source or combo applies.)"
+  },
+  {
+   "kind": "post",
+   "name": "if the Read is allowed, session_token value in plist content is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/test/Library/Developer/CoreSimulator/Devices/FAKEUDID-0000/data/Containers/Data/Application/FAKEAPPUUID/Library/Preferences/com.example.app.plist"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/test/Library/Developer/CoreSimulator/Devices/FAKEUDID-0000/data/Containers/Data/Application/FAKEAPPUUID/Library/Preferences/com.example.app.plist",
+      "content": "<?xml version=\"1.0\"?>\n<plist version=\"1.0\">\n<dict>\n<key>session_token</key>\n<string>FAKESECRET_sess_0002</string>\n</dict>\n</plist>\n",
+      "numLines": 7,
+      "startLine": 1,
+      "totalLines": 7
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sess_0002"
+   ],
+   "must_see": [
+    "session_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

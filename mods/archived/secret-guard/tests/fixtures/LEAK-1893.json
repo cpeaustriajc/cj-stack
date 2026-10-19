@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1893",
+ "title": "sudo read of root-only swap or sleepimage file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo cat of sleepimage is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /private/var/vm/sleepimage"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare sudo -n cat of sleepimage with no combo; not an item 4 deny. Flagged: sleepimage is a RAM dump that may contain secrets, and sudo is involved; review recom)"
+  },
+  {
+   "kind": "pre",
+   "name": "sudo cat of swapfile is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /private/var/vm/swapfile0"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain sudo cat display; no combo, tamper, or write rule in item 4. Swapfile is not a listed secret path, so this is a gap in the rules.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

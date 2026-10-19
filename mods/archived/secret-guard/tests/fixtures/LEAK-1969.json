@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1969",
+ "title": "Raw API body file holds a user-typed secret, not a tool result",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The user prompt is written into the OTEL raw API body file by the exporter outside any tool call. PostToolUse never receives prompt text, and the fixture format has no user-prompt or file-dump observation. Non-hook control: managed settings forcing OTEL_LOG_RAW_API_BODIES off, plus file permissions on the dump directory (case mitigation).",
+ "duplicate_of_dropped": false
+}

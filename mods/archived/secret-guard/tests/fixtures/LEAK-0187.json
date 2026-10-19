@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0187",
+ "title": "Broad Grep with secret-word regex and no glob",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "two secret values in Grep content redacted",
+   "files": {
+    "infra/prod.auto.tfvars": "region = \"us-east-1\"\n\ndb_password = \"FAKESECRET_wide_26\"\n",
+    "app/.env": "NODE_ENV=prod\nAPI_KEY=FAKESECRET_wide_26b\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "(?i)(secret|token|password)",
+     "path": ".",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "infra/prod.auto.tfvars:3:db_password = \"FAKESECRET_wide_26\"\napp/.env:2:API_KEY=FAKESECRET_wide_26b",
+     "numLines": 2,
+     "totalLines": 2
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wide_26",
+    "FAKESECRET_wide_26b"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

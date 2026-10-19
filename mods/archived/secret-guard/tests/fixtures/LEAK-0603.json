@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0603",
+ "title": "SSH -L tunnel to pprof then curl: curl output redacted (tunnel deny-or-flag not asserted, spec has no either-form)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated pprof cmdline with grpc preshared key",
+   "files": {},
+   "command": "printf 'serve\\0--grpc-preshared-key=FAKESECRET_tun67\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tun67"
+   ],
+   "must_see": [
+    "serve",
+    "--grpc-preshared-key="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

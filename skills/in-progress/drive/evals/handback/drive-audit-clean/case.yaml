@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: drive-audit-clean
+context:
+  scaffold_script: run.sh

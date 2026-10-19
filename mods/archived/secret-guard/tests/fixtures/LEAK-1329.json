@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1329",
+ "title": "IMDS role credentials JSON with named secret fields (post + simulated pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "IMDS credentials JSON stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/app-role"
+    },
+    "tool_response": {
+     "stdout": "{\"Code\":\"Success\",\"LastUpdated\":\"2026-10-10T08:00:00Z\",\"Type\":\"AWS-HMAC\",\"AccessKeyId\":\"ASIAFAKEFAKEFAKE0048\",\"SecretAccessKey\":\"FAKESECRET_imdssec0048\",\"Token\":\"FAKESECRET_imdstok0048\",\"Expiration\":\"2026-10-10T14:00:00Z\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "ASIAFAKEFAKEFAKE0048",
+    "FAKESECRET_imdssec0048",
+    "FAKESECRET_imdstok0048"
+   ],
+   "must_see": [
+    "Success",
+    "2026-10-10T08:00:00Z",
+    "AWS-HMAC",
+    "2026-10-10T14:00:00Z"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for IMDS curl",
+   "files": {},
+   "command": "printf '%s\\n' '{\"Code\":\"Success\",\"LastUpdated\":\"2026-10-10T08:00:00Z\",\"Type\":\"AWS-HMAC\",\"AccessKeyId\":\"ASIAFAKEFAKEFAKE0048\",\"SecretAccessKey\":\"FAKESECRET_imdssec0048\",\"Token\":\"FAKESECRET_imdstok0048\",\"Expiration\":\"2026-10-10T14:00:00Z\"}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "ASIAFAKEFAKEFAKE0048",
+    "FAKESECRET_imdssec0048",
+    "FAKESECRET_imdstok0048"
+   ],
+   "must_see": [
+    "Success",
+    "AWS-HMAC"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

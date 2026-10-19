@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1531",
+ "title": "Sentry event returns Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp__sentry__get_event: Bearer token replaced, header name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__sentry__get_event",
+    "tool_input": {
+     "event_id": "FAKE"
+    },
+    "tool_response": {
+     "request": {
+      "headers": {
+       "Authorization": "Bearer FAKESECRET_sentry"
+      }
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sentry"
+   ],
+   "must_see": [
+    "Authorization"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

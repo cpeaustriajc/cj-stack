@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1728",
+ "title": "Read of psql history with SQL PASSWORD literal",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ALTER USER PASSWORD literal in Read of .psql_history is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.psql_history"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.psql_history",
+      "content": "ALTER USER app_rw PASSWORD 'FAKESECRET_pg_pw';\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_pw"
+   ],
+   "must_see": [
+    "ALTER USER app_rw PASSWORD",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

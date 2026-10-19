@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-1298",
+ "title": "Bash cat of gradle.properties and Maven settings.xml",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash cat of ~/.gradle/gradle.properties and ~/.m2/settings.xml is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat $HOME/.gradle/gradle.properties $HOME/.m2/settings.xml"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of two secret files with nothing else combined; display allowed.)"
+  },
+  {
+   "kind": "post",
+   "name": "If run, key=value and XML password element values are redacted",
+   "files": {
+    ".gradle/gradle.properties": "nexusPassword=FAKESECRET_gradlebash0024\n",
+    ".m2/settings.xml": "<settings>\n  <password>FAKESECRET_m2pw0024</password>\n</settings>\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat $HOME/.gradle/gradle.properties $HOME/.m2/settings.xml"
+    },
+    "tool_response": {
+     "stdout": "nexusPassword=FAKESECRET_gradlebash0024\n<settings>\n  <password>FAKESECRET_m2pw0024</password>\n</settings>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gradlebash0024",
+    "FAKESECRET_m2pw0024"
+   ],
+   "must_see": [
+    "nexusPassword=",
+    "<password>",
+    "</password>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

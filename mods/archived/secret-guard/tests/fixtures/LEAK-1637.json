@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1637",
+ "title": "Bash cat of ~/.claude/settings.json with env block",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat settings.json stdout with PINECONE_API_KEY",
+   "files": {
+    ".claude/settings.json": "{\"env\":{\"PINECONE_API_KEY\":\"FAKESECRET_PINE_0001\"}}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.claude/settings.json"
+    },
+    "tool_response": {
+     "stdout": "{\"env\":{\"PINECONE_API_KEY\":\"FAKESECRET_PINE_0001\"}}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PINE_0001"
+   ],
+   "must_see": [
+    "PINECONE_API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

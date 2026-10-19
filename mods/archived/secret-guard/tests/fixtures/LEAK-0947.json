@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0947",
+ "title": "kubeconfig client-key-data base64 of a PEM header is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "kubectl config view --raw with client-key-data",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl config view --raw"
+    },
+    "tool_response": {
+     "stdout": "    client-certificate-data: FAKECERTDATA\n    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVkgRkFLRVNFQ1JFVEtVQkU=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVk",
+    "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVkgRkFLRVNFQ1JFVEtVQkU="
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

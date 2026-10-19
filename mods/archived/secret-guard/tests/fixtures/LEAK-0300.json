@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0300",
+ "title": "--bare -p skips the redaction hook",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0299"
+}

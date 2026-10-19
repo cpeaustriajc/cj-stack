@@ -1,0 +1,20 @@
+{
+ "case_id": "REL-0023",
+ "title": "Latin-1 byte 0xE9 in banner must not make the filter throw; must_see requires decoded-with-replacement form (path a); withheld form (path b) would fail this must_see",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated banner with raw Latin-1 byte; output must be non-empty and keep ASCII text",
+   "files": {
+    "sim-latin1-banner.sh": "printf 'Welcome \\351 build-03. Password logins are disabled.\\n'\n"
+   },
+   "command": "sh sim-latin1-banner.sh",
+   "must_see": [
+    "build-03",
+    "Password logins are disabled."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

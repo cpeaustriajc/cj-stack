@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-2090",
+ "title": "Hook returns a wrong output shape for Read and the original output passes through",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of gradle.properties: redacted output must keep the Read output object shape",
+   "files": {
+    ".gradle/gradle.properties": "mavenPassword=FAKESECRET_gradle_C3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/example/.gradle/gradle.properties"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/example/.gradle/gradle.properties",
+      "content": "mavenPassword=FAKESECRET_gradle_C3\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gradle_C3"
+   ],
+   "must_see": [
+    "filePath",
+    "numLines"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

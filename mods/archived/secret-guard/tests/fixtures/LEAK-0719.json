@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0719",
+ "title": "updatedToolOutput uses wrong key 'output' for Bash (fail-closed internal-error path not reachable; checks the normal Bash shape keeps 'stdout')",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout with two harvested values",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_tok3\nDB_PASSWORD=FAKESECRET_pw_3381\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "TOKEN=FAKESECRET_tok3\nFAKESECRET_pw_3381\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok3",
+    "FAKESECRET_pw_3381"
+   ],
+   "must_see": [
+    "stdout"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

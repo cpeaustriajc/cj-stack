@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1265",
+ "title": "openssl generates a secret that is then cat-ed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of a *secret* file over ssh (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app1.example.com 'cat /srv/myapp/.session_secret'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a secret-named file over ssh with nothing combined; owner allows plain display.)"
+  },
+  {
+   "kind": "pre",
+   "name": "cat of an ordinary remote file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app1.example.com 'cat /srv/myapp/README.md'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1824",
+ "title": "Bash curl with a literal Bearer token in the command text",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl with literal Bearer token in command text; deny",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -H 'Authorization: Bearer FAKESECRET_CURL_01' https://api.example.com/v1/me"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: literal auth header is used only by curl and its output is shown; allowed, output redacted."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1145",
+ "title": "ssh tail of app error log with DB URL: redact URL password at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated tail line with postgres URL password redacted at source",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw@db/app\n"
+   },
+   "command": "printf '%s\\n' 'Error: connect postgres://app:FAKESECRET_pw@db/app'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

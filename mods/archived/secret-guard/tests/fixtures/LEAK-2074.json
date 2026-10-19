@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-2074",
+ "title": "simctl spawn defaults read prints an auth token from simulator preferences",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "defaults read prints auth_token; value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl spawn FAKEUDID-0000 defaults read com.example.app"
+    },
+    "tool_response": {
+     "stdout": "{\n    auth_token = \"FAKESECRET_def_0005\";\n    theme = dark;\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_def_0005"
+   ],
+   "must_see": [
+    "auth_token",
+    "theme"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary simctl defaults query is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun simctl spawn FAKEUDID-0000 defaults read com.example.app"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

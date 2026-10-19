@@ -1,0 +1,43 @@
+{
+ "case_id": "FP-0170",
+ "title": "Benign /proc/keys listing must not be over-redacted (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "/proc/keys listing returned unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'cat /proc/keys'"
+    },
+    "tool_response": {
+     "stdout": "0a1b2c3d I--Q---     1 perm 3f010000     0     0 user      maint-db-password: 24\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "0a1b2c3d I--Q---     1 perm 3f010000     0     0 user      maint-db-password: 24"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Benign cat /proc/keys stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'cat /proc/keys'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

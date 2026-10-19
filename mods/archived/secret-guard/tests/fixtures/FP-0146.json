@@ -1,0 +1,50 @@
+{
+ "case_id": "FP-0146",
+ "title": "False-positive guard: harmless preference reads must pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "defaults read com.apple.dock tilesize passes through",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read com.apple.dock tilesize"
+    },
+    "tool_response": {
+     "stdout": "48\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "48"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "defaults read -g AppleLocale passes through",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults read -g AppleLocale"
+    },
+    "tool_response": {
+     "stdout": "en_US\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "en_US"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

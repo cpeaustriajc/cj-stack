@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0296",
+ "title": "Read PostToolUse hook returns a string where the Read object is required",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "runner asserts emitted value keeps Read object keys and types and JSON has no value (a string replacement must fail)",
+   "files": {
+    "app.env": "PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "app.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "app.env",
+      "content": "PASSWORD=FAKESECRET_pw_123",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

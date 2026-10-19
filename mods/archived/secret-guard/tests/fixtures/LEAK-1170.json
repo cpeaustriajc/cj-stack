@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1170",
+ "title": "Every file read is sent to the model provider",
+ "level": "not-testable",
+ "reason_not_testable": "Transmission of tool results to the model provider is by design of the API, not a hook-observable output. Non-hook control: rotate exposed values; the secret-read deny is a separate case not in this batch.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

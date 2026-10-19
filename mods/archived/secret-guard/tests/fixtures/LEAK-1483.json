@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1483",
+ "title": "az keyvault secret show returns value field",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "az keyvault secret show: value redacted, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "az keyvault secret show --vault-name v --name k"
+    },
+    "tool_response": {
+     "stdout": "{\"name\":\"k\",\"value\":\"FAKESECRET_az\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_az"
+   ],
+   "must_see": [
+    "name"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

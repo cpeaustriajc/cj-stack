@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0959",
+ "title": "AWS secret access key with lowercase name in ~/.aws/credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat ~/.aws/credentials: secret access key value redacted, names kept",
+   "files": {
+    ".aws/credentials": "[default]\naws_access_key_id = AKIAFAKEKEYID0000\naws_secret_access_key = FAKESECRET_wJalrXUtnFEMI_K7MDENG_bPxRfiCY\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.aws/credentials"
+    },
+    "tool_response": {
+     "stdout": "[default]\naws_access_key_id = AKIAFAKEKEYID0000\naws_secret_access_key = FAKESECRET_wJalrXUtnFEMI_K7MDENG_bPxRfiCY\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wJalrXUtnFEMI_K7MDENG_bPxRfiCY"
+   ],
+   "must_see": [
+    "[default]",
+    "aws_access_key_id = ",
+    "aws_secret_access_key = "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

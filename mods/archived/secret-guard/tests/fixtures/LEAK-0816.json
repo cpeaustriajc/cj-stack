@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0816",
+ "title": "Glob result text includes a secret value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Glob result with a returned entry containing the token, using the captured real Glob shape",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "/work/app/**"
+    },
+    "tool_response": {
+     "filenames": [
+      "/work/app/API_TOKEN=FAKESECRET_tok_6.txt"
+     ],
+     "durationMs": 5,
+     "numFiles": 1,
+     "truncated": false,
+     "totalMatches": 1,
+     "countIsComplete": true
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_6"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

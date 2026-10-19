@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0583",
+ "title": "tshark decrypts TLS with SSLKEYLOGFILE and prints header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tshark with tls.keylog_file stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tshark -o tls.keylog_file:fixtures/keys.log -r fixtures/app.pcapng -Y http -T fields -e http.authorization"
+    },
+    "tool_response": {
+     "stdout": "Bearer FAKESECRET_tls48\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tls48"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated tshark output redacted at source",
+   "files": {
+    "tls-fields.txt": "Bearer FAKESECRET_tls48\n"
+   },
+   "command": "cat tls-fields.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tls48"
+   ],
+   "must_see": [
+    "Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

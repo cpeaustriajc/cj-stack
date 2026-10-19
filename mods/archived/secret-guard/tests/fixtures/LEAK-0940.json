@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0940",
+ "title": "sk-proj key with no matched name is redacted in Bash output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "OPENAI-style line with sk-proj value",
+   "files": {},
+   "command": "printf 'OPENAI=sk-proj-FAKESECRET0123456789abcdefghijklmnop\\n'",
+   "must_not_see": [
+    "sk-proj-FAKESECRET0123456789abcdefghijklmnop"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "bare sk-proj value after a word",
+   "files": {},
+   "command": "printf 'val sk-proj-FAKESECRET0123456789abcdefghijklmnop\\n'",
+   "must_not_see": [
+    "sk-proj-FAKESECRET0123456789abcdefghijklmnop"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

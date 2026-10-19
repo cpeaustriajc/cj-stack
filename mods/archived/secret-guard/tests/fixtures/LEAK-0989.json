@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0989",
+ "title": "plutil -p on a LaunchAgent plist",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "quoted NAME => \"value\" pair masked, quoted key and => intact",
+   "files": {
+    "plutil.txt": "\"EnvironmentVariables\" => {\n  \"API_TOKEN\" => \"FAKESECRET_tok_O13\"\n}\n"
+   },
+   "command": "cat plutil.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok_O13"
+   ],
+   "must_see": [
+    "\"API_TOKEN\" => \"[REDACTED]\"",
+    "\"EnvironmentVariables\" => {"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

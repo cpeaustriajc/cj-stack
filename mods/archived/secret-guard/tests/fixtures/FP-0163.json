@@ -1,0 +1,60 @@
+{
+ "case_id": "FP-0163",
+ "title": "Legitimate build tool using TMPDIR is wrongly blocked (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xcodebuild writing DerivedData into TMPDIR stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcodebuild -derivedDataPath $TMPDIR/DerivedData build"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "npm pack into TMPDIR stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm pack --pack-destination \"$TMPDIR\""
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Build output containing a TMPDIR path is not altered",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_unused_Q7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcodebuild -derivedDataPath $TMPDIR/DerivedData build"
+    },
+    "tool_response": {
+     "stdout": "Build succeeded\n/var/folders/xx/T/DerivedData/Build/Products/Debug/App.app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "Build succeeded",
+    "DerivedData"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0383",
+ "title": "P8 pbpaste of a user-copied plain password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "pbpaste of plain password withheld or replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pb_hunter\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pb_hunter"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

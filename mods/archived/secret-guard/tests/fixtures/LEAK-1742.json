@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1742",
+ "title": "git fsck --lost-found then cat of dangling file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "dangling file value replaced, fsck line kept",
+   "files": {
+    "fsck-lost-found.out": "dangling blob 4b825dc642cb6eb9a060e54bf8d69288fbee4904\nAPI_KEY=FAKESECRET_LF_01\n"
+   },
+   "command": "cat fsck-lost-found.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_LF_01"
+   ],
+   "must_see": [
+    "dangling blob 4b825dc642cb6eb9a060e54bf8d69288fbee4904",
+    "API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

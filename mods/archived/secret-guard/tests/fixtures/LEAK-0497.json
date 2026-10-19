@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0497",
+ "title": "cat of a leftover mktemp file holding a DATABASE_URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of a mktemp residue in /tmp is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /tmp/tmp.Xk83jQ2a9B"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a mktemp file; a single display with no combo. Contents UNVERIFIED.)"
+  },
+  {
+   "kind": "post",
+   "name": "cat output: DATABASE_URL password redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /tmp/tmp.Xk83jQ2a9B"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_mk48@db/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mk48"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "@db/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

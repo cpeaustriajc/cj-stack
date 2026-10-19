@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1601",
+ "title": "Two files joined by cat in Bash stdout",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat joins two fragments into harvested value",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n",
+    "a.txt": "FAKESECRET_HARVESTED_",
+    "b.txt": "0001\n"
+   },
+   "command": "cat a.txt b.txt",
+   "must_not_see": [
+    "FAKESECRET_HARVESTED_0001"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Read of a.txt alone is unchanged (false-positive check)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n",
+    "a.txt": "FAKESECRET_HARVESTED_",
+    "b.txt": "0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "a.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "a.txt",
+      "content": "FAKESECRET_HARVESTED_",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    },
+    "tool_use_id": "toolu_fp1601"
+   },
+   "must_see": [
+    "FAKESECRET_HARVESTED_"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

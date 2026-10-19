@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1736",
+ "title": "git log -p path-scoped to a removed dotenv file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "removed-line value redacted in git log -p output",
+   "files": {
+    "git-log-env.out": "commit 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b\nAuthor: CJ <cj@example.com>\nDate:   Mon Oct 5 10:00:00 2026 +0000\n\n    remove db password\n\ndiff --git a/.env b/.env\n@@ -1 +1 @@\n-DB_PASS=FAKESECRET_HIST_01\n+DB_PASS=<placeholder>\n"
+   },
+   "command": "cat git-log-env.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_HIST_01"
+   ],
+   "must_see": [
+    "commit 1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+    "+DB_PASS=<placeholder>",
+    "-DB_PASS=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git log -p -- .env stays allowed (rewritten, not denied)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --all -p -- .env"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

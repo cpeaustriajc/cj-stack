@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1232",
+ "title": "socket discovery with lsof and find (paths pass, no secret value)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "socket path listing passes through the output filter unchanged (printf simulates lsof/find output)",
+   "files": {},
+   "command": "printf '%s\\n' '/tmp/ssh-FAKE01/agent.1234' '/tmp/gpg-FAKE02/S.gpg-agent'",
+   "must_not_see": [],
+   "must_see": [
+    "/tmp/ssh-FAKE01/agent.1234",
+    "/tmp/gpg-FAKE02/S.gpg-agent"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

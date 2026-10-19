@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1462",
+ "title": "cut -c truncates a NAME=value line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cut -c1-40 of STRIPE line",
+   "files": {
+    "fixture.env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n"
+   },
+   "command": "cut -c1-40 fixture.env",
+   "must_not_see": [
+    "FAKESECRET_stripe_0123"
+   ],
+   "policy_note": "R2: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

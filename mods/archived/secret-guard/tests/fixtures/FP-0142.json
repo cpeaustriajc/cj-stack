@@ -1,0 +1,41 @@
+{
+ "case_id": "FP-0142",
+ "title": "Benign download URL with no token must not be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "benign xattr URL and quarantine text pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -l ~/Downloads/FAKESECRET_guide.pdf"
+    },
+    "tool_response": {
+     "stdout": "com.apple.metadata:kMDItemWhereFroms: https://developer.example.com/docs/guide?id=42&lang=en\ncom.apple.quarantine: 0081;65f0a1b2;Safari;\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "https://developer.example.com/docs/guide?id=42&lang=en",
+    "0081;65f0a1b2;Safari;"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated benign xattr output is not over-redacted at source",
+   "files": {},
+   "command": "printf 'com.apple.metadata:kMDItemWhereFroms: https://developer.example.com/docs/guide?id=42&lang=en\\n'",
+   "must_see": [
+    "https://developer.example.com/docs/guide?id=42&lang=en"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

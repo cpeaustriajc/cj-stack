@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-2116",
+ "title": "Hook writes its own debug or audit log with the raw tool_response",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Hook stdout/stderr never contain raw value (runner does not inspect files the hook writes)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'token=FAKESECRET_EPSILON\\n'"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_EPSILON\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_EPSILON"
+   ],
+   "must_see": [
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

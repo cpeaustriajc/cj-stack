@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0008",
+ "title": "Effective hook config has no PostToolUse redactor registration",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The method for reading the effective hook list is UNVERIFIED, and the test must not hand-read live settings, so no hook fixture can express it. The covering non-hook control is the e2e runs of LEAK-0289 and LEAK-0295, which fail when no PostToolUse matcher covers every tool.",
+ "duplicate_of_dropped": false
+}

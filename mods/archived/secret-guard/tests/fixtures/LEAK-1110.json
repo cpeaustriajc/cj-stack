@@ -1,0 +1,87 @@
+{
+ "case_id": "LEAK-1110",
+ "title": "Bash grep -r over a tree or home files that contain dotfiles",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "recursive grep over home dotfiles is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r token ~/.npmrc ~/.netrc ~/.docker/config.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (grep pattern on named secret files (.npmrc, .netrc, docker config). Same as the Grep tool on secret files, which owner allows. Not a broad sweep.)"
+  },
+  {
+   "kind": "pre",
+   "name": "recursive grep over home root is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r API_KEY ~"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "if reached, .env value in project tree is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1110a",
+    "tool_input": {
+     "command": "grep -r API_KEY ."
+    },
+    "tool_response": {
+     "stdout": "./.env:API_KEY=FAKESECRET_k\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "if reached, npmrc _authToken is masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1110b",
+    "tool_input": {
+     "command": "grep -r token ~/.npmrc ~/.netrc ~/.docker/config.json"
+    },
+    "tool_response": {
+     "stdout": "~/.npmrc:_authToken=FAKESECRET_npm\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npm"
+   ],
+   "must_see": [
+    "_authToken=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

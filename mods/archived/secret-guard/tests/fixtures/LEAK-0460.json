@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0460",
+ "title": "[15b] Grep for X-Amz-Signature matches inside ._ sidecar",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content line with X-Amz-Signature in ._ sidecar",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "X-Amz-Signature",
+     "path": "/Users/cj/Projects",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "./dist/._bundle.zip:1:...X-Amz-Signature=FAKESECRET_gr15",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gr15"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

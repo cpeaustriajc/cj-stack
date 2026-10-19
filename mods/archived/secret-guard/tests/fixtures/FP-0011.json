@@ -1,0 +1,43 @@
+{
+ "case_id": "FP-0011",
+ "title": "False positive: sha256 image digest in docker inspect output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker inspect {{.Image}} over ssh stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-swarm \"docker inspect app-web-1 --format '{{.Image}}'\""
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "sha256 image digest passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-swarm \"docker inspect app-web-1 --format '{{.Image}}'\""
+    },
+    "tool_response": {
+     "stdout": "sha256:4c1f0b9e7a2d58e3f6b1c0d9a8e7f5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "sha256:4c1f0b9e7a2d58e3f6b1c0d9a8e7f5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

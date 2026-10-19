@@ -1,0 +1,66 @@
+{
+ "case_id": "LEAK-0339",
+ "title": "open launches a script outside the sandbox",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "open denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "open ./scripts/collect.command"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "owner: open of a script runs it outside the sandbox; same rule as TAMP-0023 (policy-review flip reverted)"
+  },
+  {
+   "kind": "pre",
+   "name": "open denied inside a chain",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo ready && open ./scripts/collect.command"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "owner: open of a script runs it outside the sandbox; same rule as TAMP-0023 (policy-review flip reverted)"
+  },
+  {
+   "kind": "post",
+   "name": "Read of exfiltrated AWS key redacted",
+   "files": {
+    "out.txt": "aws_secret_access_key = FAKESECRET_AWS\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "out.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "out.txt",
+      "content": "aws_secret_access_key = FAKESECRET_AWS\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_AWS"
+   ],
+   "must_see": [
+    "aws_secret_access_key"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

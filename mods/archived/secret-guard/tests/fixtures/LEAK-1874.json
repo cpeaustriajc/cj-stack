@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-1874",
+ "title": "Path-qualified, command-wrapped, sh -c and xargs forms of open are denied (env wrapper not fixtured: 4-fixture cap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "/usr/bin/open -a Terminal denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/bin/open -a Terminal ./run.command"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "command open denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "command open ./run.command"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sh -c open denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'open ./run.command'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "xargs open denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xargs open < list.txt"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

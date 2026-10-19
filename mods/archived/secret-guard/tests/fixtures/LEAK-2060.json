@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-2060",
+ "title": "Bash writes secret into $TMPDIR, then Read opens the temp copy",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of temp copy containing a registered token is redacted",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_A1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/var/folders/xx/T/resp.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/var/folders/xx/T/resp.json",
+      "content": "{\"token\":\"FAKESECRET_tok_A1\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_A1"
+   ],
+   "must_see": [
+    "token",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0849",
+ "title": "Default config: redactor exits 1 with no JSON, raw cat output reaches the model (e2e fail-open detection)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0840"
+}

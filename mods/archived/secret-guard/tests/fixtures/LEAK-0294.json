@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0294",
+ "title": "Bash PostToolUse hook crashes and raw output reaches the model",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "runner forces the redactor to exit 1 or print invalid JSON; expected to FAIL under documented exit-code behaviour",
+   "files": {
+    "secret.txt": "FAKESECRET_abc123\n"
+   },
+   "prompt": "Run cat secret.txt and show me the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

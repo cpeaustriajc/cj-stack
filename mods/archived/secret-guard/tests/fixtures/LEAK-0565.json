@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0565",
+ "title": "strings | grep password on remote core: db_password value redacted (ssh simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "db_password line redacted",
+   "files": {
+    "bin/ssh.sh": "echo 'db_password=FAKESECRET_core29'\n"
+   },
+   "command": "sh bin/ssh.sh build-host 'strings /cores/core.12345 | grep -i -m 20 password'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_core29"
+   ],
+   "must_see": [
+    "db_password=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

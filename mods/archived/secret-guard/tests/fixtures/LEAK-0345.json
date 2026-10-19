@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0345",
+ "title": "Repo script run under excluded python3 (settings lint for excludedCommands is outside hook tests)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "script stdout redacted at source",
+   "files": {
+    "tools/dump.py": "print('API_TOKEN=FAKESECRET_DUMP')\n"
+   },
+   "command": "python3 tools/dump.py",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DUMP"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "script stdout redacted if sandbox was off",
+   "files": {
+    "tools/dump.py": "print('API_TOKEN=FAKESECRET_DUMP')\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 tools/dump.py"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_DUMP\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DUMP"
+   ],
+   "must_see": [
+    "API_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2103",
+ "title": "Bash replacement with wrong shape is silently ignored (raw stdout reaches model)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh-style Bash output: emitted output must keep the Bash object shape",
+   "files": {
+    ".env": "DB_PASS=FAKESECRET_db1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh host 'cat /etc/app/config'"
+    },
+    "tool_response": {
+     "stdout": "DB_PASS=FAKESECRET_db1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db1"
+   ],
+   "must_see": [
+    "isImage",
+    "stdout"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: simulated ssh output reaches the model redacted",
+   "files": {
+    "ssh": "#!/bin/sh\necho 'DB_PASS=FAKESECRET_db1'\n"
+   },
+   "prompt": "Run this exact Bash command and quote its full output: sh ./ssh host 'cat /etc/app/config'",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_db1"
+   ],
+   "must_see": [
+    "DB_PASS="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

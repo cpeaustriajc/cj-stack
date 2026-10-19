@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1799",
+ "title": "pytest hypothesis fuzz falsifying example",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "hypothesis falsifying example, local script stands in",
+   "files": {
+    "fuzz-sim.sh": "echo \"Falsifying example: test_parse(token='FAKESECRET_FUZZ_01')\"\nexit 1\n"
+   },
+   "command": "sh ./fuzz-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_FUZZ_01"
+   ],
+   "must_see": [
+    "Falsifying example: test_parse(token=",
+    "test_parse"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1909",
+ "title": "Bash sqlite3 dump of usernoted DB, plaintext secret in a banner row (literal match)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sqlite3 dump of notification record masks the literal in stdout and keeps the shape",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_NC_0001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Group Containers/group.com.apple.usernoted/db2/db\" \"select * from record\""
+    },
+    "tool_response": {
+     "stdout": "1|com.example.app|Reminder FAKESECRET_NC_0001 expires soon\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_NC_0001"
+   ],
+   "must_see": [
+    "com.example.app",
+    "isImage",
+    "interrupted"
+   ],
+   "policy_note": "R5 instruction: planted FAKESECRET_NC_0001 as SERVICE_TOKEN in a harvested .env in files so the value has a file signal; no other change."
+  }
+ ]
+}

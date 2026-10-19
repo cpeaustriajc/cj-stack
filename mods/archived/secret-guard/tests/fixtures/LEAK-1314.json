@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1314",
+ "title": "git config --list --show-origin exposes http.proxy",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Tab-separated origin line keeps origin and key; proxy password redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git config --list --show-origin"
+    },
+    "tool_response": {
+     "stdout": "file:.git/config\thttp.proxy=http://FAKEUSER:FAKESECRET_gitcfg0038@proxy.corp.example:8080\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gitcfg0038"
+   ],
+   "must_see": [
+    "file:.git/config",
+    "http.proxy=http://FAKEUSER:",
+    "@proxy.corp.example:8080"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

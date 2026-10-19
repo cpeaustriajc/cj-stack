@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0139",
+ "title": "Harmless SSH output must not be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh-add -L output keeps public key and socket path",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh-add -L"
+    },
+    "tool_response": {
+     "stdout": "ssh-ed25519 AAAAFAKESECRET_pubkey_only user@host\nSSH_AUTH_SOCK=/private/tmp/com.apple.launchd.FAKE/Listeners\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "ssh-ed25519",
+    "user@host",
+    "SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.FAKE/Listeners"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ssh-add -L is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh-add -L"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

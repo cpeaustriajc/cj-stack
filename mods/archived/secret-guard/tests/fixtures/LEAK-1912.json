@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1912",
+ "title": "PostToolUse replacement with wrong output shape is silently ignored (fail-open); fixture asserts the full Bash object shape survives redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash object shape kept and stdout redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_NC_0004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat banner.txt"
+    },
+    "tool_response": {
+     "stdout": "Build notice: FAKESECRET_NC_0004 from banner\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_NC_0004"
+   ],
+   "must_see": [
+    "isImage",
+    "interrupted",
+    "stderr",
+    "[REDACTED]"
+   ],
+   "policy_note": "R5 instruction: planted FAKESECRET_NC_0004 as SERVICE_TOKEN in a harvested .env in files so the value has a file signal; no other change."
+  }
+ ]
+}

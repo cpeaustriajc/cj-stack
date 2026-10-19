@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0913",
+ "title": "JSON unicode escape hides a DSN password in docker inspect Env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh-wrapped docker inspect JSON with F escape for F; escaped form must be absent (FAKESECRET literal never appears raw; runner must accept the JSON-escaped form)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host 'docker inspect app'"
+    },
+    "tool_response": {
+     "stdout": "[{\"Id\":\"c0ffee\",\"Config\":{\"Env\":[\"PATH=/usr/bin\",\"DSN=postgres://app:FAKESECRET_json@db:5432/x\"]}}]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_json"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: local sh shim named ssh (never real ssh) prints docker-inspect-like JSON with F escape",
+   "command": "sh bin/ssh dokploy-host 'docker inspect app'",
+   "files": {
+    "bin/ssh": "#!/bin/sh\ncat <<'EOF'\n[{\"Id\":\"c0ffee\",\"Config\":{\"Env\":[\"PATH=/usr/bin\",\"DSN=postgres://app:FAKESECRET_json@db:5432/x\"]}}]\nEOF\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_json"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

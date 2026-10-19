@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1733",
+ "title": "declare -f reproduces curl Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Authorization Bearer value in declare -f output is redacted [printf stands in for declare -f]",
+   "files": {},
+   "command": "printf '%s\\n' 'deploy_fn () { curl -H \"Authorization: Bearer FAKESECRET_bearer_1\" https://api.example.com/v1/deploy; }'",
+   "must_not_see": [
+    "FAKESECRET_bearer_1"
+   ],
+   "must_see": [
+    "Authorization: Bearer [REDACTED]",
+    "https://api.example.com/v1/deploy"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

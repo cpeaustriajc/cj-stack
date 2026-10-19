@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2131",
+ "title": "Block path on Read of app.env: block reason and model-visible output exclude FAKESECRET_ETA; reason text itself is stderr and not checkable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read fixtures/app.env containing FAKESECRET_ETA: no value in any output stream",
+   "files": {
+    "fixtures/app.env": "AWS_KEY=FAKESECRET_ETA\nREGION=eu-west-1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "fixtures/app.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "fixtures/app.env",
+      "content": "AWS_KEY=FAKESECRET_ETA\nREGION=eu-west-1\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    },
+    "tool_use_id": "toolu_FAKE2131"
+   },
+   "must_not_see": [
+    "FAKESECRET_ETA"
+   ],
+   "must_see": [
+    "REGION=eu-west-1",
+    "fixtures/app.env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

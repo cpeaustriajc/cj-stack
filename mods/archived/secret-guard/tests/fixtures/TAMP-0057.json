@@ -1,0 +1,56 @@
+{
+ "case_id": "TAMP-0057",
+ "title": "Write with [REDACTED] in the content overwrites the real secret on disk",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write config/mail.php with [REDACTED] placeholder",
+   "files": {
+    "config/mail.php": "'password' => env('MAIL_PASSWORD', 'FAKESECRET_pw123'),\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "config/mail.php",
+     "content": "<?php\n'password' => env('MAIL_PASSWORD', '[REDACTED]'),\n"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (config/mail.php is not a harvested secret file, so item 4's marker rule does not apply. The marker is only a default value.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Write docker-compose with POSTGRES_PASSWORD=[REDACTED]",
+   "files": {
+    "scratch-fixtures/docker-compose.yml": "POSTGRES_PASSWORD=FAKESECRET_pg1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "scratch-fixtures/docker-compose.yml",
+     "content": "services:\n  db:\n    environment:\n      POSTGRES_PASSWORD=[REDACTED]\n"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (scratch-fixtures/docker-compose.yml is not a harvested secret file, so item 4's marker rule does not apply. Flag: the placeholder sits where a password would li)"
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary Write with no placeholder stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "notes.txt",
+     "content": "hello\n"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

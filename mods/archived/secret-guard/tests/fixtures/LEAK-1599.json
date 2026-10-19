@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1599",
+ "title": "Generated script prints value in fragments",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "script prints value split across lines",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n",
+    "show.py": "parts = ['FAKESECRET', '_HARVESTED', '_0001']\nprint('\\n'.join(parts))\n"
+   },
+   "command": "python3 show.py",
+   "must_not_see": [
+    "FAKESECRET",
+    "_HARVESTED",
+    "_0001"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

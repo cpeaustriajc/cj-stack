@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0764",
+ "title": "Secret written only to stderr by sh -c >&2",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr-only secret redacted from stderr",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_DB_PW\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'echo FAKESECRET_DB_PW >&2'"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "FAKESECRET_DB_PW\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DB_PW"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

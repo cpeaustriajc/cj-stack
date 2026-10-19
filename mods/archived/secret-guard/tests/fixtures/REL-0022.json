@@ -1,0 +1,19 @@
+{
+ "case_id": "REL-0022",
+ "title": "3,000,000-character single line with a secret at the end",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "3,000,000 'a' characters then ' PASSWORD=FAKESECRET_long' on one line; secret absent and hook must return within timeout (runner also checks valid output or withheld)",
+   "command": "python3 -c \"import sys; sys.stdout.write('a'*3000000 + ' PASSWORD=FAKESECRET_long\\n')\"",
+   "files": {},
+   "must_not_see": [
+    "FAKESECRET_long"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

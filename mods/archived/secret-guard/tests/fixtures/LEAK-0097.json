@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0097",
+ "title": "Redactor times out on 5 MB log and raw output reaches model",
+ "level": "not-testable",
+ "reason_not_testable": "Needs a ~5 MB log with the secret on line 40000 and a real 10 s hook timeout. The static JSON fixture format cannot carry a file that large and the spec has no generator for it. Non-hook control: onFailure block (v2.1.295 or later, per the catalog) and a bounded scan in the redactor. Source: scratchpad/test-spec.md fixture format.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

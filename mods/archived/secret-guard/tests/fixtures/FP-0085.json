@@ -1,0 +1,24 @@
+{
+ "case_id": "FP-0085",
+ "title": "Bash cat JSON with empty and null secret-named fields: output unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat JSON with empty and null secret-named fields",
+   "files": {
+    "package-config.json": "{\"client_secret\": \"\", \"token\": null, \"apiKey\": \"\"}"
+   },
+   "command": "cat package-config.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "client_secret",
+    "token",
+    "apiKey",
+    "null"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0642",
+ "title": "Resume with hooks disabled as a storage control (--bare)",
+ "level": "not-testable",
+ "reason_not_testable": "Same gap as LEAK-0641: the schema has no seeded-transcript or claude --bare --resume step, so the storage oracle cannot be expressed. Needs runner support. Non-hook controls: purge transcripts; disable resume for secret-touching sessions.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

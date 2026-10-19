@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0297",
+ "title": "Bash PostToolUse hook returns a string where the Bash object is required",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "hook emits updatedToolOutput as a plain string; mismatch is ignored so the value stays visible; expected to FAIL",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DEMO_TOKEN"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_abc123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_abc123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

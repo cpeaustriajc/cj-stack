@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0763",
+ "title": "Hook exceeds timeout on seq 200000 plus a secret on the last line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "200000-line output with secret on the last line is not shown raw",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_TOKEN_9\n"
+   },
+   "command": "seq 1 200000 && echo FAKESECRET_TOKEN_9",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_TOKEN_9"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

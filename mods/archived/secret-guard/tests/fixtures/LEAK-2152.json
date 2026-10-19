@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2152",
+ "title": "Encoded keyring payload defeats the value-pattern redactor",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The case's expected outcome is a known leak: a base64-encoded secret is printed and the pattern-based O-layer redactor does not match it. A passing fixture cannot assert this, since the must_not_see form (base64 of the secret) would fail whenever it reaches the model, and the hook only sees the printed bytes. Covered by non-hook controls: the maintenance account lacks read permission on the keyring key (kernel key ACL, https://www.kernel.org/doc/html/latest/security/keys/core.html), and a PreToolUse guard on keyctl print/pipe/read as defence in depth (bypassable by quoting). The guard is not tested against this exact case here.",
+ "duplicate_of_dropped": false
+}

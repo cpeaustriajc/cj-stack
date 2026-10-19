@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0591",
+ "title": "Remote tcpdump over ssh prints service bearer tokens (remote simulated, never real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh tcpdump pipeline stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-api 'sudo tcpdump -A -s0 -c 200 port 8080' | head -n 400"
+    },
+    "tool_response": {
+     "stdout": "12:00:00.100 IP 10.0.0.5.51422 > 10.0.0.9.8080: Flags [P.]\nAuthorization: Bearer FAKESECRET_rtd55\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rtd55"
+   ],
+   "must_see": [
+    "Flags [P.]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote tcpdump output redacted at source",
+   "files": {
+    "remote-tcpdump.txt": "12:00:00.100 IP 10.0.0.5.51422 > 10.0.0.9.8080: Flags [P.]\nAuthorization: Bearer FAKESECRET_rtd55\n"
+   },
+   "command": "cat remote-tcpdump.txt | head -n 400",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rtd55"
+   ],
+   "must_see": [
+    "Flags [P.]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

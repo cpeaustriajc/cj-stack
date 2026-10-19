@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-0214",
+ "title": "Adversarial: cut truncates docker history so the secret splits",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "fragment of harvested value not shown",
+   "files": {
+    ".env": "WEBHOOK_SIGNING_SECRET=whsec_FAKESECRET_0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest | cut -c 60-85"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_0123456789\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_0123456789"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "cut slicing of docker history is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest | cut -c 60-85"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

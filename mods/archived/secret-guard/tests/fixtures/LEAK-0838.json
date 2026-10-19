@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0838",
+ "title": "Lone surrogate (\\ud800) after the secret in tool_response.stdout must not crash the redactor or leak; the stored form is the JSON escape",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stdout has secret then lone surrogate then newline",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_pw_abc123\ud800\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_abc123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

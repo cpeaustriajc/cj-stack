@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1087",
+ "title": "Baseline: plain printenv POSTGRES_PASSWORD=value is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "remote POSTGRES_PASSWORD=value line becomes name=[REDACTED]; simulated via printf",
+   "files": {},
+   "command": "printf '%s\\n' 'POSTGRES_PASSWORD=FAKESECRET_remote3'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_remote3"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0762",
+ "title": "Bash cat ./.env: hook throws uncaught exception and exits 1",
+ "level": "not-testable",
+ "reason_not_testable": "Requires the PostToolUse hook to throw, exit 1 and emit no JSON. No fixture kind can inject a hook crash, and a normal-path redaction fixture would not prove the crash-path outcome. Non-hook control: code review that the hook body is wrapped to always exit 0 with a withheld updatedToolOutput.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

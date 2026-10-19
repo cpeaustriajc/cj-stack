@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1539",
+ "title": "Committed CLAUDE.md imports file outside repo",
+ "level": "not-testable",
+ "reason_not_testable": "Import resolution happens at approval time with no hook payload. The expected outcome is a lint flag on imports resolving outside the repo root, which is not a hook component and has no fixture kind. Non-hook control: declining external-import dialogs and CI lint for imports resolving outside the repo root.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0366",
+ "title": "K21 keychain value exported then env printed in same call",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "export of keychain value then env grep, output withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "export OPENAI_API_KEY=$(security find-generic-password -s openai -w) && env | grep OPENAI"
+    },
+    "tool_response": {
+     "stdout": "OPENAI_API_KEY=FAKESECRET_oai_12\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oai_12"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

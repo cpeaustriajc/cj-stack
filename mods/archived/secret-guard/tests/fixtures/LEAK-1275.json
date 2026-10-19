@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1275",
+ "title": "Read of Claude app support OAuth client info",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "read-claude-oauth-client-info-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/Library/Application Support/Claude/oauth_client_info.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a secret file; owner decision allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "read-oauth-client-info-secret-redacted",
+   "files": {
+    "Library/Application Support/Claude/oauth_client_info.json": "{\"client_id\":\"FAKESECRET_cid0007\",\"client_secret\":\"FAKESECRET_csec0007\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/Library/Application Support/Claude/oauth_client_info.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/Library/Application Support/Claude/oauth_client_info.json",
+      "content": "{\"client_id\":\"FAKESECRET_cid0007\",\"client_secret\":\"FAKESECRET_csec0007\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_csec0007"
+   ],
+   "must_see": [
+    "client_secret"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

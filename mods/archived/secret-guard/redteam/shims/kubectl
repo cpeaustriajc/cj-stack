@@ -1,0 +1,9 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+case "$*" in
+  *"exec"*) cat "$RT_DATA/env.txt";;
+  *"describe"*) cat "$RT_DATA/k8s_describe.txt";;
+  *"config view"*) cat "$RT_DATA/k8s_config.yaml";;
+  *secret*|*secrets*) cat "$RT_DATA/k8s_secret.json";;
+  *) cat "$RT_DATA/k8s_secret.json";;
+esac

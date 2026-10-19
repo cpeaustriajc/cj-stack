@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1737",
+ "title": "git show <rev>:<path> prints a historical blob",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "historical blob secret and password replaced, key names and URL parts kept",
+   "files": {
+    "git-show-old.out": "api_key: FAKESECRET_BLOB_01\ndb_url: postgres://app:FAKESECRET_BLOB_02@db/x\n"
+   },
+   "command": "cat git-show-old.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_BLOB_01",
+    "FAKESECRET_BLOB_02"
+   ],
+   "must_see": [
+    "api_key: [REDACTED]",
+    "db_url: postgres://app:[REDACTED]@db/x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,70 @@
+{
+ "case_id": "FP-0079",
+ "title": "Read TS source: max_tokens, tokenBudget and TOKEN_LIMIT_DOC lines pass unchanged, and a follow-up Edit matches",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of limits.ts returns file content unchanged",
+   "files": {
+    "src/llm/limits.ts": "const max_tokens = 4096;\nconst tokenBudget = 2000;\nexport const TOKEN_LIMIT_DOC = \"see docs\";\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/llm/limits.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/llm/limits.ts",
+      "content": "const max_tokens = 4096;\nconst tokenBudget = 2000;\nexport const TOKEN_LIMIT_DOC = \"see docs\";\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const max_tokens = 4096;",
+    "const tokenBudget = 2000;",
+    "export const TOKEN_LIMIT_DOC = ",
+    "see docs"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Edit of tokenBudget line succeeds and is not altered",
+   "files": {
+    "src/llm/limits.ts": "const max_tokens = 4096;\nconst tokenBudget = 2000;\nexport const TOKEN_LIMIT_DOC = \"see docs\";\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "src/llm/limits.ts",
+     "old_string": "const tokenBudget = 2000;",
+     "new_string": "const tokenBudget = 3000;",
+     "replace_all": false
+    },
+    "tool_response": {
+     "filePath": "src/llm/limits.ts",
+     "oldString": "const tokenBudget = 2000;",
+     "newString": "const tokenBudget = 3000;",
+     "originalFile": "const max_tokens = 4096;\nconst tokenBudget = 2000;\nexport const TOKEN_LIMIT_DOC = \"see docs\";\n",
+     "structuredPatch": [],
+     "userModified": false,
+     "replaceAll": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "const tokenBudget = 3000;",
+    "const max_tokens = 4096;"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

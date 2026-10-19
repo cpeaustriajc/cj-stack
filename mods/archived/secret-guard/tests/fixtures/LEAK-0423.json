@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0423",
+ "title": "Hook emits string-valued updatedToolOutput for Bash (hook bug): output must keep the four-key object",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout with DATABASE_PASSWORD line, shape must be preserved",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixture/.env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_PASSWORD=FAKESECRET_pw_9f8e\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_9f8e"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

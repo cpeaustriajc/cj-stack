@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1453",
+ "title": "URL-safe base64 without padding (harvested value changed to FAKESECRET_ALPHA_?x so standard base64 contains /)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "URL-safe unpadded base64 of the harvested value",
+   "files": {
+    ".dev.vars": "EXAMPLE_API_KEY=FAKESECRET_ALPHA_?x\n"
+   },
+   "command": "printf '%s' 'FAKESECRET_ALPHA_?x' | base64 | tr '+/' '-_' | tr -d '='",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9BTFBIQV8"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "notes": "The must_not_see is now the 23-character prefix RkFLRVNFQ1JFVF9BTFBIQV8. It is a substring of the standard base64 of FAKESECRET_ALPHA_?x (RkFLRVNFQ1JFVF9BTFBIQV8/eA==) and occurs literally in the URL-safe output. The standard '/' form is not separately checked because it is absent from the original output."
+}

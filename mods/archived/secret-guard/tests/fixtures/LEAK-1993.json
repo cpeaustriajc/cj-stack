@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1993",
+ "title": "Read of an App Store Connect .p8 key returns the PEM body unredacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "whole PEM block replaced on Read output",
+   "files": {
+    "private_keys/AuthKey_FAKESECRET_KEYID.p8": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_P8_BODY_LINE1\nFAKESECRET_P8_BODY_LINE2\n-----END PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "private_keys/AuthKey_FAKESECRET_KEYID.p8"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "private_keys/AuthKey_FAKESECRET_KEYID.p8",
+      "content": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_P8_BODY_LINE1\nFAKESECRET_P8_BODY_LINE2\n-----END PRIVATE KEY-----\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_P8_BODY_LINE1",
+    "FAKESECRET_P8_BODY_LINE2"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0929",
+ "title": "Real assignment inside a MOTD sentence: only the value span is replaced",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated banner line Notice: API_TOKEN=... ; value span only replaced",
+   "files": {
+    "sim-motd.sh": "printf 'Notice: API_TOKEN=FAKESECRET_motd_77c1 rotates monthly. Contact ops.\\n'\n"
+   },
+   "command": "sh sim-motd.sh",
+   "must_not_see": [
+    "FAKESECRET_motd_77c1"
+   ],
+   "must_see": [
+    "Notice:",
+    "API_TOKEN=",
+    "rotates monthly. Contact ops."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

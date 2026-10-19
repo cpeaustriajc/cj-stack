@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1135",
+ "title": "kubectl config view --raw: deny; mask token and client-key-data if reached",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "kubectl config view --raw denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl config view --raw"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of kube config (kubectl config view) with nothing combined; owner allows plain display.)"
+  },
+  {
+   "kind": "post",
+   "name": "token and client-key-data values masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl config view --raw"
+    },
+    "tool_response": {
+     "stdout": "token: FAKESECRET_k8s\nclient-key-data: FAKESECRET_cert\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k8s",
+    "FAKESECRET_cert"
+   ],
+   "must_see": [
+    "token:",
+    "client-key-data:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

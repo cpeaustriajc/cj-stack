@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1420",
+ "title": "Bash: cat .env piped to tr rot13 (harvested value)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies cat .env piped to tr",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "rot13 line of harvested value is withheld in output",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | tr 'A-Za-z' 'N-ZA-Mn-za-m'"
+    },
+    "tool_response": {
+     "stdout": "QO_CNFFJBEQ=SNXRFRPERG_mm9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "SNXRFRPERG_mm9",
+    "QO_CNFFJBEQ"
+   ],
+   "must_see": []
+  }
+ ]
+}

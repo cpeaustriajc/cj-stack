@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1839",
+ "title": "User pastes an API key into the prompt",
+ "level": "not-testable",
+ "reason_not_testable": "The key is in the user prompt, not in a tool result, so PostToolUse and PreToolUse do not run. Non-hook control: user training and key rotation.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

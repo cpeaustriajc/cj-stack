@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0151",
+ "title": "False positive: benign tcpdump summary line with Authorization text is over-redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tcpdump summary with 'value not shown' passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tcpdump -r /work/capture.pcap -n"
+    },
+    "tool_response": {
+     "stdout": "12:00:01.000 IP 10.0.0.2.443 > 10.0.0.5.51234: Flags [P.], length 512\nAuthorization header present (value not shown)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "12:00:01.000 IP 10.0.0.2.443 > 10.0.0.5.51234: Flags [P.], length 512",
+    "Authorization header present (value not shown)"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "plain tcpdump read of a capture stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tcpdump -r /work/capture.pcap -n"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

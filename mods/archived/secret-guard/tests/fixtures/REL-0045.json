@@ -1,0 +1,21 @@
+{
+ "case_id": "REL-0045",
+ "title": "direnv not active in the non-interactive Bash tool (negative, state-dependent)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Non-interactive env grep returns empty output and the runner passes",
+   "files": {
+    ".envrc": "export FAKE_SVC_KEY=FAKESECRET_hhh888\n"
+   },
+   "prompt": "Run this exact Bash command from the project directory and reply with its raw output only: env | grep FAKE_ . Do not read any file.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_hhh888"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

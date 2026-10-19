@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0439",
+ "title": "--safe-mode with the redactor in managed policy settings",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0437"
+}

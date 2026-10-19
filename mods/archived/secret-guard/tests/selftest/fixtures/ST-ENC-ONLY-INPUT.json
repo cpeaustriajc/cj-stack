@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-ENC-ONLY-INPUT",
+ "title": "raw input holds only an encoded form",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "raw input holds only an encoded form",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "token64=RkFLRVNFQ1JFVF9vbmx5MQ== end"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_only1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

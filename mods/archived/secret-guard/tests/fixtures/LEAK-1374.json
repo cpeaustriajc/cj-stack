@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1374",
+ "title": "Percent-encoded password in a URL userinfo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect output with percent-encoded password in DATABASE_URL",
+   "files": {},
+   "command": "echo 'DATABASE_URL=postgres://app:FAKESECRET%40pw_9@db.internal:5432/app'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET%40pw_9"
+   ],
+   "must_see": [
+    "db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

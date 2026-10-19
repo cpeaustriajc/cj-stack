@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-0695",
+ "title": "Read of .dev.vars: updatedToolOutput is a plain string (shape mismatch)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read hook output keeps the Read object shape (filePath, totalLines) and redacts content",
+   "files": {
+    ".dev.vars": "JWT_SIGNING_KEY=FAKESECRET_jwt_signing_key_42\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/work/proj/.dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/work/proj/.dev.vars",
+      "content": "JWT_SIGNING_KEY=FAKESECRET_jwt_signing_key_42\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_jwt_signing_key_42"
+   ],
+   "must_see": [
+    "totalLines",
+    "filePath",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: Read .dev.vars shows no secret",
+   "files": {
+    ".dev.vars": "JWT_SIGNING_KEY=FAKESECRET_jwt_signing_key_42\n"
+   },
+   "prompt": "Read the file .dev.vars and show me its contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_jwt_signing_key_42"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

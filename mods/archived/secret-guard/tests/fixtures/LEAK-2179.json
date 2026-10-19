@@ -1,0 +1,106 @@
+{
+ "case_id": "LEAK-2179",
+ "title": "Interpreter environment dumps in hook scripts are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "os.environ dump in python is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.py",
+     "content": "import os\nprint(dict(os.environ))\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "process.env dump in node is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.js",
+     "content": "console.log(JSON.stringify(process.env))\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ENV[ in ruby is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.rb",
+     "content": "puts ENV['AWS_KEY']\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "%ENV in perl is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.pl",
+     "content": "print %ENV;\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Deno.env in deno is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.ts",
+     "content": "console.log(Deno.env.toObject());\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "System.getenv in java is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.java",
+     "content": "System.getenv();\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "getenv( in C is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.c",
+     "content": "puts(getenv(\"AWS_SECRET_KEY\"));\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

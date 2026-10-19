@@ -1,0 +1,46 @@
+{
+ "case_id": "REL-0021",
+ "title": "MCP tool output replaced with a Bash-shaped object; expected keeps the content-array shape with text redacted",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP content array keeps array shape with text redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__dokploy__container_inspect",
+    "tool_input": {
+     "containerId": "abc123"
+    },
+    "tool_response": [
+     {
+      "type": "text",
+      "text": "DB_PASSWORD=FAKESECRET_pw_123"
+     }
+    ]
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "MCP container_inspect with stub",
+   "files": {
+    "dokploy-stub.json": "[{\"type\":\"text\",\"text\":\"DB_PASSWORD=FAKESECRET_pw_123\"}]"
+   },
+   "prompt": "Call mcp__dokploy__container_inspect with containerId abc123 and reply with the exact text it returns. The runner's dokploy stub serves dokploy-stub.json.",
+   "allowed_tools": "mcp__dokploy__container_inspect",
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

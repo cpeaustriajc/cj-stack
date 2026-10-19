@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2001",
+ "title": "Multi-line YAML or block-scalar secret is redacted across line breaks",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "block-scalar secret line redacted, YAML structure kept",
+   "files": {
+    "pillar/tls.key": "FAKESECRET_pk_line3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "salt '*' pillar.items"
+    },
+    "tool_response": {
+     "stdout": "tls_key: |\n  FAKEKEYLINE1ABCDEFGHIJKLMNOPQRSTUVWXYZ0123\n  FAKESECRET_pk_line3\n  FAKEKEYLINE4ABCDEFGHIJKLMNOPQRSTUVWXYZ0123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pk_line3"
+   ],
+   "must_see": [
+    "tls_key: |",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

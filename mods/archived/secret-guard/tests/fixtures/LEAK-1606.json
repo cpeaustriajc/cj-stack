@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1606",
+ "title": "Redactor timeout on 2 MB Bash output (timeout not injectable; large-output source redaction tested)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "2 MB output with secret on last line",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_pw6\n"
+   },
+   "command": "head -c 2000000 /dev/zero | tr '\\0' 'a'; echo; echo FAKESECRET_pw6",
+   "must_not_see": [
+    "FAKESECRET_pw6"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

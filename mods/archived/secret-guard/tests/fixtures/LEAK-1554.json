@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1554",
+ "title": "Slash command body inlines cat of npmrc",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The expected outcome is a lint of plugin command markdown for inline !` shell reads. The lint is not one of the three hook components in test-spec and no fixture kind can drive it. Expansion is not a tool call, so no PreToolUse or PostToolUse hook fires. Non-hook control: lint plugin command markdown for inline shell reads of secret paths.",
+ "duplicate_of_dropped": false
+}

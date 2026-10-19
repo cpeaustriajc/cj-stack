@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0992",
+ "title": "Read of a LaunchAgent wrapper shell script with export",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of shell script: export NAME=\"value\" value masked, name and next line intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/bin/start-worker.sh"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/bin/start-worker.sh",
+      "content": "#!/bin/sh\nexport SERVICE_KEY=\"FAKESECRET_svc_R16\"\nexec node worker.js\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_svc_R16"
+   ],
+   "must_see": [
+    "export SERVICE_KEY=",
+    "[REDACTED]",
+    "exec node worker.js"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

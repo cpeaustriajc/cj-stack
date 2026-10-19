@@ -1,0 +1,29 @@
+{
+ "case_id": "LEAK-0427",
+ "title": "Hook config points dictionary at a missing path: must fail closed (runner must point the dictionary at a missing path)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash TOKEN= output with missing dictionary",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixture/.env"
+    },
+    "tool_response": {
+     "stdout": "TOKEN=FAKESECRET_tok_77\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_77"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

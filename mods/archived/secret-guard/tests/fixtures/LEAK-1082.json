@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-1082",
+ "title": "Bash git rev-parse HEAD | cut in two calls: SHA fragments pass (acceptable, not a secret)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "first 20 hex chars of a SHA pass verbatim",
+   "files": {},
+   "command": "echo 3f9a1c07d4e2b85a6f10c3d9e7b2a4f08c51d6e2 | cut -c1-20",
+   "exit_code": 0,
+   "must_see": [
+    "3f9a1c07d4e2b85a6f10"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "next 20 hex chars of a SHA pass verbatim",
+   "files": {},
+   "command": "echo 3f9a1c07d4e2b85a6f10c3d9e7b2a4f08c51d6e2 | cut -c21-40",
+   "exit_code": 0,
+   "must_see": [
+    "c3d9e7b2a4f08c51d6e2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

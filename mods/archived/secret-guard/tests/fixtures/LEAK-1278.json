@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1278",
+ "title": "Read tool on Kerberos ccache file under /tmp",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "read-krb5cc-file-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/krb5cc_501"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a credential cache file.)"
+  },
+  {
+   "kind": "post",
+   "name": "read-krb5cc-binary-content-withheld",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_krbread0010\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/krb5cc_501"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/tmp/krb5cc_501",
+      "content": "\u00ff\u0004FAKESECRET_krbread0010",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_krbread0010"
+   ],
+   "policy_note": "R5 (owner instruction): planted FAKESECRET_krbread0010 as SERVICE_TOKEN in harvested .env so the value has a file signal. Only this post fixture changed."
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0799",
+ "title": "Hook command cannot start (nonexistent script path)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0797"
+}

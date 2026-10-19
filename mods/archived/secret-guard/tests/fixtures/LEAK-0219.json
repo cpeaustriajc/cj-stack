@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0219",
+ "title": "Secret length via ${#VAR} after sourcing a secret file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "source then ${#NAME} on secret variable is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "set -a; . .env; echo ${#DB_PASSWORD}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "length output 24 is unchanged (recorded leak)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "set -a; . .env; echo ${#DB_PASSWORD}"
+    },
+    "tool_response": {
+     "stdout": "24\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "24"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

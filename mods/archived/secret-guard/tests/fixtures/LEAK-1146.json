@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1146",
+ "title": "ssh bash -x of script: deny bash -x over ssh; redact DB_PASS trace line at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh bash -x denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host 'bash -x /opt/app/scripts/notify.sh'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated bash -x trace line redacted at source",
+   "files": {
+    ".env": "DB_PASS=FAKESECRET_pg\n"
+   },
+   "command": "printf '%s\\n' '+ DB_PASS=FAKESECRET_pg'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pg"
+   ],
+   "must_see": [
+    "DB_PASS="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

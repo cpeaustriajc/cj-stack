@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-2114",
+ "title": "Bash glob bypasses a literal path deny on the tool-results directory",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Glob form cat over tool-results must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.claude/projects/*/*/tool-results/*.txt | head -50"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -r over projects directory must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -r FAKESECRET_ ~/.claude/projects/"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: a grep that prints matching lines is plain display; allowed, output redacted."
+  },
+  {
+   "kind": "pre",
+   "name": "Brace expansion form over tool-results must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.claude/projects/{s1,s2}/tool-results/toolu_FAKE01.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Brace-expanded plain cat of a tool-results file with no transform; same reasoning as LEAK-2111#1.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Variable indirection form over tool-results must be denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "d=~/.claude/projects; cat \"$d\"/*/tool-results/*.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Variable-indirected plain cat with no transform; same reasoning as LEAK-2111#1.)"
+  }
+ ]
+}

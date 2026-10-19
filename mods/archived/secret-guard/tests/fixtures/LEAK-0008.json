@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-0008",
+ "title": "git show <rev>:<path> prints a whole old blob [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "rev:path read of a secrets.json path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~12:config/secrets.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git show of a secrets.json path is a plain display of a secret source with nothing combined; owner allows it.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git show of a normal README at HEAD stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD:README.md"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "whole-blob JSON value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show HEAD~12:config/secrets.json"
+    },
+    "tool_response": {
+     "stdout": "{\"stripe\":\"FAKESECRET_BLOB_002\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BLOB_002"
+   ],
+   "must_see": [
+    "stripe",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

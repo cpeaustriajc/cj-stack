@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0400",
+ "title": "L9 SSH journalctl shows logged token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "token= value in journal line redacted, line prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-app-01 'journalctl -u myapp.service -n 500 --no-pager'"
+    },
+    "tool_response": {
+     "stdout": "config loaded token=FAKESECRET_log_46\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_log_46"
+   ],
+   "must_see": [
+    "config loaded"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated journal token value withheld at source, line prefix kept",
+   "files": {},
+   "command": "ssh() { printf 'config loaded token=FAKESECRET_log_46\\n'; }; ssh prod-app-01 'journalctl -u myapp.service -n 500 --no-pager'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_log_46"
+   ],
+   "must_see": [
+    "config loaded"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

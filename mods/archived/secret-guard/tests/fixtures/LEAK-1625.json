@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1625",
+ "title": "Direct Read of Chrome Cookies SQLite (two profile dir names)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read Chrome Default Cookies",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/Google/Chrome/Default/Cookies"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Chrome cookie store. Read on secret paths is allowed; the spec goal says Claude may read anything, and the redactor hides values.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read Chrome Profile 2 Cookies",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Application Support/Google/Chrome/Profile 2/Cookies"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a Chrome profile cookie store. Same reasoning as LEAK-1625#0.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

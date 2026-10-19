@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1068",
+ "title": "Bash printenv API_TOKEN | base64: base64 of harvested value is not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "printenv API_TOKEN | base64 is a secret-source plus transform combo: deny",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_77aa\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv API_TOKEN | base64"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "unrelated 44-char base64 digest still passes (negative control)",
+   "files": {},
+   "command": "printf '%s\\n' 'FAKEDIGESTQ3x7Lb2mZp0Vw9Rt4Hk8Nd1Ys6Uf5GjAB='",
+   "exit_code": 0,
+   "must_see": [
+    "FAKEDIGESTQ3x7Lb2mZp0Vw9Rt4Hk8Nd1Ys6Uf5GjAB="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

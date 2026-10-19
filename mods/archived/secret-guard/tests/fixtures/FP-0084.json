@@ -1,0 +1,23 @@
+{
+ "case_id": "FP-0084",
+ "title": "Bash cat package.json fragment: author and keyboardLayout pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat package.json author and keyboardLayout",
+   "files": {
+    "package.json": "{\"author\": \"Jane Doe\", \"keyboardLayout\": \"us\"}\n"
+   },
+   "command": "cat package.json",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "author",
+    "Jane Doe",
+    "keyboardLayout"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

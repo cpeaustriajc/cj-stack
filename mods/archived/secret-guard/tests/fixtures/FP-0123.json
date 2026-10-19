@@ -1,0 +1,30 @@
+{
+ "case_id": "FP-0123",
+ "title": "Bash: git rev-parse HEAD",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "40-char commit SHA stays unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git rev-parse HEAD"
+    },
+    "tool_response": {
+     "stdout": "8b5ac958c4e21f7a9d03b6e5c2f18a4d7e90b3c1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "8b5ac958c4e21f7a9d03b6e5c2f18a4d7e90b3c1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

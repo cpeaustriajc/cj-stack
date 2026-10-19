@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1744",
+ "title": "git cat-file -p of a raw blob found by fsck",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "raw blob value replaced",
+   "files": {
+    "cat-file-blob.out": "API_KEY=FAKESECRET_BLOB_RAW\n"
+   },
+   "command": "cat cat-file-blob.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_BLOB_RAW"
+   ],
+   "must_see": [
+    "API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "fsck then git cat-file -p stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git fsck --lost-found && git cat-file -p 4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1517",
+ "title": "Workflow template interpolates file contents into prompt",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "File contents are read in-process by the workflow script, not through a tool_response, so no PostToolUse or PreToolUse event fires. Non-hook control: the workflow prompt builder must not interpolate secret-named files, covered by a unit test on that builder.",
+ "duplicate_of_dropped": false
+}

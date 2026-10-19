@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-1813",
+ "title": "gh run view --log grep misses base64 or split form of a key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "CI log with base64 form and split fragments; base64 and AKIAFAKE/SECRET01 fragments redacted",
+   "files": {
+    "run-log.txt": "build\tStep 4\tencoded=QUtJQUZBS0VTRUNSRVQwMQ==\nbuild\tStep 5\tsplit: AKIAFAKE\nbuild\tStep 6\tSECRET01\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=AKIAFAKE\nPLANTED_SERVICE_SECRET_1=QUtJQUZBS0VTRUNSRVQwMQ==\nPLANTED_SERVICE_SECRET_2=SECRET01\n"
+   },
+   "command": "cat run-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "QUtJQUZBS0VTRUNSRVQwMQ==",
+    "AKIAFAKE",
+    "SECRET01"
+   ],
+   "must_see": [
+    "Step 4",
+    "Step 6"
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

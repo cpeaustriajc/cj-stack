@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1610",
+ "title": "hex of .env file encodes harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "xxd -p of .env file",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_pk8\n"
+   },
+   "command": "xxd -p .env",
+   "must_not_see": [
+    "46414b455345435245545f706b38",
+    "46414b4553454352"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0377",
+ "title": "P2a bw list items bulk dump",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bw list items bulk JSON with login password withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bw list items --search prod | jq ."
+    },
+    "tool_response": {
+     "stdout": "[{\"id\":\"1f2e\",\"name\":\"prod db\",\"login\":{\"password\":\"FAKESECRET_bw_22\",\"username\":\"cj\"},\"notes\":\"rotate quarterly\"}]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bw_22"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

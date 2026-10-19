@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1006",
+ "title": "grep -n on dotenv-style file prints matching line with value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -n line-number prefixed secret line redacted",
+   "files": {
+    ".dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_AD27\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n CLOUDFLARE .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "3:CLOUDFLARE_API_TOKEN=FAKESECRET_cf_AD27\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf_AD27"
+   ],
+   "must_see": [
+    "3:CLOUDFLARE_API_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

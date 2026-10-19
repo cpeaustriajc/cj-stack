@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0560",
+ "title": "Remote cat of .env over ssh: DB_PASSWORD redacted, PORT unchanged (ssh simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "DB_PASSWORD value redacted, PORT kept",
+   "files": {
+    "bin/ssh.sh": "echo 'DB_PASSWORD=FAKESECRET_env24'\necho 'PORT=3000'\n"
+   },
+   "command": "sh bin/ssh.sh prod 'cat /srv/app/.env'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_env24"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

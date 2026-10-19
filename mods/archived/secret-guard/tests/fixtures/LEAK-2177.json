@@ -1,0 +1,78 @@
+{
+ "case_id": "LEAK-2177",
+ "title": "Shell builtins that list exported variables are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "export -p is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/sh\nexport -p\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "declare -p is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/bash\ndeclare -p\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "typeset -x is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/ksh\ntypeset -x\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "compgen -e is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/bash\ncompgen -e\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "bare set is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/sh\nset\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

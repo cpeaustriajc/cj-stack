@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1616",
+ "title": "Secret only on stderr of Bash call",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "secret written only to stderr is redacted",
+   "files": {},
+   "command": "echo \"DB_PASSWORD=FAKESECRET_err2\" 1>&2",
+   "must_not_see": [
+    "FAKESECRET_err2"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stderr field of Bash tool_response redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"DB_PASSWORD=FAKESECRET_err2\" 1>&2"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "DB_PASSWORD=FAKESECRET_err2",
+     "interrupted": false,
+     "isImage": false
+    },
+    "tool_use_id": "toolu_1616"
+   },
+   "must_not_see": [
+    "FAKESECRET_err2"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

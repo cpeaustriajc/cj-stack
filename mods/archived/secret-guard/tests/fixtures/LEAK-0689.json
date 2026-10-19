@@ -1,0 +1,89 @@
+{
+ "case_id": "LEAK-0689",
+ "title": "Secret in Bash argv (curl Bearer) stays in tool_input",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl Bearer GitHub-style: tool_response clean and unchanged (catalog expected outcome; no must_not_see because the response never holds the secret)",
+   "files": {
+    ".env": "GH_TOKEN=FAKESECRET_gh_abc123XYZ\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sS -H 'Authorization: Bearer FAKESECRET_gh_abc123XYZ' https://api.example.com/v1/me"
+    },
+    "tool_response": {
+     "stdout": "{\"login\":\"cj\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "login",
+    "cj"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "curl Bearer Anthropic-style variant: tool_response clean and unchanged (catalog expected outcome)",
+   "files": {
+    ".env": "ANTHROPIC_API_KEY=FAKESECRET_anthropic_7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -H 'Authorization: Bearer FAKESECRET_anthropic_7' https://api.example.invalid/v1/ping"
+    },
+    "tool_response": {
+     "stdout": "{\"ok\":true}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "ok",
+    "true"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "curl Bearer GitHub-style in argv: guard denies command carrying a harvested value (catalog mitigation; PostToolUse cannot rewrite tool_input, so the leak is only killable on the PreToolUse side)",
+   "files": {
+    ".env": "GH_TOKEN=FAKESECRET_gh_abc123XYZ\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sS -H 'Authorization: Bearer FAKESECRET_gh_abc123XYZ' https://api.example.com/v1/me"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into a curl call that calls an API and shows its output is allowed."
+  },
+  {
+   "kind": "pre",
+   "name": "curl Bearer Anthropic-style variant in argv: guard denies command carrying a harvested value (catalog mitigation)",
+   "files": {
+    ".env": "ANTHROPIC_API_KEY=FAKESECRET_anthropic_7\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -H 'Authorization: Bearer FAKESECRET_anthropic_7' https://api.example.invalid/v1/ping"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into a curl call that calls an API and shows its output is allowed."
+  }
+ ]
+}

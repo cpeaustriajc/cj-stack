@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1033",
+ "title": "bash -x trace prints expanded secret in header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bash -x trace line on stderr redacted, + prefix kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bash -x ./scripts/deploy.sh"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "+ curl -H 'Authorization: Bearer FAKESECRET_tok_BB62' https://api.example.test\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BB62"
+   ],
+   "must_see": [
+    "+ curl",
+    "https://api.example.test"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real bash -x trace of a script that holds the token",
+   "files": {
+    "scripts/deploy.sh": "TOKEN=FAKESECRET_tok_BB62\necho \"Authorization: Bearer $TOKEN\"\n"
+   },
+   "command": "bash -x ./scripts/deploy.sh",
+   "must_not_see": [
+    "FAKESECRET_tok_BB62"
+   ],
+   "must_see": [
+    "+ TOKEN=",
+    "+ echo"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

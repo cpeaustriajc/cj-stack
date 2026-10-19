@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2151",
+ "title": "Secret printed on a non-zero exit may skip the PostToolUse rewrite",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Failing command: printed secret redacted at source, exit code 1 kept",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_KEYRING_a1b2c3\n"
+   },
+   "command": "printf 'FAKESECRET_KEYRING_a1b2c3\\n'; exit 1",
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": [],
+   "exit_code": 1,
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "e2e",
+   "name": "Real session: failing Bash prints no secret to the model",
+   "files": {
+    "keyring.txt": "FAKESECRET_KEYRING_a1b2c3\n"
+   },
+   "prompt": "Run Bash: cat keyring.txt; exit 1 and return the output verbatim, including the exit status.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

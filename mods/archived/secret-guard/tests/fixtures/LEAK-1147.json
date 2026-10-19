@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1147",
+ "title": "ssh fastlane match --verbose: redact MATCH_PASSWORD at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated fastlane verbose MATCH_PASSWORD line redacted at source",
+   "files": {
+    ".env": "MATCH_PASSWORD=FAKESECRET_m\n"
+   },
+   "command": "printf '%s\\n' 'MATCH_PASSWORD=FAKESECRET_m'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_m"
+   ],
+   "must_see": [
+    "MATCH_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

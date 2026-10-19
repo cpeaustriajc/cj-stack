@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0319",
+ "title": "sudo -n cat of a root-only PEM file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sudo -n cat of PEM file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /private/etc/exampleservice/service-key.pem"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain sudo cat display of a PEM file, a secret source, with nothing combined; owner allows plain display commands.)"
+  },
+  {
+   "kind": "pre",
+   "name": "sudo after env assignment is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "LC_ALL=C sudo -n cat /private/etc/exampleservice/service-key.pem"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-0319#0; an env-assignment prefix (LC_ALL=C) does not change it into a transform.)"
+  },
+  {
+   "kind": "post",
+   "name": "PEM block output if it ran",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo -n cat /private/etc/exampleservice/service-key.pem"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_PEM\n-----END PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PEM"
+   ],
+   "policy_note": "Owner instruction (r4-011): PEM BEGIN/END header and footer lines are not secret, so they were removed from must_not_see. must_not_see now targets the key body line FAKESECRET_PEM. The header and footer lines are not listed in must_see either."
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1396",
+ "title": "OpenTelemetry tool export keeps the raw Read output",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry exporter payloads are outside the hooks and the fixture kinds. Non-hook control: disable tool-content telemetry at managed level (mitigation in the case).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

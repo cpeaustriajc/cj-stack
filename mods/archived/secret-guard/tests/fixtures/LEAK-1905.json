@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1905",
+ "title": "plutil converts a preference file to JSON on stdout, bypassing a defaults-only guard",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plutil JSON stdout masks apiKey value and keeps theme",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -convert json -o - ~/Library/Preferences/com.example.FAKEAPP.plist"
+    },
+    "tool_response": {
+     "stdout": "{\"apiKey\":\"FAKESECRET_key_0003\",\"theme\":\"dark\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_0003"
+   ],
+   "must_see": [
+    "theme",
+    "dark"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "plutil JSON conversion is not blocked by the guard (per case expected)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -convert json -o - ~/Library/Preferences/com.example.FAKEAPP.plist"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

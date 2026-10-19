@@ -1,0 +1,25 @@
+{
+ "case_id": "REL-0061",
+ "title": "Non-zero grep exit with partial stdout bypasses PostToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep prints a secret line then exits 2 on an unreadable path; matched line redacted at source",
+   "files": {
+    "DerivedData/MyApp.app/Info.plist": "<dict>\n    <string>FAKESECRET_dd_0004</string>\n</dict>\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_dd_0004\n"
+   },
+   "command": "grep -r FAKESECRET_dd_0004 ./DerivedData ./Locked; exit 2",
+   "must_not_see": [
+    "FAKESECRET_dd_0004"
+   ],
+   "must_see": [
+    "Info.plist"
+   ],
+   "exit_code": 2,
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

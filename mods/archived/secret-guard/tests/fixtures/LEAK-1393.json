@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1393",
+ "title": "Read tool_response replaced with a plain string instead of the Read object",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .env keeps the Read object shape and redacts the value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/fixture/project/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/fixture/project/.env",
+      "content": "FAKESECRET_DB_PASSWORD=hunter2FAKE\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DB_PASSWORD=hunter2FAKE"
+   ],
+   "must_see": [
+    "filePath",
+    "numLines",
+    "totalLines"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

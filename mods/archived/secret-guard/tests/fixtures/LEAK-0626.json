@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0626",
+ "title": "od -c spaces out secret characters (KNOWN GAP: best case is spaced form redacted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "od -c spaced characters of a secret are redacted (best case)",
+   "files": {
+    "core.4121": "FAKESECRET_core_006\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_core_006\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "od -An -c core.4121 | grep -a -A1 'F   A   K'"
+    },
+    "tool_response": {
+     "stdout": "  F   A   K   E   S   E   C   R   E   T   _   c   o   r   e   _   0   0   6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "F   A   K   E   S   E   C   R   E   T   _   c   o   r   e   _   0   0   6"
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted the underlying secret FAKESECRET_core_006 (the value the spaced form encodes) as SERVICE_TOKEN in harvested .env under files; core.4121 kept; no other change. The must_not_see spaced form is unchanged."
+  }
+ ]
+}

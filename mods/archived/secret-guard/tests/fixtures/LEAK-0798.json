@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0798",
+ "title": "Redactor timeout of 2 s while Bash prints a DATABASE_PASSWORD line",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0797"
+}

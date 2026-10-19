@@ -1,0 +1,7 @@
+{
+  "name": "denial-explainer",
+  "version": "0.1.0",
+  "description": "Says which rule blocked an action in auto mode and the allow rule that would cover it",
+  "author": { "name": "CJ" },
+  "types": "./types/index.d.ts"
+}

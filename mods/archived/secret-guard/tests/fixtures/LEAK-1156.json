@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1156",
+ "title": "openssl pkcs12 -nodes without -nokeys: deny; -nokeys allowed; redact PEM body at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nodes with env:P12_PASS denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in ~/certs/client.p12 -nodes -passin env:P12_PASS"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nodes with pass: denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in ~/Certs/distribution.p12 -nodes -passin pass:$P12_PASS"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nokeys allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in ~/certs/client.p12 -nokeys -passin env:P12_PASS"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated PRIVATE KEY PEM body redacted at source",
+   "files": {
+    "certs/key.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_pk\n-----END PRIVATE KEY-----\n"
+   },
+   "command": "printf '%s\\n' '-----BEGIN PRIVATE KEY-----' 'FAKESECRET_pk' '-----END PRIVATE KEY-----'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pk"
+   ],
+   "must_see": [
+    "-----BEGIN PRIVATE KEY-----"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

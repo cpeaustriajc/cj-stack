@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2041",
+ "title": "Secret already synced is overwritten with [REDACTED] but version history keeps it",
+ "level": "not-testable",
+ "reason_not_testable": "Remote version history and trash at iCloud or Dropbox are outside the machine; the hook cannot delete or retract them and a local fixture cannot observe them. Non-hook control: rotate the exposed value and purge provider version history manually.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

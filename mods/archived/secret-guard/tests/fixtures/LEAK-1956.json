@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1956",
+ "title": "Secret value embedded in a filename returned by locate",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "locate output with secret in filename is redacted in place",
+   "files": {
+    ".env": "TOKEN_FNAME=FAKESECRET_FNAME_004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "locate -i FAKESECRET_FNAME_004"
+    },
+    "tool_response": {
+     "stdout": "/Users/example/tmp/token-FAKESECRET_FNAME_004.txt\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_FNAME_004"
+   ],
+   "must_see": [
+    "/Users/example/tmp/token-[REDACTED].txt"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

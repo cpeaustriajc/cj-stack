@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0069",
+ "title": "Edit writes a secret into CLAUDE.md, PostToolUse cannot rewrite tool_input",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit adding GH_TOKEN secret to CLAUDE.md is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "CLAUDE.md",
+     "old_string": "## Notes",
+     "new_string": "GH_TOKEN=FAKESECRET_gh_tok3\n## Notes",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Write of GH_TOKEN secret into CLAUDE.md is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "CLAUDE.md",
+     "content": "GH_TOKEN=FAKESECRET_gh_tok3\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "benign Edit to CLAUDE.md stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "CLAUDE.md",
+     "old_string": "## Notes",
+     "new_string": "## Notes\nRun tests with pnpm test",
+     "replace_all": false
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

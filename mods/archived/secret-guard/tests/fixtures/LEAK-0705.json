@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0705",
+ "title": "Bash updatedToolOutput is a plain string for env|grep DB_PASSWORD",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash output must keep object keys stdout, interrupted, isImage",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": [
+    "stdout",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: grep DB_PASSWORD in .env (env cannot be set by spec; .env used)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "prompt": "Run grep DB_PASSWORD .env and show the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

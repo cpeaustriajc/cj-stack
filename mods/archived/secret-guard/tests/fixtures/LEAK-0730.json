@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0730",
+ "title": "Bash cat of a secret file: slow hook exceeds timeout with no decision",
+ "level": "not-testable",
+ "reason_not_testable": "Depends on the hook's wall-clock timeout and harvest speed on the machine; the fixture format has no timeout or slow-harvest control, so the timeout path cannot be forced deterministically. No non-hook control covers it; the internal deadline is covered only by code review.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

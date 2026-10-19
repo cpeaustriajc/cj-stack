@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1544",
+ "title": "User-scope CLAUDE.md holds GitHub token",
+ "level": "not-testable",
+ "reason_not_testable": "Loaded in every project without a tool call, and the check requires reading the real ~/.claude/CLAUDE.md, which the test rules forbid. Non-hook control: manual review plus the rule that user-scope and managed memory files hold no secrets.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

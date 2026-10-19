@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1077",
+ "title": "Bash python3 urllib.parse percent-encoding of harvested value is absent",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python3 urllib.parse.quote of .env.local is a secret-source plus transform combo: deny",
+   "files": {
+    ".env.local": "TOKEN=FAKESECRET_p@ss/1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import urllib.parse,sys;print(urllib.parse.quote(sys.stdin.read()))\" < .env.local"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

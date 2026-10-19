@@ -1,0 +1,59 @@
+{
+ "case_id": "LEAK-1939",
+ "title": "tmux session started by the agent replays env; capture-pane output not redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tmux capture-pane output with known fake value is redacted",
+   "files": {
+    ".env": "DEMO_TOKEN=FAKESECRET_eee555\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tmux capture-pane -p -t w"
+    },
+    "tool_response": {
+     "stdout": "DEMO_TOKEN=FAKESECRET_eee555\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_eee555"
+   ],
+   "must_see": [
+    "DEMO_TOKEN="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "tmux new detached call with empty output passes unchanged",
+   "files": {
+    ".env": "DEMO_TOKEN=FAKESECRET_eee555\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tmux new -d -s w 'env; sleep 999'"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "interrupted"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

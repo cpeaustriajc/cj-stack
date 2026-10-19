@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0386",
+ "title": "P11 printenv piped to grep for session variables",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv | grep session, SESSION env line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep -i session"
+    },
+    "tool_response": {
+     "stdout": "OP_SESSION_my=FAKESECRET_sess_33\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sess_33"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

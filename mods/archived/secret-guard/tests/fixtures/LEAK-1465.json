@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1465",
+ "title": "sed one character per line with spaces (variant A)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cut | sed s/./& /g",
+   "files": {
+    "fixture.env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n"
+   },
+   "command": "cut -c19-52 fixture.env | sed 's/./& /g'",
+   "must_not_see": [
+    "F A K E S E C R E T _ s t r i p e _ 0 1 2 3 4 5 6 7 8 9 a b c d e f"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1779",
+ "title": "Grep for _authToken across home directory",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep /Users/cj for _authToken, value replaced, path and line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "_authToken",
+     "path": "/Users/cj",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/cj/.npmrc:1://registry.npmjs.org/:_authToken=npm_FAKESECRET_NPM_02",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "npm_FAKESECRET_NPM_02"
+   ],
+   "must_see": [
+    "/Users/cj/.npmrc:1:",
+    "_authToken="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

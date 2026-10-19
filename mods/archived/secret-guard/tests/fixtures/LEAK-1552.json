@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1552",
+ "title": "Plugin diagnose script dumps env to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout API_KEY line value replaced, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/diagnose.py"
+    },
+    "tool_response": {
+     "stdout": "API_KEY=FAKESECRET_diag\nNODE_ENV=production\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_diag"
+   ],
+   "must_see": [
+    "API_KEY=",
+    "NODE_ENV=production"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated plugin script output from a local file; API_KEY value redacted at source",
+   "files": {
+    "plugin/scripts/diagnose.out": "API_KEY=FAKESECRET_diag\nNODE_ENV=production\n"
+   },
+   "command": "cat plugin/scripts/diagnose.out",
+   "must_not_see": [
+    "FAKESECRET_diag"
+   ],
+   "must_see": [
+    "API_KEY=",
+    "NODE_ENV=production"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

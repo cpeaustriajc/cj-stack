@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-1718",
+ "title": "document.cookie readout with session and CSRF cookies",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "page-script document.cookie string with sessionid and csrftoken [tool name UNVERIFIED]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__claude-in-chrome__javascript_tool",
+    "tool_input": {
+     "text": "document.cookie"
+    },
+    "tool_response": "sessionid=FAKESECRET_SESS_9f8e7d6c5b4a3210; csrftoken=FAKESECRET_CSRF_aa11bb22cc33dd44; theme=dark"
+   },
+   "must_not_see": [
+    "FAKESECRET_SESS_9f8e7d6c5b4a3210",
+    "FAKESECRET_CSRF_aa11bb22cc33dd44"
+   ],
+   "must_see": [
+    "sessionid=[REDACTED]; csrftoken=[REDACTED]; theme=dark"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

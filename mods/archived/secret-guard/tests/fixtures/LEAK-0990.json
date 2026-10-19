@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0990",
+ "title": "Grep tool across LaunchAgents for key-like names",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content line: matched value masked, file name and line number kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "(?i)(api_key|token|secret)",
+     "path": "/Users/cj/Library/LaunchAgents",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "com.example.api-worker.plist:14:        <string>FAKESECRET_key_P14</string>",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_P14"
+   ],
+   "must_see": [
+    "com.example.api-worker.plist:14:",
+    "<string>[REDACTED]</string>"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1234",
+ "title": "LocalCommand prints a local secret after connect (simulated locally)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "local command output containing API_KEY is redacted, remote status line survives",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_a15\n"
+   },
+   "command": "cat .env; printf 'Active: active (running)\\n'",
+   "must_not_see": [
+    "FAKESECRET_a15"
+   ],
+   "must_see": [
+    "Active: active (running)"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

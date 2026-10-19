@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1838",
+ "title": "Claude Code npm package shipped a source map",
+ "level": "not-testable",
+ "reason_not_testable": "The .map file is produced by the vendor build and published outside any agent tool call. Non-hook control: publish-time checks that exclude .map files and secret-bearing outputs.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

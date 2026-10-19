@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0613",
+ "title": "Hook hangs past timeout on secret file",
+ "level": "not-testable",
+ "reason_not_testable": "Needs a hook that exceeds its deadline. The spec defines only SECRET_HOOK_HOME and SECRET_HOOK_ROOTS and no delay injection, and e2e cannot force one. PostToolUse timeout behaviour is UNVERIFIED in the catalog. Non-hook control: set the settings timeout above the hook's internal deadline and check the deadline branch with a manual slow-harvest run.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

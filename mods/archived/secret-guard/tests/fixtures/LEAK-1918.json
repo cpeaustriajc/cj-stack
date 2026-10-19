@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1918",
+ "title": "sqlite3 on Electron store fails non-zero but prints secret to stderr; failure path redacted and sqlite3 on store denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sqlite3 against Notion store is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Application Support/Notion/notion.sqlite\" \"select value from items\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain SELECT display with no transform or oracle.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failed command stderr redacted at source",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_notiontok\n"
+   },
+   "command": "printf 'partial row: FAKESECRET_notiontok\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_notiontok"
+   ],
+   "must_see": [
+    "partial row:",
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

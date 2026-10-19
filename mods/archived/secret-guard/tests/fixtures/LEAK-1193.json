@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1193",
+ "title": "ssh ps -ef piped to grep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "argv password= value in ps -ef line",
+   "files": {},
+   "command": "printf '%s\\n' 'postgres  1234  1  0 09:00 ?  00:00:01 postgres -c password=FAKESECRET_p1' | grep postgres",
+   "must_not_see": [
+    "FAKESECRET_p1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

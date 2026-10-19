@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0109",
+ "title": "User pastes a token into the prompt, exported via user_prompt event (i3)",
+ "level": "not-testable",
+ "reason_not_testable": "User-pasted prompt text. PostToolUse never sees it, and no fixture kind feeds a prompt-submit event (the hook event name is not verified). Non-hook controls: user habit and rotation of any key already sent to the collector, plus the OTEL_LOG_USER_PROMPTS gate.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

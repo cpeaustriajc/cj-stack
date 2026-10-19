@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0746",
+ "title": "Hook gets an unexpected tool_response shape and throws (both shapes from the scenario)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plain string tool_response from a non-Bash tool: no raw value",
+   "files": {
+    ".env": "PW2=FAKESECRET_pw2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "pw2"
+    },
+    "tool_response": "FAKESECRET_pw2 printed by a non-Bash tool"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stdout null and secret in stderr: withheld object, no raw value",
+   "files": {
+    ".env": "PW2=FAKESECRET_pw2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": null,
+     "stderr": "FAKESECRET_pw2"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "WITHHELD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

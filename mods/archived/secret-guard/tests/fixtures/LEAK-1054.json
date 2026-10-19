@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1054",
+ "title": "JAVA_TOOL_OPTIONS echoed by JVM start",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JVM picked-up line stderr redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "./gradlew test"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "Picked up JAVA_TOOL_OPTIONS: -Dapi.token=FAKESECRET_tok_BV84\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BV84"
+   ],
+   "must_see": [
+    "Picked up JAVA_TOOL_OPTIONS: -Dapi.token=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "JVM picked-up line redacted at source (printf stand-in)",
+   "files": {},
+   "command": "printf 'Picked up JAVA_TOOL_OPTIONS: -Dapi.token=FAKESECRET_tok_BV84\\n' >&2",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_tok_BV84"
+   ],
+   "must_see": [
+    "Picked up JAVA_TOOL_OPTIONS: -Dapi.token=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0053",
+ "title": "Read PostToolUse returns Bash-shaped object and original text leaks",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read output with AUTH_SECRET line is redacted and keeps the Read tool_response shape",
+   "files": {
+    ".dev.vars": "AUTH_SECRET=FAKESECRET_auth_9f3a\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".dev.vars"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".dev.vars",
+      "content": "AUTH_SECRET=FAKESECRET_auth_9f3a\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_auth_9f3a"
+   ],
+   "must_see": [
+    "AUTH_SECRET",
+    "filePath"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

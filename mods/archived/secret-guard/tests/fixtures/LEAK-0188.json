@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0188",
+ "title": "terraform output -json prints sensitive outputs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "sensitive output value redacted, keys kept (simulated)",
+   "files": {
+    "out.json": "{\"db_password\":{\"sensitive\":true,\"type\":\"string\",\"value\":\"FAKESECRET_out_27\"}}\n",
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_out_27\n"
+   },
+   "command": "cat out.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_out_27"
+   ],
+   "must_see": [
+    "sensitive",
+    "type"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  },
+  {
+   "kind": "post",
+   "name": "terraform output -json via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cd infra && terraform output -json"
+    },
+    "tool_response": {
+     "stdout": "{\"db_password\":{\"sensitive\":true,\"type\":\"string\",\"value\":\"FAKESECRET_out_27\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_out_27"
+   ],
+   "must_see": [
+    "sensitive",
+    "type"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

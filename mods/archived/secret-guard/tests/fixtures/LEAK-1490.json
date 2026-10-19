@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1490",
+ "title": "docker compose config renders interpolated connection string",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "docker-compose-sim config: password in DB_URL redacted, scheme and host kept",
+   "files": {},
+   "command": "printf 'services:\\n  app:\\n    environment:\\n      DB_URL: postgres://app:FAKESECRET_compose@db:5432/app\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_compose"
+   ],
+   "must_see": [
+    "DB_URL:",
+    "postgres://app:",
+    "@db:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

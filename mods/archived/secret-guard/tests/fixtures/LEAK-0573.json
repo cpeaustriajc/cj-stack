@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0573",
+ "title": "log show output with Authorization header: value redacted, log formatting kept (log simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Authorization Bearer value in log show output redacted",
+   "files": {
+    "bin/log.sh": "echo 'Filtering the log data using subsystem == com.example.api'\necho 'Authorization: Bearer FAKESECRET_ol38'\n"
+   },
+   "command": "sh bin/log.sh show --last 1h --info --debug",
+   "exit_code": 0,
+   "must_not_see": [
+    "Bearer FAKESECRET_ol38"
+   ],
+   "must_see": [
+    "Filtering the log data",
+    "Authorization: Bearer [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

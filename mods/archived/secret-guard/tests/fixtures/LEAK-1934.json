@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1934",
+ "title": "Plugin monitor streams a secret from a log into the session",
+ "level": "not-testable",
+ "reason_not_testable": "Monitor output has no PostToolUse event in this design, and whether monitor output reaches model context is UNVERIFIED (catalog test_level not-testable). The plugin monitor manifest format needed to start a monitor in a runner session is not in the spec or the real payload file. Non-hook control per catalog: managed settings to block or force-enable plugins, do not install plugins that declare monitors, keep app logs free of secret values (E).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

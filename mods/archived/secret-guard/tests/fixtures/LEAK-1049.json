@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1049",
+ "title": "Python usercustomize prints os.environ on every run",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "quoted API_KEY repr value redacted, HOME and test output kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -m pytest -q"
+    },
+    "tool_response": {
+     "stdout": "{'API_KEY': 'FAKESECRET_key_BR79', 'HOME': '/Users/cj'}\n.\n1 passed in 0.01s\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_BR79"
+   ],
+   "must_see": [
+    "'HOME': '/Users/cj'",
+    "1 passed in 0.01s"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints os.environ repr then test summary",
+   "files": {},
+   "command": "printf \"{'API_KEY': 'FAKESECRET_key_BR79', 'HOME': '/Users/cj'}\\n1 passed in 0.01s\\n\"",
+   "must_not_see": [
+    "FAKESECRET_key_BR79"
+   ],
+   "must_see": [
+    "'HOME': '/Users/cj'",
+    "1 passed in 0.01s"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

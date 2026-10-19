@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1376",
+ "title": "PEM key embedded as escaped newlines inside a JSON log line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker logs line with literal backslash-n inside JSON string",
+   "files": {},
+   "command": "printf '%s\\n' '{\"tls_key\":\"-----BEGIN PRIVATE KEY-----\\nFAKESECRETMIIEvQIBADANBgkqhkiG9w0BAQEFAASC\\n-----END PRIVATE KEY-----\\n\"}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRETMIIEvQIBADANBgkqhkiG9w0BAQEFAASC"
+   ],
+   "must_see": [
+    "tls_key"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

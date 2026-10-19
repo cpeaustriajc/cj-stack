@@ -1,0 +1,86 @@
+# Motion rules
+
+Check each rule against the change. A row in the report names the rule it breaks.
+
+**Duration bands**
+- Button press: 100-160ms.
+- Tooltip or popover: 125-200ms.
+- Dropdown: 150-250ms.
+- Modal or drawer: 200-500ms.
+- Exits run shorter than entrances.
+- Stagger runs 30-80ms per item and never blocks input.
+- Once one tooltip is open, the next opens at once with no delay.
+- Feedback to a press, key or hover starts at once; only the duration follows the band.
+
+**Easing**
+- Enter and exit use ease-out.
+- Movement already on screen uses ease-in-out.
+- Hover and colour changes use ease.
+- Linear is only for constant motion such as a spinner.
+- No ease-in anywhere, exits included.
+- Defaults when nothing in the design says otherwise:
+  - ease-out: `cubic-bezier(0.23, 1, 0.32, 1)`
+  - ease-in-out: `cubic-bezier(0.77, 0, 0.175, 1)`
+  - drawers and sheets: `cubic-bezier(0.32, 0.72, 0, 1)`
+- Flag the built-in `ease-out` keyword only when the motion feels weak, not as a violation.
+
+**Interrupted motion**
+- An interrupted or reversed motion starts from the element's live on-screen value, not its
+  target. A jump at the reversal is a mistake.
+- A CSS transition retargets from its live value, so it passes for UI triggered again
+  mid-motion: a toast pushed by the next toast, a toggle flipped back. Don't ask for a spring there.
+- CSS keyframes restart from zero. On anything triggered rapidly they are a mistake; use a
+  transition.
+
+**Gesture-driven motion** (a drag, a swipe, a flick on release)
+- It uses a spring that keeps its current velocity when retargeted. A fixed curve that restarts from zero is a mistake.
+- Default bounce is 0. Bounce may reach about 0.3 and never passes 0.4.
+- Bounce appears only at the end of a flick or in a deliberately playful tone, never on a plain click or tap.
+- On the web that means the Web Animations API or a JS spring. CSS transitions and keyframes don't carry velocity.
+- On release, project the endpoint from the velocity instead of snapping to the nearest point.
+- Edges rubberband instead of stopping hard.
+- 2D motion runs one spring per axis. One spring on the combined distance drifts off when X and
+  Y move at different speeds.
+- A drag captures the pointer once it starts, so it keeps tracking outside the element.
+- Once a drag starts, extra touches are ignored. A second finger must not make the element jump.
+- A drag commits to a direction only after about 10px of movement, then tracks 1:1.
+
+**Origin and space**
+- Popovers scale from their trigger with `transform-origin`.
+- Modals stay centred.
+- Expanded content grows from its source element.
+- Things leave the way they came.
+
+**Feedback and hover**
+- `:active` scales the control to about 0.97.
+- Hover effects sit behind `@media (hover: hover) and (pointer: fine)`.
+- A press-and-hold fills slowly while held and snaps back fast on release. Release is never slower
+  than press.
+
+**Reduced motion and theme**
+- Reduced motion keeps opacity and colour changes and drops movement. Crossfade instead of moving.
+- A crossfade that still shows both states at once gets a brief blur of about 2px to merge them.
+- A crossfade blur stays near 2px, never near 20px.
+- The theme toggle switches instantly, with transitions suppressed during the switch.
+
+**Frequency**
+- An action used 100+ times a day gets no animation.
+- An action used tens of times a day gets a minimal animation or none.
+- Keyboard-initiated actions are never animated.
+
+**Implementation**
+- Name the transitioned properties. `transition: all` is a mistake.
+- `will-change` appears only on elements that actually animate, and only to fix a problem seen
+  in the browser, such as a 1px shift at the start or end. Added up front, it is a mistake.
+- A child's transform is set on the child, not through a CSS variable on its parent. An
+  inherited variable recalculates every descendant each frame, so the motion slows as content grows.
+- Framer Motion's `x`, `y` and `scale` shorthands run on the main thread. Where they drop frames
+  under load, the full `transform` string is used.
+- An animated shadow uses `filter: drop-shadow()`, not `box-shadow`, which repaints every frame.
+- Values that change every frame, such as drag position or scroll-linked progress, are written
+  straight to the element's style, not routed through framework state that re-renders.
+
+**How to check**
+- Watch the motion at 2-5x slow motion in DevTools. Judge the origin, the easing and any overlap there, not at full speed.
+
+Sources: https://emilkowal.ski/ui/great-animations, https://github.com/emilkowalski/skill, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/review-animations/STANDARDS.md, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/animation-performance/SKILL.md, https://raw.githubusercontent.com/emilkowalski/skill/main/skills/apple-design/SKILL.md, https://raw.githubusercontent.com/emilkowalski/skill/main/performance-cheatsheet.md, https://developer.apple.com/videos/play/wwdc2018/803/, https://developer.apple.com/videos/play/wwdc2023/10158/, https://www.joshwcomeau.com/animation/css-transitions/, https://paco.me/writing/disable-theme-transitions, https://rauno.me/craft/interaction-design

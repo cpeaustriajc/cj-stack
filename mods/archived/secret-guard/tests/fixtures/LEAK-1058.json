@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1058",
+ "title": "ssh systemctl status triggers remote NODE_OPTIONS preload",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "remote status output: URL password redacted, status lines intact",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web-1 'systemctl status app'"
+    },
+    "tool_response": {
+     "stdout": "app.service - App\n   Active: active (running) since Fri 2026-10-09 10:00:00 UTC\nDATABASE_URL=postgres://app:FAKESECRET_pw_BY88@db.internal/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_BY88"
+   ],
+   "must_see": [
+    "Active: active (running)",
+    "postgres://app:[REDACTED]@db.internal/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "remote systemctl output simulated with printf (no real ssh)",
+   "files": {},
+   "command": "printf 'app.service - App\\n   Active: active (running) since Fri 2026-10-09 10:00:00 UTC\\nDATABASE_URL=postgres://app:FAKESECRET_pw_BY88@db.internal/app\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_BY88"
+   ],
+   "must_see": [
+    "Active: active (running)",
+    "postgres://app:[REDACTED]@db.internal/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

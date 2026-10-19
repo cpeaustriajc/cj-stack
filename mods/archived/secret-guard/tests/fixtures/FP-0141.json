@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0141",
+ "title": "Redactor false-positive on a Kerberos principal name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "klist with principal and krbtgt lines passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "klist"
+    },
+    "tool_response": {
+     "stdout": "Credentials cache: FILE:/tmp/krb5cc_501\nDefault principal: cj@EXAMPLE.COM\n\nValid starting     Expires            Service principal\n10/10/26 09:00:00  10/10/26 19:00:00  krbtgt/EXAMPLE.COM@EXAMPLE.COM\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Default principal: cj@EXAMPLE.COM",
+    "krbtgt/EXAMPLE.COM@EXAMPLE.COM"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "plain klist is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "klist"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

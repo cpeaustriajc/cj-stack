@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1915",
+ "title": "Token hex-dumped evades value pattern; guard must block xxd on Electron store paths",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xxd on discord LevelDB is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd \"$HOME/Library/Application Support/discord/Local Storage/leveldb/000005.ldb\" | head"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

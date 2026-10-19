@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0810",
+ "title": "onFailure block on a timed-out PostToolUse hook withholds Bash output",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0797"
+}

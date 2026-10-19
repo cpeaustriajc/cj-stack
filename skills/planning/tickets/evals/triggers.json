@@ -1,0 +1,50 @@
+[
+ {
+  "query": "break the confirmed alerts spec into tickets in linear, project MP",
+  "should_trigger": true
+ },
+ {
+  "query": "cut the next slice from the checkout spec, R4 through R7 aren't covered yet",
+  "should_trigger": true
+ },
+ {
+  "query": "this ticket ABC-412 is way too long and does two things, rewrite it",
+  "should_trigger": true
+ },
+ {
+  "query": "file these bugs from today's QA as issues in our github repo: 1) cart empties after login 2) double-click on Buy charges twice 3) back button mid-checkout shows a blank page 4) price shows NaN for a 0-length domain",
+  "should_trigger": true
+ },
+ {
+  "query": "write the issue for adding CSV export to the reports page, it's R3 in the reports spec",
+  "should_trigger": true
+ },
+ {
+  "query": "is this a chore or a task? it's bumping our eslint config and fixing the warnings it causes",
+  "should_trigger": true
+ },
+ {
+  "query": "write the spec for the reports project",
+  "should_trigger": false
+ },
+ {
+  "query": "plan the whole product, we want to build a newsletter tool for local councils",
+  "should_trigger": false
+ },
+ {
+  "query": "fix ABC-412, the export button throws a 500",
+  "should_trigger": false
+ },
+ {
+  "query": "grill me on the caching approach before I start",
+  "should_trigger": false
+ },
+ {
+  "query": "drive this ticket to green overnight, the tests are in cart.test.ts",
+  "should_trigger": false
+ },
+ {
+  "query": "what should the milestones be for the reports project",
+  "should_trigger": false
+ }
+]

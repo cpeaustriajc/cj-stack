@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1491",
+ "title": "terraform output -json prints sensitive value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "terraform output -json: sensitive value replaced, flag and type kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "terraform output -json"
+    },
+    "tool_response": {
+     "stdout": "{\"db_password\":{\"sensitive\":true,\"type\":\"string\",\"value\":\"FAKESECRET_tf\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tf"
+   ],
+   "must_see": [
+    "db_password",
+    "sensitive",
+    "string"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

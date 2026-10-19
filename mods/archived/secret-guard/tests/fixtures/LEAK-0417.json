@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0417",
+ "title": "D15 earlier tool output persists in transcript: stored output must hold [REDACTED]",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "turn-1 output re-quoted in turn 2",
+   "files": {
+    "notes.txt": "token FAKESECRET_tok_64\n"
+   },
+   "prompt": "Step 1: run `cat notes.txt` with Bash and show the output. Step 2: in your final reply, repeat the output from step 1 word for word.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_tok_64"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

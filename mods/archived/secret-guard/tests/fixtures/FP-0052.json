@@ -1,0 +1,8 @@
+{
+ "case_id": "FP-0052",
+ "title": "False positive: Read of a PNG under onFailure block must reach the model",
+ "level": "not-testable",
+ "reason_not_testable": "Fixtures are text-only; the Read image tool_response shape is not in shapes/hook-payloads.json (UNVERIFIED). Non-hook control: manually Read a PNG with the onFailure config and confirm the image reaches the model.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

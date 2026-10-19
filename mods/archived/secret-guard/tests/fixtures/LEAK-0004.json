@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0004",
+ "title": "Bash openssl rsa writes a decrypted private key into a project directory (i=3, write step)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "openssl rsa -out a decrypted key into the project tree is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl rsa -in ./server.key -out ./debug/key-plain.pem && git add ./debug"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "same write with flags reordered is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl rsa -out ./debug/key-plain.pem -in ./server.key"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "read-only certificate inspection stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl x509 -in ./server.crt -noout -subject"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

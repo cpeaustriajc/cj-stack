@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1704",
+ "title": "ssh pbpaste on remote Mac",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh body pbpaste denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host.example 'pbpaste'"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain pbpaste display over ssh with nothing combined. Owner allows plain display over ssh.)"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh body pbcopy denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host.example 'echo hi | pbcopy'"
+    }
+   },
+   "policy_note": "R1-R5: no item-4 secret source and no secret literal; 'echo hi' writes a non-secret to the clipboard, which no rule lists as a deny, so allow."
+  }
+ ]
+}

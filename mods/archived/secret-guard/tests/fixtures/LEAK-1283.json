@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1283",
+ "title": "MCP debug tool echoes Authorization Bearer header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp-bearer-header-redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__debug__show_request",
+    "tool_input": {},
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "Authorization: Bearer FAKESECRET_mcpbearer0015\nContent-Type: application/json"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcpbearer0015"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "Content-Type: application/json"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

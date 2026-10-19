@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0498",
+ "title": "SSH lists and cats staged deploy env files in remote /tmp",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote ls and cat of deploy env: API_TOKEN value redacted at source (no real ssh)",
+   "files": {
+    "deploy-app.env": "API_TOKEN=FAKESECRET_dp49\n"
+   },
+   "command": "ls -la deploy-app.env; cat deploy-*.env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_dp49"
+   ],
+   "must_see": [
+    "API_TOKEN",
+    "deploy-app.env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

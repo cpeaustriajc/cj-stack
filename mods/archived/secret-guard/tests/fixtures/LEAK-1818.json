@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1818",
+ "title": "gh run download then grep extraheader in .git/config",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "git config extraheader with base64 basic credential (base64 of x-access-token:FAKESECRET_ART_02); whole value redacted",
+   "files": {
+    "source-tree/.git/config": "# x-access-token:FAKESECRET_ART_02\n[http \"https://github.com/\"]\n\textraheader = AUTHORIZATION: basic eC1hY2Nlc3MtdG9rZW46RkFLRVNFQ1JFVF9BUlRfMDI=\n"
+   },
+   "command": "grep extraheader source-tree/.git/config",
+   "exit_code": 0,
+   "must_not_see": [
+    "eC1hY2Nlc3MtdG9rZW46RkFLRVNFQ1JFVF9BUlRfMDI="
+   ],
+   "must_see": [
+    "extraheader"
+   ]
+  }
+ ]
+}

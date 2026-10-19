@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0687",
+ "title": "OpenTelemetry tool-span export raw output (telemetry is a non-model channel)",
+ "level": "not-testable",
+ "reason_not_testable": "Non-hook control: the OpenTelemetry exporter or collector redaction configuration. Hooks only govern what the model receives, so this channel is outside the hook test suite.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

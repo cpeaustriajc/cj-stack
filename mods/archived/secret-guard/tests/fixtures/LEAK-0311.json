@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0311",
+ "title": "Python reads /proc/<pid>/maps and /proc/<pid>/mem via Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "python -c referencing /proc is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import sys; print(open('/proc/%s/maps' % sys.argv[1]).read())\" 4242"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "python /proc read output if it ran",
+   "files": {
+    "~/Projects/app/.env": "API_TOKEN=FAKESECRET_PROC_MEM\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import sys; print(open('/proc/%s/maps' % sys.argv[1]).read())\" 4242"
+    },
+    "tool_response": {
+     "stdout": "0x7f00 FAKESECRET_PROC_MEM\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PROC_MEM"
+   ],
+   "must_see": [
+    "0x7f00"
+   ]
+  }
+ ]
+}

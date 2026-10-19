@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1223",
+ "title": "node migration script stack trace on stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command: URL password on stderr redacted, exit code 1 preserved (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'Error: connect ECONNREFUSED postgres://u:FAKESECRET_p10@db\\n' >&2; exit 1",
+   "must_not_see": [
+    "FAKESECRET_p10"
+   ],
+   "must_see": [
+    "ECONNREFUSED",
+    "postgres://u:"
+   ],
+   "exit_code": 1
+  },
+  {
+   "kind": "pre",
+   "name": "node migration command stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'node scripts/migrate.js'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-2127",
+ "title": "Hook exits 0 but stdout is not valid JSON (e.g. a stray traceback or debug line)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash printenv-style output: model-visible JSON and hook stdout must not contain value",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep FAKESECRET"
+    },
+    "tool_response": {
+     "stdout": "DB_PASS=FAKESECRET_GAMMA\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_GAMMA"
+   ],
+   "must_see": [
+    "DB_PASS="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Command output (printf through grep) redacted at source",
+   "files": {},
+   "command": "printf 'DB_PASS=FAKESECRET_GAMMA\\n' | grep FAKESECRET",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_GAMMA"
+   ],
+   "must_see": [
+    "DB_PASS="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

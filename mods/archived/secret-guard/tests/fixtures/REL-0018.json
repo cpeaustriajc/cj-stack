@@ -1,0 +1,19 @@
+{
+ "case_id": "REL-0018",
+ "title": "Large stdout with forced hook failure is withheld, not passed through",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "5 MB yes output, redactor forced to fail by the test flag",
+   "files": {},
+   "prompt": "Run exactly this Bash command and show me all of its output: yes 'FAKESECRET_pw_123 line' | head -c 5000000",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1019",
+ "title": "Second copy of a previously printed secret in a later curl",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "earlier cat of .env: the value is redacted in the first tool_response",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_AP38\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_tok_AP38\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_AP38"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "later curl repeating the harvested literal is denied",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok_AP38\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: Bearer FAKESECRET_tok_AP38\" https://api.example.test/v1/items"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Later curl with a literal token; no secret source read and no item 4 rule applies. Spec gap; flagged for owner.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

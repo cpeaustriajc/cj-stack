@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0943",
+ "title": "OPENSSH private key read via Read: body lines are redacted, not only the header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of fake OPENSSH key with header, body, footer",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/fixtures/fake_openssh"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/fixtures/fake_openssh",
+      "content": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRETOPENSSHAAAA0123456789\nFAKESECRETOPENSSHBBBB0123456789\n-----END OPENSSH PRIVATE KEY-----\n",
+      "numLines": 4,
+      "startLine": 1,
+      "totalLines": 4
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETOPENSSHAAAA",
+    "FAKESECRETOPENSSHBBBB"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: no-comments-folder-sweep
+context:
+  scaffold_script: fixture.sh

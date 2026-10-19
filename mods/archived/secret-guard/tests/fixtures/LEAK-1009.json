@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1009",
+ "title": "Repo settings redirect API base URL before trust prompt",
+ "level": "not-testable",
+ "reason_not_testable": "No tool call occurs; the outbound API request with the key happens before trust and before any PostToolUse or PreToolUse event, so no hook can observe or redact it. Non-hook control: keep Claude Code at or above the fixed version (2.0.65 per CVE-2026-21852) and do not open untrusted repos.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

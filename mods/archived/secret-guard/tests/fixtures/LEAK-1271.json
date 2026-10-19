@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-1271",
+ "title": "Read of mcp-remote --debug log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "read-mcp-debug-log-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.mcp-auth/0a1b2c_debug.log"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a debug log under ~/.mcp-auth; the owner allows plain reads.)"
+  },
+  {
+   "kind": "post",
+   "name": "read-mcp-debug-log-value-redacted",
+   "files": {
+    "0a1b2c_debug.log": "token refresh ok refresh_token=FAKESECRET_dbgrefresh0003\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.mcp-auth/0a1b2c_debug.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "~/.mcp-auth/0a1b2c_debug.log",
+      "content": "token refresh ok refresh_token=FAKESECRET_dbgrefresh0003\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dbgrefresh0003"
+   ],
+   "must_see": [
+    "token refresh ok",
+    "refresh_token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

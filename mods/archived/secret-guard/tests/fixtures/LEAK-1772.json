@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1772",
+ "title": "Bash set -a; source .env; env | grep KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "source .env then env dump through grep is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "set -a; source .env; set +a; env | grep KEY"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: env | grep that prints matching lines is plain display; allowed, output redacted."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "KEY=VALUE line on stdout has value replaced, key kept (printf stands in for env)",
+   "files": {},
+   "command": "printf 'KEY=FAKESECRET_ENV_01\\nPATH=/usr/bin\\n' | grep KEY",
+   "must_not_see": [
+    "FAKESECRET_ENV_01"
+   ],
+   "must_see": [
+    "KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

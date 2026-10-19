@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0025",
+ "title": "git clone of an untrusted repo runs a post-checkout hook that dumps env",
+ "level": "not-testable",
+ "reason_not_testable": "Clone-time code execution happens before any output exists for the hook to redact, and the exploit depends on a case-insensitive filesystem write via a symlink and case-variant layout (CVE-2021-21300) that a normal test cannot reproduce. Non-hook controls: sandbox the clone with no access to ~/.aws or the environment; deny clones from hosts outside an allowlist; pin a patched git (version UNVERIFIED here).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

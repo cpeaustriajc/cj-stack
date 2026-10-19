@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0850",
+ "title": "Timeout discards output: printf-style API_TOKEN line under default and block configs (e2e)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat of API_TOKEN line when hook exceeds timeout",
+   "files": {
+    "api.env": "API_TOKEN=FAKESECRET_tok2\n"
+   },
+   "prompt": "Run Bash: cat api.env and return the output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_tok2"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

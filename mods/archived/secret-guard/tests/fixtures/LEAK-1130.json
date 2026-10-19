@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1130",
+ "title": "Allow-always persists a command that contains a secret (hook-side deny only; permission-UI persistence is not testable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "literal Bearer command is denied before approval, so nothing is offered for allow-always",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H 'Authorization: Bearer FAKESECRET_allow' https://api.example.com/v1/deploy"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into curl that only calls an API and shows its output is allowed; expect changed from deny to allow."
+  }
+ ]
+}

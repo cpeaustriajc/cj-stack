@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1425",
+ "title": "Unharvested 40-byte value hex-encoded by xxd -p with line wrap (value FAKESECRET x4)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies xxd over secret-named variable",
+   "files": {
+    "notes.txt": "FAKESECRETFAKESECRETFAKESECRETFAKESECRET\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$FAKESECRET_HEX_VALUE\" | xxd -p"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "two-line hex wrap of 40-byte value is withheld in output",
+   "files": {
+    "notes.txt": "FAKESECRETFAKESECRETFAKESECRETFAKESECRET\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$FAKESECRET_HEX_VALUE\" | xxd -p"
+    },
+    "tool_response": {
+     "stdout": "46414b4553454352455446414b4553454352455446414b45534543524554\n46414b45534543524554\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "46414b4553454352455446414b4553454352455446414b45534543524554",
+    "46414b45534543524554"
+   ],
+   "must_see": []
+  }
+ ]
+}

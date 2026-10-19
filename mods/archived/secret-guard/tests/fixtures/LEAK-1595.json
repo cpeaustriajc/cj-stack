@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1595",
+ "title": "Renamed key with GitHub token format is redacted by format (unit; 36-char body built from FAKESECRET plus A-Z)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of w2.txt redacts ghp_ token by format",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "w2.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "w2.txt",
+      "content": "k=ghp_FAKESECRETABCDEFGHIJKLMNOPQRSTUVWXYZ\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "ghp_FAKESECRETABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   ],
+   "must_see": [
+    "k=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

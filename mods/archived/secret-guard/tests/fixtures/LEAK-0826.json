@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0826",
+ "title": "Secret only on stderr while the hook rewrites only stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr-only secret is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'echo ok; echo \"token=FAKESECRET_tok_3\" >&2'"
+    },
+    "tool_response": {
+     "stdout": "ok\n",
+     "stderr": "token=FAKESECRET_tok_3\n",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_3"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stderr-only secret is redacted at source",
+   "files": {},
+   "command": "sh -c 'echo ok; echo \"token=FAKESECRET_tok_3\" >&2'",
+   "must_not_see": [
+    "FAKESECRET_tok_3"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

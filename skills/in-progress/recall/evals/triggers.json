@@ -1,0 +1,9 @@
+[
+  {"query": "where was I on this project? catch me up", "should_trigger": true},
+  {"query": "what did we do last week on the checkout work and what's still open", "should_trigger": true},
+  {"query": "pick up where we left off yesterday", "should_trigger": true},
+  {"query": "what's in flight across my branches right now", "should_trigger": true},
+  {"query": "what do I keep correcting you about", "should_trigger": false},
+  {"query": "what did we decide about the cart drawer", "should_trigger": false},
+  {"query": "fix the failing login test", "should_trigger": false}
+]

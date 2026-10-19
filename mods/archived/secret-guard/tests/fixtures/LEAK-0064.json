@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-0064",
+ "title": "Read of PEM key body chunk with no BEGIN or END marker (Read tool_response shape reused from captured Read payload)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "five 64-char base64 body lines from a Read chunk are all redacted",
+   "files": {
+    "deploy/tls.key": "FAKESECRETPEMLINE01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE02ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE03ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE04ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE05ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "deploy/tls.key",
+     "offset": 10,
+     "limit": 5
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "deploy/tls.key",
+      "content": "FAKESECRETPEMLINE01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE02ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE03ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE04ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs\nFAKESECRETPEMLINE05ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs",
+      "numLines": 5,
+      "startLine": 10,
+      "totalLines": 14
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETPEMLINE01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs",
+    "FAKESECRETPEMLINE02ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs",
+    "FAKESECRETPEMLINE03ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs",
+    "FAKESECRETPEMLINE04ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs",
+    "FAKESECRETPEMLINE05ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrs"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "REL-0059",
+ "title": "Failure hook receives no tool_response; redactor silently passes through",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command prints secret to stdout and exits 3; output redacted at source",
+   "files": {},
+   "command": "printf 'DB_PASSWORD=FAKESECRET_r59_0059\\n'; exit 3",
+   "must_not_see": [
+    "FAKESECRET_r59_0059"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ],
+   "exit_code": 3
+  }
+ ],
+ "duplicate_of_dropped": false
+}

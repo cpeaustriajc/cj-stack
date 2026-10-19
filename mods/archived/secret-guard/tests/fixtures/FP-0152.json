@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0152",
+ "title": "core.fsmonitor hook runs on a benign git status",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git status output with a known env value is redacted, status lines kept",
+   "files": {
+    ".env": "ENV_VAL=FAKESECRET_ENV_7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git status --short"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_ENV_7\n M notes.txt\n?? out.txt\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ENV_7"
+   ],
+   "must_see": [
+    " M notes.txt",
+    "?? out.txt"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

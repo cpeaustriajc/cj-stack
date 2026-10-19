@@ -1,0 +1,34 @@
+{
+ "case_id": "FP-0033",
+ "title": "docker inspect Env array: per-value redaction, JSON stays valid, no whole-line redaction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker inspect Env JSON array with POSTGRES_PASSWORD",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect app_web_1 --format '{{json .Config.Env}}'"
+    },
+    "tool_response": {
+     "stdout": "[\"PATH=/usr/bin\",\"POSTGRES_PASSWORD=FAKESECRET_pw7\",\"NODE_ENV=production\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw7"
+   ],
+   "must_see": [
+    "PATH=/usr/bin",
+    "POSTGRES_PASSWORD=[REDACTED]",
+    "NODE_ENV=production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

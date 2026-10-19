@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0172",
+ "title": "docker history ARG line: DB_PASSWORD value removed, other columns kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker history ARG line with value",
+   "files": {
+    "history.txt": "sha256:1d2e3f4a5b6c  4 days ago  /bin/sh -c #(nop) ARG DB_PASSWORD=FAKESECRET_hist_11  0B\n"
+   },
+   "command": "cat history.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_hist_11"
+   ],
+   "must_see": [
+    "sha256:1d2e3f4a5b6c",
+    "4 days ago",
+    "0B"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker history --no-trunc stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc myapp:latest"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

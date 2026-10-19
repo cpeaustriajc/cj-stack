@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0052",
+ "title": "fold splits secret value across short lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "fold on a secret file is a secret-source plus transform combo, denied",
+   "files": {
+    ".dev.vars": "AUTH_SECRET=FAKESECRET_auth_9f3a\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fold -w4 .dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "successful fold output of .dev.vars has no 4-char fragments in sequence",
+   "files": {
+    ".dev.vars": "AUTH_SECRET=FAKESECRET_auth_9f3a\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fold -w4 .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "AUTH\n_SEC\nRET=\nFAKE\nSECR\nET_a\nuth_\n9f3a\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKE\nSECR\nET_a\nuth_\n9f3a"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

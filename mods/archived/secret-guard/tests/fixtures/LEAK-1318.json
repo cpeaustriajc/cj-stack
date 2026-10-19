@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1318",
+ "title": "pip config list index-url with credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "pip config list stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pip config list"
+    },
+    "tool_response": {
+     "stdout": "global.index-url='https://FAKEUSER:FAKESECRET_pipcfg0042@pypi.corp.example/simple'\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pipcfg0042"
+   ],
+   "must_see": [
+    "global.index-url=",
+    "pypi.corp.example/simple"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated pip config list output",
+   "files": {},
+   "command": "printf \"global.index-url='https://FAKEUSER:FAKESECRET_pipcfg0042@pypi.corp.example/simple'\\n\"",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pipcfg0042"
+   ],
+   "must_see": [
+    "pypi.corp.example/simple"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

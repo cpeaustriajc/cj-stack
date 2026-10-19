@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-1871",
+ "title": "Log text written to a file is redacted when read back with Read (model view); disk residue not covered",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read output redacts session value",
+   "files": {
+    "ul.txt": "eventMessage: session=FAKESECRET_file_005\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "ul.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "ul.txt",
+      "content": "eventMessage: session=FAKESECRET_file_005\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_file_005"
+   ],
+   "must_see": [
+    "eventMessage: session="
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Read of log file in a real session",
+   "files": {
+    "ul.txt": "eventMessage: session=FAKESECRET_file_005\n"
+   },
+   "prompt": "Use the Read tool on ul.txt and quote its single line verbatim.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_file_005"
+   ],
+   "must_see": [
+    "eventMessage: session="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

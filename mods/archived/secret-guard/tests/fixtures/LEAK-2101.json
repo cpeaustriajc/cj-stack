@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2101",
+ "title": "Writing a private key to a file with openssl -out leaks through a later Read, not stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nodes -out writing a key file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in FAKESECRET_bundle.p12 -nodes -out FAKESECRET_out.pem -passin pass:FAKESECRET_pw"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the PEM file: PEM body redacted if the write was not stopped",
+   "files": {
+    "proj/bundle-key.pem": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_OUT_BODY_1\n-----END PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/example/proj/bundle-key.pem"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/example/proj/bundle-key.pem",
+      "content": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_OUT_BODY_1\n-----END PRIVATE KEY-----\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_OUT_BODY_1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

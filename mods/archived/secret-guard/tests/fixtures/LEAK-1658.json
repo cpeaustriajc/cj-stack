@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1658",
+ "title": "MCP browser screenshot of a page showing a new API key (MCP tool name UNVERIFIED; image content not modelled, so pre-level only; catalog says e2e)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "MCP browser_take_screenshot with fullPage is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__browser__browser_take_screenshot",
+    "tool_input": {
+     "fullPage": true
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (MCP browser screenshot is not an item-4 secret source or transform; no combo.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

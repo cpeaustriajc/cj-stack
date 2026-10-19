@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0469",
+ "title": "[24] locate results piped through xargs grep for KEY",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "locate piped to xargs grep is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "locate -b '\\.env' | xargs grep -H 'KEY'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -H output (simulated) with KEY= value is redacted if run",
+   "files": {
+    "grep-out.txt": "/Users/cj/Projects/app/.env:API_KEY=FAKESECRET_lc24\n"
+   },
+   "command": "cat grep-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_lc24"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

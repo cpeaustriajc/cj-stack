@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0865",
+ "title": "Failed remote exec prints secret to stderr with exit 1; pre_exec through the guard wrapper, local stub instead of ssh",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failed command stderr is redacted at source",
+   "files": {
+    ".env": "DATABASE_PASSWORD=FAKESECRET_dbpw"
+   },
+   "command": "cat .env >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_dbpw"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

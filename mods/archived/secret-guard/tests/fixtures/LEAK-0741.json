@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0741",
+ "title": "Bash cat of .dev.vars: plain-string updatedToolOutput (checks the emitted object keeps all four Bash keys)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat .dev.vars: model-visible object has no secret and keeps the Bash keys",
+   "files": {
+    ".dev.vars": "API_TOKEN=FAKESECRET_tok2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN=FAKESECRET_tok2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok2"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat .dev.vars output redacted at source",
+   "files": {
+    ".dev.vars": "API_TOKEN=FAKESECRET_tok2\n"
+   },
+   "command": "cat .dev.vars",
+   "must_not_see": [
+    "FAKESECRET_tok2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0126",
+ "title": "Short harvested value matches prose under fold",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "fold CHANGELOG with harvested value true",
+   "files": {
+    ".npmrc": "always-auth=true\n",
+    "CHANGELOG.md": "The flag is true by default.\n"
+   },
+   "command": "fold -w 20 CHANGELOG.md | head -n 3",
+   "exit_code": 0,
+   "must_see": [
+    "The flag is true by"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

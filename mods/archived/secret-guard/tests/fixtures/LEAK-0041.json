@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-0041",
+ "title": "Recalled GitHub token written to .env.example then read back",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of .env.example with ghp_ literal is denied",
+   "files": {
+    ".env.example": "# env template\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "<repo>/.env.example",
+     "old_string": "# env template",
+     "new_string": "GITHUB_TOKEN=ghp_FAKESECRET14"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read-back of .env.example redacts ghp_ token even when never harvested (Read shape from hook-payloads)",
+   "files": {
+    ".env.example": "GITHUB_TOKEN=ghp_FAKESECRET14\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "<repo>/.env.example"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "<repo>/.env.example",
+      "content": "GITHUB_TOKEN=ghp_FAKESECRET14\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "ghp_FAKESECRET14"
+   ],
+   "must_see": [
+    "GITHUB_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

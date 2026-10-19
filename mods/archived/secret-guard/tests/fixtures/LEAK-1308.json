@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1308",
+ "title": "ssh remote cat of gradle.properties on build host",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh remote cat of a credential path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@build-01 \"cat ~/.gradle/gradle.properties\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain ssh cat of ~/.gradle/gradle.properties; owner allows plain display over ssh.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "ssh replaced by local stub script (never real ssh); if run, the stdout value is redacted at source",
+   "files": {
+    "fake-ssh.sh": "#!/bin/sh\nprintf 'nexusPassword=FAKESECRET_remotegradle0032\\n'\n"
+   },
+   "command": "sh ./fake-ssh.sh build-01",
+   "must_not_see": [
+    "FAKESECRET_remotegradle0032"
+   ],
+   "must_see": [
+    "nexusPassword="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

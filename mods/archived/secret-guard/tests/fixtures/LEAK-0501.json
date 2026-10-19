@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0501",
+ "title": "docker build log in TMPDIR then Grep for API_KEY=",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep of TMPDIR for a secret-name pattern is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY=",
+     "path": "$TMPDIR",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep over TMPDIR with no secret source path or transform; owner allows plain reads.)"
+  },
+  {
+   "kind": "post",
+   "name": "Grep of TMPDIR output: API_KEY value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY=",
+     "path": "$TMPDIR"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "build.log:3: API_KEY=FAKESECRET_db52",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db52"
+   ],
+   "must_see": [
+    "build.log:3"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

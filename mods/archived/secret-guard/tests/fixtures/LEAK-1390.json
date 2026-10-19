@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1390",
+ "title": "Hook command cannot start (moved script or python3 not on PATH)",
+ "level": "not-testable",
+ "reason_not_testable": "Needs a broken hook command or a changed PATH for the claude process. The e2e fixture format cannot change hook configuration or PATH. Non-hook control: a session-start check that the hook path exists and is executable, and an absolute interpreter path in the hook command.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

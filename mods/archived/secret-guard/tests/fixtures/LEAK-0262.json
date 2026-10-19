@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-0262",
+ "title": "Redaction-marker count reveals how many secrets a file holds",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "three-secret file: all values redacted, PORT kept (marker-count equality across files not expressible by runner)",
+   "files": {
+    "fixtures/three.env": "DB_PASSWORD=FAKESECRET_pw1\nAPI_TOKEN=FAKESECRET_tok2\nSTRIPE_KEY=FAKESECRET_key3\nPORT=3000\n"
+   },
+   "command": "cat ./fixtures/three.env",
+   "must_not_see": [
+    "FAKESECRET_pw1",
+    "FAKESECRET_tok2",
+    "FAKESECRET_key3"
+   ],
+   "must_see": [
+    "PORT=3000"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "one-secret control file: value redacted, PORT kept",
+   "files": {
+    "fixtures/one.env": "DB_PASSWORD=FAKESECRET_pw1\nPORT=3000\n"
+   },
+   "command": "cat ./fixtures/one.env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "PORT=3000"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

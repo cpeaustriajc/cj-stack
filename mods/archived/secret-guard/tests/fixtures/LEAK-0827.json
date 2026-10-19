@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0827",
+ "title": "Non-zero exit: cat .env runs but redactor is registered only on PostToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat .env then exit 1 is redacted at source",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_6\n"
+   },
+   "command": "cat .env; exit 1",
+   "must_not_see": [
+    "FAKESECRET_pw_6"
+   ],
+   "must_see": [],
+   "exit_code": 1
+  },
+  {
+   "kind": "post",
+   "name": "successful cat .env is redacted (success path)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw_6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_6"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

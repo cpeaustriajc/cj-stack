@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0270",
+ "title": "cmp -l against /dev/zero dumps each secret byte as offset and octal",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cmp -l with secret path as operand is denied",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cmp -l .env /dev/zero"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "numeric byte table in cmp output gated on secret path is replaced with [REDACTED] (octal bytes corrected: K is 113, not 123)",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cmp -l .env /dev/zero"
+    },
+    "tool_response": {
+     "stdout": "10 106 0\n11 101 0\n12 113 0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

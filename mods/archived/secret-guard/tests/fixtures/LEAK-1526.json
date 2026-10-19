@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1526",
+ "title": "Symlink in project points to ~/.ssh key, read via filesystem MCP (catalog test_level e2e; both fixtures are unit-testable, so level set to unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ln -s targeting a credential path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ln -s ~/.ssh/id_ed25519 deploy/key"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "filesystem read of a key via symlink: whole PEM block replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__filesystem__read_file",
+    "tool_input": {
+     "path": "deploy/key"
+    },
+    "tool_response": {
+     "content": [
+      {
+       "type": "text",
+       "text": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_key_body\n-----END OPENSSH PRIVATE KEY-----\n"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key_body"
+   ],
+   "policy_note": "PEM header/footer lines are not secret; only the body is"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

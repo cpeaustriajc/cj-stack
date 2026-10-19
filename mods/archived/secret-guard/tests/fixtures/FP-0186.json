@@ -1,0 +1,23 @@
+{
+ "case_id": "FP-0186",
+ "title": "Counting a key present in a settings file, and diff-marker lines, over its chezmoi diff is allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "present settings key count plus diff-marker count over a chezmoi diff",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"DISABLE_TELEMETRY\": \"1\"\n  }\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"present key lines in chezmoi diff: $(chezmoi diff ~/.claude/settings.json | grep -c DISABLE_TELEMETRY)\"; echo \"total changed lines in chezmoi diff: $(chezmoi diff ~/.claude/settings.json | grep -cE '^[-+][^-+]')\""
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

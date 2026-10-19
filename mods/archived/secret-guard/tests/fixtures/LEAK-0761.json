@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0761",
+ "title": "Failed MCP tool returns an error result with a secret",
+ "level": "not-testable",
+ "reason_not_testable": "MCP server name, tool name and error-result shape are UNVERIFIED in the spec, and PostToolUseFailure cannot rewrite output. A fixture would need a fake MCP server whose error shape is measured first. Non-hook control: avoid sending or receiving secrets through MCP tools; PreToolUse guard on MCP inputs is a design option, not yet verified.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0174",
+ "title": "Generating a fresh random secret into an env file is allowed (rotation)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "generate a random password into .env with openssl",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DB_PASSWORD=%s\\n' \"$(openssl rand -base64 18)\" >> .env"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "generate a hex API key into .env.local",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"API_SECRET=$(openssl rand -hex 32)\" >> .env.local"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "python secrets.token_urlsafe into .env",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c 'import secrets;print(\"SESSION_SECRET=\"+secrets.token_urlsafe(32))' >> .env"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

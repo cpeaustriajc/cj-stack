@@ -1,0 +1,67 @@
+{
+ "case_id": "LEAK-2035",
+ "title": "Edit tool inserts a secret and the result echoes it back",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit inserting a secret into a Dropbox-synced file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/Dropbox/notes/ci.yml",
+     "old_string": "token: old-value",
+     "new_string": "token: FAKESECRET_bbb222",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Edit diff echoing a secret on a non-synced path is redacted",
+   "files": {
+    "ci.yml": "token: FAKESECRET_bbb222\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "ci.yml",
+     "old_string": "token: old-value",
+     "new_string": "token: FAKESECRET_bbb222",
+     "replace_all": false
+    },
+    "tool_response": {
+     "filePath": "ci.yml",
+     "oldString": "token: old-value",
+     "newString": "token: FAKESECRET_bbb222",
+     "originalFile": "token: old-value\n",
+     "structuredPatch": [
+      {
+       "oldStart": 1,
+       "oldLines": 1,
+       "newStart": 1,
+       "newLines": 1,
+       "lines": [
+        "-token: old-value",
+        "+token: FAKESECRET_bbb222"
+       ]
+      }
+     ],
+     "userModified": false,
+     "replaceAll": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bbb222"
+   ],
+   "must_see": [
+    "ci.yml"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

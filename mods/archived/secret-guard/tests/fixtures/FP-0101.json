@@ -1,0 +1,25 @@
+{
+ "case_id": "FP-0101",
+ "title": "Bash cat .env.example .env: placeholder kept, real value redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat .env.example .env: placeholder kept, FAKESECRET value redacted",
+   "files": {
+    ".env.example": "STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx\n",
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_9f8e7d6c5b4a\n"
+   },
+   "command": "cat .env.example .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_sk_live_9f8e7d6c5b4a"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxxxxx",
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

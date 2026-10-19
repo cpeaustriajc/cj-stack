@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1108",
+ "title": "find for token-named files under home, then Read of a hit",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "find over /home with credential-name globs is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find /home -iname '*token*' -o -iname '*credential*' 2>/dev/null"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (find lists file names only and reveals no values. Not a read or transform of a secret source. Borderline as an existence probe over /home.)"
+  },
+  {
+   "kind": "pre",
+   "name": "find over $HOME with credential glob is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find $HOME -iname '*credential*' 2>/dev/null"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (find lists file names only under $HOME; no values read. Borderline as an existence probe.)"
+  },
+  {
+   "kind": "post",
+   "name": "path-only find output passes through unchanged (false-positive check)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_use_id": "toolu_fx_1108",
+    "tool_input": {
+     "command": "find /home -iname '*token*' -o -iname '*credential*' 2>/dev/null"
+    },
+    "tool_response": {
+     "stdout": "/home/cj/.npmrc\n/home/cj/.aws/credentials\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "/home/cj/.aws/credentials"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

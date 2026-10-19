@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-0620",
+ "title": "Secret split across two cut calls (second fragment modelled; known limitation, pass if the fragment is redacted or withheld)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cut -c13-40 of .env yields the value fragment",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "cut -c13-40 .env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

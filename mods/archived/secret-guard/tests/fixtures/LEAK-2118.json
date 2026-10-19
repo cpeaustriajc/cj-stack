@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2118",
+ "title": "OpenTelemetry exporter captures original tool output before the hook",
+ "level": "not-testable",
+ "reason_not_testable": "Exporter payload is outside the runner's observable surface (runner asserts only PostToolBatch tool_response and final reply); telemetry content setting names are UNVERIFIED in the docs. Non-hook control: disable tool-content export in telemetry settings and keep secret values out of tool output at source.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

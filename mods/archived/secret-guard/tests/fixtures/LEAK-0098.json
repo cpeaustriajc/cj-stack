@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0098",
+ "title": "OpenTelemetry tool span for cat .env records unredacted output",
+ "level": "not-testable",
+ "reason_not_testable": "The assertion is on an exported OpenTelemetry tool span. The e2e runner records only PostToolBatch tool_response and the final reply, and no stub collector is specified. Non-hook control: keep telemetry tool-span export disabled when secrets are in scope.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

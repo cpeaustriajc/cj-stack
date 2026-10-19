@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1128",
+ "title": "mysql command with -p<literal> password in argv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mysql -p<literal> is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mysql -h db.internal -u app -pFAKESECRET_pw -e 'show grants'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mysql --password=<literal> is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mysql -h db.internal -u app --password=FAKESECRET_pw -e 'show grants'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mysql without a literal password stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mysql -h db.internal -u app -e 'show grants'"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

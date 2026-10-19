@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1884",
+ "title": "Read-back of a file written by script with stdout redirected is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of out.txt secret redacted",
+   "files": {
+    "out.txt": "FAKESECRET_g7\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_g7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "out.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "out.txt",
+      "content": "FAKESECRET_g7\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_g7"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

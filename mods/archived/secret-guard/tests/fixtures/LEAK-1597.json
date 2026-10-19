@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1597",
+ "title": "Base64 of harvested value in Bash stdout (aligned; value sits after a 3-byte prefix so the base64 literally contains FAKE)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of harvested value, aligned",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n"
+   },
+   "command": "printf '\\024\\002\\204FAKESECRET_HARVESTED_0001' | base64",
+   "must_not_see": [
+    "FAKERkFLRVNFQ1JFVF9IQVJWRVNURURfMDAw"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

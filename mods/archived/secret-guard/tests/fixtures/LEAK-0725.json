@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0725",
+ "title": "Bash cat .env: hook exits 1 or prints invalid JSON (pre_exec; source-side pipe-through covers the same output)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat .env with DB_PASSWORD",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "command": "cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_123"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,64 @@
+{
+ "case_id": "LEAK-0267",
+ "title": "Trailing-comment column shifts with secret length",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "app.yaml short secret: secret and trailing comment absent (drop-comment mitigation; fixed-column padding not expressible)",
+   "files": {
+    "app.yaml": "password: FAKESECRET_pw # rotated 2026-01\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./app.yaml"
+    },
+    "tool_response": {
+     "stdout": "password: FAKESECRET_pw # rotated 2026-01\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw",
+    "# rotated 2026-01"
+   ],
+   "must_see": [
+    "password:"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "app2.yaml long secret: secret and trailing comment absent",
+   "files": {
+    "app2.yaml": "password: FAKESECRET_pw_considerably_longer_value # rotated 2026-01\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./app2.yaml"
+    },
+    "tool_response": {
+     "stdout": "password: FAKESECRET_pw_considerably_longer_value # rotated 2026-01\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_considerably_longer_value",
+    "# rotated 2026-01"
+   ],
+   "must_see": [
+    "password:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

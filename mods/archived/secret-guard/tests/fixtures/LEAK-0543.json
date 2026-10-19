@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0543",
+ "title": "ssh docker inspect full JSON exposes env DB URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh docker inspect JSON with DB_URL password",
+   "files": {
+    "remote/inspect.json": "[\n  {\n    \"Name\": \"/api-container\",\n    \"Config\": {\n      \"Image\": \"registry.example.test/api:1.4.2\",\n      \"Env\": [\n        \"NODE_ENV=production\",\n        \"DB_URL=postgres://app:FAKESECRET_db8@db/prod\"\n      ]\n    }\n  }\n]\n"
+   },
+   "command": "ssh() { cat remote/inspect.json; }; ssh prod 'docker inspect api-container'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_db8"
+   ],
+   "must_see": [
+    "\"Name\": \"/api-container\"",
+    "postgres://app:",
+    "@db/prod"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

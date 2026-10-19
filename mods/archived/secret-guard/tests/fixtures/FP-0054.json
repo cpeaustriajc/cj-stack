@@ -1,0 +1,35 @@
+{
+ "case_id": "FP-0054",
+ "title": "False positive: PASSWORD_MIN_LENGTH and TOKEN_TTL_SECONDS read from src/config.ts must pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "config.ts read passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/app/src/config.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/app/src/config.ts",
+      "content": "PASSWORD_MIN_LENGTH=8\nconst tokenHeader = \"Authorization\"\nTOKEN_TTL_SECONDS=3600",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_see": [
+    "PASSWORD_MIN_LENGTH=8",
+    "const tokenHeader",
+    "TOKEN_TTL_SECONDS=3600"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

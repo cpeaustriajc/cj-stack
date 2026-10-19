@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0063",
+ "title": "hostile remote host uses forwarded agent socket",
+ "level": "not-testable",
+ "reason_not_testable": "The signing happens on a remote host using a forwarded socket; neither PreToolUse nor PostToolUse sees it, and no tool output records it. Non-hook controls: avoid agent forwarding, require confirmation prompts on keys, use hardware-backed keys.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

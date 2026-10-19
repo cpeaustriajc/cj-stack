@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0870",
+ "title": "Unescaped pipe matcher Bash|Read|Grep; the redactor must handle MCP text blocks when it does run (matcher gap is a settings check)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP text block with STRIPE key is redacted",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_1"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__dokploy__get_env",
+    "tool_input": {},
+    "tool_response": [
+     {
+      "type": "text",
+      "text": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_1"
+     }
+    ]
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_live_1"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

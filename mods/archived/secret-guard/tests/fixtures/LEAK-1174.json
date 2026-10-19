@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1174",
+ "title": "ls and cat of ~/.ssh while debugging a clone",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies ls and cat on ~/.ssh",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la ~/.ssh && cat ~/.ssh/config"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain ls and cat of ~/.ssh/config, nothing combined; owner allows plain display.)"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies find on ~/.ssh",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "find ~/.ssh -type f"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (find lists ~/.ssh file names only; no content, transform or oracle.)"
+  },
+  {
+   "kind": "pre",
+   "name": "ls of a project directory stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la ./src"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

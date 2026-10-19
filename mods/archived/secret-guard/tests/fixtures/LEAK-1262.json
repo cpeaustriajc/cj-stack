@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1262",
+ "title": "remote grep writes a config then cats it",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "URL password redacted in output (remote output simulated with printf)",
+   "files": {},
+   "command": "printf 'DATABASE_URL=postgres://u:FAKESECRET_p13@h/db\\n'",
+   "must_not_see": [
+    "FAKESECRET_p13"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://u:",
+    "@h/db"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

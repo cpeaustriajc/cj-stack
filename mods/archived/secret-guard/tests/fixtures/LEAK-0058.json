@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-0058",
+ "title": "Reversed harvested value in Bash stdout (echo | rev); note the case text reverses FAKESECRET_PW1 as 1WP_TERCESEFKAF, which has an extra F, so the fixture uses the correct reverse 1WP_TERCESEKAF",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo of harvested value piped through rev is not released",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW1\n"
+   },
+   "command": "echo FAKESECRET_PW1 | rev",
+   "exit_code": 0,
+   "must_not_see": [
+    "1WP_TERCESEKAF"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "successful rev output of harvested value is redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_PW1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_PW1 | rev"
+    },
+    "tool_response": {
+     "stdout": "1WP_TERCESEKAF\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "1WP_TERCESEKAF"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

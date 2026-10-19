@@ -1,0 +1,54 @@
+[
+ {
+  "query": "before you touch anything, ask me questions first about how the new permissions model should work for guests vs members",
+  "should_trigger": true
+ },
+ {
+  "query": "stress-test this plan: we migrate all jobs from cron to a queue in one weekend",
+  "should_trigger": true
+ },
+ {
+  "query": "grill me on the refactor of the billing module, I'm not sure about the approach",
+  "should_trigger": true
+ },
+ {
+  "query": "users say the search is 'weird' on mobile. ask me questions first before you change anything",
+  "should_trigger": true
+ },
+ {
+  "query": "plan and ask me: we need to add SSO to the admin panel",
+  "should_trigger": true
+ },
+ {
+  "query": "here's my design for offline sync: every write goes to IndexedDB first, a service worker replays the queue on reconnect, last-write-wins on conflicts by server timestamp. poke holes in it with questions before we build",
+  "should_trigger": true
+ },
+ {
+  "query": "grill me on this product idea: a marketplace for used climbing gear",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the typo in the footer, it says 'Copywright'",
+  "should_trigger": false
+ },
+ {
+  "query": "break the confirmed sync spec into tickets",
+  "should_trigger": false
+ },
+ {
+  "query": "write the spec for the SSO project",
+  "should_trigger": false
+ },
+ {
+  "query": "review this diff with a second opinion before I open the PR",
+  "should_trigger": false
+ },
+ {
+  "query": "what's my most repeated correction to claude lately",
+  "should_trigger": false
+ },
+ {
+  "query": "triage #272 and tell me if an agent can take it alone",
+  "should_trigger": false
+ }
+]

@@ -1,0 +1,39 @@
+{
+ "case_id": "REL-0015",
+ "title": "Bash cat of 20 MB log with a 2s hook timeout",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "source-level filter on cat of log containing API_KEY (reduced size)",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ak_9\n",
+    "big.log": "INFO start\nAPI_KEY=FAKESECRET_ak_9\nINFO end\n"
+   },
+   "command": "cat big.log",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ak_9"
+   ],
+   "must_see": [
+    "INFO start",
+    "INFO end"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session: 2s PostToolUse timeout with sleeping stub; KNOWN GAP if timed-out raw output is shown",
+   "files": {
+    "big.log": "INFO start\nAPI_KEY=FAKESECRET_ak_9\nINFO end\n",
+    ".env": "API_KEY=FAKESECRET_ak_9\n",
+    ".claude/settings.json": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"*\",\"hooks\":[{\"type\":\"command\",\"command\":\"sleep 5; cat\",\"timeout\":2}]}]}}"
+   },
+   "prompt": "Run cat big.log and show the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_ak_9"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0914",
+ "title": "Non-UTF-8 bytes in Bash output",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "real shell: printf emits invalid UTF-8 bytes 0xff 0xfe after the secret; secret must be absent or whole output withheld",
+   "command": "printf 'PASSWORD=FAKESECRET_bin\\377\\376\\n'",
+   "files": {},
+   "must_not_see": [
+    "FAKESECRET_bin"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false,
+ "gap_note": "The e2e prompt itself contains the secret, so the model has it before any tool runs. User-pasted secrets are a gap no hook can close; unit fixtures still cover the tool output."
+}

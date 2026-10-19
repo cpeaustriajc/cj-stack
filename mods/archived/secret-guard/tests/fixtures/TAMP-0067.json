@@ -1,0 +1,47 @@
+{
+ "case_id": "TAMP-0067",
+ "title": "gpg-agent signing and key listing oracle",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "gpg-connect-agent PKSIGN is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gpg-connect-agent 'PKSIGN' /bye"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "gpg-connect-agent PKDECRYPT is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gpg-connect-agent 'PKDECRYPT' /bye"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "gpg-connect-agent KEYINFO listing is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gpg-connect-agent 'KEYINFO --list' /bye"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

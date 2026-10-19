@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0510",
+ "title": "[60b] Bash cat using ${HOME} form of a denied path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat ${HOME}/.aws/credentials : aws_secret_access_key value redacted (O layer; P expansion deny alternative not asserted)",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ${HOME}/.aws/credentials"
+    },
+    "tool_response": {
+     "stdout": "aws_secret_access_key = FAKESECRET_th60b\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_th60b"
+   ],
+   "must_see": [
+    "aws_secret_access_key"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

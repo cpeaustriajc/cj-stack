@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0982",
+ "title": "docker run with -e KEY=value on command line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "docker run with -e NAME=literal value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker run --rm -e STRIPE_KEY=FAKESECRET_sk_H6 myimage"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (docker run -e with a literal value involves no secret source read and no item 4 deny rule. Spec gap; flagged for owner.)"
+  },
+  {
+   "kind": "pre",
+   "name": "docker run with bare -e NAME form stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker run --rm -e STRIPE_KEY myimage"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

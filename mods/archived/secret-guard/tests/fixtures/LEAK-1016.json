@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1016",
+ "title": "Partial value via echo | head -c 10",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "10-char prefix of harvested GH_TOKEN withheld as [REDACTED]",
+   "files": {
+    ".env": "GH_TOKEN=FAKESECRET_gh_AQ35\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo $GH_TOKEN | head -c 10"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

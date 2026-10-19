@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1366",
+ "title": "Fragment slices of a harvested value across several cut calls",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P guard denies cut slicing of .dev.vars",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c1-12 ./.dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "tail -c byte slice of .dev.vars holding the value (slicer on a secret path)",
+   "files": {
+    ".dev.vars": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "tail -c 15 ./.dev.vars",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre",
+   "name": "legitimate cut on a non-secret file stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c1-12 ./README.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

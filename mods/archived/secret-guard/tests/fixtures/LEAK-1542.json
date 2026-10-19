@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1542",
+ "title": "AGENTS.md holds deploy token",
+ "level": "not-testable",
+ "reason_not_testable": "AGENTS.md loads at session start with no tool call. The expected outcome is a lint over AGENTS.md and .claude/AGENTS.md, which is not a hook component and has no fixture kind. Non-hook control: pre-launch lint.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

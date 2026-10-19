@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-1338",
+ "title": "Redactor emitted Bash object must keep stdout, stderr, interrupted and isImage keys",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "IMDS JSON Bash stdout; full Bash object shape must survive",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/app-role"
+    },
+    "tool_response": {
+     "stdout": "{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_shape0057\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_shape0057"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for IMDS curl stdout",
+   "files": {},
+   "command": "printf '%s\\n' '{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_shape0057\"}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_shape0057"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

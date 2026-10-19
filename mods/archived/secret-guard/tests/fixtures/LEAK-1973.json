@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-1973",
+ "title": "Token split at the 60 KB content truncation boundary",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "full token near the end of long Bash output is redacted (filler shortened; 61,440 boundary itself is exporter-side)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat build.log"
+    },
+    "tool_response": {
+     "stdout": "build step 1 ok\nbuild step 2 ok\nbuild step 3 ok\ntoken FAKESECRET_trunc_008\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_trunc_008"
+   ],
+   "must_see": [
+    "build step 3 ok"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "tail prefix fragment FAKESECRET_tru at end of output is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat build.log"
+    },
+    "tool_response": {
+     "stdout": "build step 1 ok\ntoken FAKESECRET_tru",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tru"
+   ],
+   "must_see": [
+    "build step 1 ok"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1510",
+ "title": "WebSearch snippet contains pasted export of key (WebSearch result shape ASSUMED, not captured in hook-payloads.json; matcher coverage UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "WebSearch snippet export value redacted, KEY name kept (assumed shape)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebSearch",
+    "tool_input": {
+     "query": "export STRIPE_KEY forum"
+    },
+    "tool_response": {
+     "query": "export STRIPE_KEY forum",
+     "results": [
+      {
+       "title": "forum thread",
+       "url": "https://forum.example.com/t/1",
+       "snippet": "export STRIPE_KEY=FAKESECRET_search"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_search"
+   ],
+   "must_see": [
+    "STRIPE_KEY",
+    "forum.example.com"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary WebSearch query is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebSearch",
+    "tool_input": {
+     "query": "stripe export key docs"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

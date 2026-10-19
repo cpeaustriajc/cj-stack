@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1764",
+ "title": "Grep over *.js.map for key patterns",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep over js.map, very long single JSON line keeps its match with value replaced",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "sk_live|api[_-]?key",
+     "path": "dist/",
+     "glob": "**/*.js.map",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "dist/app.js.map:1:{\"version\":3,\"sources\":[\"src/config.ts\"],\"sourcesContent\":[\"export const apiKey = \\\"FAKESECRET_MAP_02\\\";\\n\"],\"names\":[],\"mappings\":\"AAAA,SAASA,IAAIC,KAAKC,MAAMC,OAAOC,QAAQ,AAAA,SAASA,IAAIC,KAAKC,MAAMC,OAAOC,QAAQ,AAAA,SAASA,IAAIC,KAAKC,MAAMC,OAAOC,QAAQ,AAAA,SAASA,IAAIC,KAAKC,MAAMC,OAAOC,QAAQ\"}",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_MAP_02"
+   ],
+   "must_see": [
+    "dist/app.js.map:1:",
+    "src/config.ts",
+    "export const apiKey = "
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2055",
+ "title": "Spring /actuator/configprops value not in the registry (known gap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Unregistered token under a token-named key is redacted by key-name rule",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:8080/actuator/configprops"
+    },
+    "tool_response": {
+     "stdout": "{\"prefix\":\"app.vendor\",\"properties\":{\"apiToken\":\"FAKESECRET_vendor_77\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_vendor_77"
+   ],
+   "must_see": [
+    "app.vendor",
+    "apiToken",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1178",
+ "title": "ssh cat of credential file plus systemd unit",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "O masks aws_secret_access_key and Environment=API_KEY values",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh bastion 'cat ~/.aws/credentials; cat /etc/systemd/system/api.service'"
+    },
+    "tool_response": {
+     "stdout": "[default]\naws_secret_access_key = FAKESECRET_aws1\n[Service]\nEnvironment=API_KEY=FAKESECRET_k1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aws1",
+    "FAKESECRET_k1"
+   ],
+   "must_see": [
+    "aws_secret_access_key",
+    "Environment=API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote credentials and unit file redacted at source",
+   "files": {},
+   "command": "ssh() { printf '[default]\\naws_secret_access_key = FAKESECRET_aws1\\n[Service]\\nEnvironment=API_KEY=FAKESECRET_k1\\n'; }; ssh bastion 'cat ~/.aws/credentials; cat /etc/systemd/system/api.service'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_aws1",
+    "FAKESECRET_k1"
+   ],
+   "must_see": [
+    "aws_secret_access_key",
+    "Environment=API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

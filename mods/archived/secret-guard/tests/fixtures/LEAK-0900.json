@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0900",
+ "title": "DATABASE_URL with password in query string (grep .env)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "URL password query parameter redacted; host, port, database kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DATABASE_URL .env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app_user@db.internal:5432/prod?sslmode=require&password=FAKESECRET_pg_0003\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_0003"
+   ],
+   "must_see": [
+    "db.internal:5432/prod",
+    "password=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: grep of .env, output redacted at source",
+   "command": "grep DATABASE_URL .env",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app_user@db.internal:5432/prod?sslmode=require&password=FAKESECRET_pg_0003\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_0003"
+   ],
+   "must_see": [
+    "db.internal:5432/prod",
+    "password=[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

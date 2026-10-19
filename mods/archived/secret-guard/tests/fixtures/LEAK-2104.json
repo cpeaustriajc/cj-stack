@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2104",
+ "title": "Bash secret on stderr is not in the replaced stdout field",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr-only secret in Bash output object: stderr must be scanned",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_tok9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker compose logs api 2>&1"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "Error: token=FAKESECRET_tok9 rejected\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok9"
+   ],
+   "must_see": [
+    "rejected",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failing command writes the secret only to stderr and exits 2",
+   "files": {
+    "remote-sim": "echo 'Error: token=FAKESECRET_tok9 rejected' >&2\nexit 2\n"
+   },
+   "command": "sh ./remote-sim",
+   "exit_code": 2,
+   "must_not_see": [
+    "FAKESECRET_tok9"
+   ],
+   "must_see": [
+    "rejected"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Slide in (bad)</title>
+<style>
+  :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
+  body { margin: 0; width: 480px; height: 270px; overflow: hidden; background: #f4f4f5; font: 15px/1.4 sans-serif; color: #18181b; }
+  .page { position: absolute; inset: 24px 24px auto 24px; }
+  .row { height: 12px; margin: 10px 0; border-radius: 6px; background: #e4e4e7; }
+  .row.short { width: 55%; }
+  .toast {
+    position: absolute; right: 24px; bottom: 24px; width: 240px; padding: 14px 16px; border-radius: 10px;
+    background: #fff; box-shadow: 0 0 0 1px #e4e4e7, 0 8px 24px rgb(0 0 0 / 0.08);
+    /* ease-in: it crawls off the edge, then arrives at full speed and stops dead. */
+    transform: translateY(calc(100% + 24px));
+    opacity: 0;
+    transition: transform 500ms ease-in, opacity 500ms ease-in;
+  }
+  .open .toast { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="page"><div class="row"></div><div class="row short"></div><div class="row"></div><div class="row short"></div></div>
+  <div class="toast" data-measure="y" data-duration="500" data-easing="ease-in">Changes saved</div>
+  <script>window.play = () => document.body.classList.add('open');</script>
+</body>
+</html>

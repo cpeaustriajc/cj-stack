@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1864",
+ "title": "Multi-line plist value split across lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "signature value wrapped across two lines is redacted as a whole",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -l ~/Downloads/FAKESECRET_report.pdf"
+    },
+    "tool_response": {
+     "stdout": "com.apple.metadata:kMDItemWhereFroms:\n    https://dl.example.com/a?X-Amz-Signature=FAKESECRET_\nsig456&X-Amz-Expires=3600\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sig456",
+    "FAKESECRET_\\nsig456"
+   ],
+   "must_see": [
+    "https://dl.example.com/a?X-Amz-Signature=",
+    "X-Amz-Expires=3600"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated wrapped xattr output: token split at newline redacted at source",
+   "files": {},
+   "command": "printf 'com.apple.metadata:kMDItemWhereFroms:\\n    https://dl.example.com/a?X-Amz-Signature=FAKESECRET_\\nsig456&X-Amz-Expires=3600\\n'",
+   "must_not_see": [
+    "sig456"
+   ],
+   "must_see": [
+    "X-Amz-Expires=3600"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

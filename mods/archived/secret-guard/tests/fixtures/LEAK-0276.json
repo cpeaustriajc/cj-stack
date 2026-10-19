@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0276",
+ "title": "fold -w1 | nl dumps the secret in order, one character per line",
+ "level": "unit",
+ "agent_note": "R5 not applied. The post fixture already plants the value in a harvested file: files .env = DB_TOKEN=FAKESECRET_9fQ2. The instruction premise (no file signal) does not hold. The runner failure is a char-per-line fragment that exact-value harvesting does not match, so planting would not fix it. Kept verbatim; needs a different fix (joined-output normalisation).",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "fold and nl on secret path is denied",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fold -w1 .env | nl"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "per-character numbered lines spelling the secret are withheld (must_not_see is the char-per-line encoding of FAKESECRET_9fQ2 from .env)",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_9fQ2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fold -w1 .env | nl"
+    },
+    "tool_response": {
+     "stdout": "     1\tD\n     2\tB\n     3\t_\n     4\tT\n     5\tO\n     6\tK\n     7\tE\n     8\tN\n     9\t=\n    10\tF\n    11\tA\n    12\tK\n    13\tE\n    14\tS\n    15\tE\n    16\tC\n    17\tR\n    18\tE\n    19\tT\n    20\t_\n    21\t9\n    22\tf\n    23\tQ\n    24\t2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "    10\tF\n    11\tA\n    12\tK\n    13\tE\n    14\tS\n    15\tE\n    16\tC\n    17\tR\n    18\tE\n    19\tT\n    20\t_\n    21\t9\n    22\tf\n    23\tQ\n    24\t2\n",
+    "    10\tF\n    11\tA\n    12\tK\n"
+   ]
+  }
+ ]
+}

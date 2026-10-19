@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0976",
+ "title": "security CLI generic password read with -w (value is unknown to exact matching, so deny before run)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "find-generic-password -w is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s FAKE_SVC -a FAKE_ACCT -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain keychain display (find-generic-password -w) with nothing combined; owner allows plain display of a secret source, redactor hides the value.)"
+  },
+  {
+   "kind": "pre",
+   "name": "-w placed before the other flags is also denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -w -s FAKE_SVC -a FAKE_ACCT"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-0976#0: -w flag position does not add a transform; plain display allowed.)"
+  },
+  {
+   "kind": "pre",
+   "name": "find-generic-password without -w (no password value) stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s FAKE_SVC -a FAKE_ACCT"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

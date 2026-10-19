@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1199",
+ "title": "Read tool on /proc/self/environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of /proc/self/environ with NUL-separated entries is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/proc/self/environ"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/proc/self/environ",
+      "content": "ANTHROPIC_API_KEY=FAKESECRET_a3\u0000PATH=/usr/bin\u0000",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    },
+    "tool_use_id": "toolu_FAKE1199",
+    "duration_ms": 2
+   },
+   "must_not_see": [
+    "FAKESECRET_a3"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

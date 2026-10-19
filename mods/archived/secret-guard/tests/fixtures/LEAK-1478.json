@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1478",
+ "title": "ssh remote env | sort prints environment values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-sim env|sort: AWS secret replaced, PATH line kept",
+   "files": {},
+   "command": "printf 'AWS_SECRET_ACCESS_KEY=FAKESECRET_aws\\nPATH=/usr/bin:/bin\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_aws"
+   ],
+   "must_see": [
+    "AWS_SECRET_ACCESS_KEY=",
+    "PATH=/usr/bin:/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

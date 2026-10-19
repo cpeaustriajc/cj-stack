@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1551",
+ "title": "Skill text directs Read of SSH private key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read ~/.ssh/id_ed25519 denied (~ = HOME). Spec gap: test-spec Guard(a) lists only combos, so this credential-path deny rule must exist for this to pass",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "~/.ssh/id_ed25519"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.ssh/id_ed25519; owner allows reads of secret files. Spec has no credential-path deny rule, so the fixture expectation is a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of ordinary project source stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/index.ts"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

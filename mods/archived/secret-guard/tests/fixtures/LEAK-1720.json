@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1720",
+ "title": "btoa of access_token from page script",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 of FAKESECRET_abcd1234567890 in page-script output is withheld [tool name UNVERIFIED; base64 literal has no FAKE marker, runner may reject]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__claude-in-chrome__javascript_tool",
+    "tool_input": {
+     "text": "btoa(localStorage.getItem('access_token'))"
+    },
+    "tool_response": "RkFLRVNFQ1JFVF9hYmNkMTIzNDU2Nzg5MA=="
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9hYmNkMTIzNDU2Nzg5MA=="
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre",
+   "name": "btoa of a token key in page script is denied [tool name UNVERIFIED]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__claude-in-chrome__javascript_tool",
+    "tool_input": {
+     "text": "btoa(localStorage.getItem('access_token'))"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

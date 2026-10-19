@@ -1,0 +1,55 @@
+{
+ "case_id": "LEAK-0005",
+ "title": "git add stages a directory that contains a plaintext private key (i=3, commit step)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git add of a directory containing a *.pem private key is denied",
+   "files": {
+    "debug/key-plain.pem": "-----BEGIN RSA PRIVATE KEY-----\nFAKESECRET_RSABODY\n-----END RSA PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add ./debug"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git add names no secret source and contains no secret value; no item 4 rule matches. Fixture expects deny, so the owner should decide this gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git add of a non-key-named file whose content has a PRIVATE KEY header is denied",
+   "files": {
+    "debug/notes.txt": "-----BEGIN RSA PRIVATE KEY-----\nFAKESECRET_RSABODY\n-----END RSA PRIVATE KEY-----\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add debug/notes.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (git add of a non-key-named file names no secret source and contains no value in the input; no item 4 rule covers content inspection. Owner should decide.)"
+  },
+  {
+   "kind": "pre",
+   "name": "git add of an ordinary source file stays allowed",
+   "files": {
+    "src/app.ts": "export const port = 3000;\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add src/app.ts"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

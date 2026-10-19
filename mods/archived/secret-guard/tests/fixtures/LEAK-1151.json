@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1151",
+ "title": "Redis CONFIG GET requirepass: deny; redact the value line at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "redis-cli CONFIG GET requirepass denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "redis-cli -h <redis-host> -a \"$REDIS_PASSWORD\" CONFIG GET requirepass"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Single CONFIG GET requirepass display with nothing transformed; owner allows plain display of a secret source.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated requirepass value line redacted at source",
+   "files": {
+    ".env": "REDIS_PASSWORD=FAKESECRET_rp\n"
+   },
+   "command": "printf '%s\\n' '1) requirepass' '2) FAKESECRET_rp'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rp"
+   ],
+   "must_see": [
+    "1) requirepass"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0295",
+ "title": "Failing Bash command leaks the secret through the error path",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat .env && false; value must not reach model whether the call counts as success or PostToolUseFailure error",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "prompt": "Run cat .env && false and show me the output.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_sk_live_abc"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

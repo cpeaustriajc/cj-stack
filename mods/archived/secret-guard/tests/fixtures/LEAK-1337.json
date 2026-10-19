@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-1337",
+ "title": "Failing IMDS command prints credentials then exits 22 (catalog e2e; covered as unit via pre and pre_exec)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "literal IMDS curl then exit 22 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://169.254.169.254/latest/meta-data/iam/security-credentials/app-role; exit 22"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for failing IMDS output",
+   "files": {},
+   "command": "printf '%s\\n' '{\"Code\":\"Success\",\"SecretAccessKey\":\"FAKESECRET_failsec0056\"}'; exit 22",
+   "exit_code": 22,
+   "must_not_see": [
+    "FAKESECRET_failsec0056"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

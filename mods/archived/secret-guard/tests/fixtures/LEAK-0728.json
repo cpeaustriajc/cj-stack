@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0728",
+ "title": "Base64 of a .env file via cat | base64 (blob of API_KEY=FAKESECRET_ak_987 newline, hand-encoded)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 blob of whole .env",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_ak_987\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | base64"
+    },
+    "tool_response": {
+     "stdout": "QVBJX0tFWT1GQUtFU0VDUkVUX2FrXzk4Nwo=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "QVBJX0tFWT1GQUtFU0VDUkVUX2FrXzk4Nwo="
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

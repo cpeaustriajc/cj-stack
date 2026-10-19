@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1428",
+ "title": "Zero-width U+200B after every character of an unharvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "U+200B-interleaved unharvested value is replaced by [REDACTED] (no must_not_see: the ZW form is not a listed rule-2 encoding; absence is not asserted)",
+   "files": {
+    ".env": "ZW_SERVICE_TOKEN=FAKESECRET_ZW_03\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "V=FAKESECRET_ZW_03; printf '%s' \"$V\" | sed 's/./&\\xe2\\x80\\x8b/g'"
+    },
+    "tool_response": {
+     "stdout": "F\u200bA\u200bK\u200bE\u200bS\u200bE\u200bC\u200bR\u200bE\u200bT\u200b_\u200bZ\u200bW\u200b_\u200b0\u200b3\u200b",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: value planted; zero-width characters must be stripped before known-value matching"
+  }
+ ]
+}

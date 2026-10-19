@@ -1,0 +1,29 @@
+{
+ "case_id": "LEAK-0362",
+ "title": "K16 keychain read over SSH to a Mac",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-wrapped keychain read: remote simulated by a local shell function, output withheld by guard wrapper",
+   "files": {},
+   "command": "ssh() { printf 'FAKESECRET_prod_api_9\\n'; }; ssh deploy@build-mac.local 'security find-generic-password -s \"prod-api\" -w'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_prod_api_9"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "ssh-wrapped Claude Code-credentials JSON bundle withheld (simulated remote)",
+   "files": {},
+   "command": "ssh() { printf '%s\\n' '{\"claudeAiOauth\":{\"accessToken\":\"FAKESECRET_oat_2\",\"refreshToken\":\"FAKESECRET_rt_2\",\"expiresAt\":1790000000000}}'; }; ssh build-mac 'security find-generic-password -s \"Claude Code-credentials\" -w'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oat_2",
+    "FAKESECRET_rt_2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1035",
+ "title": "launchctl print grep for token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep output with => separator, value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "launchctl print gui/501 | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "API_TOKEN => FAKESECRET_tok_BD64\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BD64"
+   ],
+   "must_see": [
+    "API_TOKEN =>"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in piped through grep -i token",
+   "files": {},
+   "command": "printf 'API_TOKEN => FAKESECRET_tok_BD64\\nPATH => /usr/bin\\n' | grep -i token",
+   "must_not_see": [
+    "FAKESECRET_tok_BD64"
+   ],
+   "must_see": [
+    "API_TOKEN =>"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

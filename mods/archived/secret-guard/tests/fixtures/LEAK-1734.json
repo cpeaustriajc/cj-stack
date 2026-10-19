@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1734",
+ "title": "sqlite3 select on VS Code state.vscdb with camelCase accessToken",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "camelCase accessToken value in sqlite-style output is redacted, label and account kept [printf stands in for sqlite3]",
+   "files": {},
+   "command": "printf '%s\\n' \"github.auth|{'accessToken':'FAKESECRET_gh_access_token_0001','account':{'label':'cj'}}\"",
+   "must_not_see": [
+    "FAKESECRET_gh_access_token_0001"
+   ],
+   "must_see": [
+    "github.auth|",
+    "{'accessToken':'[REDACTED]','account':{'label':'cj'}}"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0399",
+ "title": "L8 SSH sudo read of running process environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "/proc/<pid>/environ output redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-app-01 'sudo cat /proc/$(systemctl show -p MainPID --value myapp.service)/environ | tr \"\\0\" \"\\n\"'"
+    },
+    "tool_response": {
+     "stdout": "STRIPE_KEY=FAKESECRET_proc_45\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_proc_45"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated environ read withheld at source",
+   "files": {},
+   "command": "ssh() { printf 'STRIPE_KEY=FAKESECRET_proc_45\\n'; }; ssh prod-app-01 'sudo cat /proc/$(systemctl show -p MainPID --value myapp.service)/environ | tr \"\\0\" \"\\n\"'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_proc_45"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

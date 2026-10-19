@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-2149",
+ "title": "Remote keyring payload (simulated, no real ssh): PostToolUse Bash-shape rewrite and pre_exec source redaction of a success path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash ssh-style keyctl output with Bash-shaped tool_response: stdout replaced, other fields kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host 'keyctl print 612345678'",
+     "description": "Print keyring payload"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_KEYRING_a1b2c3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    },
+    "tool_use_id": "toolu_FAKE2149"
+   },
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "interrupted"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote keyring output (local file, exit 0) is redacted at source by the guard wrapper",
+   "files": {
+    ".env": "KEYRING=FAKESECRET_KEYRING_a1b2c3\n"
+   },
+   "command": "cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_KEYRING_a1b2c3"
+   ],
+   "must_see": [
+    "KEYRING="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1538",
+ "title": "User-scope CLAUDE.md imports credentials file",
+ "level": "not-testable",
+ "reason_not_testable": "Requires reading the real user-scope ~/.claude/CLAUDE.md, which the test rules forbid, and the import loads without a tool call. Non-hook control: manual review of user-scope memory files for secret imports.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

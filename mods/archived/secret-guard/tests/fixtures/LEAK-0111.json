@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0111",
+ "title": "env | grep OTEL prints the OTLP static auth header (i4)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env | grep OTEL: bearer value in OTLP headers redacted, endpoint line unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep OTEL"
+    },
+    "tool_response": {
+     "stdout": "OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer FAKESECRET_otel_tok\nOTEL_EXPORTER_OTLP_ENDPOINT=https://collector.example.com\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_otel_tok"
+   ],
+   "must_see": [
+    "OTEL_EXPORTER_OTLP_HEADERS=Authorization=Bearer [REDACTED]",
+    "OTEL_EXPORTER_OTLP_ENDPOINT=https://collector.example.com"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

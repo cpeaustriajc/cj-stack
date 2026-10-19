@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0574",
+ "title": "sudo log show returns a private-marked token as plaintext: value redacted (sudo simulated)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "token=value redacted in sudo log output",
+   "files": {
+    "bin/sudo.sh": "echo 'Timestamp Thread Type Activity PID'\necho 'token=FAKESECRET_priv39'\n"
+   },
+   "command": "sh bin/sudo.sh log show --last 10m --info",
+   "exit_code": 0,
+   "must_not_see": [
+    "token=FAKESECRET_priv39"
+   ],
+   "must_see": [
+    "token=[REDACTED]",
+    "Timestamp Thread"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

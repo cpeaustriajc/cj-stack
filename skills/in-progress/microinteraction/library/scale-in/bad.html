@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scale in (bad)</title>
+<style>
+  :root { --ease-out: cubic-bezier(0.23, 1, 0.32, 1); }
+  body { margin: 0; width: 480px; height: 270px; background: #f4f4f5; font: 15px/1.4 sans-serif; color: #18181b; }
+  .trigger { position: absolute; left: 32px; top: 32px; padding: 8px 14px; border: 0; border-radius: 8px; background: #18181b; color: #fff; font: inherit; }
+  .popover {
+    position: absolute; left: 32px; top: 78px; width: 220px; padding: 12px; border-radius: 10px;
+    background: #fff; box-shadow: 0 0 0 1px #e4e4e7, 0 8px 24px rgb(0 0 0 / 0.08);
+    /* From its own centre, from nothing, on ease-in: it starts slow and pops from a dot. */
+    transform-origin: center;
+    transform: scale(0);
+    transition: transform 400ms ease-in;
+  }
+  .open .popover { transform: scale(1); }
+  .row { height: 12px; margin: 8px 0; border-radius: 6px; background: #e4e4e7; }
+  .row.short { width: 60%; }
+</style>
+</head>
+<body>
+  <button class="trigger">Share</button>
+  <div class="popover" data-measure="w" data-duration="400" data-easing="ease-in">
+    <div class="row"></div><div class="row short"></div><div class="row"></div>
+  </div>
+  <script>window.play = () => document.body.classList.add('open');</script>
+</body>
+</html>

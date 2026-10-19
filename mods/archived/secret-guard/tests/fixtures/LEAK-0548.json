@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0548",
+ "title": "Grep tool over ~/.claude/projects for Bearer",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep under ~/.claude/projects is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "Bearer",
+     "path": "~/.claude/projects",
+     "glob": "*.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep over transcripts with no secret source path or transform.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

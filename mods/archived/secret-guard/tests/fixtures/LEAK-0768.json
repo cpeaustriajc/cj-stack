@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0768",
+ "title": "Bash argv carries a value copied from .env.local into a CLI pipe",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pipe of harvested .env.local value into vercel env add is denied",
+   "files": {
+    ".env.local": "STRIPE_SECRET_KEY=FAKESECRET_stripe_1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' 'FAKESECRET_stripe_1' | vercel env add STRIPE_SECRET_KEY production"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

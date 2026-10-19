@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-2178",
+ "title": "jq environment builtins and /proc environ are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "jq with $ENV in a hook command is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"KEEP\": \"x\"\n  },\n  \"permissions\": {\n    \"allow\": [\n      \"Read(./docs/**)\"\n    ]\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/settings.json",
+     "content": "{\n  \"env\": {\n    \"KEEP\": \"x\"\n  },\n  \"permissions\": {\n    \"allow\": [\n      \"Read(./docs/**)\"\n    ]\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"jq -n '$ENV'\"\n          }\n        ]\n      }\n    ]\n  }\n}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "cat /proc/self/environ is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/sh\ncat /proc/self/environ\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "tr over /proc/*/environ is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "content": "#!/bin/sh\ntr '\\0' '\\n' < /proc/*/environ\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

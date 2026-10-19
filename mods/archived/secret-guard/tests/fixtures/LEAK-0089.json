@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0089",
+ "title": "Base64 of harvested value printed by printf (aligned)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printf value piped to base64",
+   "files": {
+    ".env": "POLAR_ORG=FAKESECRET_org_9f8e7d\n",
+    "org-id.txt": "FAKESECRET_org_9f8e7d"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'FAKESECRET_org_9f8e7d' | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9vcmdfOWY4ZTdk\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9vcmdfOWY4ZTdk"
+   ],
+   "must_see": []
+  }
+ ]
+}

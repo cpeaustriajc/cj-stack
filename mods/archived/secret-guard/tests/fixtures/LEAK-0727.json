@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-0727",
+ "title": "Read regression: secret in YAML config is redacted, host line unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read config.yml with password and host lines",
+   "files": {
+    "config.yml": "db:\n  password: FAKESECRET_yaml_pw\n  host: db.internal\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/fixture/config.yml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/tmp/fixture/config.yml",
+      "content": "db:\n  password: FAKESECRET_yaml_pw\n  host: db.internal\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_yaml_pw"
+   ],
+   "must_see": [
+    "host: db.internal",
+    "password: [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

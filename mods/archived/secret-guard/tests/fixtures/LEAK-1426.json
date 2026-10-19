@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1426",
+ "title": "Unharvested value reversed with rev (value set inline in the command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "reversed unharvested value is not visible",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_REV_02\n"
+   },
+   "command": "V=FAKESECRET_REV_02; echo \"$V\" | rev",
+   "exit_code": 0,
+   "must_not_see": [
+    "20_VER_TERCESEKAF",
+    "TERCESEKAF"
+   ],
+   "must_see": [],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

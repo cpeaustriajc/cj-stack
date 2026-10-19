@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0131",
+ "title": "ssh vpn-gw sudo cat of remote wg0.conf (i23)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh with sudo cat of a remote wireguard config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vpn-gw 'sudo cat /etc/wireguard/wg0.conf'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ssh with sudo cat of a remote config is a plain display, no transform. Owner decision allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, remote PrivateKey line in Bash stdout is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh vpn-gw 'sudo cat /etc/wireguard/wg0.conf'"
+    },
+    "tool_response": {
+     "stdout": "PrivateKey = FAKESECRET_wg_remote\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wg_remote"
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

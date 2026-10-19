@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-1937",
+ "title": "Daemon-written log read with the Read tool returns the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read tool_response file content with known fake value is redacted, structure kept",
+   "files": {
+    ".cache/worker.log": "line1\nFAKESECRET_ccc333\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_ccc333\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".cache/worker.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".cache/worker.log",
+      "content": "line1\nFAKESECRET_ccc333\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    },
+    "tool_use_id": "toolu_fixture_1937"
+   },
+   "must_not_see": [
+    "FAKESECRET_ccc333"
+   ],
+   "must_see": [
+    "line1"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

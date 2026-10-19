@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0445",
+ "title": "[2] strings on SQLite db piped to grep for sk_live token prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sk_live_ prefix line becomes [REDACTED] even when not harvested",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "strings ~/Library/Application\\ Support/app/app.db | grep -E 'sk_(live|test)_[A-Za-z0-9]+'"
+    },
+    "tool_response": {
+     "stdout": "sk_live_FAKESECRET02\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET02"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real local grep for sk_live prefix; output redacted at source",
+   "files": {
+    "app.db": "junk\nsk_live_FAKESECRET02\nmore junk\n"
+   },
+   "command": "grep -E 'sk_(live|test)_[A-Za-z0-9]+' app.db",
+   "must_not_see": [
+    "sk_live_FAKESECRET02"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

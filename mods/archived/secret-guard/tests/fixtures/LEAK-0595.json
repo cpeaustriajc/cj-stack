@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0595",
+ "title": "Actuator /configprops returns bound client secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "configprops clientSecret redacted, JSON key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://localhost:8080/actuator/configprops"
+    },
+    "tool_response": {
+     "stdout": "{\"prefix\":\"oauth\",\"properties\":{\"clientSecret\":\"FAKESECRET_cfg59\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cfg59"
+   ],
+   "must_see": [
+    "clientSecret",
+    "oauth"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated configprops output redacted at source",
+   "files": {
+    "configprops.json": "{\"prefix\":\"oauth\",\"properties\":{\"clientSecret\":\"FAKESECRET_cfg59\"}}\n"
+   },
+   "command": "cat configprops.json",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_cfg59"
+   ],
+   "must_see": [
+    "clientSecret"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

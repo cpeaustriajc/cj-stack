@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0359",
+ "title": "K13 keychain read via Python keyring or Security.framework",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "python keyring get_password output withheld or redacted",
+   "files": {
+    "~/Projects/app/.env": "GITHUB_TOKEN=FAKESECRET_py_6\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import keyring; print(keyring.get_password('github','user'))\""
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_py_6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_py_6"
+   ]
+  }
+ ]
+}

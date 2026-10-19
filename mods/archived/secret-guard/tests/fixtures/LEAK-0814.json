@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0814",
+ "title": "Non-zero exit: secret may route to PostToolUseFailure, not PostToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo secret then exit 1 through the guard wrapper",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_pw_4\n"
+   },
+   "command": "echo FAKESECRET_pw_4; exit 1",
+   "must_not_see": [
+    "FAKESECRET_pw_4"
+   ],
+   "must_see": [],
+   "exit_code": 1,
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

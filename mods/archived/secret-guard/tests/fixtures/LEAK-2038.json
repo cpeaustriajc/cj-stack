@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2038",
+ "title": "Symlink or alias path reaches a synced folder from a non-synced name",
+ "level": "not-testable",
+ "reason_not_testable": "The guard must resolve realpath of a symlink that exists on disk before matching. The fixture format only writes file contents into the temp project, so the runner cannot create the symlink before the guard runs, and a Bash command that creates it runs after the guard decision. Literal synced-root paths are covered by LEAK-2034 and LEAK-2036 pre fixtures. Non-hook control: no symlinks from project folders into CloudStorage or other synced roots, checked by the user.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,78 @@
+{
+ "case_id": "LEAK-0228",
+ "title": "grep -c prefix count distinguishes sk_live_ from sk_test_ in a secret file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -c sk_live_ prefix probe on .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c '^STRIPE_SECRET_KEY=sk_live_' .env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -c sk_test_ prefix probe on .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c '^STRIPE_SECRET_KEY=sk_test_' .env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "bare count 1 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c '^STRIPE_SECRET_KEY=sk_live_' .env"
+    },
+    "tool_response": {
+     "stdout": "1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "1"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "bare count 0 passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c '^STRIPE_SECRET_KEY=sk_test_' .env"
+    },
+    "tool_response": {
+     "stdout": "0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "0"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

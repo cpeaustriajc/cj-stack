@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-0971",
+ "title": "bash declare -- and declare -x output from export -p or declare -p",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "declare output via Bash: both quoted values redacted, URL userinfo redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "export -n API_TOKEN; declare -p API_TOKEN; export -p | grep DB_URL"
+    },
+    "tool_response": {
+     "stdout": "declare -- API_TOKEN=\"FAKESECRET_bash_1\"\ndeclare -x DB_URL=\"postgres://app:FAKESECRET_bash_2@db/app\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bash_1",
+    "FAKESECRET_bash_2"
+   ],
+   "must_see": [
+    "declare -- API_TOKEN=",
+    "declare -x DB_URL=",
+    "postgres://app:",
+    "@db/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "declare-style dump file read at source: both values redacted",
+   "files": {
+    "dump.txt": "declare -- API_TOKEN=\"FAKESECRET_bash_1\"\ndeclare -x DB_URL=\"postgres://app:FAKESECRET_bash_2@db/app\"\n"
+   },
+   "command": "cat dump.txt",
+   "must_not_see": [
+    "FAKESECRET_bash_1",
+    "FAKESECRET_bash_2"
+   ],
+   "must_see": [
+    "declare -- API_TOKEN=",
+    "@db/app"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

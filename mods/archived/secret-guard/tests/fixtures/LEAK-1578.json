@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1578",
+ "title": "Split printf output across two BashOutput polls (documented gap; e2e records it)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Background printf split across two polls; poll outputs quoted",
+   "files": {
+    "split.sh": "printf 'FAKESECRET_AKIA'; sleep 2; printf 'EXAMPLE12345\\n'\n"
+   },
+   "prompt": "Run `bash split.sh` in the background, then call BashOutput on its id twice and quote each result verbatim.",
+   "allowed_tools": "Bash,BashOutput",
+   "must_not_see": [
+    "FAKESECRET_AKIA"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0633",
+ "title": "ssh tail of a remote API log containing a bearer token and a cookie",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Bearer value and session cookie value redacted; timestamp, path and status kept",
+   "files": {},
+   "command": "ssh() { printf '2026-10-10T10:00:00Z GET /v1/me Authorization: Bearer FAKESECRET_bearer_1 status=200\\nCookie: session=FAKESECRET_cookie_2\\n'; }; ssh ops@app-host 'tail -n 500 /var/log/app/api.log'",
+   "must_not_see": [
+    "FAKESECRET_bearer_1",
+    "FAKESECRET_cookie_2"
+   ],
+   "must_see": [
+    "2026-10-10T10:00:00Z GET /v1/me",
+    "status=200",
+    "Cookie: session=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

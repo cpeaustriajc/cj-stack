@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0156",
+ "title": "False positive: non-secret fact filter returns clean output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ansible fact filter command is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible all -i inventory.ini -m setup -a 'filter=ansible_distribution*'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "non-secret ansible fact output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible all -i inventory.ini -m setup -a 'filter=ansible_distribution*'"
+    },
+    "tool_response": {
+     "stdout": "web-1 | ansible_distribution: Debian\nweb-2 | ansible_distribution: Debian\nweb-3 | ansible_distribution: Debian\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "ansible_distribution: Debian",
+    "web-3"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

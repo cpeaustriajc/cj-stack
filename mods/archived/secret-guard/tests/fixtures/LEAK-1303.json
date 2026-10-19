@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1303",
+ "title": "bundle config list shows BUNDLE_ host credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "bundle config list stays allowed (installs need it)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bundle config list"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "The value after the colon is redacted; host and user remain",
+   "files": {
+    ".bundle/config": "BUNDLE_GEMS__CORP__EXAMPLE: \"ci:FAKESECRET_bundle0028\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bundle config list"
+    },
+    "tool_response": {
+     "stdout": "Settings are listed in order of priority. The top value will be used.\nBUNDLE_GEMS__CORP__EXAMPLE: \"ci:FAKESECRET_bundle0028\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_bundle0028"
+   ],
+   "must_see": [
+    "BUNDLE_GEMS__CORP__EXAMPLE",
+    "ci:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

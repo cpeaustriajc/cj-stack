@@ -1,0 +1,19 @@
+{
+ "case_id": "FP-0106",
+ "title": "ssh-add -L key comments in output (false-positive check)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "public key line with identity comment passes unchanged (printf simulates ssh-add -L)",
+   "files": {},
+   "command": "printf 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFAKEPUBKEY user@personal-laptop-name\\n'",
+   "must_not_see": [],
+   "must_see": [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFAKEPUBKEY user@personal-laptop-name"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

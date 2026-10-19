@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1683",
+ "title": "script wrapper around ssh cat .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "script recorder wrapping ssh cat .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "script -q /Users/cj/scratch/s.log ssh prod-app 'cat /srv/app/.env'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ssh body reading .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-app 'cat /srv/app/.env'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain ssh display of a .env file with nothing combined. Owner explicitly allows plain display over ssh.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

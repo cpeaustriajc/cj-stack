@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1011",
+ "title": "ssh sudo cat of a remote process environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote environ with NUL converted to newline: API_TOKEN redacted",
+   "files": {},
+   "command": "printf 'API_TOKEN=FAKESECRET_tok_AH31\\0PATH=/usr/bin\\0' | tr '\\0' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_tok_AH31"
+   ],
+   "must_see": [
+    "API_TOKEN=[REDACTED]",
+    "PATH=/usr/bin"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

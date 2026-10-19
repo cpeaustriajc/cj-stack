@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1773",
+ "title": "env dump redirected to a file then cat",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "env dump redirected into a file is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | sort > debug-env.txt && cat debug-env.txt"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of a dump file: DB_PASSWORD value replaced on stdout",
+   "files": {
+    "debug-env.txt": "DB_PASSWORD=FAKESECRET_ENVDUMP_01\n"
+   },
+   "command": "cat debug-env.txt",
+   "must_not_see": [
+    "FAKESECRET_ENVDUMP_01"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

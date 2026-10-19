@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1315",
+ "title": "git remote -v prints token in remote URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Token in fetch and push remote URLs is redacted; x-access-token username remains",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git remote -v"
+    },
+    "tool_response": {
+     "stdout": "origin\thttps://x-access-token:FAKESECRET_ghtoken0039@github.com/org/repo.git (fetch)\norigin\thttps://x-access-token:FAKESECRET_ghtoken0039@github.com/org/repo.git (push)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ghtoken0039"
+   ],
+   "must_see": [
+    "origin",
+    "https://x-access-token:",
+    "@github.com/org/repo.git"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

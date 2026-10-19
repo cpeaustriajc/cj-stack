@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1305",
+ "title": "Bash cat of ~/.config/composer/auth.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Bash cat of ~/.config/composer/auth.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat $HOME/.config/composer/auth.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of ~/.config/composer/auth.json; single display.)"
+  },
+  {
+   "kind": "post",
+   "name": "If run, password and github-oauth values are redacted in the JSON shape",
+   "files": {
+    ".config/composer/auth.json": "{\"github-oauth\":{\"github.com\":\"FAKESECRET_ghoauthbash0029\"},\"http-basic\":{\"repo.packagist.example\":{\"username\":\"ci\",\"password\":\"FAKESECRET_composerbash0029\"}}}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat $HOME/.config/composer/auth.json"
+    },
+    "tool_response": {
+     "stdout": "{\"github-oauth\":{\"github.com\":\"FAKESECRET_ghoauthbash0029\"},\"http-basic\":{\"repo.packagist.example\":{\"username\":\"ci\",\"password\":\"FAKESECRET_composerbash0029\"}}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ghoauthbash0029",
+    "FAKESECRET_composerbash0029"
+   ],
+   "must_see": [
+    "github-oauth",
+    "github.com",
+    "http-basic",
+    "repo.packagist.example",
+    "username"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

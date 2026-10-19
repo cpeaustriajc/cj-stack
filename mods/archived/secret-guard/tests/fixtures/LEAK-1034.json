@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1034",
+ "title": "node -e console.log(process.env)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "quoted STRIPE value redacted, names and NODE_ENV kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "node -e 'console.log(process.env)'"
+    },
+    "tool_response": {
+     "stdout": "{ STRIPE_KEY: 'FAKESECRET_sk_BC63', NODE_ENV: 'development' }\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_BC63"
+   ],
+   "must_see": [
+    "STRIPE_KEY: '",
+    "NODE_ENV: 'development'"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints env object",
+   "files": {},
+   "command": "printf \"{ STRIPE_KEY: 'FAKESECRET_sk_BC63', NODE_ENV: 'development' }\\n\"",
+   "must_not_see": [
+    "FAKESECRET_sk_BC63"
+   ],
+   "must_see": [
+    "STRIPE_KEY: '",
+    "NODE_ENV: 'development'"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

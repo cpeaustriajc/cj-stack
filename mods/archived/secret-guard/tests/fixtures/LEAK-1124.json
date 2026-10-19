@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1124",
+ "title": "Echo of a single secret variable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "echo $DATABASE_URL stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo $DATABASE_URL"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "echo of quoted $SOME_API_KEY stays allowed (unexpanded)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo \"$SOME_API_KEY\""
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "echo of a DATABASE_URL shows userinfo masked",
+   "files": {
+    "config/db.txt": "postgres://app:FAKESECRET_pw@db:5432/app\n"
+   },
+   "command": "DATABASE_URL=$(cat config/db.txt); echo $DATABASE_URL",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

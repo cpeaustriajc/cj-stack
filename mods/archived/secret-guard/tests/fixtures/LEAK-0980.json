@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-0980",
+ "title": "macOS ps eww -p <pid> shows environment pairs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ps environment pair value masked, PORT and HOME intact",
+   "files": {
+    "ps-eww.txt": "4121 node server.js PORT=3000 STRIPE_SECRET_KEY=FAKESECRET_sk_F5 HOME=/Users/cj\n"
+   },
+   "command": "cat ps-eww.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_sk_F5"
+   ],
+   "must_see": [
+    "PORT=3000",
+    "HOME=/Users/cj",
+    "node server.js",
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

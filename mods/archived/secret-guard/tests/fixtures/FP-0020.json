@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0020",
+ "title": "Read of keyboard.ts with KEY and TOKEN identifiers is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of keyboard.ts with KEYBOARD_LAYOUT, TOKEN_TYPE, MAX_TOKENS stays unchanged",
+   "files": {
+    "src/input/keyboard.ts": "const KEYBOARD_LAYOUT = \"us\";\nconst TOKEN_TYPE = \"bearer\";\nconst MAX_TOKENS = 4096;\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "src/input/keyboard.ts"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "src/input/keyboard.ts",
+      "content": "const KEYBOARD_LAYOUT = \"us\";\nconst TOKEN_TYPE = \"bearer\";\nconst MAX_TOKENS = 4096;\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_see": [
+    "KEYBOARD_LAYOUT",
+    "TOKEN_TYPE",
+    "MAX_TOKENS = 4096"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

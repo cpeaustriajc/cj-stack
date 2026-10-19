@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0127",
+ "title": "Grep content for PrivateKey prints the key line (i21)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content for PrivateKey: value redacted, path and line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "PrivateKey",
+     "path": "/Users/cj/Projects",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/cj/Projects/vpn/wg0.conf:2:PrivateKey = FAKESECRET_wgkey",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wgkey"
+   ],
+   "must_see": [
+    "/Users/cj/Projects/vpn/wg0.conf:2:PrivateKey = [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

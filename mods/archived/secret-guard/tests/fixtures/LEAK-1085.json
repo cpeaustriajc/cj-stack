@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-1085",
+ "title": "Docker inspect Env array: POSTGRES_PASSWORD replaced, PATH and NODE_ENV kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "POSTGRES_PASSWORD value replaced in Env array; simulated docker output via printf",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg1\n"
+   },
+   "command": "printf '%s\\n' '[\"PATH=/usr/local/bin:/usr/bin\",\"POSTGRES_PASSWORD=FAKESECRET_pg1\",\"NODE_ENV=production\"]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=",
+    "PATH=/usr/local/bin:/usr/bin",
+    "NODE_ENV=production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

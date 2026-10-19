@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0607",
+ "title": "Hook crashes on truncated stdin and falls open",
+ "level": "not-testable",
+ "reason_not_testable": "Truncated hook stdin cannot be expressed: pre and post fixtures take a parsed event object, and the e2e runner cannot make Claude Code truncate its own hook input. Non-hook control: wrap the whole hook body in try/catch that exits 0 with empty stderr (catalog mitigation), checked by code review.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

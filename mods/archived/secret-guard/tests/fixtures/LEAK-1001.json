@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1001",
+ "title": "echo of DATABASE_URL in braces",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "URL userinfo password masked in echoed DATABASE_URL, host and path intact",
+   "files": {
+    "db.env": "DATABASE_URL=postgres://app:FAKESECRET_pw_Z23@db.internal/app\n",
+    "run.sh": ". ./db.env\necho ${DATABASE_URL}\n"
+   },
+   "command": "sh run.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_Z23"
+   ],
+   "must_see": [
+    "postgres://app:[REDACTED]@db.internal/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

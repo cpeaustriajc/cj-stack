@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1639",
+ "title": "PowerShell or sed pipeline reading deploy/.env (plus legitimate README read allowed)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Get-Content of .env piped to Select-String",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "Get-Content deploy/.env | Select-String KEY"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: a grep-style command that prints matching lines is plain display; Get-Content is a plain read. Output is redacted by the name=value rule, so R2 does not deny."
+  },
+  {
+   "kind": "pre",
+   "name": "sed of .env",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -n '1,5p' deploy/.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Get-Content of README stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "Get-Content deploy/README.md"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-REDACTED-EXEMPT",
+ "title": "[REDACTED] must_not_see with must_see is exempt",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "nothing redacted",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "nothing secret here"
+    }
+   },
+   "must_not_see": [
+    "[REDACTED]"
+   ],
+   "must_see": [
+    "nothing secret"
+   ]
+  }
+ ]
+}

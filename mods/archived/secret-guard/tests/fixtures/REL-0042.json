@@ -1,0 +1,36 @@
+{
+ "case_id": "REL-0042",
+ "title": "Bash replacement with wrong output shape",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash output with DATABASE_PASSWORD line keeps Bash tool_response object shape and redacts value [shape from hook-payloads.json PostToolUse:Bash]",
+   "files": {
+    "fixtures/leak.txt": "DATABASE_PASSWORD=FAKESECRET_DBPW_77aa\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./fixtures/leak.txt"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_PASSWORD=FAKESECRET_DBPW_77aa\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_DBPW_77aa"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=[REDACTED]",
+    "interrupted"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

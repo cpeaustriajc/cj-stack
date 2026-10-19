@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-1632",
+ "title": "Headless browser or Chrome launched on the real Chrome profile",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "npx playwright open with --user-data-dir on Chrome Default",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx playwright open --user-data-dir='$HOME/Library/Application Support/Google/Chrome/Default' https://console.example.com"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Chrome binary with --user-data-dir on Chrome Default",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --user-data-dir=\"$HOME/Library/Application Support/Google/Chrome/Default\""
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

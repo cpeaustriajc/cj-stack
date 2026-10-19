@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1048",
+ "title": "NODE_OPTIONS preload writes env to stderr during npm test",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr FAKE_TOKEN line redacted, normal test lines kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm test"
+    },
+    "tool_response": {
+     "stdout": "PASS src/app.test.js\n  renders (4 ms)\n",
+     "stderr": "FAKE_TOKEN=FAKESECRET_tok_BQ78\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BQ78"
+   ],
+   "must_see": [
+    "PASS src/app.test.js",
+    "renders (4 ms)"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in writes token to stderr then normal output",
+   "files": {},
+   "command": "echo \"FAKE_TOKEN=FAKESECRET_tok_BQ78\" >&2; echo \"PASS src/app.test.js\"",
+   "must_not_see": [
+    "FAKESECRET_tok_BQ78"
+   ],
+   "must_see": [
+    "PASS src/app.test.js"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

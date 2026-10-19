@@ -1,0 +1,59 @@
+{
+ "case_id": "TAMP-0056",
+ "title": "Edit whose old_string or new_string holds [REDACTED]: no file write occurs",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of .env with [REDACTED] in old_string",
+   "files": {
+    "opt/app/.env": "DATABASE_PASSWORD=FAKESECRET_pw_4411\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "opt/app/.env",
+     "old_string": "DATABASE_PASSWORD=[REDACTED]",
+     "new_string": "DATABASE_PASSWORD=[REDACTED]\\nLOG_LEVEL=debug"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit of .dev.vars with [REDACTED] in old_string",
+   "files": {
+    ".dev.vars": "AUTH_SECRET=FAKESECRET_abc123\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": ".dev.vars",
+     "old_string": "AUTH_SECRET=[REDACTED]",
+     "new_string": "AUTH_SECRET=changed"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "ordinary Edit with no placeholder stays allowed",
+   "files": {
+    "src/app.ts": "const a = 1;\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "src/app.ts",
+     "old_string": "const a = 1;",
+     "new_string": "const a = 2;"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

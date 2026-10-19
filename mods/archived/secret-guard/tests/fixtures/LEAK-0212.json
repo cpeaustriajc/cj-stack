@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0212",
+ "title": "Harvested value under a non-secret variable name in build metadata",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "harvested .env value under APP_CONFIG redacted",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_49\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    },
+    "tool_response": {
+     "stdout": "sha256:aa11bb22cc33  2 days ago  /bin/sh -c #(nop)  ENV APP_CONFIG=FAKESECRET_pw_49   0B\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_49"
+   ],
+   "must_see": [
+    "APP_CONFIG=",
+    "sha256:aa11bb22cc33"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

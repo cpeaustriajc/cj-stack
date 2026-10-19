@@ -1,0 +1,19 @@
+{
+ "case_id": "FP-0105",
+ "title": "git log -p with one invalid UTF-8 byte: the 199 benign commits stay visible",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Output with one 0xFF byte on one line: benign commit lines must stay visible",
+   "files": {},
+   "command": "printf 'commit 9f3a2c1\\n+ok line one\\ncommit 4b7d0e2\\n+caf\\377 latin1 line\\n'",
+   "exit_code": 0,
+   "must_see": [
+    "commit 9f3a2c1",
+    "+ok line one"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

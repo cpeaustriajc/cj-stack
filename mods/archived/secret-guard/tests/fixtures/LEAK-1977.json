@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1977",
+ "title": "Secret printed only on stderr by a git filter or hook",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "secret on stderr of git commit is redacted, stderr field kept",
+   "files": {
+    ".env": "CERT_PASS=FAKESECRET_CERT_5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git add . && git commit -m test"
+    },
+    "tool_response": {
+     "stdout": "[main 3e9d0a1] test\n 1 file changed, 1 insertion(+)\n",
+     "stderr": "warning: FAKESECRET_CERT_5\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CERT_5"
+   ],
+   "must_see": [
+    "[main 3e9d0a1] test",
+    "warning:"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

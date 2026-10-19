@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-ENC-RAW-AND-B64",
+ "title": "raw and base64 in the same output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "raw and base64 in the same output",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_both1 and RkFLRVNFQ1JFVF9ib3RoMQ== end"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_both1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

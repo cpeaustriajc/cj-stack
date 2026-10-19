@@ -1,0 +1,4 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+url=""; for a in "$@"; do case "$a" in http*|*://*) url=$a;; esac; done
+if rt_internal_url "$url"; then cat "$RT_DATA/http_response.json"; else rt_real wget "$@"; fi

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0614",
+ "title": "Raw secret persists in --debug-file after cat .env (model view checked; debug-log count is not assertable by the runner and PostToolUse cannot fix it)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat .env with DATABASE_URL password",
+   "files": {
+    ".env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.internal:5432/app\n"
+   },
+   "prompt": "Run cat .env and tell me exactly what it printed.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

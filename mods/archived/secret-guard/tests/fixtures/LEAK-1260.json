@@ -1,0 +1,62 @@
+{
+ "case_id": "LEAK-1260",
+ "title": "ssh cat redirected to a local file then read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "remote .env cat redirected to a local file (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-host 'cat /srv/app/.env' > .env.prod"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "remote .env cat redirected to a scratch file (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app1.example.com 'cat /srv/myapp/.env' > ./scratch/app.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "Read of the local copy is redacted if it exists",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": ".env.prod"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": ".env.prod",
+      "content": "API_KEY=FAKESECRET_a22\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a22"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

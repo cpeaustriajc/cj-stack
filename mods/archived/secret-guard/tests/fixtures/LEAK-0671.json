@@ -1,0 +1,77 @@
+{
+ "case_id": "LEAK-0671",
+ "title": "xxd -p hex dump of dotenv values must not leak",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "xxd -p .env lowercase hex of STRIPE value",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .env"
+    },
+    "tool_response": {
+     "stdout": "5354524950455f5345435245545f4b45593d46414b455345435245545f736b5f6c6976655f6162630a",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "46414b455345435245545f736b5f6c6976655f616263"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "xxd -p -u .env uppercase hex of STRIPE value",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p -u .env"
+    },
+    "tool_response": {
+     "stdout": "5354524950455F5345435245545F4B45593D46414B455345435245545F736B5F6C6976655F6162630A",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "46414B455345435245545F736B5F6C6976655F616263"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "xxd -p .dev.vars hex of DB_PASSWORD value",
+   "files": {
+    ".dev.vars": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xxd -p .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "44425f50415353574f52443d46414b455345435245545f70775f3132330a",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "46414b455345435245545f70775f313233"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

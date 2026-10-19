@@ -1,0 +1,34 @@
+{
+ "case_id": "TAMP-0053",
+ "title": "Bash sed -i or jq changes settings to disable redaction; command is denied",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed -i on settings.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i s/PostToolUse/none/ /Users/cj/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "jq delete of PostToolUse hook in settings is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq 'del(.hooks.PostToolUse)' /Users/cj/.claude/settings.json > /Users/cj/.claude/settings.new.json"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

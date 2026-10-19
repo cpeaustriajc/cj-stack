@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1815",
+ "title": "base64 -d twice on the step output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "double base64 decoded in shell; decoded FAKESECRET_DB64_01 redacted in tool_response",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_DB64_01\n"
+   },
+   "command": "echo 'UmtGTFJWTkZRMUpGVkY5RVFqWTBYekF4' | base64 -d | base64 -d",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DB64_01"
+   ],
+   "must_see": [],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,1015 @@
+{
+  "case_id": "FP-0196",
+  "title": "Content checks allow placeholders, built strings, code references and prose after a secret-named label; literals still deny",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "pre",
+      "name": "Write of shape 00 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n00.md",
+          "content": "You are hardening /Users/cj/Projects/cj-stack/mods/secret-guard: PreToolUse guard, PostToolUse redactor and stream filter.\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 01 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n01.md",
+          "content": "mods/secret-guard: PreToolUse guard (hooks/secret_guard.py)\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 02 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n02.md",
+          "content": "secret-guard: the guard\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 03 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n03.md",
+          "content": "- secret-guard: PreToolUse guard\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 04 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n04.md",
+          "content": "**Token:** paste it into Settings\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 05 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n05.md",
+          "content": "**Password**: Use a long passphrase\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 06 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n06.md",
+          "content": "## Secret handling: Overview of the flow\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 07 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n07.md",
+          "content": "API key: Settings > Developer > Keys\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 08 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n08.md",
+          "content": "Note on tokens: They expire after one hour.\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 09 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n09.md",
+          "content": "The token: a JWT signed by the server.\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 10 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n10.md",
+          "content": "Access token: Generated in the dashboard\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 11 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n11.md",
+          "content": "password: required for login\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 12 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n12.md",
+          "content": "Your secret: Keep It Safe\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 13 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n13.md",
+          "content": "Token handling: see docs/tokens.md\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 14 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n14.md",
+          "content": "`token`: Bearer header value\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 15 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n15.md",
+          "content": "- `api_key`: Your API key from the dashboard\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 16 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n16.md",
+          "content": "* **secret_key**: Django signing key\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 17 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n17.md",
+          "content": "url = \"https://api.example.com/?token=\" + token\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 18 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n18.md",
+          "content": "msg = \"password: \" + pw\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 19 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n19.md",
+          "content": "headers = {\"Authorization\": \"Bearer \" + token}\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 20 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n20.md",
+          "content": "const k = [\"api\", \"key\"].join(\"_\") + \"=\" + value\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 21 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n21.md",
+          "content": "line = `${prefix}_TOKEN=${value}`\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 22 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n22.md",
+          "content": "s = \"token={}\".format(t)\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 23 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n23.md",
+          "content": "s = \"api_key=%s\" % key\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 24 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n24.md",
+          "content": "s = \"password: %s\" % pw\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 25 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n25.md",
+          "content": "echo \"TOKEN=${TOKEN}\"\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 26 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n26.md",
+          "content": "password=<your-password>\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 27 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n27.md",
+          "content": "token: <token>\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 28 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n28.md",
+          "content": "TOKEN=$(cat file)\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 29 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n29.md",
+          "content": "const url = base + \"?api_key=\" + apiKey;\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 30 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n30.md",
+          "content": "q = f\"secret={secret}&x=1\"\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 31 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n31.md",
+          "content": "cfg.token = token\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 32 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n32.md",
+          "content": "password: process.env.DB_PASSWORD\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 33 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n33.md",
+          "content": "token: os.environ[\"TOKEN\"]\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 34 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n34.md",
+          "content": "\"token=\" + getToken()\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 35 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n35.md",
+          "content": "\"secret: \" + this.secret\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 36 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n36.md",
+          "content": "key = \"SECRET_\" + name\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 37 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n37.md",
+          "content": "const header = 'Authorization: Bearer ' + token;\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 38 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n38.md",
+          "content": "args = [\"--token=\" + token]\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 39 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n39.md",
+          "content": "const k2 = [\"API\", \"KEY\"].join(\"_\") + \"=\" + process.env.X;\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 40 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n40.md",
+          "content": "const u = `${base}?token=${tok}`;\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 41 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n41.md",
+          "content": "log(\"secret:\", s)\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of shape 42 is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/n42.md",
+          "content": "print(\"token:\", tok)\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of a markdown table whose Token column holds prose is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/table.md",
+          "content": "| Name | Token |\n|------|-------|\n| svc  | see vault |\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Agent prompt naming the guard by its file and role is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Agent",
+        "tool_input": {
+          "description": "build",
+          "prompt": "You are hardening /Users/cj/Projects/cj-stack/mods/secret-guard: PreToolUse guard, PostToolUse redactor and stream filter.\nmods/secret-guard: PreToolUse guard (hooks/secret_guard.py)"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "SendMessage with prose after a token label is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "SendMessage",
+        "tool_input": {
+          "to": "builder",
+          "message": "The token: a JWT signed by the server."
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "MCP input with a built URL is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "mcp__notion__create_page",
+        "tool_input": {
+          "content": "url = \"https://api.example.com/?token=\" + token"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of a markdown placeholder before a closing backtick is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/bt.md",
+          "content": "Add the `BOT_TOKEN=` line to .env, then restart.\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of code references, types and f-string headers is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/src/a.ts",
+          "content": "const token = req.body['cf-turnstile-response'];\napi_token = var.cloudflare_api_token\nAPI_KEY: string; // from env\nsecret: TURNSTILE_SECRET,\nHEADERS = {\"Authorization\": f\"Bearer {TOKEN}\"}\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of docs placeholders is allowed",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/README.md",
+          "content": "export API_TOKEN=\"your-api-token\"\nCLOUDFLARE_API_TOKEN=xxx    # for deployment\n\"CLAUDE_CODE_MAX_OUTPUT_TOKENS\": \"128000\",\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 00 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit00.md",
+          "content": "DB_PASSWORD=FAKESECRET_pw_7Kq2x\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 01 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit01.md",
+          "content": "password: FAKESECRET_pw_7Kq2x\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 02 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit02.md",
+          "content": "\"api_key\": \"FAKESECRET_abc123XYZ\"\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 03 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit03.md",
+          "content": "const token = \"FAKESECRET_tok_9xZ\"\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 04 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit04.md",
+          "content": "token = 'FAKESECRET_tok_9xZ' + suffix\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 05 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit05.md",
+          "content": "Authorization: Bearer FAKESECRETtok123abc\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 06 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit06.md",
+          "content": "export AWS_SECRET_ACCESS_KEY=FAKESECRETQmZr8TnVy2Lp\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 07 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit07.md",
+          "content": "password: Summer2024fake\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 08 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit08.md",
+          "content": "\"password\": \"Abcdef12!\"\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 09 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit09.md",
+          "content": "headers = {\"Authorization\": f\"Bearer FAKESECRET{n}abc123\"}\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 10 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit10.md",
+          "content": "TOKEN=your_FAKESECRET_value_1234abcd\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 11 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit11.md",
+          "content": "api_token = FAKESECRET.k3y9Zq\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 12 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit12.md",
+          "content": "secret: FAKESECRETzz9 # note\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 13 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit13.md",
+          "content": "client_secret=\"FAKESECRET_cs_44\" // keep\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 14 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit14.md",
+          "content": "args = [\"--token=FAKESECRET_t1\"]\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 18 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit18.md",
+          "content": "password: \"FAKESECRET pass phrase 9\"\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 19 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit19.md",
+          "content": "\"token\": \"1234567890123\"\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 20 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit20.md",
+          "content": "API_KEY=ab12cd34ef56gh78\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 21 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit21.md",
+          "content": "const pw = `FAKESECRET_tpl_8`\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of literal line 22 is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lit22.md",
+          "content": "password = (FAKESECRET_paren_1)\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Write of a literal in a Token table column is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/lt.md",
+          "content": "| Name | Token |\n|------|-------|\n| ci   | FAKESECRET_tbl_9q |\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "Agent prompt with a literal pw is denied",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Agent",
+        "tool_input": {
+          "description": "x",
+          "prompt": "DB_PASSWORD=FAKESECRET_dbpw_7Kq2Lm to log in."
+        }
+      },
+      "expect": "deny"
+    }
+  ]
+}

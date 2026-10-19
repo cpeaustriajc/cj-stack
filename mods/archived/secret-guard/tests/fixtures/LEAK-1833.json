@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-1833",
+ "title": "ssh git stash, reflog and log chain",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote stash diff plus reflog line",
+   "files": {
+    "remote-sim.sh": "printf 'diff --git a/config/production.env b/config/production.env\\n+PROD_KEY=FAKESECRET_SSH_02\\n9d07a1d3 HEAD@{1}: commit: rotate deploy key\\n'\n",
+    ".env": "PLANTED_SERVICE_SECRET=FAKESECRET_SSH_02\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_SSH_02"
+   ],
+   "must_see": [
+    "+PROD_KEY=",
+    "HEAD@{1}: commit: rotate deploy key"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

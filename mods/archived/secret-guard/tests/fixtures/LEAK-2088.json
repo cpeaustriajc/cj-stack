@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-2088",
+ "title": "Bash cat of global gradle.properties with a plaintext repo password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of gradle.properties: password value redacted, Bash object shape kept",
+   "files": {
+    ".gradle/gradle.properties": "mavenUser=ci-bot\nmavenPassword=FAKESECRET_gradle_A1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.gradle/gradle.properties"
+    },
+    "tool_response": {
+     "stdout": "mavenUser=ci-bot\nmavenPassword=FAKESECRET_gradle_A1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gradle_A1"
+   ],
+   "must_see": [
+    "mavenUser=ci-bot",
+    "mavenPassword=[REDACTED]",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

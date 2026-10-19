@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0547",
+ "title": "git log -p prints removed secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -p on .env.production shows removed secret line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -- .env.production"
+    },
+    "tool_response": {
+     "stdout": "commit 9d07a1d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9\nAuthor: CJ <cj@example.test>\n\n    rotate db password\n\ndiff --git a/.env.production b/.env.production\nindex 1111111..2222222 100644\n--- a/.env.production\n+++ b/.env.production\n@@ -1,2 +1,2 @@\n DB_HOST=db.prod\n-DB_PASSWORD=FAKESECRET_git11\n+DB_PASSWORD=rotated\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_git11"
+   ],
+   "must_see": [
+    "diff --git a/.env.production b/.env.production",
+    "@@ -1,2 +1,2 @@",
+    "DB_HOST=db.prod",
+    "-DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

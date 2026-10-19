@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1334",
+ "title": "Docker API Env with APP_SESSION_SALT value (known failing policy gap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker API Env salt value stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s --unix-socket /var/run/docker.sock http://localhost/containers/web/json"
+    },
+    "tool_response": {
+     "stdout": "{\"Id\":\"c1f0a9\",\"Config\":{\"Env\":[\"APP_SESSION_SALT=FAKESECRET_salt0053\",\"PATH=/usr/bin\"]}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_salt0053"
+   ],
+   "must_see": [
+    "PATH=/usr/bin"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for docker API salt env",
+   "files": {},
+   "command": "printf '%s\\n' '{\"Id\":\"c1f0a9\",\"Config\":{\"Env\":[\"APP_SESSION_SALT=FAKESECRET_salt0053\",\"PATH=/usr/bin\"]}}'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_salt0053"
+   ],
+   "must_see": [
+    "PATH=/usr/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

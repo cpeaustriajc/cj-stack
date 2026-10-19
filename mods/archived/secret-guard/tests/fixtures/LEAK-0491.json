@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0491",
+ "title": "broad Grep for PRIVATE KEY across /private/var/folders",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "broad Grep for PRIVATE KEY over /private/var/folders is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "BEGIN (RSA |OPENSSH )?PRIVATE KEY",
+     "path": "/private/var/folders",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Grep tool call; the policy names Grep as allowed, and the redactor hides matched values.)"
+  },
+  {
+   "kind": "post",
+   "name": "Grep output with a PEM body from another app's temp file: body line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "BEGIN (RSA |OPENSSH )?PRIVATE KEY",
+     "path": "/private/var/folders",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/private/var/folders/q1/x9/T/app-tmp/key.pem:1:-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_gr45\n-----END OPENSSH PRIVATE KEY-----",
+     "numLines": 3,
+     "totalLines": 3
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gr45"
+   ],
+   "must_see": [
+    "key.pem"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

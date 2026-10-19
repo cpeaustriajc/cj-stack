@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-1534",
+ "title": "Git MCP log with patch exposes removed secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp__git__git_log patch line: value replaced, diff marker and SHA kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__git__git_log",
+    "tool_input": {
+     "repo_path": ".",
+     "patch": true,
+     "max_count": 500
+    },
+    "tool_response": "commit 00912aa4\n\n+API_KEY=FAKESECRET_gitlog\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_gitlog"
+   ],
+   "must_see": [
+    "+API_KEY=",
+    "00912aa4"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

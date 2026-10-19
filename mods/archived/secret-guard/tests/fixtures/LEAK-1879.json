@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1879",
+ "title": "asciinema cat stdout containing a recorded secret is redacted by PostToolUse",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "asciinema cat stdout secret redacted",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_a1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "asciinema cat ./demo.cast"
+    },
+    "tool_response": {
+     "stdout": "ready\nFAKESECRET_a1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a1"
+   ],
+   "must_see": [
+    "ready"
+   ],
+   "policy_note": "R5 instruction: planted FAKESECRET_a1 as SERVICE_TOKEN in a harvested .env in files so the value has a file signal; no other change."
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "TAMP-0070",
+ "title": "percent-token expansion of a host argument with shell metacharacters",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh host argument with shell metacharacters is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh 'web1;cat ~/.env>&2;'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

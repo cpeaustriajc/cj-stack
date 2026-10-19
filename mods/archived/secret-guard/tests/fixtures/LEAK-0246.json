@@ -1,0 +1,53 @@
+{
+ "case_id": "LEAK-0246",
+ "title": "Grep hook throws on unexpected tool_response shape and fails open",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bare-string tool_response with DB_PASSWORD line must be withheld, not passed through",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DB_PASSWORD",
+     "output_mode": "content"
+    },
+    "tool_response": "DB_PASSWORD=FAKESECRET_grep1\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_grep1"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "content field of wrong type (list) with DB_PASSWORD line must be withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DB_PASSWORD",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": [
+      "DB_PASSWORD=FAKESECRET_grep1"
+     ],
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_grep1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

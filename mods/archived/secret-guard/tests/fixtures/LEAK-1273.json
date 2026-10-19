@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1273",
+ "title": "Recursive grep and ls over stale mcp-remote-0.x token directories",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ls-and-grep-mcp-auth-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la ~/.mcp-auth/ && grep -r . ~/.mcp-auth/mcp-remote-0.1.*"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (ls plus grep -r . over ~/.mcp-auth is display-only; no transform, oracle or secret combo (hooks-build-spec.md item 4).)"
+  },
+  {
+   "kind": "post",
+   "name": "stale-token-grep-value-redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls -la ~/.mcp-auth/ && grep -r . ~/.mcp-auth/mcp-remote-0.1.*"
+    },
+    "tool_response": {
+     "stdout": "mcp-remote-0.1.30\nmcp-remote-0.1.30/tokens.json:{\"refresh_token\":\"FAKESECRET_oldrefresh0005\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oldrefresh0005"
+   ],
+   "must_see": [
+    "mcp-remote-0.1.30",
+    "refresh_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

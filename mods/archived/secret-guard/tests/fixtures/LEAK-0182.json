@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0182",
+ "title": "buildx local cache export read back by tar extraction",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep of extracted blob line redacted (simulated)",
+   "files": {
+    "blob.txt": "ENV PATH=/usr/local/bin\nENV STRIPE_KEY=FAKESECRET_cache_21\n"
+   },
+   "command": "cat blob.txt | grep ENV",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_cache_21"
+   ],
+   "must_see": [
+    "STRIPE_KEY="
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "tar extract then grep ENV via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tar -xzf ./cache/blobs/sha256/abc123 -O | grep ENV"
+    },
+    "tool_response": {
+     "stdout": "ENV STRIPE_KEY=FAKESECRET_cache_21\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cache_21"
+   ],
+   "must_see": [
+    "STRIPE_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

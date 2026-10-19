@@ -1,0 +1,35 @@
+{
+ "case_id": "TAMP-0129",
+ "title": "Auto-update swaps a reviewed plugin script after review",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "updated plugin output with known fake value is redacted",
+   "files": {
+    ".env": "PLUGIN_KEY=FAKESECRET_PLUGIN_UPDATE_005\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fake-plugin-dump"
+    },
+    "tool_response": {
+     "stdout": "key=FAKESECRET_PLUGIN_UPDATE_005\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PLUGIN_UPDATE_005"
+   ],
+   "must_see": [
+    "key="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

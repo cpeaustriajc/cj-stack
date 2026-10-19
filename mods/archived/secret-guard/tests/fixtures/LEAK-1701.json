@@ -1,0 +1,69 @@
+{
+ "case_id": "LEAK-1701",
+ "title": "ls of Mobile Documents then Read of clipboard store",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ls of Mobile Documents names allowed",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls \"$HOME/Library/Mobile Documents/\" | grep -i clip"
+    }
+   }
+  },
+  {
+   "kind": "post",
+   "name": "ls names pass through unchanged",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls \"$HOME/Library/Mobile Documents/\" | grep -i clip"
+    },
+    "tool_response": {
+     "stdout": "com~clipboard-sync\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "com~clipboard-sync"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Read under clipboard sync store denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Library/Mobile Documents/com~clipboard-sync/Documents/state.db"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of one clipboard sync store file. Owner allows this.)"
+  },
+  {
+   "kind": "pre",
+   "name": "Grep under clipboard sync store denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "token",
+     "path": "/Users/cj/Library/Mobile Documents/com~clipboard-sync",
+     "output_mode": "content"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep with content output over a store directory. Owner allows Grep on secret files.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

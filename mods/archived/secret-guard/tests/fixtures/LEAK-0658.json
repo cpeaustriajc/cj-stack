@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0658",
+ "title": "grep -h over pre-existing transcripts: value replaced, key name kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -rhE name-pattern over transcripts",
+   "files": {
+    "transcripts/s1.jsonl": "{\"type\":\"user\",\"content\":\"DB_PASSWORD=FAKESECRET_pw8\"}\n",
+    "transcripts/sub/agent-1.jsonl": "{\"type\":\"assistant\",\"content\":\"done\"}\n"
+   },
+   "command": "grep -rhE '(PASSWORD|SECRET|TOKEN|API_KEY)=[A-Za-z0-9+/_-]{12,}' transcripts",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw8"
+   ],
+   "must_see": [
+    "PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

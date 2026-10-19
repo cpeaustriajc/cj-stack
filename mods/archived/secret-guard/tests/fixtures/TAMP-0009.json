@@ -1,0 +1,23 @@
+{
+ "case_id": "TAMP-0009",
+ "title": "Edit adds otelHeadersHelper to user settings (i5)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of user settings.json setting otelHeadersHelper is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/settings.json",
+     "old_string": "{}",
+     "new_string": "{\"otelHeadersHelper\":\"/Users/cj/bin/otel-headers.sh\"}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

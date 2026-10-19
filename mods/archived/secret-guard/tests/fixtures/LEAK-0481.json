@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0481",
+ "title": "diff of .env and .env.example via process substitution",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "diff with process substitution cat of .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "diff <(cat .env) <(cat .env.example)"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "diff output: the < side secret value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "diff <(cat .env) <(cat .env.example)"
+    },
+    "tool_response": {
+     "stdout": "1c1\n< API_KEY=FAKESECRET_pc36\n---\n> API_KEY=changeme\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pc36"
+   ],
+   "must_see": [
+    "API_KEY",
+    "changeme"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1735",
+ "title": "xoxc token in Slack leveldb strings output",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "xoxc token with no assignment operator is redacted [printf stands in for strings|grep; token body uses FAKE marker, scenario sample did not]",
+   "files": {},
+   "command": "printf '%s\\n' '_https://app.slack.com token xoxc-FAKE0000000000-0000000000-0000000000-0123456789abcdef0123456789abcdef.'",
+   "must_not_see": [
+    "xoxc-FAKE0000000000-0000000000-0000000000-0123456789abcdef0123456789abcdef",
+    "xoxc-FAKE0000000000"
+   ],
+   "must_see": [
+    "_https://app.slack.com token",
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

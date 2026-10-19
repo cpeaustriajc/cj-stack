@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0434",
+ "title": "Third and later commands of the printenv recovery attempt (source truncated)",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "Source item is truncated at 'printen'. Commands 3 and 4 are not in the item, and its expected outcome is UNSPECIFIED, so no assertion can be written. Blocked until the source item is completed. No non-hook control is assigned in the source.",
+ "duplicate_of_dropped": false
+}

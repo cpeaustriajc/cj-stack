@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1051",
+ "title": "PYTHONSTARTUP runs in interactive python -i",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PYTHONSTARTUP FAKE_KEY line in stdout redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -i -c 'import os' < /dev/null"
+    },
+    "tool_response": {
+     "stdout": "FAKE_KEY=FAKESECRET_k_BS81\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k_BS81"
+   ],
+   "must_see": [
+    "FAKE_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "source redaction of startup-style output (printf stands in for PYTHONSTARTUP, runner cannot set env)",
+   "files": {},
+   "command": "printf 'FAKE_KEY=FAKESECRET_k_BS81\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_k_BS81"
+   ],
+   "must_see": [
+    "FAKE_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

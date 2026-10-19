@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-2016",
+ "title": "Dot-dot and double-slash segments route a Read around a ~/ anchored deny",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read via dot-dot and double-slash path into protected dir is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/FAKEUSER//./work/../.fakeapp/token.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on a dot-dot path to a protected token file is a plain read; the owner allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "if read runs, token value in Read output is redacted",
+   "files": {
+    ".fakeapp/token.json": "{\"refresh\":\"FAKESECRET_tok_0003\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/FAKEUSER//./work/../.fakeapp/token.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/FAKEUSER//./work/../.fakeapp/token.json",
+      "content": "{\"refresh\":\"FAKESECRET_tok_0003\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_0003"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

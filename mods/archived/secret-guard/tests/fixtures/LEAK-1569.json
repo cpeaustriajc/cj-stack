@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1569",
+ "title": "screencapture then Read shows banner",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "screencapture denied unless user-approved. Spec gap: not in test-spec Guard(a); Read result withholding not covered by these fixture kinds",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "screencapture -x \"$SCRATCH/shot.png\""
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

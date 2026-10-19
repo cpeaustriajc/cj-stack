@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-0625",
+ "title": "Core bytes with invalid UTF-8 crash the hook (failed-decode path, real shell bytes)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf emits raw 0xFF 0xFE bytes then an ENV_TOKEN line; the filtered output must not show the token",
+   "files": {},
+   "command": "printf 'core strings \\377\\376 mid-line\\nENV_TOKEN=FAKESECRET_tok_core_005\\n'",
+   "must_not_see": [
+    "FAKESECRET_tok_core_005"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

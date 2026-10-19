@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1895",
+ "title": "Session transcript on disk keeps pre-redaction tool output (live view tested; .jsonl persistence not testable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .env shows [REDACTED] in the live tool_response",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_API_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/fake/proj/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/fake/proj/.env",
+      "content": "API_KEY=FAKESECRET_API_1\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_API_1"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

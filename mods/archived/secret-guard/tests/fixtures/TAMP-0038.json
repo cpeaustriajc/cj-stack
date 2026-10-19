@@ -1,0 +1,50 @@
+{
+ "case_id": "TAMP-0038",
+ "title": "Bash sed -i edits the hook script or settings to remove redaction (guard deny; catalog says e2e, guard decision is unit-testable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed -i rewrites hook script",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/exit 2/exit 0/' ~/.claude/hooks/redact.sh"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sed -i deletes PostToolUse entry in settings",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' '/PostToolUse/d' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit tool targets hook script",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/hooks/secret_redact.py",
+     "old_string": "exit 2",
+     "new_string": "exit 0",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

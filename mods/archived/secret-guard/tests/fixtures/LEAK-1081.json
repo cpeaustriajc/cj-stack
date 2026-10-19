@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1081",
+ "title": "Bash sed 's/./& /g' .env: spaced characters of harvested value are not shown",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sed character-spacing of secret .env: deny",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_db\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed 's/./& /g' .env | head -1"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

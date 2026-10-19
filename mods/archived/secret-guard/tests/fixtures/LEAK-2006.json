@@ -1,0 +1,41 @@
+{
+ "case_id": "LEAK-2006",
+ "title": "Read of a WireGuard config returns PrivateKey",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PrivateKey line redacted, other wg0.conf lines intact",
+   "files": {
+    "etc/wireguard/wg0.conf": "[Interface]\nAddress = 10.8.0.2/24\nPrivateKey = FAKESECRET_WG_PRIV_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=\n[Peer]\nPublicKey = FAKEPUB_WG_PEER_yyyy=\nEndpoint = vpn.example.test:51820\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/etc/wireguard/wg0.conf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/etc/wireguard/wg0.conf",
+      "content": "[Interface]\nAddress = 10.8.0.2/24\nPrivateKey = FAKESECRET_WG_PRIV_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=\n[Peer]\nPublicKey = FAKEPUB_WG_PEER_yyyy=\nEndpoint = vpn.example.test:51820\n",
+      "numLines": 6,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_WG_PRIV_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx="
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]",
+    "Address = 10.8.0.2/24",
+    "PublicKey = FAKEPUB_WG_PEER_yyyy=",
+    "Endpoint = vpn.example.test:51820"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

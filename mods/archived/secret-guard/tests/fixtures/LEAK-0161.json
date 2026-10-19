@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-0161",
+ "title": "kubectl secret jsonpath piped to base64 -d over ssh: password in connection string redacted, pipeline denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote DATABASE_URL output with password",
+   "files": {
+    "sim-db-url.txt": "postgres://app:FAKESECRET_k8s_0@10.0.0.5:5432/app\n"
+   },
+   "command": "cat sim-db-url.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_k8s_0"
+   ],
+   "must_see": [
+    "10.0.0.5:5432/app"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse ssh kubectl get secret | base64 -d output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh ops@cluster-bastion \"kubectl -n prod get secret app-env -o jsonpath='{.data.DATABASE_URL}' | base64 -d\""
+    },
+    "tool_response": {
+     "stdout": "postgres://app:FAKESECRET_k8s_0@10.0.0.5:5432/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_k8s_0"
+   ],
+   "must_see": [
+    "10.0.0.5:5432/app"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ssh kubectl get secret jsonpath piped to base64 -d is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh ops@cluster-bastion \"kubectl -n prod get secret app-env -o jsonpath='{.data.DATABASE_URL}' | base64 -d\""
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

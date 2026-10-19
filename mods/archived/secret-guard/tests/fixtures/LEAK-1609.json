@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1609",
+ "title": "base64 of .env file encodes harvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of whole .env file, value at byte alignment 2",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_pk8\n"
+   },
+   "command": "cat .env | base64",
+   "must_not_see": [
+    "U1RSSVBFX0tFWT1GQUtFU0VDUkVUX3BrOAo=",
+    "QUtFU0VDUkVUX3Br"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

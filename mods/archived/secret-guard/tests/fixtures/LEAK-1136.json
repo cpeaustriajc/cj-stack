@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1136",
+ "title": "claude mcp list: stays allowed; Bearer token in output masked",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "claude mcp list is not blocked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude mcp list"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Authorization Bearer value masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "claude mcp list"
+    },
+    "tool_response": {
+     "stdout": "figma: https://mcp.figma.com (Authorization: Bearer FAKESECRET_fig)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_fig"
+   ],
+   "must_see": [
+    "figma: https://mcp.figma.com",
+    "Authorization: Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

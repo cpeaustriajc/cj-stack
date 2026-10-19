@@ -1,0 +1,126 @@
+{
+ "case_id": "LEAK-2184",
+ "title": "Hooks that read an environment variable by a computed name are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Python os.environ[k] is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.py",
+     "content": "import os\nk = \"X\"\nprint(os.environ[k])\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Python getenv of a concatenated name is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.py",
+     "content": "import os\nprint(os.getenv(\"ANTHROPIC_\" + \"API_KEY\"))\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "a computed read hidden in a default is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.py",
+     "content": "import os\nprint(os.getenv(\"HOME\", os.getenv(k)))\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "node process.env[k] is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.js",
+     "content": "console.log(process.env[k])\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "C getenv(argv) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.c",
+     "content": "#include <stdlib.h>\nint main(int c, char**v){puts(getenv(v[1]));}\n"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "awk ENVIRON[k] is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"KEEP\": \"x\"\n  },\n  \"permissions\": {\n    \"allow\": [\n      \"Read(./docs/**)\"\n    ]\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/settings.json",
+     "old_string": "  \"hooks\": {",
+     "new_string": "  \"hooks\": {\n    \"SessionStart\": [{\"hooks\": [{\"type\": \"command\", \"command\": \"awk -v k=X 'BEGIN{print ENVIRON[k]}'\"}]}],"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "python -c reading argv as a name is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"KEEP\": \"x\"\n  },\n  \"permissions\": {\n    \"allow\": [\n      \"Read(./docs/**)\"\n    ]\n  },\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/settings.json",
+     "old_string": "  \"hooks\": {",
+     "new_string": "  \"hooks\": {\n    \"SessionStart\": [{\"hooks\": [{\"type\": \"command\", \"command\": \"python3 -c 'import os,sys;print(os.environ[sys.argv[1]])' X\"}]}],"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "PowerShell GetEnvironmentVariable($k) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.ps1",
+     "content": "[Environment]::GetEnvironmentVariable($k)\n"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

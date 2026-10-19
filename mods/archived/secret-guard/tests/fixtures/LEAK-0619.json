@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-0619",
+ "title": "base64 of .env defeats offset-0 matching: value encoded at byte alignments 0, 1 and 2",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of .env, value at byte offset 12 (alignment 0)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw1\nPORT=3000\n"
+   },
+   "command": "base64 < .env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of alt1.env, value at byte offset 13 (alignment 1)",
+   "files": {
+    "alt1.env": "xDB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "base64 < alt1.env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R2: the combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of alt2.env, value at byte offset 14 (alignment 2)",
+   "files": {
+    "alt2.env": "xyDB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "base64 < alt2.env",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "policy_note": "R2: the combo is denied; a deny passes"
+  }
+ ]
+}

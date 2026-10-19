@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2051",
+ "title": "Replacement shape mismatch makes the startup-hook leak pass through",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash redaction keeps the stdout/stderr/interrupted object shape",
+   "files": {
+    ".env": "FAKESECRET_TOKEN=FAKESECRET_xxx_delta\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh ./dump.sh"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_TOKEN=FAKESECRET_xxx_delta",
+     "stderr": "",
+     "interrupted": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_xxx_delta"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "FAKESECRET_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

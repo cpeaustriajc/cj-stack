@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0177",
+ "title": "BuildKit mounted secret printed mid-line in build log: value redacted via harvested .env value; plain build allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "build log line with mid-line mounted secret value",
+   "files": {
+    ".env": "NPM_TOKEN=FAKESECRET_npm_16\n",
+    "build.log": "#5 [2/4] RUN --mount=type=secret,id=npm_token sh -c 'cat /run/secrets/npm_token'\n#5 0.312 FAKESECRET_npm_16\n"
+   },
+   "command": "cat build.log",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_npm_16"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre",
+   "name": "docker build -t myapp . stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker build -t myapp ."
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

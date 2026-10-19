@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1752",
+ "title": "Bash cat of ~/.config/git/credentials",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "credential store cat: password never reaches the model",
+   "files": {
+    "~/.config/git/credentials": "https://cj:FAKESECRET_CRED_02@github.com\n"
+   },
+   "command": "cat ~/.config/git/credentials",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_CRED_02"
+   ]
+  }
+ ]
+}

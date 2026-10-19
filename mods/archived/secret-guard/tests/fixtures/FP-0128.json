@@ -1,0 +1,33 @@
+{
+ "case_id": "FP-0128",
+ "title": "Build log with key-like names but no secret values must be byte-identical (false-positive control)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Four benign key-like lines pass through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat build.log"
+    },
+    "tool_response": {
+     "stdout": "TOKEN_COUNT=42\nAuthentication module loaded\nKEY_LAYOUT=qwerty\nPASSWORD_MIN_LENGTH=12\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "TOKEN_COUNT=42",
+    "Authentication module loaded",
+    "KEY_LAYOUT=qwerty",
+    "PASSWORD_MIN_LENGTH=12"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

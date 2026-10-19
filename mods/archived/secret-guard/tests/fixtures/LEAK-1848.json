@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1848",
+ "title": "Raw agent protocol spoken over a socket without ssh-add",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "nc -U to SSH_AUTH_SOCK",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "nc -U \"$SSH_AUTH_SOCK\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "python3 one-liner connecting to an agent socket",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 -c \"import socket;s=socket.socket(socket.AF_UNIX);s.connect('/FAKE/agent.sock')\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "socat UNIX-CONNECT to an agent socket",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "socat - UNIX-CONNECT:/FAKE/agent.sock"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "plain python3 script without socket calls stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 report.py"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

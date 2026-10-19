@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0946",
+ "title": "PuTTY .ppk Private-Lines body with no keyword is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of fake ppk file with Private-Lines body",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/fixtures/fake.ppk"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/fixtures/fake.ppk",
+      "content": "PuTTY-User-Key-File-3: ssh-ed25519\nEncryption: none\nComment: fake-key\nPublic-Lines: 1\nAAAAFAKEPUBLIC0123\nPrivate-Lines: 1\nFAKESECRETPPK0123456789\nPrivate-MAC: 0123FAKE\n",
+      "numLines": 8,
+      "startLine": 1,
+      "totalLines": 8
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETPPK0123456789"
+   ],
+   "must_see": [
+    "Public-Lines: 1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

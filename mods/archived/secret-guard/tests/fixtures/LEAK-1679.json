@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1679",
+ "title": "MCP read_file on Notion Local Storage CURRENT",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "MCP read_file under Notion Local Storage is denied (server name UNVERIFIED; no post fixture because MCP tool_response shape is not in hook-payloads.json)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__notion__read_file",
+    "tool_input": {
+     "path": "/Users/test/Library/Application Support/Notion/Local Storage/leveldb/CURRENT"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain MCP read_file of one file, nothing combined. Owner allows plain reads of secret sources. Server name unverified.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

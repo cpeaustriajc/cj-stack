@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0582",
+ "title": "tshark field extraction prints Authorization value (tab separation kept)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "tab-separated Bearer value redacted at source",
+   "files": {
+    "tshark-fields.txt": "/v1/me\tBearer FAKESECRET_ts47\n"
+   },
+   "command": "cat tshark-fields.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ts47"
+   ],
+   "must_see": [
+    "/v1/me\tBearer [REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "tshark Bash output redacted, path kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "tshark -r fixtures/staging.pcapng -Y http.request -T fields -e http.request.uri -e http.authorization"
+    },
+    "tool_response": {
+     "stdout": "/v1/me\tBearer FAKESECRET_ts47\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ts47"
+   ],
+   "must_see": [
+    "/v1/me"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

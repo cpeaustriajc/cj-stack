@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1000",
+ "title": "echo of a key variable inside a sentence",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echoed variable sourced from .env is masked inside the sentence",
+   "files": {
+    ".env": "ANTHROPIC_API_KEY=FAKESECRET_an_Y22\n",
+    "run.sh": ". ./.env\necho \"key is $ANTHROPIC_API_KEY\"\n"
+   },
+   "command": "sh run.sh",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_an_Y22"
+   ],
+   "must_see": [
+    "key is [REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

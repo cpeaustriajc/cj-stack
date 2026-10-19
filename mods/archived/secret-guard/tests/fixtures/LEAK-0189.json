@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0189",
+ "title": "terraform state show prints an attribute in HCL form",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "HCL password value redacted (simulated)",
+   "files": {
+    "state.out": "resource \"aws_db_instance\" \"main\" {\n    password = \"FAKESECRET_state_28\"  # sensitive\n}\n"
+   },
+   "command": "cat state.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_state_28"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "terraform state show via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "terraform state show aws_db_instance.main"
+    },
+    "tool_response": {
+     "stdout": "resource \"aws_db_instance\" \"main\" {\n    password = \"FAKESECRET_state_28\"  # sensitive\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_state_28"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

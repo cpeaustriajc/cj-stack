@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0261",
+ "title": "Spotlight mdfind content query reveals a secret file's presence",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mdfind content query for a typed secret-shaped literal is allowed (literal only used as a tool argument, output shown)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mdfind -onlyin . 'FAKESECRET_xxxxxxxx'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a secret literal typed into a command that only uses it to run a tool, with output shown, is allowed."
+  }
+ ]
+}

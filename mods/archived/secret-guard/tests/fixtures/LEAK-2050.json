@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-2050",
+ "title": "Startup code prints the secret to stderr while the command exits non-zero",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Failing command: stderr secret redacted at source, exit code preserved",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_xxx_gamma\n"
+   },
+   "command": "printf 'FAKESECRET_API_KEY=FAKESECRET_xxx_gamma\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_xxx_gamma"
+   ],
+   "must_see": [
+    "FAKESECRET_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

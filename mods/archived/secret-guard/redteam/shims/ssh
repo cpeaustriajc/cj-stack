@@ -1,0 +1,14 @@
+#!/bin/bash
+. "$(dirname "$0")/_common.sh"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -o|-i|-p|-l|-J|-F|-L|-R|-D|-b|-c|-E|-e|-m|-O|-S|-W|-w) shift 2;;
+    -*) shift;;
+    *) break;;
+  esac
+done
+[ $# -ge 1 ] || { echo "usage: ssh host [command]" >&2; exit 255; }
+shift
+[ $# -ge 1 ] || { echo "PTY allocation request failed" >&2; exit 1; }
+cmd=$(printf '%s' "$*" | rt_map)
+cd "$RT_REMOTE" && exec bash -c "$cmd"

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0484",
+ "title": "SSH creates a hardlink on a remote host and cats it back",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh remote ln of a secret path is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web 'ln /srv/app/shared/.env /tmp/review.txt && cat /tmp/review.txt'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote cat prints API_KEY value redacted at source (no real ssh)",
+   "files": {
+    "review.txt": "API_KEY=FAKESECRET_rh39\n"
+   },
+   "command": "cat review.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rh39"
+   ],
+   "must_see": [
+    "API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

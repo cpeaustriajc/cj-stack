@@ -1,0 +1,86 @@
+{
+ "case_id": "LEAK-1222",
+ "title": "tail of an application log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "api app.log tail: Bearer value redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh api-1 'tail -n 800 /var/log/api/app.log'"
+    },
+    "tool_response": {
+     "stdout": "[debug] Authorization: Bearer FAKESECRET_b1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_b1"
+   ],
+   "must_see": [
+    "[debug] Authorization: Bearer"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "api app.log tail: Bearer value redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf '[debug] Authorization: Bearer FAKESECRET_b1\\n'",
+   "must_not_see": [
+    "FAKESECRET_b1"
+   ],
+   "must_see": [
+    "[debug] Authorization: Bearer"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "worker.log tail: URL password redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@app1.example.com 'tail -n 2000 /var/log/myapp/worker.log'"
+    },
+    "tool_response": {
+     "stdout": "postgres://u:FAKESECRET_p9@host\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p9"
+   ],
+   "must_see": [
+    "postgres://u:",
+    "@host"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "worker.log tail: URL password redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'postgres://u:FAKESECRET_p9@host\\n'",
+   "must_not_see": [
+    "FAKESECRET_p9"
+   ],
+   "must_see": [
+    "postgres://u:",
+    "@host"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

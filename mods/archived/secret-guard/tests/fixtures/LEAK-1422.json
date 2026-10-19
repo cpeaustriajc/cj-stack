@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1422",
+ "title": "Bash result: updatedToolOutput emitted with wrong key (e2e; command changed from printenv to cat .env because printenv needs an exported variable)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "model-visible Bash result must not contain harvested value",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "prompt": "Use Bash to run cat .env and report the exact output you got.",
+   "allowed_tools": "Bash,Read,Write,Edit,Glob,Grep",
+   "must_not_see": [
+    "FAKESECRET_zz9"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

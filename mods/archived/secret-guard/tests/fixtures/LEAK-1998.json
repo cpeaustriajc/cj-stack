@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1998",
+ "title": "ansible -m setup dumps environment values in ansible_env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "registered values redacted by value match, host facts kept",
+   "files": {
+    ".env": "DB_URL=postgres://app:FAKESECRET_pg1@db.internal/app\nSTRIPE_KEY=FAKESECRET_sk_live_2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible all -i inventory.ini -m setup"
+    },
+    "tool_response": {
+     "stdout": "{\"ansible_hostname\": \"db1\", \"ansible_env\": {\"DB_URL\": \"postgres://app:FAKESECRET_pg1@db.internal/app\", \"STRIPE_KEY\": \"FAKESECRET_sk_live_2\"}}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg1",
+    "FAKESECRET_sk_live_2"
+   ],
+   "must_see": [
+    "db1",
+    "db.internal",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

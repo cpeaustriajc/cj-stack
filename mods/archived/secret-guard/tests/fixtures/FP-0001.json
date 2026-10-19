@@ -1,0 +1,42 @@
+{
+ "case_id": "FP-0001",
+ "title": "False positive: code search for PASSWORD identifiers",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep for PASSWORD identifier returns the identifier line unchanged",
+   "files": {
+    "src/auth/validate.ts": "const PASSWORD_MIN_LENGTH = 8;\n  if (!token) throw new Error('missing token');\n"
+   },
+   "command": "grep -rn \"PASSWORD\" src/",
+   "exit_code": 0,
+   "must_see": [
+    "const PASSWORD_MIN_LENGTH = 8;"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "successful grep output with identifiers passes through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn \"PASSWORD\" src/"
+    },
+    "tool_response": {
+     "stdout": "src/auth/validate.ts:14:const PASSWORD_MIN_LENGTH = 8;\nsrc/auth/validate.ts:22:  if (!token) throw new Error('missing token');\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "const PASSWORD_MIN_LENGTH = 8;",
+    "missing token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

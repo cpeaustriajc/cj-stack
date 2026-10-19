@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0341",
+ "title": "dangerouslyDisableSandbox retry of cat",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "dangerouslyDisableSandbox true denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.ssh/config",
+     "dangerouslyDisableSandbox": true
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of ~/.ssh/config, which is not a private key. dangerouslyDisableSandbox is not an item-4 rule.)"
+  },
+  {
+   "kind": "post",
+   "name": "bearer token in ssh config redacted if run",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.ssh/config",
+     "dangerouslyDisableSandbox": true
+    },
+    "tool_response": {
+     "stdout": "Host proxy\n  ProxyCommand curl -H 'Authorization: Bearer FAKESECRET_BEARER' https://gw.example.com\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BEARER"
+   ],
+   "must_see": [
+    "Authorization: Bearer",
+    "ProxyCommand"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

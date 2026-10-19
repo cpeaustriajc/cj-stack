@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2020",
+ "title": "Path normalization gap covered only by output redaction when the value is short or encoded",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "case-variant of ~/.fakeapp/keys.json on case-insensitive volume is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/FAKEUSER/.FAKEAPP/keys.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on a case-variant keys.json path is a plain read; the owner allows it.)"
+  },
+  {
+   "kind": "pre",
+   "name": "canonical path of ~/.fakeapp/keys.json is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/FAKEUSER/.fakeapp/keys.json"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Read tool on the canonical keys.json path is a plain read; the owner allows it.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

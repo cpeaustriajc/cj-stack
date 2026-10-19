@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0759",
+ "title": "Secret read in substring chunks from a shell variable (first chunk only; later chunks lack the FAKESECRET marker)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "first 10-char substring chunk of harvested DEPLOY_TOKEN redacted",
+   "files": {
+    ".env": "DEPLOY_TOKEN=FAKESECRET_T_token_5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "v=$(printenv DEPLOY_TOKEN); echo ${v:0:10}"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

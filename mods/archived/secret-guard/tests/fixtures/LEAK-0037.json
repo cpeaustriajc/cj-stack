@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0037",
+ "title": "gh gist create publishes a file containing a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "gh gist create of file containing harvested value is denied",
+   "files": {
+    "notes.txt": "gist token FAKESECRET_gist_10\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh gist create --public notes.txt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (gh gist create names no secret source and has no value in the input; item 4 does not cover publishing a file. Fixture expects deny; owner should decide.)"
+  },
+  {
+   "kind": "pre",
+   "name": "control: gh pr status stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "gh pr status"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

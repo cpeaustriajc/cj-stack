@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0306",
+ "title": "Core dump enabled by ulimit then Read of /cores",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ulimit -c unlimited before running binary is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ulimit -c unlimited && ./app-under-test"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Read of /cores/core.4321 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/cores/core.4321"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of a core file with nothing combined; owner allows plain Read of secret sources.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

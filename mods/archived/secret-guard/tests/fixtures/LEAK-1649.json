@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1649",
+ "title": "ssh cat of remote .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh whose remote body cats a .env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-host 'cat /srv/app/.env'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of a .env over ssh is a display of a secret source with nothing combined; owner allows this, redactor hides values.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote .env output has URL password redacted at source",
+   "files": {},
+   "command": "printf 'DB_URL=postgres://app:FAKESECRET_DB_PW@db.internal/app\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DB_PW"
+   ],
+   "must_see": [
+    "DB_URL",
+    "db.internal/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

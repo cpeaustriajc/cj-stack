@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0072",
+ "title": "Process names containing secret-ish words must not be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ps comm lines with auth/token/key/secret words pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -axo pid,comm"
+    },
+    "tool_response": {
+     "stdout": "301 /System/Library/Frameworks/Security.framework/.../AuthenticationServices\n412 /usr/libexec/tokend\n455 /usr/sbin/pkeyd\n519 /usr/bin/keychainsharingmessagingd\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "301 /System/Library/Frameworks/Security.framework/.../AuthenticationServices",
+    "412 /usr/libexec/tokend",
+    "455 /usr/sbin/pkeyd",
+    "519 /usr/bin/keychainsharingmessagingd"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "ps -axo pid,comm is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -axo pid,comm"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

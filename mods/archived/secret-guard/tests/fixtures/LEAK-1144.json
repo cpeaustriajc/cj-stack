@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1144",
+ "title": "ssh docker inspect filtered for key names: redact POSTGRES_PASSWORD at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect Env line redacted at source",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg\n"
+   },
+   "command": "printf '%s\\n' '\"POSTGRES_PASSWORD=FAKESECRET_pg\"'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pg"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

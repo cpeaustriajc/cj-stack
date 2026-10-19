@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0107",
+ "title": "printenv | grep -i key exported via tool content span (i1)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv | grep -i key: password redacted, key name kept (span half not testable here)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep -i key"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://user:FAKESECRET_pg_pw@host/db\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pg_pw"
+   ],
+   "must_see": [
+    "DATABASE_URL=postgres://user:[REDACTED]@host/db"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,125 @@
+{
+  "case_id": "LEAK-2202",
+  "title": "An echo, printf or read prompt label followed by a literal value stays redacted and refused",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "post",
+      "name": "Read of echo label with a literal",
+      "files": {},
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/u/notes/setup.sh"
+        },
+        "tool_response": {
+          "type": "text",
+          "file": {
+            "filePath": "/home/u/notes/setup.sh",
+            "content": "echo 'API token: ' FAKESECRET_r8Kq2LmZ7w\n",
+            "numLines": 1,
+            "startLine": 1,
+            "totalLines": 1
+          }
+        }
+      },
+      "must_not_see": [
+        "FAKESECRET_r8Kq2LmZ7w"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "Read of read prompt with a literal word",
+      "files": {},
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/u/notes/setup2.sh"
+        },
+        "tool_response": {
+          "type": "text",
+          "file": {
+            "filePath": "/home/u/notes/setup2.sh",
+            "content": "read -rsp 'API token: ' FAKESECRET_r8Kq2LmZ7w\n",
+            "numLines": 1,
+            "startLine": 1,
+            "totalLines": 1
+          }
+        }
+      },
+      "must_not_see": [
+        "FAKESECRET_r8Kq2LmZ7w"
+      ]
+    },
+    {
+      "kind": "post",
+      "name": "Read of printf label with a literal",
+      "files": {},
+      "event": {
+        "hook_event_name": "PostToolUse",
+        "tool_name": "Read",
+        "tool_input": {
+          "file_path": "/home/u/notes/setup3.sh"
+        },
+        "tool_response": {
+          "type": "text",
+          "file": {
+            "filePath": "/home/u/notes/setup3.sh",
+            "content": "printf 'API token: ' FAKESECRET_r8Kq2LmZ7w\n",
+            "numLines": 1,
+            "startLine": 1,
+            "totalLines": 1
+          }
+        }
+      },
+      "must_not_see": [
+        "FAKESECRET_r8Kq2LmZ7w"
+      ]
+    },
+    {
+      "kind": "pre",
+      "name": "deny echo label with a literal",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/deny-echo-label-with-a-l.md",
+          "content": "echo 'API token: ' FAKESECRET_r8Kq2LmZ7w\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "deny read prompt with a literal word",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/deny-read-prompt-with-a-.md",
+          "content": "read -rsp 'API token: ' FAKESECRET_r8Kq2LmZ7w\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "deny printf label with a literal",
+      "files": {},
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/notes/deny-printf-label-with-a.md",
+          "content": "printf 'API token: ' FAKESECRET_r8Kq2LmZ7w\n"
+        }
+      },
+      "expect": "deny"
+    }
+  ]
+}

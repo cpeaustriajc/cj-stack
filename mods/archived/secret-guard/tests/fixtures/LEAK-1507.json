@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-1507",
+ "title": "Browser read_network_requests returns Authorization header",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bearer token redacted, Authorization header name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__exampleBrowser__read_network_requests",
+    "tool_input": {},
+    "tool_response": [
+     {
+      "headers": {
+       "Authorization": "Bearer FAKESECRET_net"
+      }
+     }
+    ]
+   },
+   "must_not_see": [
+    "FAKESECRET_net"
+   ],
+   "must_see": [
+    "Authorization"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "read_network_requests without a header filter is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__exampleBrowser__read_network_requests",
+    "tool_input": {}
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain read of network requests with no combo; not a spec deny rule. Owner allows plain reads.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

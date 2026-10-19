@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1143",
+ "title": "ssh remote printenv filtered for keys: deny printenv over ssh; redact STRIPE_KEY output at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh printenv | grep -i key denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@prod-host 'printenv | grep -i key'"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: printenv piped through grep -i key prints matching lines, which is plain display over ssh, not an oracle; allowed, output redacted."
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated STRIPE_KEY line redacted at source",
+   "files": {
+    ".env": "STRIPE_KEY=FAKESECRET_s\n"
+   },
+   "command": "printf '%s\\n' 'STRIPE_KEY=FAKESECRET_s'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_s"
+   ],
+   "must_see": [
+    "STRIPE_KEY="
+   ]
+  }
+ ]
+}

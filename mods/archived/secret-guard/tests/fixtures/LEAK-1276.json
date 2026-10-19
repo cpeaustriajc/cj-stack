@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1276",
+ "title": "Environment grep for MCP_REMOTE client secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "env-grep-mcp-remote-allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i MCP_REMOTE"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: env piped to a grep that prints matching lines is plain display; allowed and the output is redacted. Renamed from (denied) to (allowed) to match expect."
+  },
+  {
+   "kind": "post",
+   "name": "env-grep-mcp-remote-values-redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i MCP_REMOTE"
+    },
+    "tool_response": {
+     "stdout": "MCP_REMOTE_CLIENT_ID=FAKESECRET_cid0008\nMCP_REMOTE_CLIENT_SECRET=FAKESECRET_csec0008\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cid0008",
+    "FAKESECRET_csec0008"
+   ],
+   "must_see": [
+    "MCP_REMOTE_CLIENT_ID=",
+    "MCP_REMOTE_CLIENT_SECRET="
+   ]
+  }
+ ]
+}

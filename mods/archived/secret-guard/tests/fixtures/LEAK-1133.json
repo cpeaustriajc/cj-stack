@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1133",
+ "title": "Earlier cat ~/.npmrc: deny the cat and mask the value on PostToolUse (JSONL persistence part is harness-side, not asserted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat ~/.npmrc denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.npmrc"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of ~/.npmrc with nothing combined; owner allows plain reads of secret sources.)"
+  },
+  {
+   "kind": "post",
+   "name": "cat ~/.npmrc output: _authToken value masked",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ~/.npmrc"
+    },
+    "tool_response": {
+     "stdout": "_authToken=FAKESECRET_npm\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npm"
+   ],
+   "must_see": [
+    "_authToken="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

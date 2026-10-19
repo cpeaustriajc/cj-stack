@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1214",
+ "title": "systemctl show plus cat of a shell rc file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Environment API_KEY and export GH_TOKEN both redacted (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'Environment=API_KEY=FAKESECRET_a8\\nexport GH_TOKEN=FAKESECRET_g2\\n'",
+   "must_not_see": [
+    "FAKESECRET_a8",
+    "FAKESECRET_g2"
+   ],
+   "must_see": [
+    "Environment=API_KEY=",
+    "export GH_TOKEN="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "systemctl show plus cat ~/.zshrc redacted by PostToolUse",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'systemctl show myapp -p Environment; cat ~/.zshrc'"
+    },
+    "tool_response": {
+     "stdout": "Environment=API_KEY=FAKESECRET_a8\nexport GH_TOKEN=FAKESECRET_g2\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a8",
+    "FAKESECRET_g2"
+   ],
+   "must_see": [
+    "Environment=API_KEY=",
+    "export GH_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

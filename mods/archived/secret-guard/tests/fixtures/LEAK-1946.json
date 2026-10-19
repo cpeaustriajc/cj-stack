@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1946",
+ "title": "Malformed replacement shape makes the hook fail open on a Bash result",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash result replacement must keep full Bash object shape and drop the secret",
+   "files": {
+    ".env": "SHAPE_TOKEN=FAKESECRET_shape_5q\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "SHAPE_TOKEN=FAKESECRET_shape_5q\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_shape_5q"
+   ],
+   "must_see": [
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

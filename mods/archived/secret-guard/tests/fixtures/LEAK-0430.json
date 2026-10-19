@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0430",
+ "title": "Hook crashes during claude -p Bash call (fault-injected build: runner must crash the hook)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat fixture env with TOKEN= line",
+   "files": {
+    "fixture/app.env": "TOKEN=FAKESECRET_tok_77\n"
+   },
+   "prompt": "Run `cat fixture/app.env` with Bash and reply with its output verbatim.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_tok_77"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

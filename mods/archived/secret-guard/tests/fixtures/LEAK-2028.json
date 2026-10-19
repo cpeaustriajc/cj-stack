@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2028",
+ "title": "Read of a clipboard-manager database file returns a secret in a plain-pattern form (store path UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read output containing a copied password value is redacted (clipboard store path not used; path UNVERIFIED)",
+   "files": {
+    "clipboard-history.txt": "row 3: FAKESECRET_abc123def456\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_abc123def456\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "clipboard-history.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "clipboard-history.txt",
+      "content": "row 3: FAKESECRET_abc123def456\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_abc123def456"
+   ],
+   "must_see": [
+    "row 3"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

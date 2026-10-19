@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-1935",
+ "title": "Detached nohup daemon writes secret to log; later Bash tail is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "call 2 cat of daemon log is redacted",
+   "files": {
+    ".cache/worker.log": "FAKESECRET_aaa111\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .cache/worker.log"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_aaa111\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aaa111"
+   ],
+   "must_see": [
+    "stdout"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  },
+  {
+   "kind": "post",
+   "name": "call 1 detached start with empty output passes unchanged",
+   "files": {
+    ".cache/worker.log": "FAKESECRET_aaa111\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "nohup sh -c 'echo FAKESECRET_aaa111; sleep 99999' > $HOME/.cache/worker.log 2>&1 &"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "interrupted"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0235",
+ "title": "Bare known prefix from cut -c1-8 is not matched by any rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cut -c1-8 bare sk_live_ prefix becomes [REDACTED] (sk_live_ has no FAKE marker; runner may reject)",
+   "files": {
+    ".env": "sk_live_FAKESECRET_0123456789\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c1-8 .env | head -1"
+    },
+    "tool_response": {
+     "stdout": "sk_live_\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "cut on .env is denied per LEAK-0228 policy (UNVERIFIED whether cut is in the guard transform list)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c1-8 .env | head -1"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

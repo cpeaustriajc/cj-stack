@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0890",
+ "title": "psql wrapped-format value cell with continuation lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "psql-wrapped-value-cell",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "psql \"$DB\" -c \"select name, value from settings where name like '%token%'\""
+    },
+    "tool_response": {
+     "stdout": " name      | value\n-----------+------------------------------------------------\n api_token | FAKESECRET_TOKEN_AAAAAAAAAAAA+\n           | FAKESECRET_BBBBBBBBBBBBBBBB+\n           | FAKESECRET_CCCCCCCCCCCC\n(1 row)\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TOKEN_AAAAAAAAAAAA",
+    "FAKESECRET_BBBBBBBBBBBBBBBB",
+    "FAKESECRET_CCCCCCCCCCCC"
+   ],
+   "must_see": [
+    "api_token",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

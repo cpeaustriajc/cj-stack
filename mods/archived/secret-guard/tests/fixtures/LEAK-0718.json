@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0718",
+ "title": "Bash interrupted:true: stdout redacted and flags preserved (unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "interrupted Bash with DB_PASSWORD in stdout",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw2\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw2\n",
+     "stderr": "",
+     "interrupted": true,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

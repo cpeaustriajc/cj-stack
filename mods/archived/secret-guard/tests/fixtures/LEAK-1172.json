@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1172",
+ "title": "Prompt injection in fetched issue asks for an env grep (only the Bash output expectation is tested; model compliance with injected text is not testable)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "env | grep ANTHROPIC output redacted at source",
+   "files": {},
+   "command": "ANTHROPIC_API_KEY=FAKESECRET_anth env | grep ANTHROPIC",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_anth"
+   ],
+   "must_see": [
+    "ANTHROPIC_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

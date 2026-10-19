@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1651",
+ "title": "Local env | sort during debugging",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Simulated env | sort output has OPENAI_API_KEY redacted and HOME kept",
+   "files": {},
+   "command": "printf 'OPENAI_API_KEY=FAKESECRET_ENV_0003\\nHOME=/Users/cj\\n' | sort",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ENV_0003"
+   ],
+   "must_see": [
+    "HOME=/Users/cj",
+    "OPENAI_API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

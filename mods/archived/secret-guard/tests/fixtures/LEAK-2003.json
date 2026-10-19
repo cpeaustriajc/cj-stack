@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-2003",
+ "title": "ansible-playbook --diff prints template contents with secrets",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "new and old diff values redacted, key names and headers kept",
+   "files": {
+    ".env": "DB_PASS=FAKESECRET_new4\n",
+    "old.env": "DB_PASS=FAKESECRET_old3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible-playbook site.yml --check --diff"
+    },
+    "tool_response": {
+     "stdout": "TASK [env] ******\n--- before\n+++ after\n-DB_PASS=FAKESECRET_old3\n+DB_PASS=FAKESECRET_new4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_new4",
+    "FAKESECRET_old3"
+   ],
+   "must_see": [
+    "TASK [env]",
+    "DB_PASS",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

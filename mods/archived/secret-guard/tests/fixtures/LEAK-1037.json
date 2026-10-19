@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1037",
+ "title": "direnv exec echoing a DB URL",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "password in DB URL redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "direnv exec . sh -c 'echo $DATABASE_URL'"
+    },
+    "tool_response": {
+     "stdout": "postgres://app:FAKESECRET_pw_BF68@db.internal/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_BF68"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in echoes DB URL",
+   "files": {},
+   "command": "printf 'postgres://app:FAKESECRET_pw_BF68@db.internal/app\\n'",
+   "must_not_see": [
+    "FAKESECRET_pw_BF68"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal/app"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

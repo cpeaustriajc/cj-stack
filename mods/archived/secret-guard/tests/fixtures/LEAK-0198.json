@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0198",
+ "title": "helm get values --all -o json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "helm db password redacted, image tag kept (simulated)",
+   "files": {
+    "helm.out": "{\"image\":{\"tag\":\"1.2\"},\"db\":{\"password\":\"FAKESECRET_helm_33\"}}\n"
+   },
+   "command": "cat helm.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_helm_33"
+   ],
+   "must_see": [
+    "1.2"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "helm get values via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "helm get values myapp -n prod --all -o json"
+    },
+    "tool_response": {
+     "stdout": "{\"image\":{\"tag\":\"1.2\"},\"db\":{\"password\":\"FAKESECRET_helm_33\"}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_helm_33"
+   ],
+   "must_see": [
+    "1.2"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

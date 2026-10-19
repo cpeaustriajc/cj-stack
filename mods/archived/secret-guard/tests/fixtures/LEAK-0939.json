@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0939",
+ "title": "SendGrid SG. key in printf output is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash printf of SG. two-dot key",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'SG.FAKEID0123456789ab.FAKESECRET0123456789abcdefghijklmnopqrs\\n'"
+    },
+    "tool_response": {
+     "stdout": "SG.FAKEID0123456789ab.FAKESECRET0123456789abcdefghijklmnopqrs\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "SG.FAKEID0123456789ab.FAKESECRET0123456789abcdefghijklmnopqrs"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

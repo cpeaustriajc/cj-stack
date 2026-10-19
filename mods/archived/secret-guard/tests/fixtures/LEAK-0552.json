@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0552",
+ "title": "env-style grep for STRIPE names: value redacted at source (simulated env output)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "STRIPE_SECRET_KEY value redacted, name kept, exit 0",
+   "files": {
+    "bin/env-sim.sh": "echo 'PATH=/usr/bin:/bin'\necho 'STRIPE_SECRET_KEY=FAKESECRET_stripe15'\necho 'HOME=/tmp'\n"
+   },
+   "command": "sh bin/env-sim.sh | grep -i STRIPE",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_stripe15"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

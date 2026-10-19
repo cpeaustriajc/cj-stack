@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1436",
+ "title": "export -p shows a shell-escaped value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "export -p line with shell-escaped value",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_p4$`x\n"
+   },
+   "command": "API_KEY='FAKESECRET_p4$`x'; export API_KEY; export -p | grep API_KEY",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_p4"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "double-quoted backslash-escaped form of the value",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_p4$`x\n"
+   },
+   "command": "printf '%s\\n' 'declare -x API_KEY=\"FAKESECRET_p4\\$\\`x\"'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_p4\\$\\`x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

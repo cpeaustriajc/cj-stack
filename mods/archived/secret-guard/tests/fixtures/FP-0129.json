@@ -1,0 +1,31 @@
+{
+ "case_id": "FP-0129",
+ "title": "Benign screenshot Read is withheld (false positive; unit proves hook does not withhold benign image payload; real visibility needs e2e with a real PNG, UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Benign image Read payload must remain visible",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "ok.png"
+    },
+    "tool_response": {
+     "type": "image",
+     "file": {
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+      "type": "image/png",
+      "originalSize": 68
+     }
+    }
+   },
+   "must_see": [
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0176",
+ "title": "docker run cat /app/.env: DB_PASSWORD redacted; docker run reading .env denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated container cat of .env with DB_PASSWORD",
+   "files": {
+    "sim-app-env.txt": "DB_PASSWORD=FAKESECRET_copy_15\n"
+   },
+   "command": "cat sim-app-env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_copy_15"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker run ... cat /app/.env is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker run --rm myapp cat /app/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain cat of /app/.env inside a container with no transform; a plain display via docker run.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

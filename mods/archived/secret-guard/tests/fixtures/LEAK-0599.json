@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0599",
+ "title": "pprof goroutine debug=2 stack shows token argument (stack line kept)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "goroutine stack token value redacted, line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s 'http://localhost:6060/debug/pprof/goroutine?debug=2' | grep -i token"
+    },
+    "tool_response": {
+     "stdout": "main.connect(token=\"FAKESECRET_gr63\")\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gr63"
+   ],
+   "must_see": [
+    "main.connect(token="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated goroutine dump grep redacted at source",
+   "files": {
+    "goroutine.txt": "goroutine 1 [running]:\nmain.connect(token=\"FAKESECRET_gr63\")\nmain.main()\n"
+   },
+   "command": "cat goroutine.txt | grep -i token",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_gr63"
+   ],
+   "must_see": [
+    "main.connect(token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

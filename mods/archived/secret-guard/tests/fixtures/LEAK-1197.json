@@ -1,0 +1,18 @@
+{
+ "case_id": "LEAK-1197",
+ "title": "ssh sudo tr redirect of a process environ",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "tr redirect of a NUL-separated environ file",
+   "files": {},
+   "command": "printf 'SERVICE_TOKEN=FAKESECRET_s3\\000HOME=/root\\000' > environ.bin && tr '\\000' '\\n' < environ.bin",
+   "must_not_see": [
+    "FAKESECRET_s3"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

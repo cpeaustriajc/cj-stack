@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1690",
+ "title": "WebFetch of an asciinema.org recording",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "WebFetch of asciinema.org recording is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://asciinema.org/a/123456",
+     "prompt": "show the full output"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain WebFetch that displays a remote recording. Nothing local is combined. Low confidence: the recording may count as a secret source.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, token in WebFetch result is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://asciinema.org/a/123456",
+     "prompt": "show the full output"
+    },
+    "tool_response": {
+     "bytes": 120,
+     "code": 200,
+     "codeText": "OK",
+     "result": "Terminal recording\n$ deploy\ntoken=FAKESECRET_CAST_WEB_0001",
+     "durationMs": 900,
+     "url": "https://asciinema.org/a/123456"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_CAST_WEB_0001"
+   ],
+   "must_see": [
+    "token=[REDACTED]",
+    "Terminal recording"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

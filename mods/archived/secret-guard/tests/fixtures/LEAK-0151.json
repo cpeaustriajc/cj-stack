@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0151",
+ "title": "base64 < .dev.vars: guard denies secret source plus transform; output hook must also withhold the base64 of the line (base64 computed by hand, UNVERIFIED by running)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "base64 of a secret file is denied",
+   "files": {
+    ".dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_9z\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < .dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "base64 output of the token line redacted",
+   "files": {
+    ".dev.vars": "CLOUDFLARE_API_TOKEN=FAKESECRET_cf_tok_9z\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 < .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "Q0xPVURGTEFSRV9BUElfVE9LRU49RkFLRVNFQ1JFVF9jZl90b2tfOXoK\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "Q0xPVURGTEFSRV9BUElfVE9LRU49RkFLRVNFQ1JFVF9jZl90b2tfOXoK"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

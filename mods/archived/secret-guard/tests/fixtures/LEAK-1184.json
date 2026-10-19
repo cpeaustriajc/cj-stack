@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1184",
+ "title": "tmux capture-pane shows a less view of an .env file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "API_KEY value replaced, DB_HOST passes",
+   "files": {},
+   "command": "printf '%s\\n' 'API_KEY=FAKESECRET_x1' 'DB_HOST=db.internal'",
+   "must_not_see": [
+    "FAKESECRET_x1"
+   ],
+   "must_see": [
+    "DB_HOST=db.internal"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1794",
+ "title": "Snapshot update writes live values into tracked .snap files",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "deny jest -u snapshot update",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx jest -u --ci=false"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "deny jest --updateSnapshot long flag",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx jest --updateSnapshot"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "allow jest without update flag",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npx jest --ci"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1335",
+ "title": "Docker exec multiplexed stream with raw 8-byte frame header bytes",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printf emits raw frame header then DATABASE_PASSWORD line",
+   "files": {},
+   "command": "printf '\\001\\000\\000\\000\\000\\000\\000\\050DATABASE_PASSWORD=FAKESECRET_execpw0054\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_execpw0054"
+   ],
+   "must_see": [
+    "DATABASE_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

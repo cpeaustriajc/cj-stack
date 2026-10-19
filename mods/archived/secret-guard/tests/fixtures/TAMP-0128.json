@@ -1,0 +1,47 @@
+{
+ "case_id": "TAMP-0128",
+ "title": "Symlink and case variant point at the protected settings file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ln -s case-variant of user settings is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ln -s ~/.claude/Settings.JSON ./notes.md"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "hardlink to user settings is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ln ~/.claude/settings.json ./notes.md"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "symlink to project .claude settings is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ln -s ./.claude/settings.json ./notes.md"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

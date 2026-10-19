@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1097",
+ "title": "Bash env | grep FAKESECRET: wrong-key object in updatedToolOutput is ignored",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "env grep output: model-visible must have the four Bash keys with the value redacted",
+   "files": {
+    ".env": "ANTHROPIC_API_KEY=FAKESECRET_anth_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep FAKESECRET"
+    },
+    "tool_response": {
+     "stdout": "ANTHROPIC_API_KEY=FAKESECRET_anth_1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_anth_1"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"stderr\"",
+    "\"interrupted\"",
+    "\"isImage\"",
+    "ANTHROPIC_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

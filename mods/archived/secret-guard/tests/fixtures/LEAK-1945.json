@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1945",
+ "title": "Secret lands on stderr of a failing AX read and the redactor only rewrites stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command writes known fake value to stderr; output redacted at source",
+   "files": {
+    ".env": "AX_ERR=FAKESECRET_err_2x\n"
+   },
+   "command": "printf 'execution error: Cannot get value (value was \"FAKESECRET_err_2x\")\\n' >&2; exit 1",
+   "must_not_see": [
+    "FAKESECRET_err_2x"
+   ],
+   "must_see": [
+    "execution error"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

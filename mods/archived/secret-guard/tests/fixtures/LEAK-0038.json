@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-0038",
+ "title": "Bash curl with documentation-style sk_test key literal",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl with typed sk_test_ bearer literal that only calls the API is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: Bearer sk_test_FAKESECRET11\" https://api.example.com/v1/charges"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R3: a typed secret literal that only calls an API (curl) and whose output is shown is allowed; the value is still redacted in output."
+  },
+  {
+   "kind": "pre",
+   "name": "control: curl with env variable reference stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: Bearer $STRIPE_TEST_KEY\" https://api.example.com/v1/charges"
+    }
+   },
+   "expect": "allow"
+  }
+ ]
+}

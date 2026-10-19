@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0479",
+ "title": "mkfifo relay fed by a background cat of ~/.npmrc",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "mkfifo plus background cat of npmrc relay is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "mkfifo /tmp/relay && (cat ~/.npmrc > /tmp/relay &) && cat /tmp/relay"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of npmrc prints authToken line redacted at source",
+   "files": {
+    ".npmrc": "//registry.npmjs.org/:_authToken=FAKESECRET_ff34\n"
+   },
+   "command": "cat .npmrc",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ff34"
+   ],
+   "must_see": [
+    "registry.npmjs.org",
+    "_authToken"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

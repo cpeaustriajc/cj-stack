@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0576",
+ "title": "Broad log show predicate returns other apps' tokens (large output; cap path must still redact)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "secret beyond large-output cap is redacted",
+   "files": {
+    "fixtures/show-tail.txt": "browser[901]: token=FAKESECRET_other41\nmyapp[77]: ok\n"
+   },
+   "command": "seq 1 40000 | sed 's/^/filler /'; cat fixtures/show-tail.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_other41"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre_exec",
+   "name": "secret in first line of large output is redacted and non-secret line kept",
+   "files": {
+    "fixtures/show-head.txt": "browser[901]: token=FAKESECRET_other41\n"
+   },
+   "command": "cat fixtures/show-head.txt; seq 1 40000 | sed 's/^/filler /'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_other41"
+   ],
+   "must_see": [
+    "browser[901]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

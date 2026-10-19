@@ -1,0 +1,72 @@
+{
+  "case_id": "FP-0195",
+  "title": "Harvest skips URLs, host:port, numbers, booleans and short words; a .env password still counts",
+  "level": "unit",
+  "duplicate_of_dropped": false,
+  "fixtures": [
+    {
+      "kind": "pre",
+      "name": "writing a curl to the local app URL from .env is allowed",
+      "files": {
+        ".env": "APP_URL=http://localhost:8000\nAPP_HOST=localhost:8000\nPORT=8000\nDEBUG=true\nNODE_ENV=development\nDB_NAME=postgres\nDB_PASSWORD=FAKESECRET_dbpw_7Kq2Lm\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/scripts/smoke.sh",
+          "content": "#!/bin/sh\ncurl -fsS http://localhost:8000/health\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "writing host:port, port, boolean and short word values from .env is allowed",
+      "files": {
+        ".env": "APP_URL=http://localhost:8000\nAPP_HOST=localhost:8000\nPORT=8000\nDEBUG=true\nNODE_ENV=development\nDB_NAME=postgres\nDB_PASSWORD=FAKESECRET_dbpw_7Kq2Lm\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/scripts/smoke.sh",
+          "content": "HOST=localhost:8000 PORT=8000 DEBUG=true\nnpm run development -- --db postgres\n"
+        }
+      },
+      "expect": "allow"
+    },
+    {
+      "kind": "pre",
+      "name": "writing the .env database pw is denied",
+      "files": {
+        ".env": "APP_URL=http://localhost:8000\nAPP_HOST=localhost:8000\nPORT=8000\nDEBUG=true\nNODE_ENV=development\nDB_NAME=postgres\nDB_PASSWORD=FAKESECRET_dbpw_7Kq2Lm\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/scripts/smoke.sh",
+          "content": "psql -c 'select 1' \"$URL\" # pw FAKESECRET_dbpw_7Kq2Lm\n"
+        }
+      },
+      "expect": "deny"
+    },
+    {
+      "kind": "pre",
+      "name": "a URL with the .env pw as userinfo is denied",
+      "files": {
+        ".env": "APP_URL=http://localhost:8000\nAPP_HOST=localhost:8000\nPORT=8000\nDEBUG=true\nNODE_ENV=development\nDB_NAME=postgres\nDB_PASSWORD=FAKESECRET_dbpw_7Kq2Lm\n"
+      },
+      "event": {
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Write",
+        "tool_input": {
+          "file_path": "{PROJECT}/scripts/smoke.sh",
+          "content": "curl http://app:FAKESECRET_dbpw_7Kq2Lm@localhost:8000/\n"
+        }
+      },
+      "expect": "deny"
+    }
+  ]
+}

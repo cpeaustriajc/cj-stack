@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1971",
+ "title": "otelHeadersHelper output exfiltrates env values as headers",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "otelHeadersHelper runs at startup and every 29 minutes outside any tool call, so no PreToolUse or PostToolUse event exists to test. Whether a project-scope helper is honoured is UNVERIFIED in the docs. Non-hook controls: review repo settings before trusting a clone, pin otelHeadersHelper in managed settings, keep high-value secrets out of the env (https://code.claude.com/docs/en/monitoring-usage).",
+ "duplicate_of_dropped": false
+}

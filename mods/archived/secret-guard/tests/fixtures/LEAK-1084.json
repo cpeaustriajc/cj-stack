@@ -1,0 +1,26 @@
+{
+ "case_id": "LEAK-1084",
+ "title": "Docker inspect Env JSON with JWT_SECRET containing an escaped double quote",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "JWT_SECRET value with escaped quote is replaced in JSON output; simulated docker output via printf",
+   "files": {
+    ".env": "JWT_SECRET=FAKESECRET_ab\\\"cd\\n"
+   },
+   "command": "printf '%s\\n' '[\"PATH=/usr/bin\",\"JWT_SECRET=FAKESECRET_ab\\\"cd\",\"NODE_ENV=production\"]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ab",
+    "FAKESECRET_ab\\\"cd"
+   ],
+   "must_see": [
+    "JWT_SECRET=",
+    "PATH=/usr/bin",
+    "NODE_ENV=production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

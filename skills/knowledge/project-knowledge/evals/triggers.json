@@ -1,0 +1,34 @@
+[
+ {
+  "query": "note that down as a decision: we're moving from REST to tRPC for the internal API, as of today",
+  "should_trigger": true
+ },
+ {
+  "query": "what did we decide about caching in this project and when? check the wiki",
+  "should_trigger": true
+ },
+ {
+  "query": "we changed our mind on the JavaScriptCore approach, supersede that decision with going fully native",
+  "should_trigger": true
+ },
+ {
+  "query": "write up the research on payment providers we did yesterday as a page in our notion",
+  "should_trigger": true
+ },
+ {
+  "query": "write the spec for the payments project",
+  "should_trigger": false
+ },
+ {
+  "query": "add a note to CLAUDE.md that tests run with pnpm vitest",
+  "should_trigger": false
+ },
+ {
+  "query": "what's my most repeated correction to claude",
+  "should_trigger": false
+ },
+ {
+  "query": "file a bug that the wiki link in the footer is broken",
+  "should_trigger": false
+ }
+]

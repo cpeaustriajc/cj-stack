@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1653",
+ "title": "pbpaste piped to head (including Universal Clipboard case)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pbpaste | head -c 300 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste | head -c 300"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (pbpaste is not an enumerated secret source and head -c is a plain display slice; no item-4 combo. Boundary: clipboard is not listed, owner should confirm.)"
+  },
+  {
+   "kind": "pre",
+   "name": "pbpaste | head -c 200 (iPhone Universal Clipboard form) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste | head -c 200"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Same as LEAK-1653#0 (head -c 200); clipboard not an enumerated secret source, no item-4 combo. Boundary flag.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

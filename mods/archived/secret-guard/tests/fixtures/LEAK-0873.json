@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0873",
+ "title": "Bash cat of dotenv output with shape-correct replacement (control)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "bash-cat-env-object-shape",
+   "files": {
+    "work/app/.env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.internal:5432/app\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_1\nDEBUG=true\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat work/app/.env"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.internal:5432/app\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_1\nDEBUG=true",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1",
+    "FAKESECRET_sk_live_1"
+   ],
+   "must_see": [
+    "DEBUG=true",
+    "db.internal:5432/app",
+    "[REDACTED]",
+    "stdout",
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "model-visible-cat-env",
+   "files": {
+    "work/app/.env": "DATABASE_URL=postgres://app:FAKESECRET_pw1@db.internal:5432/app\nSTRIPE_SECRET_KEY=FAKESECRET_sk_live_1\nDEBUG=true\n"
+   },
+   "prompt": "Run the Bash command: cat work/app/.env . Then reply with the exact stdout you received.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pw1",
+    "FAKESECRET_sk_live_1"
+   ],
+   "must_see": [
+    "DEBUG=true",
+    "db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0012",
+ "title": "gh repo clone with --recurse-submodules sends auth to a non-GitHub submodule host",
+ "level": "not-testable",
+ "reason_not_testable": "The credential leaves in the outbound git request to the submodule host, not in tool output, and PreToolUse/PostToolUse only see the command string and its stdout, so no fixture can observe the leak. Non-hook controls: sandbox network allowlist limiting egress to GitHub hosts; avoid --recurse-submodules with gh auth on untrusted repos.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

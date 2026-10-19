@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0384",
+ "title": "P9 op signin --raw eval then op item get field",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "eval op signin then op item get --fields password withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "eval \"$(op signin --raw)\" && op item get Deploy --fields password"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_op_31\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_op_31"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

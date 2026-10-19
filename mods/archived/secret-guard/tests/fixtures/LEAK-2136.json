@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-2136",
+ "title": "Redactor debug tee to a log: output channels clean (post) and a Write of the hook script adding tee is denied; the on-disk check itself is not expressible",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash cat app.env with FAKESECRET_ddd444: hook output and stderr clean",
+   "files": {
+    "app.env": "TOKEN=FAKESECRET_ddd444\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.env"
+    },
+    "tool_response": {
+     "stdout": "TOKEN=FAKESECRET_ddd444\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    },
+    "tool_use_id": "toolu_FAKE2136"
+   },
+   "must_not_see": [
+    "FAKESECRET_ddd444"
+   ],
+   "must_see": [
+    "TOKEN="
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Edit of hook script adding tee to a debug log is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/home/fake-user/.claude/hooks/secret_redact.py",
+     "old_string": "def main():",
+     "new_string": "def main():\n    os.system('tee -a $HOME/.claude/redactor-debug.log')",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

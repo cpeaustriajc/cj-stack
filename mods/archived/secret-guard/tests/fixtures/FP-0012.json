@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0012",
+ "title": "False positive: compose file placeholder ${POSTGRES_PASSWORD} must not be redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -n on compose file keeps the ${...} placeholder line visible",
+   "files": {
+    "docker-compose.yml": "services:\n  db:\n    image: postgres:16\n    environment:\n      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}\n"
+   },
+   "command": "grep -n PASSWORD docker-compose.yml",
+   "must_not_see": [],
+   "must_see": [
+    "POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

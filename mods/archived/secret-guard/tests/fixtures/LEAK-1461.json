@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1461",
+ "title": "Matcher throws on 2 MB Bash stdout with the secret near the end",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "2 MB of x then FAKESECRET_p@ss#1",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_p@ss#1\n"
+   },
+   "command": "head -c 2000000 /dev/zero | tr '\\0' 'x'; echo FAKESECRET_p@ss#1",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_p@ss#1"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

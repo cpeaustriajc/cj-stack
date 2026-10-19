@@ -1,0 +1,27 @@
+{
+ "case_id": "TAMP-0156",
+ "title": "A harmless edit of a hook script goes to Claude Code's check",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of a comment in .claude/hooks/x.sh is allowed",
+   "files": {
+    ".claude/hooks/x.sh": "#!/bin/sh\n# old comment\necho hi\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "{PROJECT}/.claude/hooks/x.sh",
+     "old_string": "# old comment",
+     "new_string": "# new comment",
+     "replace_all": false
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: edits to Claude Code's own settings and hooks go to Claude Code's check; secret-guard denies only content that dumps env or reads secrets, adds or changes a credential helper, or switches redaction off. Supersedes the 'may not loosen' note."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

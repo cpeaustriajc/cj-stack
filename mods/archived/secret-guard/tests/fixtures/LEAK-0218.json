@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0218",
+ "title": "Bash grep -q value-match existence oracle returns HIT/MISS",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -q with secret key and literal value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=FAKESECRET_a' .env && echo HIT || echo MISS"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "HIT answer is left unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q '^DB_PASSWORD=FAKESECRET_a' .env && echo HIT || echo MISS"
+    },
+    "tool_response": {
+     "stdout": "HIT\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "HIT"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

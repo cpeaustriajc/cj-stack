@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1096",
+ "title": "Bash returns FAKESECRET_pg1; string replacement is ignored and the raw value reaches the model",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Real session cat of a file holding the value; the model must see [REDACTED] only",
+   "files": {
+    "secret.txt": "FAKESECRET_pg1\n"
+   },
+   "prompt": "Use the Bash tool to run `cat secret.txt` and reply with exactly the text it printed.",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_pg1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

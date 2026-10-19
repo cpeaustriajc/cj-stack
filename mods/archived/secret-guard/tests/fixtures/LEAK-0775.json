@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0775",
+ "title": "Write of a config file whose content holds a harvested secret is denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write content with harvested apiKey is denied",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_api_w\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/app/config/local.json",
+     "content": "{\"apiKey\": \"FAKESECRET_api_w\"}"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

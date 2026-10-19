@@ -1,0 +1,8 @@
+{
+ "case_id": "REL-0064",
+ "title": "onFailure block on a Claude Code build older than 2.1.295 (needs a runner-pinned old binary, which the format cannot select)",
+ "level": "not-testable",
+ "reason_not_testable": "Needs a Claude Code build older than 2.1.295 pinned by the runner. The fixture format has no version pin, and an e2e on the current build would pass without exercising onFailure on an old build. Non-hook control: a setup check that refuses to start a session below 2.1.295, plus the CI pin named in the mitigation.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

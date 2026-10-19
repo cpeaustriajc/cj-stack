@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0357",
+ "title": "K11 secret redirected to file then cat in same Bash call",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "redirect-then-cat output withheld via secret-source match",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s \"prod-api\" -w > /tmp/k.txt && cat /tmp/k.txt"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_prod_4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_prod_4"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

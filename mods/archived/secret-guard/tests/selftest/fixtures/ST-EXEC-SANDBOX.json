@@ -1,0 +1,17 @@
+{
+ "case_id": "ST-EXEC-SANDBOX",
+ "title": "sandbox blocks real home and network",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "read ~/.ssh, ~/.claude, curl",
+   "command": "ls -la {REALHOME}/.ssh 2>&1 | head -c 200; echo; cat {REALHOME}/.claude/CLAUDE.md 2>&1 | head -c 200; echo; curl -sS -m 5 http://example.com 2>&1 | head -c 200; echo; touch {REALHOME}/sechook-probe 2>&1; ls {REALHOME}/sechook-probe 2>&1; exit 0",
+   "must_see": [
+    "Operation not permitted",
+    "Could not resolve host"
+   ],
+   "exit_code": 0
+  }
+ ]
+}

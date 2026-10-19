@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1245",
+ "title": "config file written with copied values then git diff",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of password into tracked config (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "config/production.json",
+     "content": "{\"password\": \"FAKESECRET_p12\"}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "git diff of config holding the value is redacted at source (diff output simulated with printf)",
+   "files": {
+    "config/production.json": "{\"password\": \"FAKESECRET_p12\"}\n"
+   },
+   "command": "printf '%s\\n' '+++ b/config/production.json' '+{\"password\": \"FAKESECRET_p12\"}'; true",
+   "must_not_see": [
+    "FAKESECRET_p12"
+   ],
+   "must_see": [
+    "password"
+   ],
+   "exit_code": 0
+  }
+ ]
+}

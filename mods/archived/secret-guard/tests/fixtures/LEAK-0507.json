@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0507",
+ "title": "[58] Read of /tmp firmlink path when the rule denies /private/tmp",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read /tmp/app/.env : API_KEY value redacted (O layer; P firmlink deny alternative not asserted)",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/tmp/app/.env"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/tmp/app/.env",
+      "content": "API_KEY=FAKESECRET_fw58\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_fw58"
+   ],
+   "must_see": [
+    "API_KEY"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0984",
+ "title": "Prompt-injected ps -ww -eo args dump",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "--password flag value masked, pid and --port intact",
+   "files": {
+    "ps-args.txt": "4410 worker --password FAKESECRET_pw_J8 --port 9000\n"
+   },
+   "command": "cat ps-args.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw_J8"
+   ],
+   "must_see": [
+    "4410 worker",
+    "--password [REDACTED]",
+    "--port 9000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,42 @@
+{
+ "case_id": "FP-0077",
+ "title": "Read package.json: author, authorization_note, keyv and @auth/core lines pass unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "package.json \u043d\u0435\u0433ative lines byte-identical",
+   "files": {
+    "package.json": "{\n  \"name\": \"fixture-app\",\n  \"author\": \"CJ <fixture@example.invalid>\",\n  \"authorization_note\": \"see docs\",\n  \"dependencies\": {\n    \"keyv\": \"^4.5.0\",\n    \"@auth/core\": \"^0.34.0\"\n  }\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "package.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "package.json",
+      "content": "{\n  \"name\": \"fixture-app\",\n  \"author\": \"CJ <fixture@example.invalid>\",\n  \"authorization_note\": \"see docs\",\n  \"dependencies\": {\n    \"keyv\": \"^4.5.0\",\n    \"@auth/core\": \"^0.34.0\"\n  }\n}\n",
+      "numLines": 9,
+      "startLine": 1,
+      "totalLines": 9
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "CJ <fixture@example.invalid>",
+    "authorization_note",
+    "see docs",
+    "keyv",
+    "^4.5.0",
+    "@auth/core",
+    "^0.34.0"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0148",
+ "title": "False-positive check: docs that merely mention settings.json are not blocked",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write of docs file that mentions settings.json is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "./docs/how-to-settings.json.md",
+     "content": "The key disableAllHooks turns off hooks. Documentation text only."
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit of app config src/settings.json is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "./src/settings.json",
+     "old_string": "\"debug\": false",
+     "new_string": "\"debug\": true"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1309",
+ "title": "Dependency resolution error echoes repo URL with user:token on stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "gradlew stubbed as sh script that writes the URL to stderr and exits 1; stderr channel must be redacted at source",
+   "files": {
+    "gradlew": "#!/bin/sh\necho \"Could not GET 'https://ci-bot:FAKESECRET_repotok0033@repo.example.test/maven/x.pom'\" >&2\nexit 1\n"
+   },
+   "command": "sh ./gradlew dependencies",
+   "must_not_see": [
+    "FAKESECRET_repotok0033"
+   ],
+   "must_see": [
+    "https://ci-bot:",
+    "@repo.example.test/maven/x.pom"
+   ],
+   "exit_code": 1
+  },
+  {
+   "kind": "post",
+   "name": "stderr field of a successful-status Bash result has the password redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "./gradlew dependencies"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "Could not GET 'https://ci-bot:FAKESECRET_repotok0033@repo.example.test/maven/x.pom'",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_repotok0033"
+   ],
+   "must_see": [
+    "https://ci-bot:",
+    "repo.example.test/maven/x.pom"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

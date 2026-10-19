@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0545",
+ "title": "POST to OAuth token endpoint returns access and refresh tokens",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "client_credentials token response JSON",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -X POST https://auth.example.test/oauth/token -d grant_type=client_credentials -u $CLIENT_ID:$CLIENT_SECRET"
+    },
+    "tool_response": {
+     "stdout": "{\"access_token\":\"FAKESECRET_oauth9\",\"refresh_token\":\"FAKESECRET_ref9\",\"token_type\":\"bearer\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oauth9",
+    "FAKESECRET_ref9"
+   ],
+   "must_see": [
+    "token_type",
+    "access_token",
+    "refresh_token",
+    "bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

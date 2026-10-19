@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-1404",
+ "title": "Read .json: JSON-escaped quote and backslash inside a secret value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON-escaped quote and backslash in dbPassword value",
+   "files": {
+    "config.json": "{\"dbPassword\": \"FAKESECRET_p\\\"ss\\\\1\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/Projects/fixture/config.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/Projects/fixture/config.json",
+      "content": "1\t{\"dbPassword\": \"FAKESECRET_p\\\"ss\\\\1\"}\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p",
+    "FAKESECRET_p\\\"ss",
+    "ss\\\\1"
+   ],
+   "must_see": [
+    "dbPassword"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

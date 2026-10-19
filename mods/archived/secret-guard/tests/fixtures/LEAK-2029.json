@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-2029",
+ "title": "Bash sqlite3 query returns the secret in hex or base64 form the redactor does not match",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sqlite3 hex() query on a clipboard-store path is denied (placeholder path; real store path UNVERIFIED)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Clipboard/history.db\" \"SELECT hex(item) FROM history\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sqlite3 base64() query on a clipboard-store path is denied (placeholder path; real store path UNVERIFIED)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Clipboard/history.db\" \"SELECT base64(item) FROM history\""
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "sqlite3 query on an ordinary project database stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 ./app.db \"SELECT count(*) FROM users\""
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1816",
+ "title": "gh run view --log --job grep for token or password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "CI log TOKEN= line via grep; value redacted, step prefix kept",
+   "files": {
+    "run-log.txt": "build\tStep 3\tTOKEN=FAKESECRET_UNMASK_01\nbuild\tStep 3\tcompiling\n"
+   },
+   "command": "grep -iE 'token|password|secret' run-log.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_UNMASK_01"
+   ],
+   "must_see": [
+    "Step 3"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

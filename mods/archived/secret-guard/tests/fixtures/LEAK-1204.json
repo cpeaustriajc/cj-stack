@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1204",
+ "title": "ansible-inventory --list --yaml with decrypted vault values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "become_password and db_pass YAML values replaced",
+   "files": {},
+   "command": "printf '%s\\n' 'all:' '  vars:' '    become_password: FAKESECRET_b2' '    db_pass: FAKESECRET_d3'",
+   "must_not_see": [
+    "FAKESECRET_b2",
+    "FAKESECRET_d3"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

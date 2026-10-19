@@ -1,0 +1,27 @@
+{
+ "case_id": "LEAK-1836",
+ "title": "ssh npm test prints server .env values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated failing remote npm test that prints an env value",
+   "files": {
+    "remote-sim.sh": "printf 'FAIL src/config.test.ts\\n  AssertionError: STRIPE=FAKESECRET_SSH_07\\n'\nexit 1\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_SSH_07\n"
+   },
+   "command": "sh remote-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_SSH_07"
+   ],
+   "must_see": [
+    "FAIL src/config.test.ts",
+    "AssertionError:",
+    "STRIPE="
+   ],
+   "policy_note": "R5: the value only appears in an ordinary file with no name signal; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

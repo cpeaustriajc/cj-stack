@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-2071",
+ "title": "plutil prints an API key from an app Info.plist in DerivedData",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plutil -p prints MapsApiKey value; value redacted, key name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -p ~/Library/Developer/Xcode/DerivedData/MyApp-FAKEHASH/Build/Products/Debug-iphonesimulator/MyApp.app/Info.plist"
+    },
+    "tool_response": {
+     "stdout": "{\n  \"MapsApiKey\" => \"FAKESECRET_maps_0001\"\n  \"CFBundleName\" => \"MyApp\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_maps_0001"
+   ],
+   "must_see": [
+    "MapsApiKey",
+    "CFBundleName"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

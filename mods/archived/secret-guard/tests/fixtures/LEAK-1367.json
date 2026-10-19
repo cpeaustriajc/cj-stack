@@ -1,0 +1,57 @@
+{
+ "case_id": "LEAK-1367",
+ "title": "base64 of a secret-bearing file (aligned and unaligned offsets)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard denies base64 of .dev.vars (secret source + transform)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 ./.dev.vars"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "guard denies base64 of /srv/app/.env (secret source + transform)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "base64 /srv/app/.env"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of value line at alignment 0 (encoding hand-computed, not executed)",
+   "files": {
+    ".dev.vars": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "printf 'DB_PASSWORD=FAKESECRET_pw1\\n' | base64",
+   "must_not_see": [
+    "REJfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wdzEK"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "base64 of file with value at non-zero offset (encoding hand-computed, not executed)",
+   "files": {
+    ".env": "X=1\nSTRIPE_KEY=FAKESECRET_sk_live_abc\n"
+   },
+   "command": "printf 'X=1\\nSTRIPE_KEY=FAKESECRET_sk_live_abc\\n' | base64",
+   "must_not_see": [
+    "WD0xClNUUklQRV9LRVk9RkFLRVNFQ1JFVF9za19saXZlX2FiYwo="
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

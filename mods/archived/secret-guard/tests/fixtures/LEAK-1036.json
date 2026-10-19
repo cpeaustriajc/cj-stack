@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1036",
+ "title": "direnv export json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "direnv JSON STRIPE value redacted, HOME kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "direnv export json"
+    },
+    "tool_response": {
+     "stdout": "{\"STRIPE_KEY\":\"FAKESECRET_sk_BE68\",\"HOME\":\"/Users/cj\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sk_BE68"
+   ],
+   "must_see": [
+    "HOME",
+    "/Users/cj"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in prints direnv JSON",
+   "files": {},
+   "command": "printf '{\"STRIPE_KEY\":\"FAKESECRET_sk_BE68\",\"HOME\":\"/Users/cj\"}\\n'",
+   "must_not_see": [
+    "FAKESECRET_sk_BE68"
+   ],
+   "must_see": [
+    "HOME",
+    "/Users/cj"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

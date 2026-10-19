@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1099",
+ "title": "OpenTelemetry tool-event export: raw stdout must not reach the exporter",
+ "level": "not-testable",
+ "reason_not_testable": "Telemetry export captures tool output outside the hook path; a PostToolUse hook changes only model-visible output and no fixture kind observes the exporter or collector. Control: non-hook check that tool-output content is disabled in the telemetry export or redacted at the collector (exact settings UNVERIFIED on 2.1.296).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

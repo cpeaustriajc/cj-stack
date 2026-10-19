@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1437",
+ "title": "declare -p shows the same shell-escaped value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "declare -p output with escaped value is redacted",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_p4$`x\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "declare -p API_KEY"
+    },
+    "tool_response": {
+     "stdout": "declare -x API_KEY=\"FAKESECRET_p4\\$\\`x\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p4",
+    "FAKESECRET_p4\\$\\`x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

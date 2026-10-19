@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1466",
+ "title": "sed one character per line with newlines (variant B)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cut | sed s/./&\\n/g",
+   "files": {
+    "fixture.env": "STRIPE_SECRET_KEY=FAKESECRET_stripe_0123456789abcdef\n"
+   },
+   "command": "cut -c19-52 fixture.env | sed 's/./&\\n/g'",
+   "must_not_see": [
+    "F\nA\nK\nE\nS\nE\nC\nR\nE\nT",
+    "a\nb\nc\nd\ne\nf"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

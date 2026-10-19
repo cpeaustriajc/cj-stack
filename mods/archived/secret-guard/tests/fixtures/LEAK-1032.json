@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1032",
+ "title": "kubectl get deployment -o yaml with literal env value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "deployment env value redacted, name line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "kubectl get deploy api -n prod -o yaml"
+    },
+    "tool_response": {
+     "stdout": "spec:\n  template:\n    spec:\n      containers:\n      - name: api\n        env:\n        - name: API_TOKEN\n          value: FAKESECRET_tok_BA60\n        - name: NODE_ENV\n          value: production\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok_BA60"
+   ],
+   "must_see": [
+    "name: API_TOKEN",
+    "name: NODE_ENV"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in cats deployment yaml",
+   "files": {
+    "deploy-api.yaml": "spec:\n  template:\n    spec:\n      containers:\n      - name: api\n        env:\n        - name: API_TOKEN\n          value: FAKESECRET_tok_BA60\n        - name: NODE_ENV\n          value: production\n"
+   },
+   "command": "cat deploy-api.yaml",
+   "must_not_see": [
+    "FAKESECRET_tok_BA60"
+   ],
+   "must_see": [
+    "name: API_TOKEN",
+    "name: NODE_ENV"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

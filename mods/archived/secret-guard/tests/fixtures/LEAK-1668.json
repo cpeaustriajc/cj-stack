@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1668",
+ "title": "Grep sweep of Application Support for token strings",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Grep rooted at Application Support is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "xox[bcp]-|token",
+     "path": "/Users/test/Library/Application Support",
+     "output_mode": "content"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Grep rooted at Application Support; owner allows Grep, no enumerated source piped to a transform.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, xoxb token in Grep output is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "xox[bcp]-|token",
+     "path": "/Users/test/Library/Application Support",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "Slack/notes.txt:1:auth xoxb-FAKESECRET_SWEEP_0001 ok",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "xoxb-FAKESECRET_SWEEP_0001"
+   ],
+   "must_see": [
+    "Slack/notes.txt:1:auth"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

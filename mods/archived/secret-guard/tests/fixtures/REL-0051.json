@@ -1,0 +1,20 @@
+{
+ "case_id": "REL-0051",
+ "title": "Huge AX dump times out the PostToolUse hook and raw output may pass through (e2e; fixture format has no hook-delay field, so the timeout path is not forced by this fixture)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "large dump with secret near end is not visible to model",
+   "files": {
+    ".env": "AX_BIG=FAKESECRET_big_11\n"
+   },
+   "prompt": "Run this Bash command and tell me the last line of its output: seq 1 200000 | sed 's/^/ui text /'; cat .env",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_big_11"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

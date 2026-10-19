@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-1408",
+ "title": "Bash: lowercase hex of a harvested value via xxd -p (printf source)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "xxd -p hex of harvested value is redacted at source",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_p@ss#1\n"
+   },
+   "command": "printf '%s' 'FAKESECRET_p@ss#1' | xxd -p",
+   "must_not_see": [
+    "46414b455345435245545f704073732331"
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

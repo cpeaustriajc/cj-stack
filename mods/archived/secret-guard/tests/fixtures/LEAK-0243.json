@@ -1,0 +1,95 @@
+{
+ "case_id": "LEAK-0243",
+ "title": "String-shaped updatedToolOutput for Bash is ignored and raw stdout shows",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "(a) DB_PASSWORD line in cat .env: object shape kept, secret absent",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw9"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "(b) API_KEY line in cat .env: object shape kept, secret absent",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_shape8\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "API_KEY=FAKESECRET_shape8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_shape8"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "(c) DB_PASSWORD line in fixtures/one.env: object shape kept, secret absent",
+   "files": {
+    "fixtures/one.env": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./fixtures/one.env"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_pw1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "stderr",
+    "interrupted",
+    "isImage"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

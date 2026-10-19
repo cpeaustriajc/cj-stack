@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1955",
+ "title": "Wrapper and path-qualified evasion of the mdfind guard (4 of 5 variants; plain command prefix omitted by fixture cap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Path-qualified /usr/bin/mdfind",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/bin/mdfind FAKESECRET_WRAP_003"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mdfind wrapped in env with LC_ALL",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env LC_ALL=C mdfind FAKESECRET_WRAP_003"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mdfind driven by xargs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xargs -I{} mdfind {} <<< FAKESECRET_WRAP_003"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "mdfind inside sh -c",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sh -c 'mdfind FAKESECRET_WRAP_003'"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

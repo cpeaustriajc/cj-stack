@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1342",
+ "title": "sops -d YAML with secret values under non-secret keys",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "live and relay values under non-secret keys, planted in harvested .env",
+   "files": {
+    ".env": "BILLING_LIVE=FAKESECRET_stripelive0059\nMAIL_RELAY=FAKESECRET_smtprelay0059\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sops -d secrets.enc.yaml"
+    },
+    "tool_response": {
+     "stdout": "stripe:\n  live: FAKESECRET_stripelive0059\nsmtp:\n  relay: FAKESECRET_smtprelay0059\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripelive0059",
+    "FAKESECRET_smtprelay0059"
+   ],
+   "must_see": [],
+   "policy_note": "R5: values have no secret-ish key name or provider format; planted in harvested .env so the known-value layer catches them."
+  },
+  {
+   "kind": "pre",
+   "name": "sops -d is plain display and is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sops -d secrets.enc.yaml"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "R1: sops -d is plain display with no transform or oracle, so allow. Expect changed from deny."
+  }
+ ]
+}

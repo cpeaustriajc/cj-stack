@@ -1,0 +1,44 @@
+{
+ "case_id": "LEAK-1326",
+ "title": "grep shell history for proxy line with password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep zsh_history stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -i proxy ~/.zsh_history"
+    },
+    "tool_response": {
+     "stdout": ": 1700000000:0;export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_hist0050@proxy.corp.example:8080\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hist0050"
+   ],
+   "must_see": [
+    "export HTTPS_PROXY=",
+    "proxy.corp.example:8080"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for history grep",
+   "files": {},
+   "command": "printf ': 1700000000:0;export HTTPS_PROXY=http://FAKEUSER:FAKESECRET_hist0050@proxy.corp.example:8080\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_hist0050"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

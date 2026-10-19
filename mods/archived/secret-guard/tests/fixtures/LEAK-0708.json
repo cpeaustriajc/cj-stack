@@ -1,0 +1,82 @@
+{
+ "case_id": "LEAK-0708",
+ "title": "Secret split and reversed across calls (cut then rev)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "reversed harvested value must be redacted (KNOWN GAP expected to fail today)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_pw_123 | rev"
+    },
+    "tool_response": {
+     "stdout": "321_wp_TERCESEKAF\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "321_wp_TERCESEKAF"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "cut fragment of harvested value must be redacted (KNOWN GAP expected to fail today)",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_123\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep DB_PASSWORD | cut -c17-"
+    },
+    "tool_response": {
+     "stdout": "ECRET_pw_123\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "ECRET_pw_123"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "secret-source cat .env piped to cut is denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | cut -c1-16"
+    }
+   },
+   "expect": "deny",
+   "files": {}
+  },
+  {
+   "kind": "pre",
+   "name": "legitimate grep over README stays allowed",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n TODO README.md"
+    }
+   },
+   "expect": "allow",
+   "files": {}
+  }
+ ],
+ "duplicate_of_dropped": false
+}

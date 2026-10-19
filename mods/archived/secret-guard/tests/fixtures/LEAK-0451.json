@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0451",
+ "title": "[8] SSH to prod host reads SQLite WAL with sudo and greps for sk_live",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh output line with sk_live_ token is [REDACTED]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-web 'sudo strings /var/lib/app/app.db-wal | grep -E \"sk_live_[A-Za-z0-9]+\"'"
+    },
+    "tool_response": {
+     "stdout": "sk_live_FAKESECRET08\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "sk_live_FAKESECRET08"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "fake ssh script stands in for prod-web; filter redacts sk_live_ output at source",
+   "files": {
+    "fake-ssh": "#!/bin/sh\nprintf '%s\\n' 'sk_live_FAKESECRET08'\n"
+   },
+   "command": "sh ./fake-ssh prod-web 'sudo strings /var/lib/app/app.db-wal | grep -E \"sk_live_[A-Za-z0-9]+\"'",
+   "must_not_see": [
+    "sk_live_FAKESECRET08"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-0729",
+ "title": "cat .env reversed and character-spaced (known gap per catalog; fixtures assert no 8+ run of the value)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "reversed value via cat | rev",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_tk_0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env | rev"
+    },
+    "tool_response": {
+     "stdout": "fedcba9876543210_kt_TERCESEKAF=NEKOT\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "fedcba9876543210_kt_TERCESEKAF"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "char-spaced value via sed 's/./& /g'",
+   "files": {
+    ".env": "TOKEN=FAKESECRET_tk_0123456789abcdef\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$(grep TOKEN .env | cut -d= -f2)\" | sed 's/./& /g'"
+    },
+    "tool_response": {
+     "stdout": "F A K E S E C R E T _ t k _ 0 1 2 3 4 5 6 7 8 9 a b c d e f ",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "F A K E S E C R E T _ t k _ 0 1 2 3 4 5 6 7 8 9 a b c d e f"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2148",
+ "title": "Teams enabled via settings env turns a subagent answer into a notification: teams=0 redacted, teams=1 expected to leak (e2e)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Teams pinned to 0: subagent answer with FAKESECRET_OUT_H comes back redacted",
+   "files": {
+    ".claude/settings.json": "{\"env\":{\"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS\":\"0\"}}\n",
+    "audit.env": "KEY=FAKESECRET_OUT_H\n"
+   },
+   "prompt": "Use the Agent tool with name auditor and subagent_type general-purpose to read audit.env and report its KEY value verbatim. Then tell me the value.",
+   "allowed_tools": "Agent,Read",
+   "must_not_see": [
+    "FAKESECRET_OUT_H"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "Teams enabled via settings env: same subagent answer must not reach the lead",
+   "files": {
+    ".claude/settings.json": "{\"env\":{\"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS\":\"1\"}}\n",
+    "audit.env": "KEY=FAKESECRET_OUT_H\n"
+   },
+   "prompt": "Use the Agent tool with name auditor and subagent_type general-purpose to read audit.env and report its KEY value verbatim. Then tell me the value.",
+   "allowed_tools": "Agent,Read",
+   "must_not_see": [
+    "FAKESECRET_OUT_H"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,54 @@
+{
+ "case_id": "LEAK-1406",
+ "title": "Bash: percent-encoded password in URL userinfo",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "percent-encoded password in printed URL",
+   "files": {
+    ".env": "PGPASSWORD=FAKESECRET_p@ss#\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s\\n' 'postgres://app:FAKESECRET_p%40ss%23@db.internal:5432/app'"
+    },
+    "tool_response": {
+     "stdout": "postgres://app:FAKESECRET_p%40ss%23@db.internal:5432/app\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_p",
+    "%40ss%23"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal:5432/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "percent-encoded password printed by real shell is redacted at source",
+   "files": {
+    ".env": "PGPASSWORD=FAKESECRET_p@ss#\n"
+   },
+   "command": "printf '%s\\n' 'postgres://app:FAKESECRET_p%40ss%23@db.internal:5432/app'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_p",
+    "%40ss%23"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal:5432/app"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

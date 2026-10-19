@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0140",
+ "title": "git show <sha>:<path> key value redacted in output (deny is the alternative; redaction fixtures only)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git show key value redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show 0a1b2c3:wg0.conf"
+    },
+    "tool_response": {
+     "stdout": "PrivateKey = FAKESECRET_old_key\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_old_key"
+   ],
+   "must_see": [
+    "PrivateKey"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "git show style output redacted at source",
+   "files": {},
+   "command": "printf 'PrivateKey = FAKESECRET_old_key\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_old_key"
+   ],
+   "must_see": [
+    "PrivateKey"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

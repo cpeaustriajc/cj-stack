@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2062",
+ "title": "Secret straddles the 2,000-character preview boundary",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Partial prefix of a registered value at the end of the preview is not shown",
+   "files": {
+    ".env": "CHUNK_TOKEN=FAKESECRET_tok_C3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat app.log"
+    },
+    "tool_response": {
+     "stdout": "chunk: start FAKESECRET_to",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_to"
+   ],
+   "must_see": [
+    "chunk: start"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

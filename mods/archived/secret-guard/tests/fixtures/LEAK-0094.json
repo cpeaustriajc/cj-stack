@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0094",
+ "title": "Malformed updatedToolOutput as plain string for Bash",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat .env stdout; output must keep the Bash object keys",
+   "files": {
+    ".env": "POLAR_ORG=FAKESECRET_org_9f8e7d\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "POLAR_ORG=FAKESECRET_org_9f8e7d",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_org_9f8e7d"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"stderr\"",
+    "\"interrupted\"",
+    "\"isImage\""
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

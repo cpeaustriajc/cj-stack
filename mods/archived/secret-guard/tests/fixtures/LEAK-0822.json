@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-0822",
+ "title": "Command hook times out on 2 MB Bash log output with a secret on line 1000 (generated log; hook timeout not reproduced)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "2 MB log with secret on line 1000 is redacted at source",
+   "files": {},
+   "command": "(yes 'INFO filler line' | head -n 999; echo 'DATABASE_URL=postgres://app:FAKESECRET_pw_1@db.internal/app'; yes 'INFO filler line' | head -c 2000000) > app.log; cat app.log",
+   "must_not_see": [
+    "FAKESECRET_pw_1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

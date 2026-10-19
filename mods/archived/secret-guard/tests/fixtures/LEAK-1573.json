@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-1573",
+ "title": "Notifier service logs show push body over ssh",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh journalctl over remote log stays allowed (rewritten through filter)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod-host 'journalctl -u notifier --since \"1 hour ago\" | tail -50'"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "Simulated remote journal via local file (never real ssh); otp= value replaced, label kept",
+   "files": {
+    "remote/journal.txt": "Jan 10 10:02:11 notifier[812]: sent push body otp=FAKESECRET_otp_456 to device\n"
+   },
+   "command": "cat remote/journal.txt",
+   "must_not_see": [
+    "FAKESECRET_otp_456"
+   ],
+   "must_see": [
+    "sent push body",
+    "otp="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

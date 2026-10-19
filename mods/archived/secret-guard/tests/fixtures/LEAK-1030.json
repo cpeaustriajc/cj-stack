@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1030",
+ "title": "ssh remote login shell printenv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ssh printenv output password in URL redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'printenv'"
+    },
+    "tool_response": {
+     "stdout": "HOME=/home/app\nDATABASE_URL=postgres://app:FAKESECRET_pw_AY57@db.internal/app\nNODE_ENV=production\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_AY57"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal/app",
+    "NODE_ENV=production",
+    "HOME=/home/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stand-in for remote printenv",
+   "files": {},
+   "command": "printf 'HOME=/home/app\\nDATABASE_URL=postgres://app:FAKESECRET_pw_AY57@db.internal/app\\nNODE_ENV=production\\n'",
+   "must_not_see": [
+    "FAKESECRET_pw_AY57"
+   ],
+   "must_see": [
+    "postgres://app:",
+    "@db.internal/app",
+    "NODE_ENV=production"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

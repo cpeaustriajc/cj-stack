@@ -1,0 +1,37 @@
+{
+ "case_id": "LEAK-0680",
+ "title": "docker inspect Env JSON keeps object keys and redacts DB_PASSWORD",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker inspect dokploy-app Env with DB_PASSWORD and PORT",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect dokploy-app --format '{{json .Config.Env}}'"
+    },
+    "tool_response": {
+     "stdout": "[\"DB_PASSWORD=FAKESECRET_pw1\",\"PORT=3000\"]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [
+    "\"stdout\"",
+    "\"stderr\"",
+    "\"interrupted\"",
+    "\"isImage\"",
+    "DB_PASSWORD=[REDACTED]",
+    "PORT=3000"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

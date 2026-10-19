@@ -1,0 +1,22 @@
+{
+ "case_id": "ST-E2E",
+ "title": "fake claude",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat .env",
+   "files": {
+    ".env": "K=FAKESECRET_toy1\n"
+   },
+   "prompt": "show .env",
+   "allowed_tools": "Bash",
+   "must_not_see": [
+    "FAKESECRET_toy1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

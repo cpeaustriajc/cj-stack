@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0455",
+ "title": "[12a] raw xattr -p bytes dumped with xxd",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xattr -p piped to xxd is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -p com.apple.metadata:kMDItemWhereFroms ~/Downloads/build.zip | xxd | head"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "Same ruling as LEAK-1862: an extended attribute piped to an encoder is denied, since encoding hides tokens in it from the redactor"
+  },
+  {
+   "kind": "pre",
+   "name": "xattr -p piped to base64 is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xattr -p com.apple.metadata:kMDItemWhereFroms ~/Downloads/build.zip | base64"
+    }
+   },
+   "expect": "deny",
+   "policy_note": "Same ruling as LEAK-1862: an extended attribute piped to an encoder is denied, since encoding hides tokens in it from the redactor"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

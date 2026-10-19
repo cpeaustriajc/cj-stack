@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1389",
+ "title": "Hook writes valid replacement JSON then exits 1",
+ "level": "not-testable",
+ "reason_not_testable": "The post fixture kind checks only model-visible output and the hook's stdout/stderr, not its exit status, and a non-zero exit cannot be forced on the real hook. Non-hook control: the hook always exits 0 on success and error paths, asserted in the hook's own unit suite.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

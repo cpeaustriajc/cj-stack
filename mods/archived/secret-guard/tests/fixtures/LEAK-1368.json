@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1368",
+ "title": "echo of a harvested value piped to rev",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo value piped to rev; reversed form must not be model-visible (known gap: expected to leak, recorded)",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_pw1\n"
+   },
+   "command": "echo -n FAKESECRET_pw1 | rev",
+   "exit_code": 0,
+   "must_not_see": [
+    "1wp_TERCESEKAF"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

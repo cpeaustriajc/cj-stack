@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-2002",
+ "title": "Encoding transform hides the secret from value matching (known gap)",
+ "level": "not-testable",
+ "reason_not_testable": "Value-based redaction cannot match a base64-encoded secret, so the expected outcome is a known unredacted leak. A pass/fail fixture would assert the gap rather than protection, and the only in-hook control is a PreToolUse deny on encoders, which is covered by LEAK-1995. Non-hook control: keep secret files off fleet hosts or use no_log.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

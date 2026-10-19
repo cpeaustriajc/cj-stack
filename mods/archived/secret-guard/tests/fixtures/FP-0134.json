@@ -1,0 +1,36 @@
+{
+ "case_id": "FP-0134",
+ "title": "git fsck --unreachable piped to git show --stat",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "stat output and hashes pass through unchanged",
+   "files": {
+    "fsck-unreachable-stat.out": "commit 9f3c2e1a7b6d5c4e3f2a1b0c9d8e7f6a5b4c3d2e\n    feat: add scratch notes\n .env | 1 +\n 1 file changed, 1 insertion(+)\n"
+   },
+   "command": "cat fsck-unreachable-stat.out",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "commit 9f3c2e1a7b6d5c4e3f2a1b0c9d8e7f6a5b4c3d2e",
+    "    feat: add scratch notes",
+    " .env | 1 +"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "fsck unreachable piped to git show --stat stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git fsck --unreachable --no-reflogs 2>/dev/null | awk '/commit/{print $3}' | xargs -I{} git show {} --stat"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

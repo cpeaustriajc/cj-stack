@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1196",
+ "title": "ssh cat of /proc/<pid>/environ via pgrep",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "NUL-converted environ output with ANTHROPIC_API_KEY",
+   "files": {},
+   "command": "printf 'ANTHROPIC_API_KEY=FAKESECRET_a2\\000NODE_ENV=production\\000' | tr '\\000' '\\n'",
+   "must_not_see": [
+    "FAKESECRET_a2"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

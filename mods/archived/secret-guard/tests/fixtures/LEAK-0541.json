@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0541",
+ "title": "ssh remote curl -v with bearer from remote file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated ssh curl -v trace with bearer header",
+   "files": {},
+   "command": "ssh() { printf 'remote-ok\\n* Connected\\n> GET /api/health HTTP/1.1\\n> Authorization: Bearer FAKESECRET_ssh6\\n< HTTP/1.1 200 OK\\n'; }; ssh prod 'curl -v -H \"Authorization: Bearer $(cat /etc/app/token)\" https://internal/api/health'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ssh6"
+   ],
+   "must_see": [
+    "> GET /api/health HTTP/1.1",
+    "< HTTP/1.1 200 OK",
+    "> Authorization: Bearer"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1015",
+ "title": "printenv piped to grep for key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printenv | grep key: value redacted, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv | grep -i key"
+    },
+    "tool_response": {
+     "stdout": "OPENAI_API_KEY=FAKESECRET_oa_AM56\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oa_AM56"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

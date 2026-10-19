@@ -1,0 +1,46 @@
+{
+ "case_id": "FP-0118",
+ "title": "False-positive guard: git commit timestamps stay unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard allows git log --format=%ct",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --format=%ct -3"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "three Unix timestamps pass through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log --format=%ct -3"
+    },
+    "tool_response": {
+     "stdout": "1760000000\n1760000100\n1760000200\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "1760000000",
+    "1760000100",
+    "1760000200"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

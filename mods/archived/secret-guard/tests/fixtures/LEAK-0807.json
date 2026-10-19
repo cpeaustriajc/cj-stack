@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0807",
+ "title": "Grep tool with unknown response shape containing the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep response as results array with line field",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "DATABASE_PASSWORD",
+     "path": "/work/app",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "results": [
+      {
+       "file": "app/.env",
+       "line": "DATABASE_PASSWORD=FAKESECRET_pw1"
+      }
+     ],
+     "truncated": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

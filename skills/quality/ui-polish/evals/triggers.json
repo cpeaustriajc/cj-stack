@@ -1,0 +1,34 @@
+[
+ {
+  "query": "review the new pricing page against the figma frame before I sign off on it",
+  "should_trigger": true
+ },
+ {
+  "query": "the modal animation feels off, polish the motion and spacing against our design",
+  "should_trigger": true
+ },
+ {
+  "query": "check this settings screen for visual mistakes: spacing, type, colors, focus states",
+  "should_trigger": true
+ },
+ {
+  "query": "give me a before/after/why table of UI fixes for the dashboard compared to the mockup",
+  "should_trigger": true
+ },
+ {
+  "query": "try to break the settings page like an impatient user",
+  "should_trigger": false
+ },
+ {
+  "query": "build the settings page from this figma",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the bug where saving settings throws a 500",
+  "should_trigger": false
+ },
+ {
+  "query": "write a feature file for the settings area",
+  "should_trigger": false
+ }
+]

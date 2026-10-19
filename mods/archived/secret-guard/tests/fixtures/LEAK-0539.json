@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0539",
+ "title": "Bash grep -n on .dev.vars returns secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -n on .dev.vars returns secret value line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n 'CLOUDFLARE' .dev.vars"
+    },
+    "tool_response": {
+     "stdout": "12:CLOUDFLARE_API_TOKEN=FAKESECRET_cf5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_cf5"
+   ],
+   "must_see": [
+    "12:CLOUDFLARE_API_TOKEN="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

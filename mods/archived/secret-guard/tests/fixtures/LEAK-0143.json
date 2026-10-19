@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0143",
+ "title": "WebFetch result: pasted WireGuard PrivateKey redacted, key name kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "fetched gist key redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://gist.example.com/FAKESECRET_id",
+     "prompt": "summarise the config"
+    },
+    "tool_response": {
+     "bytes": 120,
+     "code": 200,
+     "codeText": "OK",
+     "result": "[Interface]\nPrivateKey = FAKESECRET_wg_pasted\nAddress = 10.8.0.2/32\n",
+     "durationMs": 900,
+     "url": "https://gist.example.com/FAKESECRET_id"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wg_pasted"
+   ],
+   "must_see": [
+    "PrivateKey",
+    "Address"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

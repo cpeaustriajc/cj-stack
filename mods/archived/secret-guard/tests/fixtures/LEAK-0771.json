@@ -1,0 +1,25 @@
+{
+ "case_id": "LEAK-0771",
+ "title": "ssh remote cat of server secrets file and systemctl Environment dump (ssh simulated with printf, no real ssh)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote secrets and Environment lines are redacted at source",
+   "files": {
+    "secrets.env": "DB_PASSWORD=FAKESECRET_ssh_1\nAPI_KEY=FAKESECRET_ssh_2\n"
+   },
+   "command": "printf 'DB_PASSWORD=FAKESECRET_ssh_1\\nEnvironment=API_KEY=FAKESECRET_ssh_2\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ssh_1",
+    "FAKESECRET_ssh_2"
+   ],
+   "must_see": [
+    "DB_PASSWORD=[REDACTED]",
+    "Environment=API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

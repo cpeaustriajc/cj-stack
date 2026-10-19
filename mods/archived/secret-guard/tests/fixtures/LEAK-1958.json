@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-1958",
+ "title": "Shell history as a secret-bearing search index",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "history grep of known export value is redacted, keeping command and variable name",
+   "files": {
+    ".zshrc": "export STRIPE_TEST_KEY=FAKESECRET_HIST_006\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "history | grep FAKESECRET_HIST_006"
+    },
+    "tool_response": {
+     "stdout": "412  export STRIPE_TEST_KEY=FAKESECRET_HIST_006\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HIST_006"
+   ],
+   "must_see": [
+    "export STRIPE_TEST_KEY=[REDACTED]",
+    "412  export"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "export key=value line with unknown value is redacted by shape rule",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "history | grep export"
+    },
+    "tool_response": {
+     "stdout": "413  export API_KEY=FAKESECRET_HIST_007\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HIST_007"
+   ],
+   "must_see": [
+    "export API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

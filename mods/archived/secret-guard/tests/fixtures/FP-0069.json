@@ -1,0 +1,31 @@
+{
+ "case_id": "FP-0069",
+ "title": "False positive: sk- inside a kebab-case directory name is not redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ls output listing task-sk-runner",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls /Users/cj/Projects/task-sk-runner/"
+    },
+    "tool_response": {
+     "stdout": "task-sk-runner\nREADME.md\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "task-sk-runner"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

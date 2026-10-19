@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1999",
+ "title": "Redaction survives JSON escaping of the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "JSON-escaped form of a quoted secret is redacted",
+   "files": {
+    ".env": "KEY=FAKESECRET\"x/y\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible all -m setup"
+    },
+    "tool_response": {
+     "stdout": "{\"KEY\": \"FAKESECRET\\\"x\\/y\"}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET\\\"x\\/y"
+   ],
+   "must_see": [
+    "\"KEY\"",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

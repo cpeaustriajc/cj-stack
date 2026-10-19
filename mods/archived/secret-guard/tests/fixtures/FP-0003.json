@@ -1,0 +1,8 @@
+{
+ "case_id": "FP-0003",
+ "title": "False positive: at-rest scanner flags placeholder lines in CLAUDE.md",
+ "level": "not-testable",
+ "reason_not_testable": "The at-rest scanner is not one of the three components in test-spec.md (secret_redact.py, secret_guard.py, secret_filter.py), and no fixture kind invokes it. Non-hook control: its own unit tests once written, plus the at-rest scan on save described in LEAK-0073 mitigation.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

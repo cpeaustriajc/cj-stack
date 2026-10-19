@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1218",
+ "title": "kubectl get secret -o yaml",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 data value of registry secret redacted (remote simulated with printf)",
+   "files": {
+    ".env": "APP_DB_PASSWORD=FAKESECRET_1\n"
+   },
+   "command": "printf 'data:\\n  password: RkFLRVNFQ1JFVF8x\\n' # source value: FAKESECRET_1",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF8x"
+   ],
+   "must_see": [
+    "data:",
+    "password:"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "kubectl get secret -o yaml output redacted by PostToolUse",
+   "files": {
+    ".env": "APP_DB_PASSWORD=FAKESECRET_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh bastion 'kubectl get secret app-db -n prod -o yaml'",
+     "description": "app-db registry value FAKESECRET_1"
+    },
+    "tool_response": {
+     "stdout": "data:\n  password: RkFLRVNFQ1JFVF8x\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF8x"
+   ],
+   "must_see": [
+    "data:",
+    "password:"
+   ]
+  }
+ ]
+}

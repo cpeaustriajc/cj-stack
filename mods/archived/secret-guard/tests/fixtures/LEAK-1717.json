@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1717",
+ "title": "Chrome MCP page-read output with JSON access_token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP page-read string tool_response with access_token [tool name UNVERIFIED; string form ASSUMED per catalog]",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__claude-in-chrome__read_page",
+    "tool_input": {
+     "url": "https://example.com/session"
+    },
+    "tool_response": "{\"access_token\":\"FAKESECRET_ACCESS_0123456789abcdef\",\"expires_in\":3600}"
+   },
+   "must_not_see": [
+    "FAKESECRET_ACCESS_0123456789abcdef",
+    "FAKESECRET_ACCESS_",
+    "0123456789abcdef"
+   ],
+   "must_see": [
+    "access_token",
+    "[REDACTED]",
+    "expires_in",
+    "3600"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

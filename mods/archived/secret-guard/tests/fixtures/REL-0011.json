@@ -1,0 +1,32 @@
+{
+ "case_id": "REL-0011",
+ "title": "Library warning before hook JSON: hook stdout must parse as one JSON document (warning injection not reproducible in python hook)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo key=value; hook stdout must be a single JSON object",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo key=FAKESECRET_tok8"
+    },
+    "tool_response": {
+     "stdout": "key=FAKESECRET_tok8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_tok8"
+   ],
+   "must_see": [
+    "key=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

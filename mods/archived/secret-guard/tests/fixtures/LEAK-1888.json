@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1888",
+ "title": "Absolute path, env, backslash and $(which op) forms of op read are denied (command wrapper not fixtured: 4-fixture cap)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "absolute path op read denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/opt/homebrew/bin/op read op://FAKEVAULT/FAKEITEM/token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Absolute-path op read with no transform or oracle; not an item 4 combo. Flagged as a spec and fixture conflict.)"
+  },
+  {
+   "kind": "pre",
+   "name": "env op read denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env op read op://FAKEVAULT/FAKEITEM/token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (env is only a wrapper here, with no dump and no transform; plain op read, not an item 4 deny. Flagged.)"
+  },
+  {
+   "kind": "pre",
+   "name": "backslash op read denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "\\op read op://FAKEVAULT/FAKEITEM/token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Backslash-prefixed plain op read with no combo; not an item 4 deny. Flagged.)"
+  },
+  {
+   "kind": "pre",
+   "name": "which-substitution op read denied",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "$(which op) read op://FAKEVAULT/FAKEITEM/token"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Command substitution resolves op and then does a plain read; no transform or oracle, so not an item 4 deny. Flagged.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,29 @@
+{
+ "case_id": "FP-0132",
+ "title": "Console text with keyword lines (false positive)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "console keyword lines pass through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__claude-in-chrome__read_console",
+    "tool_input": {
+     "url": "https://example.com"
+    },
+    "tool_response": "[warn] Token expired, please sign in again\nPassword: required\nKey: Enter to submit\nsecret-santa: 3 players\nauth.js:42 loaded."
+   },
+   "must_not_see": [],
+   "must_see": [
+    "[warn] Token expired, please sign in again",
+    "Password: required",
+    "Key: Enter to submit",
+    "secret-santa: 3 players",
+    "auth.js:42 loaded."
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

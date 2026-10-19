@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0496",
+ "title": "ls of /tmp lists leftover mktemp and env-named files",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ls filtered for temp and env names lists the names (names allowed, not blocked)",
+   "files": {
+    "tmp.Xk83jQ2a9B": "placeholder\n",
+    "deploy-app.env": "placeholder\n"
+   },
+   "command": "ls -la | grep -i -E \"tmp\\.|env\"",
+   "exit_code": 0,
+   "must_see": [
+    "tmp.Xk83jQ2a9B",
+    "deploy-app.env"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

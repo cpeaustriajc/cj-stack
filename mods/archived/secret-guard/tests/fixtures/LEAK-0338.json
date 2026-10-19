@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0338",
+ "title": "heap against a hardened-runtime app PID (deny is testable; OS protection status UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "heap on PID denied regardless of target",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap 4343"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (heap on a PID; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "leaks on PID denied regardless of target",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "leaks 4343"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (leaks on a PID; no item-4 rule covers it. Flag as a spec gap.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

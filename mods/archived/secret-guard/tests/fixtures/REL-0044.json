@@ -1,0 +1,23 @@
+{
+ "case_id": "REL-0044",
+ "title": "Large recording with a secret at the end is not returned unredacted in a real session (fixture is small; timeout path not reproduced)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "cat of recording with secret at end",
+   "files": {
+    "session.cast": "[0.1,\"o\",\"ready\\r\\n\"]\n[9.9,\"o\",\"FAKESECRET_f6\\r\\n\"]\n"
+   },
+   "prompt": "Run cat session.cast with Bash and tell me the last line verbatim.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_f6"
+   ],
+   "must_see": [
+    "ready"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0379",
+ "title": "P3 sops -d piped through grep for one key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sops -d piped to grep db_password withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sops -d secrets/prod.enc.yaml | grep -i db_password"
+    },
+    "tool_response": {
+     "stdout": "db_password: FAKESECRET_db_24\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_db_24"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

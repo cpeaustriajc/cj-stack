@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0550",
+ "title": "Grep tool recursive over repo lists keys with values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "recursive Grep over repo returns dotenv API_KEY line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY|TOKEN|SECRET",
+     "path": ".",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".env.local:4:API_KEY=FAKESECRET_key14\n",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key14"
+   ],
+   "must_see": [
+    ".env.local:4:API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

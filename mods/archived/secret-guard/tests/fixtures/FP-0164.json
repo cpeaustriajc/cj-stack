@@ -1,0 +1,47 @@
+{
+ "case_id": "FP-0164",
+ "title": "False positive on build hashes, bundle IDs and version strings",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "DerivedData hash, bundle id, version and git SHA pass unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls ~/Library/Developer/Xcode/DerivedData; plutil -p ~/Library/Developer/Xcode/DerivedData/MyApp-abcdefghijklmnopqrstuvwxyz0123/Build/Products/Debug-iphonesimulator/MyApp.app/Info.plist"
+    },
+    "tool_response": {
+     "stdout": "MyApp-abcdefghijklmnopqrstuvwxyz0123\n{\n  \"CFBundleIdentifier\" => \"com.example.app\"\n  \"CFBundleVersion\" => \"42\"\n  \"GitCommit\" => \"0123456789abcdef0123456789abcdef01234567\"\n}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "MyApp-abcdefghijklmnopqrstuvwxyz0123",
+    "com.example.app",
+    "CFBundleVersion",
+    "0123456789abcdef0123456789abcdef01234567"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "plain listing of DerivedData is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ls ~/Library/Developer/Xcode/DerivedData"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

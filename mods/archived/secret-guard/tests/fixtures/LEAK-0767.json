@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0767",
+ "title": "Bash cat of a secret file: hook exits 1 with raw output visible",
+ "level": "not-testable",
+ "reason_not_testable": "Requires the PostToolUse hook to error and exit 1 without JSON. No fixture kind injects a hook crash. Non-hook control: code review that the hook always exits 0 and prints a withheld updatedToolOutput on error.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

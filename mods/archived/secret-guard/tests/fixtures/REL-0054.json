@@ -1,0 +1,25 @@
+{
+ "case_id": "REL-0054",
+ "title": "ssh fails and the secret arrives on an error-shaped tool result",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "failing command stderr value is redacted through the guard wrapper",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_FAIL_8\n"
+   },
+   "command": "printf 'ssh: connect failed\\nFAKESECRET_FAIL_8\\n' >&2; exit 255",
+   "exit_code": 255,
+   "must_not_see": [
+    "FAKESECRET_FAIL_8"
+   ],
+   "must_see": [
+    "ssh: connect failed",
+    "[REDACTED]"
+   ],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,63 @@
+{
+ "case_id": "FP-0149",
+ "title": "False positive: reading settings for a non-secret key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.claude/settings.json is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/settings.json"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre",
+   "name": "Bash jq .statusLine on settings.json is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq .statusLine ~/.claude/settings.json"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Read returns statusLine config unchanged",
+   "files": {
+    ".claude/settings.json": "{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"~/.claude/statusline.sh\"\n  }\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.claude/settings.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.claude/settings.json",
+      "content": "{\n  \"statusLine\": {\n    \"type\": \"command\",\n    \"command\": \"~/.claude/statusline.sh\"\n  }\n}\n",
+      "numLines": 6,
+      "startLine": 1,
+      "totalLines": 6
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "statusLine",
+    "~/.claude/statusline.sh"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

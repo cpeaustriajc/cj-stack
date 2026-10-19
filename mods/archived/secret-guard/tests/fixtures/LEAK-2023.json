@@ -1,0 +1,93 @@
+{
+ "case_id": "LEAK-2023",
+ "title": "Proxy credentials in tool-config dumps (git, npm, pip)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git config --list proxy password redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git config --global --list"
+    },
+    "tool_response": {
+     "stdout": "http.proxy=http://FAKEUSER_c:FAKESECRET_git@proxy.example.internal:3128\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_git"
+   ],
+   "must_see": [
+    "http.proxy=http://FAKEUSER_c:[REDACTED]@proxy.example.internal:3128"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": ".npmrc proxy passwords redacted via Read",
+   "files": {
+    ".npmrc": "proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128\nhttps-proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/FAKEUSER/.npmrc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/FAKEUSER/.npmrc",
+      "content": "proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128\nhttps-proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npm"
+   ],
+   "must_see": [
+    "proxy=http://FAKEUSER_d:[REDACTED]@proxy.example.internal:3128",
+    "https-proxy=http://FAKEUSER_d:[REDACTED]@proxy.example.internal:3128"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Grep match on .npmrc proxy line redacted",
+   "files": {
+    ".npmrc": "proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "proxy",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "/Users/FAKEUSER/.npmrc:1:proxy=http://FAKEUSER_d:FAKESECRET_npm@proxy.example.internal:3128",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npm"
+   ],
+   "must_see": [
+    "/Users/FAKEUSER/.npmrc:1:proxy=http://FAKEUSER_d:[REDACTED]@proxy.example.internal:3128"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

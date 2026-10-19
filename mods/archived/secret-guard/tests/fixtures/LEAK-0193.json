@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0193",
+ "title": "ssh remote terraform state pull returns state over the SSH channel",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "ssh-returned state password redacted (simulated)",
+   "files": {
+    "ssh.out": "{\"password\": \"FAKESECRET_ssh_30\"}\n"
+   },
+   "command": "cat ssh.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ssh_30"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "ssh terraform state pull via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh ops@bastion 'cd /srv/infra && terraform state pull'"
+    },
+    "tool_response": {
+     "stdout": "{\"password\": \"FAKESECRET_ssh_30\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ssh_30"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

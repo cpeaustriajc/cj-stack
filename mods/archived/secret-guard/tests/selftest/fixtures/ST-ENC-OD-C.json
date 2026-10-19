@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-ENC-OD-C",
+ "title": "od -c spacing caught",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "od -c spacing caught",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "0000000   F   A   K   E   S   E   C   R\n0000010   E   T   _   o   d   1\n0000016\n"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_od1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

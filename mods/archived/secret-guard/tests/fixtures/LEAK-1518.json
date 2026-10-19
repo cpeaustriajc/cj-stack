@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1518",
+ "title": "Stage 1 result with token forwarded into stage 2 prompt",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "Inter-stage workflow variables never pass through a tool_response, so PostToolUse cannot rewrite them and no fixture kind observes the stage 2 prompt. Non-hook control: the workflow code must redact inter-stage results with the exact and format rules before forwarding them, covered by a unit test on that code.",
+ "duplicate_of_dropped": false
+}

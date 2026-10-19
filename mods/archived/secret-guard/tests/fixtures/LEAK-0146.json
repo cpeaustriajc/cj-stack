@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0146",
+ "title": "MCP tool result: tunnel_token field redacted (MCP tool name is UNVERIFIED; mcp__cloudflare__tunnel_get is a placeholder)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "MCP tunnel_token field redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__cloudflare__tunnel_get",
+    "tool_input": {
+     "tunnel_id": "FAKESECRET_tid"
+    },
+    "tool_response": {
+     "tunnel_id": "FAKESECRET_tid",
+     "name": "my-tunnel",
+     "tunnel_token": "FAKESECRET_mcp_tok"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_mcp_tok"
+   ],
+   "must_see": [
+    "my-tunnel",
+    "tunnel_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

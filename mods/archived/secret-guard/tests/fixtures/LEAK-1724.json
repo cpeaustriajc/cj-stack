@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1724",
+ "title": "Large DOM text where the hook crashes or times out",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The runner cannot force a hook crash or timeout: its only environment overrides are SECRET_HOOK_HOME and SECRET_HOOK_ROOTS, and the page-text MCP tool needs a live Chrome session. The onFailure setting and timeout are UNVERIFIED for this environment. Non-hook control: confirm onFailure is set to block in the hook config and check manually that the withheld result appears on PostToolUse.",
+ "duplicate_of_dropped": false
+}

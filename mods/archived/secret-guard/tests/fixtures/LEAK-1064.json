@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-1064",
+ "title": "Bash docker inspect: Env array with URL password and AUTH_SECRET entry",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker inspect JSON: REDIS password and AUTH_SECRET value redacted, JSON shape kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker inspect app-web-1"
+    },
+    "tool_response": {
+     "stdout": "[{\"Id\":\"4f1c9a7e2b3d\",\"Name\":\"/app-web-1\",\"Config\":{\"Env\":[\"NODE_ENV=production\",\"REDIS_URL=redis://:FAKESECRET_redis_pw@cache:6379/0\",\"AUTH_SECRET=FAKESECRET_auth_777\"]}}]\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_redis_pw",
+    "FAKESECRET_auth_777"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "redis://:[REDACTED]@cache:6379/0",
+    "AUTH_SECRET=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "docker inspect JSON simulated with printf (no real docker)",
+   "files": {},
+   "command": "printf '%s\\n' '[{\"Id\":\"4f1c9a7e2b3d\",\"Name\":\"/app-web-1\",\"Config\":{\"Env\":[\"NODE_ENV=production\",\"REDIS_URL=redis://:FAKESECRET_redis_pw@cache:6379/0\",\"AUTH_SECRET=FAKESECRET_auth_777\"]}}]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_redis_pw",
+    "FAKESECRET_auth_777"
+   ],
+   "must_see": [
+    "NODE_ENV=production",
+    "redis://:[REDACTED]@cache:6379/0",
+    "AUTH_SECRET=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

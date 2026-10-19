@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0796",
+ "title": "Unit: forced exception in redactor on Bash payload must still emit withheld JSON",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash stdout shape the redactor cannot parse as a string (stands in for forced exception)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DATABASE_PASSWORD=FAKESECRET_pw1\\n'"
+    },
+    "tool_response": {
+     "stdout": [
+      "DATABASE_PASSWORD=FAKESECRET_pw1\n"
+     ],
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

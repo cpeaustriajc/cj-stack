@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0473",
+ "title": "[28] SSH runs plocate on a remote server and cats the results",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "remote plocate|xargs cat output (simulated) with API_KEY value is redacted",
+   "files": {
+    "remote-out.txt": "API_KEY=FAKESECRET_rm28\n"
+   },
+   "command": "cat remote-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rm28"
+   ],
+   "must_see": [
+    "API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

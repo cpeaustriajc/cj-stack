@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1427",
+ "title": "Unharvested value through tr rot13 (value set inline in the command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "rot13 of unharvested value is not visible",
+   "files": {
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_REV_02\n"
+   },
+   "command": "V=FAKESECRET_REV_02; echo \"$V\" | tr 'A-Za-z' 'N-ZA-Mn-za-m'",
+   "exit_code": 0,
+   "must_not_see": [
+    "SNXRFRPERG_ERI_02"
+   ],
+   "must_see": [],
+   "policy_note": "R5: value planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

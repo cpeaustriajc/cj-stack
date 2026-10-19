@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-1010",
+ "title": "ssh systemctl show Environment on a remote service",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote systemctl Environment: DB password in URL redacted, LOG_LEVEL kept",
+   "files": {},
+   "command": "printf 'Environment=DATABASE_URL=postgres://app:FAKESECRET_pw_AG31@db.internal/app LOG_LEVEL=info\\n'",
+   "must_not_see": [
+    "FAKESECRET_pw_AG31"
+   ],
+   "must_see": [
+    "LOG_LEVEL=info",
+    "postgres://app:[REDACTED]@db.internal/app"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

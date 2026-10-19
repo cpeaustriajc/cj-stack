@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1162",
+ "title": "security find-generic-password -w prints the keychain secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies find-generic-password with -w",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s 'fastlane-match' -w"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Single keychain read with -w via a credential CLI, nothing combined; owner allows plain display of a secret source.)"
+  },
+  {
+   "kind": "pre",
+   "name": "P denies security export with -P passphrase",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security export -k ./login.keychain-db -t identities -f pkcs12 -P FAKESECRET_kcp -o ./out.p12"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "O shows [REDACTED] if reached",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security find-generic-password -s 'fastlane-match' -w"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_kc\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_kc"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

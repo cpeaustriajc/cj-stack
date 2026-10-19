@@ -1,0 +1,20 @@
+{
+ "case_id": "LEAK-0699",
+ "title": "Bash emits 300 MB filler then cat .env (timeout-driven leak)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "REDUCED to 300 KB filler then cat .env; secret redacted at source; 300 MB size withholding not exercised",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_pw_known\n"
+   },
+   "command": "{ yes 'filler line for padding' | head -c 300000; cat .env; }",
+   "must_not_see": [
+    "FAKESECRET_pw_known"
+   ],
+   "policy_note": "R2: the combo is denied; a deny passes"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2109",
+ "title": "decision:block fallback still shows the original output and may echo the secret in reason",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash output with secret: neither model-visible JSON nor hook stdout/stderr (incl. any block reason) may contain value",
+   "files": {
+    "fixtures/block.txt": "token=FAKESECRET_rs8\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat fixtures/block.txt"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_rs8\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rs8"
+   ],
+   "must_see": [
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

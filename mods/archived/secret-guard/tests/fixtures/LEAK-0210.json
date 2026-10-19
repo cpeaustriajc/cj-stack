@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-0210",
+ "title": "docker history CREATED BY column with ENV secret not at line start",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ENV secret mid-line redacted, columns kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    },
+    "tool_response": {
+     "stdout": "sha256:4f1a0c9d2b7e  3 days ago  /bin/sh -c #(nop)  ENV WEBHOOK_SIGNING_SECRET=whsec_FAKESECRET_47   0B\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET",
+    "whsec_"
+   ],
+   "must_see": [
+    "WEBHOOK_SIGNING_SECRET=[REDACTED]",
+    "sha256:4f1a0c9d2b7e",
+    "3 days ago",
+    "0B"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

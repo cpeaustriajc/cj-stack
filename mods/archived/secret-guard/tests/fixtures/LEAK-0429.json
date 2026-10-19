@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0429",
+ "title": "Third fail-open variant (source item truncated)",
+ "level": "not-testable",
+ "reason_not_testable": "Source item i=6 is cut off at 'the hook prints the tex'; the trigger is not recoverable, so the behaviour is UNSPECIFIED and no fixture can be written until the source is completed.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1148",
+ "title": "ssh psql SELECT on password_hash column: deny the SQL; redact the hash column at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh psql select password_hash denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh <prod-host> 'psql \"$DATABASE_URL\" -c \"select email, password_hash from users limit 5\"'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated psql row with hash column redacted at source",
+   "files": {
+    ".env": "PASSWORD_HASH=$2b$FAKESECRET_hash\n"
+   },
+   "command": "printf '%s\\n' 'a@x | $2b$FAKESECRET_hash'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_hash"
+   ],
+   "must_see": [
+    "a@x"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

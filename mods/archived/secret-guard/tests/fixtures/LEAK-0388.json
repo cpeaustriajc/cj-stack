@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0388",
+ "title": "P13 op item create with password in argv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "literal password= in op item create is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op item create --category login --vault Prod title=db password=FAKESECRET_pw_35"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (op item create with a literal password in a Bash command. Item 4 has no rule for this. Flag as a gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "op item list stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "op item list --vault Prod --format json"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

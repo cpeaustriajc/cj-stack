@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-2089",
+ "title": "Read of ~/.composer/auth.json with line-number prefixes and nested JSON token",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of auth.json with cat -n prefixes: nested github-oauth value redacted",
+   "files": {
+    ".composer/auth.json": "{\n  \"github-oauth\": {\n    \"github.com\": \"FAKESECRET_ghoauth_B2\"\n  }\n}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/example/.composer/auth.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/example/.composer/auth.json",
+      "content": "     1\t{\n     2\t  \"github-oauth\": {\n     3\t    \"github.com\": \"FAKESECRET_ghoauth_B2\"\n     4\t  }\n     5\t}",
+      "numLines": 5,
+      "startLine": 1,
+      "totalLines": 5
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ghoauth_B2"
+   ],
+   "must_see": [
+    "github-oauth",
+    "github.com",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

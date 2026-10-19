@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1923",
+ "title": "sops -d YAML output where the secret value sits on a multi-line structure; key names must survive",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "multi-line YAML value redacted, keys kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sops -d secrets.enc.yaml"
+    },
+    "tool_response": {
+     "stdout": "db:\n  user: app\n  password: FAKESECRET_pw_0002\n  host: db.internal\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_0002"
+   ],
+   "must_see": [
+    "db:",
+    "user: app",
+    "password: [REDACTED]",
+    "host: db.internal"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

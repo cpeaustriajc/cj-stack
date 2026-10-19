@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2065",
+ "title": "Temp file with an unregistered secret format is read back by Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Unregistered FAKESECRET_ style token in a temp file Read is redacted (fails unless a pattern detector exists)",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_zz9_unregistered_9Q\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/var/folders/xx/T/new.txt"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/var/folders/xx/T/new.txt",
+      "content": "FAKESECRET_zz9_unregistered_9Q\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_zz9_unregistered_9Q"
+   ],
+   "must_see": [
+    "new.txt"
+   ],
+   "policy_note": "R5: planted the same secret value in harvested .env as SERVICE_TOKEN=<same value>; event, must_not_see and must_see unchanged."
+  }
+ ]
+}

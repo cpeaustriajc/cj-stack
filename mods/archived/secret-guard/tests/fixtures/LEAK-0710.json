@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-0710",
+ "title": "ssh docker inspect Env JSON: POSTGRES_PASSWORD redacted, PATH unchanged (simulated remote via printf)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated docker inspect Env JSON",
+   "files": {
+    ".env": "POSTGRES_PASSWORD=FAKESECRET_pg\n"
+   },
+   "command": "printf '%s\\n' '[\"POSTGRES_PASSWORD=FAKESECRET_pg\",\"PATH=/usr/bin:/bin\"]'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pg"
+   ],
+   "must_see": [
+    "PATH=/usr/bin:/bin",
+    "POSTGRES_PASSWORD=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

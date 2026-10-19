@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1279",
+ "title": "SSH remote Kerberos cache cat during maintenance",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "ssh-remote-krb5cc-cat-denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host \"klist; cat /tmp/krb5cc_$(id -u)\""
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Over ssh, klist then cat of the ticket cache: display-only, no transform. Borderline (two credential displays chained); flagged for owner.)"
+  },
+  {
+   "kind": "post",
+   "name": "ssh-krb5cc-output-withheld",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_sshkrb0011\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh maint-host \"klist; cat /tmp/krb5cc_$(id -u)\""
+    },
+    "tool_response": {
+     "stdout": "Principal: svc@EXAMPLE\n\u00ff\u0004FAKESECRET_sshkrb0011\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sshkrb0011"
+   ],
+   "must_see": [
+    "Principal: svc@EXAMPLE"
+   ],
+   "policy_note": "R5 (owner instruction): planted FAKESECRET_sshkrb0011 as SERVICE_TOKEN in harvested .env so the value has a file signal. Only this post fixture changed."
+  }
+ ]
+}

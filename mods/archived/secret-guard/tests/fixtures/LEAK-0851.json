@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0851",
+ "title": "Exit 0 with truncated JSON falls back to raw output (AWS key line)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "printf of AWS_SECRET_ACCESS_KEY line",
+   "files": {
+    ".env": "AWS_SECRET_ACCESS_KEY=FAKESECRET_aws3\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'AWS_SECRET_ACCESS_KEY=FAKESECRET_aws3\\n'"
+    },
+    "tool_response": {
+     "stdout": "AWS_SECRET_ACCESS_KEY=FAKESECRET_aws3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_aws3"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

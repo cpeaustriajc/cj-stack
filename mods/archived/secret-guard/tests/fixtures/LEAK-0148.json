@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0148",
+ "title": "Hook receives non-JSON stdin on Bash output",
+ "level": "not-testable",
+ "reason_not_testable": "The fixture kinds serialise event as a JSON object, so truncated or non-JSON stdin cannot be produced by the runner. The closest expressible fault (a malformed tool_response) is in LEAK-0147. Non-hook control: none in the catalog; the catalog mitigation is only the output hook's own parse-failure placeholder.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

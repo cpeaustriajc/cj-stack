@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0406",
+ "title": "D3 defaults find searches all domains",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "apiKey line in defaults find output redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "defaults find -i api_key"
+    },
+    "tool_response": {
+     "stdout": "com.example.devtool {\\n    apiKey = \\\"FAKESECRET_find_53\\\";\\n}\\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_find_53"
+   ],
+   "must_see": [
+    "com.example.devtool"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated defaults find apiKey withheld at source",
+   "files": {},
+   "command": "defaults() { printf 'com.example.devtool {\\n    apiKey = \"FAKESECRET_find_53\";\\n}\\n'; }; defaults find -i api_key",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_find_53"
+   ],
+   "must_see": [
+    "com.example.devtool"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

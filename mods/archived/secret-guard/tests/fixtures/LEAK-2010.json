@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-2010",
+ "title": "cloudflared credentials JSON printed by Read",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "TunnelSecret value redacted in Read of credentials JSON",
+   "files": {
+    "cloudflared/00000000-0000-0000-0000-000000000000.json": "{\"AccountTag\":\"FAKESECRET_ACCT_1234\",\"TunnelSecret\":\"FAKESECRET_TS_abcdefghijklmnop==\",\"TunnelID\":\"00000000-0000-0000-0000-000000000000\"}"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/FAKEUSER/.cloudflared/00000000-0000-0000-0000-000000000000.json"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/FAKEUSER/.cloudflared/00000000-0000-0000-0000-000000000000.json",
+      "content": "{\"AccountTag\":\"FAKESECRET_ACCT_1234\",\"TunnelSecret\":\"FAKESECRET_TS_abcdefghijklmnop==\",\"TunnelID\":\"00000000-0000-0000-0000-000000000000\"}",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_TS_abcdefghijklmnop=="
+   ],
+   "must_see": [
+    "TunnelSecret",
+    "AccountTag",
+    "TunnelID",
+    "00000000-0000-0000-0000-000000000000",
+    "FAKESECRET_ACCT_1234"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of cloudflared credentials redacts TunnelSecret at source",
+   "files": {
+    "cloudflared/00000000-0000-0000-0000-000000000000.json": "{\"AccountTag\":\"FAKESECRET_ACCT_1234\",\"TunnelSecret\":\"FAKESECRET_TS_abcdefghijklmnop==\",\"TunnelID\":\"00000000-0000-0000-0000-000000000000\"}"
+   },
+   "command": "cat cloudflared/00000000-0000-0000-0000-000000000000.json",
+   "must_not_see": [
+    "FAKESECRET_TS_abcdefghijklmnop=="
+   ],
+   "must_see": [
+    "TunnelID",
+    "00000000-0000-0000-0000-000000000000"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

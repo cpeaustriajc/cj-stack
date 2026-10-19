@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0627",
+ "title": "base64 of plist hides plaintext from regex rules (blob hand-encoded from DATABASE_PASSWORD=FAKESECRET_pw_plist_007 plus newline)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Base64 blob encoding a DATABASE_PASSWORD line must be withheld or redacted",
+   "files": {
+    "fixture.plist": "DATABASE_PASSWORD=FAKESECRET_pw_plist_007\n",
+    ".env": "SERVICE_TOKEN=FAKESECRET_pw_plist_007\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "plutil -p fixture.plist | base64"
+    },
+    "tool_response": {
+     "stdout": "REFUQUJBU0VfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd19wbGlzdF8wMDcK\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "REFUQUJBU0VfUEFTU1dPUkQ9RkFLRVNFQ1JFVF9wd19wbGlzdF8wMDcK"
+   ],
+   "must_see": [],
+   "policy_note": "R5: planted the underlying secret FAKESECRET_pw_plist_007 (the value the base64 blob encodes) as SERVICE_TOKEN in harvested .env under files; fixture.plist kept; no other change. The must_not_see base64 is unchanged."
+  }
+ ]
+}

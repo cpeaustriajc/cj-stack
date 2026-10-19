@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0117",
+ "title": "False-positive guard: stat file size",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stat file size output unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "stat -f %z dist/app.js"
+    },
+    "tool_response": {
+     "stdout": "48213\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "48213"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "stat -f %z stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "stat -f %z dist/app.js"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

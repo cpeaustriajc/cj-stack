@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0802",
+ "title": "Bash emits invalid UTF-8 and a NUL byte beside the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "secret line followed by raw bytes 0xff 0xfe 0x00 through the filter",
+   "files": {},
+   "command": "printf 'DATABASE_PASSWORD=FAKESECRET_pw1\\n'; printf '\\xff\\xfe\\x00'",
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": [],
+   "exit_code": 0
+  },
+  {
+   "kind": "post",
+   "name": "decoded replacement chars and NUL after secret line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DATABASE_PASSWORD=FAKESECRET_pw1\\n'; printf '\\xff\\xfe\\x00'"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_PASSWORD=FAKESECRET_pw1\n\ufffd\ufffd\u0000",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw1"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

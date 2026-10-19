@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1311",
+ "title": "env | sort prints proxy URL with embedded password",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "env dump simulated by a local script piped to sort; the proxy password is redacted at source",
+   "files": {
+    "env-dump.sh": "#!/bin/sh\nprintf 'HTTPS_PROXY=http://FAKEUSER:FAKESECRET_proxypw0035@proxy.corp.example:8080\\n'\nprintf 'HOME=/fixture/home\\n'\n"
+   },
+   "command": "sh ./env-dump.sh | sort",
+   "must_not_see": [
+    "FAKESECRET_proxypw0035"
+   ],
+   "must_see": [
+    "HTTPS_PROXY=http://FAKEUSER:",
+    "@proxy.corp.example:8080"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

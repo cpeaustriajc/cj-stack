@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0191",
+ "title": "terraform show -json on a saved plan file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "plan JSON password redacted (simulated)",
+   "files": {
+    "plan.out": "{\"planned_values\":{\"root_module\":{\"resources\":[{\"values\":{\"password\":\"FAKESECRET_plan_29\"}}]}}}\n"
+   },
+   "command": "cat plan.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_plan_29"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "terraform show -json via PostToolUse Bash",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "terraform show -json tfplan.binary"
+    },
+    "tool_response": {
+     "stdout": "{\"planned_values\":{\"root_module\":{\"resources\":[{\"values\":{\"password\":\"FAKESECRET_plan_29\"}}]}}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plan_29"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

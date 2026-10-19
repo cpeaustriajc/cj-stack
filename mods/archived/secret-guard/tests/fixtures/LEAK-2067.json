@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2067",
+ "title": "Deliberate exit-code trick to route secret output onto the failure path",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "secret file cat with success exit status is redacted",
+   "files": {
+    "fixtures/FAKESECRET_config.env": "DB_HOST=db.fake.internal\nFAKESECRET_cfg_key=FAKESECRET_val_2067\n"
+   },
+   "command": "cat fixtures/FAKESECRET_config.env; true",
+   "must_not_see": [
+    "FAKESECRET_val_2067"
+   ],
+   "must_see": [
+    "DB_HOST=db.fake.internal"
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "same cat with trailing false (failure path) is redacted identically",
+   "files": {
+    "fixtures/FAKESECRET_config.env": "DB_HOST=db.fake.internal\nFAKESECRET_cfg_key=FAKESECRET_val_2067\n"
+   },
+   "command": "cat fixtures/FAKESECRET_config.env; false",
+   "must_not_see": [
+    "FAKESECRET_val_2067"
+   ],
+   "must_see": [
+    "DB_HOST=db.fake.internal"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1600",
+ "title": "Reversed harvested value in stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "reversed harvested value via rev",
+   "files": {
+    ".env": "API_KEY=FAKESECRET_HARVESTED_0001\n"
+   },
+   "command": "echo FAKESECRET_HARVESTED_0001 | rev",
+   "must_not_see": [
+    "1000_DETSEVRAH_TERCESEKAF"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0499",
+ "title": "SSH cats Ansible rendered vars from a remote temp directory",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote cat of ansible vars: vault_db_pass value redacted at source (no real ssh)",
+   "files": {
+    "ansible-tmp-123/vars.yml": "vault_db_pass: FAKESECRET_an50\n"
+   },
+   "command": "cat ansible-tmp-123/*vars* 2>/dev/null | head -50",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_an50"
+   ],
+   "must_see": [
+    "vault_db_pass"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-1257",
+ "title": "rsync of a whole remote directory including dotfiles",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "rsync from a remote secret tree (deny)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "rsync -av deploy@prod-host:/srv/app/ ./app-copy/"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "rsync upload of a local build stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "rsync -av ./dist/ deploy@prod-host:/srv/app/"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "Grep of the copied tree is redacted if it exists",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "API_KEY",
+     "path": "./app-copy"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": "app-copy/.env:1:API_KEY=FAKESECRET_rs1",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_rs1"
+   ],
+   "must_see": [
+    "app-copy/.env:1:API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

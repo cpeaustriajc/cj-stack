@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-2012",
+ "title": "Tailscale auth key visible in a process list (ps -ef)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tskey-auth value in ps output redacted, --auth-key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ps -ef | grep tailscale"
+    },
+    "tool_response": {
+     "stdout": "root  812  1  0 09:00 ?  00:00:03 tailscaled --state=/var/lib/tailscale/tailscaled.state\nuser 4410  1  0 10:12 ?  00:00:00 tailscale up --auth-key=tskey-auth-FAKESECRET_TS_KEY_0123456789abcdef --accept-routes\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "tskey-auth-FAKESECRET_TS_KEY_0123456789abcdef",
+    "FAKESECRET_TS_KEY_0123456789abcdef"
+   ],
+   "must_see": [
+    "tailscale up --auth-key=[REDACTED] --accept-routes",
+    "tailscaled --state=/var/lib/tailscale/tailscaled.state"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "cat of ps output redacts tskey at source",
+   "files": {
+    "ps-out.txt": "root  812  1  0 09:00 ?  00:00:03 tailscaled --state=/var/lib/tailscale/tailscaled.state\nuser 4410  1  0 10:12 ?  00:00:00 tailscale up --auth-key=tskey-auth-FAKESECRET_TS_KEY_0123456789abcdef --accept-routes\n"
+   },
+   "command": "cat ps-out.txt",
+   "must_not_see": [
+    "tskey-auth-FAKESECRET_TS_KEY_0123456789abcdef",
+    "FAKESECRET_TS_KEY_0123456789abcdef"
+   ],
+   "must_see": [
+    "--auth-key=[REDACTED]",
+    "--accept-routes"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

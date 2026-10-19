@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-2096",
+ "title": "Block openssl pkcs12 -nodes that prints an unencrypted private key to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nodes with passin is denied before it runs",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in FAKESECRET_bundle.p12 -nodes -passin pass:FAKESECRET_pw"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "pkcs12 -nodes -nocerts is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in FAKESECRET_bundle.p12 -nodes -nocerts"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

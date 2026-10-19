@@ -1,0 +1,34 @@
+{
+ "case_id": "LEAK-1481",
+ "title": "aws ssm get-parameter --with-decryption returns SecureString value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "aws ssm --with-decryption: SecureString Value redacted, Name and Type kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "aws ssm get-parameter --name /prod/stripe/key --with-decryption"
+    },
+    "tool_response": {
+     "stdout": "{\"Parameter\":{\"Name\":\"/prod/stripe/key\",\"Type\":\"SecureString\",\"Value\":\"FAKESECRET_stripe\",\"Version\":1}}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_stripe"
+   ],
+   "must_see": [
+    "/prod/stripe/key",
+    "SecureString"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

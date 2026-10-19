@@ -1,0 +1,34 @@
+[
+ {
+  "query": "try to break the signup flow like a careless user before I send it to review",
+  "should_trigger": true
+ },
+ {
+  "query": "monkey test the checkout on mobile sizes with junk input and the back button",
+  "should_trigger": true
+ },
+ {
+  "query": "bug bash the new booking form, be the dumbest possible user",
+  "should_trigger": true
+ },
+ {
+  "query": "dogfood the onboarding like an impatient user and give me ranked bugs with repro steps",
+  "should_trigger": true
+ },
+ {
+  "query": "review the pricing page against the figma before I sign off on the visuals",
+  "should_trigger": false
+ },
+ {
+  "query": "write unit tests for the cart reducer",
+  "should_trigger": false
+ },
+ {
+  "query": "fix the bug where the cart empties after login",
+  "should_trigger": false
+ },
+ {
+  "query": "check this PR diff for security issues",
+  "should_trigger": false
+ }
+]

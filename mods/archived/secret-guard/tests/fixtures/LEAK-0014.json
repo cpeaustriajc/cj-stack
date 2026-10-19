@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-0014",
+ "title": "git switch re-runs smudge for every filtered path [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git switch branch line passes through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git switch feature/x"
+    },
+    "tool_response": {
+     "stdout": "Switched to branch 'feature/x'\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "Switched to branch 'feature/x'"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "Read of a filtered file written by the smudge filter is redacted",
+   "files": {
+    "config/secrets.yml": "token: FAKESECRET_SMUDGE_005\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "config/secrets.yml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "config/secrets.yml",
+      "content": "token: FAKESECRET_SMUDGE_005\n",
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SMUDGE_005"
+   ],
+   "must_see": [
+    "token:",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

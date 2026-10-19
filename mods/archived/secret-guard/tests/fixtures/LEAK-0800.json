@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0800",
+ "title": "Hook writes stderr and exits 2 with no JSON on stdout",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0797"
+}

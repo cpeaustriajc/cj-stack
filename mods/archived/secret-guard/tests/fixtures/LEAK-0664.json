@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0664",
+ "title": "echo of a harvested value piped through base64 (plaintext in command text)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 of harvested value in stdout",
+   "files": {
+    ".env": "LOCAL_TOKEN=FAKESECRET_local7\n",
+    "~/Projects/app/.env": "LOCAL_TOKEN=FAKESECRET_local7\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo -n FAKESECRET_local7 | base64"
+    },
+    "tool_response": {
+     "stdout": "RkFLRVNFQ1JFVF9sb2NhbDc=\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9sb2NhbDc="
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "pre",
+   "name": "Bash command with harvested value piped to base64",
+   "files": {
+    ".env": "LOCAL_TOKEN=FAKESECRET_local7\n",
+    "~/Projects/app/.env": "LOCAL_TOKEN=FAKESECRET_local7\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo -n FAKESECRET_local7 | base64"
+    }
+   },
+   "expect": "deny"
+  }
+ ]
+}

@@ -1,0 +1,58 @@
+{
+ "case_id": "LEAK-1421",
+ "title": "Two Bash calls: 6-char prefix and 8-char suffix of a harvested .env value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "call 1: 6-character prefix of harvested value",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DB_PASSWORD .env | cut -d= -f2 | cut -c1-6"
+    },
+    "tool_response": {
+     "stdout": "FAKESE\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESE"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "call 2: 8-character suffix of harvested value",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_zz9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep DB_PASSWORD .env | cut -d= -f2 | cut -c7-14"
+    },
+    "tool_response": {
+     "stdout": "CRET_zz9\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "CRET_zz9"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

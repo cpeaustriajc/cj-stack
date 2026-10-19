@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0909",
+ "title": "ANSI escape inside a secret-name token (printf)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ESC byte inside PASSWORD name; value must be absent",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf 'DB_\\x1b[0mPASSWORD=FAKESECRET_ansi1\\n'"
+    },
+    "tool_response": {
+     "stdout": "DB_\u001b[0mPASSWORD=FAKESECRET_ansi1\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_ansi1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real shell: printf emits ESC byte inside secret name",
+   "command": "printf 'DB_\\033[0mPASSWORD=FAKESECRET_ansi1\\n'",
+   "files": {},
+   "must_not_see": [
+    "FAKESECRET_ansi1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

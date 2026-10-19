@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1652",
+ "title": "Local printenv | grep -i key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Simulated printenv | grep -i key output has ANTHROPIC_API_KEY redacted",
+   "files": {},
+   "command": "printf 'ANTHROPIC_API_KEY=FAKESECRET_ENV_0004\\nHOME=/Users/cj\\n' | grep -i key",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ENV_0004"
+   ],
+   "must_see": [
+    "ANTHROPIC_API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

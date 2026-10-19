@@ -1,0 +1,37 @@
+{
+ "case_id": "FP-0167",
+ "title": "False positive on non-secret gradle.properties settings",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of gradle.properties with no secret value: output unchanged",
+   "files": {
+    ".gradle/gradle.properties": "org.gradle.jvmargs=-Xmx2g\norg.gradle.caching=true\n# password goes in env, not here\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/example/.gradle/gradle.properties"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/example/.gradle/gradle.properties",
+      "content": "org.gradle.jvmargs=-Xmx2g\norg.gradle.caching=true\n# password goes in env, not here\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_see": [
+    "org.gradle.jvmargs=-Xmx2g",
+    "org.gradle.caching=true",
+    "# password goes in env, not here"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

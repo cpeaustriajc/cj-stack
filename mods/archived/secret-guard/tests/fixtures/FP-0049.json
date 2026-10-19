@@ -1,0 +1,48 @@
+{
+ "case_id": "FP-0049",
+ "title": "False positive: TOKEN in a numeric constant and a camelCase identifier",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep -rni TOKEN output is unchanged",
+   "files": {
+    "src/config.ts": "const MAX_TOKENS = 4096;\n",
+    "src/auth.ts": "const tokenHeader = \"Authorization\";\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rni TOKEN src/config.ts src/auth.ts"
+    },
+    "tool_response": {
+     "stdout": "src/config.ts:1:const MAX_TOKENS = 4096;\nsrc/auth.ts:1:const tokenHeader = \"Authorization\";\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_see": [
+    "MAX_TOKENS = 4096",
+    "tokenHeader"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "real grep -rni TOKEN output is unchanged",
+   "files": {
+    "src/config.ts": "const MAX_TOKENS = 4096;\n",
+    "src/auth.ts": "const tokenHeader = \"Authorization\";\n"
+   },
+   "command": "grep -rni TOKEN src/config.ts src/auth.ts",
+   "must_not_see": [],
+   "must_see": [
+    "MAX_TOKENS = 4096",
+    "tokenHeader"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

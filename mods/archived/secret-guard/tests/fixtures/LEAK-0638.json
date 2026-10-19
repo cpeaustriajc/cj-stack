@@ -1,0 +1,40 @@
+{
+ "case_id": "LEAK-0638",
+ "title": "Edit tool old_string/new_string containing a secret value in a config file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of a secret-bearing config with secret values in old_string/new_string is denied",
+   "files": {
+    "config/local.yml": "api_key: FAKESECRET_key_8\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "config/local.yml",
+     "old_string": "api_key: FAKESECRET_key_8",
+     "new_string": "api_key: FAKESECRET_key_9"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Benign Edit (here to there in notes.txt) stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "notes.txt",
+     "old_string": "here",
+     "new_string": "there"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

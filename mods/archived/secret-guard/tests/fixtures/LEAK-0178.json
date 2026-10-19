@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-0178",
+ "title": "local docker compose config: DB_PASSWORD value removed; plain config denied; --no-interpolate allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated local compose config YAML",
+   "files": {
+    "compose-out.txt": "services:\n  api:\n    environment:\n      DB_PASSWORD: FAKESECRET_compose_17\n"
+   },
+   "command": "cat compose-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_compose_17"
+   ],
+   "must_see": [
+    "DB_PASSWORD"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "docker compose -f compose.yaml config is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker compose -f compose.yaml config"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain docker compose config dump with nothing combined; item 4 denies only combos. The spec's own safe alternative (--no-interpolate) is a suggestion, not a den)"
+  },
+  {
+   "kind": "pre",
+   "name": "docker compose config --no-interpolate stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker compose -f compose.yaml config --no-interpolate"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

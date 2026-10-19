@@ -1,0 +1,7 @@
+{
+ "case_id": "ST-NT",
+ "title": "not testable",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "selftest: needs a real network"
+}

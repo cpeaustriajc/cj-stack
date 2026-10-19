@@ -1,0 +1,27 @@
+{
+ "case_id": "ST-ENC-B64-ALIGN1",
+ "title": "base64 at alignment 1 caught",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "base64 at alignment 1 caught",
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat x"
+    },
+    "tool_response": {
+     "stdout": "blob=eEZBS0VTRUNSRVRfYWwx end"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_al1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

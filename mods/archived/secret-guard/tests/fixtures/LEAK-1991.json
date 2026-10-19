@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1991",
+ "title": "Guard bypass through attached or quoted ssh option forms",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "deny quoted attached -o ProxyCommand form",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -oProxyCommand=\"sh -c 'echo FAKESECRET_OPT >&2; nc %h %p'\" devhost true"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "deny separate -o ProxyCommand form",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -o ProxyCommand='echo FAKESECRET_OPT >&2' devhost true"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "deny -F /dev/stdin fed by heredoc with LocalCommand",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh -F /dev/stdin devhost true <<'EOF'\nLocalCommand echo FAKESECRET_HEREDOC\nEOF"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

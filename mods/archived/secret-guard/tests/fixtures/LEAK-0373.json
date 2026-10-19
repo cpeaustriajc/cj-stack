@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-0373",
+ "title": "K28a Path-qualified /usr/bin/security binary",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "/usr/bin/security -w output withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/bin/security find-generic-password -w -s prod-api"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_prod_17\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_prod_17"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "shadowed ./bin/security -w output withheld (basename match)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "./bin/security find-generic-password -w -s prod-api"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_prod_17\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_prod_17"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2058",
+ "title": "Rails /rails/info/properties HTML-escapes the secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "HTML-escaped registered value is redacted",
+   "files": {
+    ".env": "RAILS_KEY=FAKESECRET_a&b\"c\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:3000/rails/info/properties"
+    },
+    "tool_response": {
+     "stdout": "<dt>secret_key_base</dt><dd>FAKESECRET_a&amp;b&quot;c</dd>\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_a&amp;b&quot;c"
+   ],
+   "must_see": [
+    "secret_key_base",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

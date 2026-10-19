@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-0492",
+ "title": "broad Glob for .env files under /tmp",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "broad Glob for env-named files over /tmp is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+     "pattern": "**/*.env*",
+     "path": "/tmp"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Glob tool call listing filenames; the policy names Glob as allowed and it reads no content.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1056",
+ "title": "R startup prints Sys.getenv with a key",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "R NAME = value line: value redacted, format kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "Rscript analysis.R"
+    },
+    "tool_response": {
+     "stdout": "MY_API_KEY = \"FAKESECRET_r_BW86\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_r_BW86"
+   ],
+   "must_see": [
+    "MY_API_KEY = ",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "R-style line redacted at source (printf stand-in)",
+   "files": {},
+   "command": "printf 'MY_API_KEY = \"FAKESECRET_r_BW86\"\\n'",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_r_BW86"
+   ],
+   "must_see": [
+    "MY_API_KEY = ",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

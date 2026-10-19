@@ -1,0 +1,7 @@
+{
+ "case_id": "LEAK-0424",
+ "title": "Hook drops isImage from Bash updatedToolOutput (hook bug): output must keep all four keys",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "identical fixtures are tested under LEAK-0423"
+}

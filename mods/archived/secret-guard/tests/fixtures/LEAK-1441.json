@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1441",
+ "title": "base64 of a .dev.vars file with the value at all alignments",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of .dev.vars contains base64 of T=FAKESECRET_j0 (value at file byte offset 14, alignment 2)",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET=FAKESECRET_j0\n"
+   },
+   "command": "base64 < .dev.vars",
+   "must_not_see": [
+    "FAKESECRET_j0"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

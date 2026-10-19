@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1645",
+ "title": "Read of gh CLI hosts.yml",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of ~/.config/gh/hosts.yml is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.config/gh/hosts.yml"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of ~/.config/gh/hosts.yml. Read is allowed.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, oauth_token line is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/cj/.config/gh/hosts.yml"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/cj/.config/gh/hosts.yml",
+      "content": "github.com:\n    oauth_token: FAKESECRET_GH_HOSTS_0001\n    user: cj\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_GH_HOSTS_0001"
+   ],
+   "must_see": [
+    "github.com",
+    "oauth_token",
+    "user: cj"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

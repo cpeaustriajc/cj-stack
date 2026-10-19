@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1760",
+ "title": "Bash grep -r on build or static dirs prints full lines",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -r VITE_ over dist/ keeps file prefix, replaces value",
+   "files": {
+    "dist/assets/index.js": "window.cfg={VITE_KEY=\"FAKESECRET_VITE_01\"};\n"
+   },
+   "command": "grep -r 'VITE_' dist/",
+   "must_not_see": [
+    "FAKESECRET_VITE_01"
+   ],
+   "must_see": [
+    "dist/assets/index.js:",
+    "VITE_KEY="
+   ],
+   "exit_code": 0
+  },
+  {
+   "kind": "pre_exec",
+   "name": "grep -r sk_ over .next/static keeps file prefix, replaces token",
+   "files": {
+    ".next/static/chunks/main.js": "var k=\"sk_live_FAKESECRET_NXT_01\";\n"
+   },
+   "command": "grep -r \"sk_\" .next/static",
+   "must_not_see": [
+    "sk_live_FAKESECRET_NXT_01"
+   ],
+   "must_see": [
+    ".next/static/chunks/main.js:"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

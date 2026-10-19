@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1500",
+ "title": "git log -p on .env shows removed secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -p -- .env: both diff values replaced, diff markers and sha kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git log -p -- .env"
+    },
+    "tool_response": {
+     "stdout": "commit 3f9c2ab1d4e5f60718293a4b5c6d7e8f9a0b1c2d\n\n-DB_PASSWORD=FAKESECRET_old\n+DB_PASSWORD=FAKESECRET_new\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_old",
+    "FAKESECRET_new"
+   ],
+   "must_see": [
+    "3f9c2ab1d4e5f60718293a4b5c6d7e8f9a0b1c2d",
+    "-DB_PASSWORD=",
+    "+DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-2054",
+ "title": "Spring /actuator/env value covered by the literal secret registry",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Registered actuator env value is redacted, key name kept",
+   "files": {
+    ".env": "APP_DB_PASSWORD=FAKESECRET_dbpass_1\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://127.0.0.1:8080/actuator/env"
+    },
+    "tool_response": {
+     "stdout": "{\"name\":\"app.db.password\",\"value\":\"FAKESECRET_dbpass_1\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dbpass_1"
+   ],
+   "must_see": [
+    "app.db.password",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

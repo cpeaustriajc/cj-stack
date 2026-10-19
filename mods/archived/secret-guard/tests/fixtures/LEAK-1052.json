@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1052",
+ "title": "Shadowed json.py in scripts directory dumps env on import",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "shadowing scripts/json.py prints secret on import, redacted at source",
+   "files": {
+    "scripts/json.py": "print(\"OPENAI_API_KEY=FAKESECRET_oa_BT82\")\n",
+    "scripts/build.py": "import json\n"
+   },
+   "command": "python3 scripts/build.py",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oa_BT82"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "stdout line OPENAI_API_KEY redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "python3 scripts/build.py"
+    },
+    "tool_response": {
+     "stdout": "OPENAI_API_KEY=FAKESECRET_oa_BT82\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oa_BT82"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

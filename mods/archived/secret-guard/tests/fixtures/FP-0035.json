@@ -1,0 +1,52 @@
+{
+ "case_id": "FP-0035",
+ "title": "False positive: SHA, UUID, tokenizer and primaryKey lines stay readable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of session JSONL with ordinary identifiers",
+   "files": {
+    "fixtures/session.jsonl": "commit 9d07a1d3e0f4 uuid 3f2a9c1e-7b4d-4e8a-9f10-2c6d8b5a1e47\ntokenizer: wordpiece\nprimaryKey: \"user_id\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "fixtures/session.jsonl"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "fixtures/session.jsonl",
+      "content": "commit 9d07a1d3e0f4 uuid 3f2a9c1e-7b4d-4e8a-9f10-2c6d8b5a1e47\ntokenizer: wordpiece\nprimaryKey: \"user_id\"\n",
+      "numLines": 3,
+      "startLine": 1,
+      "totalLines": 3
+     }
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "9d07a1d3e0f4",
+    "3f2a9c1e-7b4d-4e8a-9f10-2c6d8b5a1e47",
+    "tokenizer",
+    "primaryKey"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Legitimate grep for tokenizer stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -n tokenizer fixtures/session.jsonl"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

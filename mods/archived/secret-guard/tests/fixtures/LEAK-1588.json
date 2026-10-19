@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-1588",
+ "title": "Hook exits 2 on image Read (unit; post kind cannot force exit 2, so fixture asserts image absence only; image payload is FAKE-marked base64)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Image Read payload must be absent from model-visible output",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRETIMAGE0FAKE\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "s.png"
+    },
+    "tool_response": {
+     "type": "image",
+     "file": {
+      "base64": "FAKESECRETIMAGE0FAKE",
+      "type": "image/png"
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRETIMAGE0FAKE"
+   ],
+   "policy_note": "R5 instruction applied: value FAKESECRETIMAGE0FAKE planted in harvested .env (SERVICE_TOKEN=<same value>) so it has a file signal. No other change."
+  }
+ ]
+}

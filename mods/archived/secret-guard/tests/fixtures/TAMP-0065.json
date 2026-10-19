@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0065",
+ "title": "local ssh-add -L lists keys behind the inherited agent",
+ "level": "not-testable",
+ "reason_not_testable": "Signing by child processes that use the inherited agent socket leaves no trace in tool output, so no output hook fixture can observe it. The public-key-line pass-through half is covered by FP-0106. Non-hook control: unset SSH_AUTH_SOCK for agent Bash sessions or run the agent under a sandbox that denies the socket (catalog mitigation, UNVERIFIED in this repo).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

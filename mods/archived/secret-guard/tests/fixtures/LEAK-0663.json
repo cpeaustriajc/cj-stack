@@ -1,0 +1,17 @@
+{
+ "case_id": "LEAK-0663",
+ "title": "Simulated ssh docker exec env | base64 output carrying an unknown value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "Simulated base64 env line: CALLBACK_TOKEN value is in the command, not in any local file",
+   "files": {},
+   "command": "printf 'CALLBACK_TOKEN=FAKESECRET_xyz\\n' | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF94eXoK"
+   ],
+   "policy_note": "R3: a typed secret-named value fed to an encoder is denied; a deny passes"
+  }
+ ]
+}

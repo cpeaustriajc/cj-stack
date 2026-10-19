@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1872",
+ "title": "sudo log show output redacted by content, not by command prefix",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "sudo log show env line redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sudo log show --last 5m --predicate 'process == \"launchd\"'"
+    },
+    "tool_response": {
+     "stdout": "env: API_KEY=FAKESECRET_sudo_006\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sudo_006"
+   ],
+   "must_see": [
+    "env: API_KEY="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

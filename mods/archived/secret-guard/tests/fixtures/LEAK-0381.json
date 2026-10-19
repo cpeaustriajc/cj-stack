@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-0381",
+ "title": "P6 ansible-vault view with password from a script",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "ansible-vault view with vault-password-file script withheld",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ansible-vault view group_vars/prod/vault.yml --vault-password-file scripts/vault-pass.sh"
+    },
+    "tool_response": {
+     "stdout": "db_pass: FAKESECRET_vault_28\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_vault_28"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

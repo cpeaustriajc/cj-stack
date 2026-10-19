@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0610",
+ "title": "Debug text on hook stdout: hook stdout checked whole (post) and model view in a real session (e2e). Debug-file grep is not assertable by the runner",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "echo of value; hook stdout must not carry raw value",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_key5\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo FAKESECRET_key5"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_key5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_key5"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "cat key.txt in real session",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_key5\n",
+    "key.txt": "FAKESECRET_key5\n"
+   },
+   "prompt": "Run cat key.txt and tell me exactly what it printed.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET_key5"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ]
+}

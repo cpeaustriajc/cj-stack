@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0596",
+ "title": "Heapdump downloaded then grepped with strings (curl prints nothing; strings output redacted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "heapdump curl && strings | grep password output redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s -o /tmp/h.hprof http://localhost:8080/actuator/heapdump && strings /tmp/h.hprof | grep -i password | head -20"
+    },
+    "tool_response": {
+     "stdout": "password=FAKESECRET_heap60\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_heap60"
+   ],
+   "must_see": [
+    "password=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated strings|grep password output redacted at source",
+   "files": {
+    "h-strings.txt": "x junk\npassword=FAKESECRET_heap60\n"
+   },
+   "command": "cat h-strings.txt | grep -i password | head -20",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_heap60"
+   ],
+   "must_see": [
+    "password=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

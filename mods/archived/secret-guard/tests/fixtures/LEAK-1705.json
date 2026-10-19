@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-1705",
+ "title": "Bare pbpaste after user asks to use copied key (catalog says e2e; the deny is decided from the command alone, so unit)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "bare pbpaste denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste"
+    }
+   },
+   "policy_note": "owner policy: plain reads allowed, values redacted (Bare pbpaste is a plain clipboard display with nothing combined.)"
+  },
+  {
+   "kind": "pre",
+   "name": "pbpaste piped to head denied",
+   "expect": "allow",
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "pbpaste | head -1"
+    }
+   },
+   "policy_note": "R1/R2: pbpaste is not an item-4 secret source (clipboard not enumerated), so the head slicer has no secret source to combine with; plain display, allow."
+  }
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1324",
+ "title": "npm install error echoes registry URL with userinfo (failed command)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "npm install combined output stdout",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "npm install 2>&1"
+    },
+    "tool_response": {
+     "stdout": "npm ERR! 401 Unauthorized - GET https://FAKEUSER:FAKESECRET_npmerr0048@registry.corp.example/pkg\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_npmerr0048"
+   ],
+   "must_see": [
+    "npm ERR! 401 Unauthorized",
+    "registry.corp.example/pkg"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "printf stands in for failing npm install",
+   "files": {},
+   "command": "printf 'npm ERR! 401 Unauthorized - GET https://FAKEUSER:FAKESECRET_npmerr0048@registry.corp.example/pkg\\n' >&2; exit 1",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_npmerr0048"
+   ],
+   "must_see": [
+    "registry.corp.example/pkg"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

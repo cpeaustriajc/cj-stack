@@ -1,0 +1,35 @@
+{
+ "case_id": "FP-0154",
+ "title": "False positive: harmless ln -s and mkfifo must not be blocked",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "allow ln -s and mkfifo",
+   "files": {
+    "build/out.js": "console.log(1)\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ln -s build/out.js link.js && mkfifo log.fifo"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "ln -s and mkfifo run through the filter (echo added so output is checkable)",
+   "files": {
+    "build/out.js": "console.log(1)\n"
+   },
+   "command": "ln -s build/out.js link.js && mkfifo log.fifo && echo linked",
+   "exit_code": 0,
+   "must_see": [
+    "linked"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

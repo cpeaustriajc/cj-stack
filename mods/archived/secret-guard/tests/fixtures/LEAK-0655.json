@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0655",
+ "title": "WebFetch: body echo redacted and URL with token-like query denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "WebFetch result echoes the query token",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://staging.example.com/export?token=FAKESECRET_sig_25",
+     "prompt": "summarise"
+    },
+    "tool_response": {
+     "bytes": 120,
+     "code": 200,
+     "codeText": "OK",
+     "result": "Export ready on staging.example.com. session token FAKESECRET_sig_25",
+     "durationMs": 5,
+     "url": "https://staging.example.com/export?token=FAKESECRET_sig_25"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_sig_25"
+   ],
+   "must_see": [
+    "Export ready on staging.example.com"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "WebFetch URL with token query parameter",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+     "url": "https://staging.example.com/export?token=FAKESECRET_sig_25",
+     "prompt": "summarise"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

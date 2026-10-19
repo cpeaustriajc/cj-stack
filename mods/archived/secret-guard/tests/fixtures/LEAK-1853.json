@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-1853",
+ "title": "Recalled key echoed back by a failing command (output must match pattern, not only known values)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "curl -v echo of bearer token in stderr is redacted by pattern",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -v -H 'Authorization: Bearer FAKESECRET_AKIAFAKE0000000000' https://api.example.test/v1/me"
+    },
+    "tool_response": {
+     "stdout": "{\"error\":\"unauthorized\"}\n",
+     "stderr": "> GET /v1/me HTTP/2\n> Host: api.example.test\n> Authorization: Bearer FAKESECRET_AKIAFAKE0000000000\n< HTTP/2 401\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_AKIAFAKE0000000000"
+   ],
+   "must_see": [
+    "HTTP/2 401",
+    "api.example.test"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated curl -v echo is redacted at source",
+   "files": {},
+   "command": "printf '> Authorization: Bearer FAKESECRET_AKIAFAKE0000000000\\n< HTTP/2 401\\n'",
+   "must_not_see": [
+    "FAKESECRET_AKIAFAKE0000000000"
+   ],
+   "must_see": [
+    "HTTP/2 401"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-0164",
+ "title": "ssh docker compose config YAML: DB_PASSWORD value removed, key kept",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote compose config YAML",
+   "files": {
+    "sim-compose.txt": "services:\n  api:\n    environment:\n      DB_PASSWORD: FAKESECRET_compose_3\n"
+   },
+   "command": "cat sim-compose.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_compose_3"
+   ],
+   "must_see": [
+    "DB_PASSWORD"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "PostToolUse ssh docker compose config YAML output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh deploy@host 'cd /srv/app && docker compose config'"
+    },
+    "tool_response": {
+     "stdout": "services:\n  api:\n    environment:\n      DB_PASSWORD: FAKESECRET_compose_3\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_compose_3"
+   ],
+   "must_see": [
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

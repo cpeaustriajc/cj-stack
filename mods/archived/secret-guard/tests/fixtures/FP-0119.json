@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0119",
+ "title": "False-positive guard: od hex of PNG magic bytes stays unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard allows od -An -tx1 on a PNG",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "od -An -tx1 -N8 public/logo.png"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "PNG magic bytes pass through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "od -An -tx1 -N8 public/logo.png"
+    },
+    "tool_response": {
+     "stdout": " 89 50 4e 47 0d 0a 1a 0a\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "89 50 4e 47 0d 0a 1a 0a"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

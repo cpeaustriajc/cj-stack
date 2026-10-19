@@ -1,0 +1,35 @@
+{
+ "case_id": "FP-0036",
+ "title": "grep output with TOKEN or PASSWORD in benign identifiers is unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "grep TOKEN/PASSWORD benign identifiers",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rn 'TOKEN\\|PASSWORD' src"
+    },
+    "tool_response": {
+     "stdout": "src/config.ts:3:export const PASSWORD_MIN_LENGTH = 8;\nsrc/config.ts:4:export const TOKEN_TYPE = 'bearer';\nsrc/config.ts:5:export const TOKEN_TTL_SECONDS = 3600;\nsrc/http.ts:9:const TOKEN_HEADER = 'x-token';\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "[REDACTED]"
+   ],
+   "must_see": [
+    "PASSWORD_MIN_LENGTH = 8",
+    "TOKEN_TYPE = 'bearer'",
+    "TOKEN_TTL_SECONDS = 3600",
+    "TOKEN_HEADER = 'x-token'"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0643",
+ "title": "Transcript retention (cleanupPeriodDays) keeps JSONL after the session",
+ "level": "not-testable",
+ "reason_not_testable": "Retention is a Claude Code setting (name and default UNVERIFIED here), and the spec forbids runtime probes on this machine. Verify the value against the settings docs. Non-hook control: lowest documented retention for secret-touching work, and purge the transcript directory after sessions.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0126",
+ "title": "Read of a WireGuard wg0.conf exposes PrivateKey (i20)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Read of wireguard wg0.conf is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/opt/homebrew/etc/wireguard/wg0.conf"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain Read of wg0.conf. Owner decision allows plain reads; redactor hides the key.)"
+  },
+  {
+   "kind": "post",
+   "name": "If the Read were allowed, PrivateKey value is redacted in tool_response",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/opt/homebrew/etc/wireguard/wg0.conf"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/opt/homebrew/etc/wireguard/wg0.conf",
+      "content": "PrivateKey = FAKESECRET_wgkey_44chars=\nAddress = 10.8.0.2/24\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_wgkey_44chars="
+   ],
+   "must_see": [
+    "PrivateKey = [REDACTED]",
+    "Address = 10.8.0.2/24"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

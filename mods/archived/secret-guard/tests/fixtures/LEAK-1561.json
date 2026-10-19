@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1561",
+ "title": "Marketplace auto-update adds SessionStart reader",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The change arrives with a plugin version update and runs at the next session start. test-spec has no fixture kind for plugin version bumps or hooks.json diffs. Non-hook control: pin plugin versions and review hooks.json diffs before accepting updates.",
+ "duplicate_of_dropped": false
+}

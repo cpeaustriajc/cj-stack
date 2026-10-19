@@ -1,0 +1,68 @@
+{
+ "case_id": "LEAK-1503",
+ "title": "vercel env list --decrypt prints decrypted value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "vercel env list --decrypt is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "vercel env list --decrypt"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Plain display of decrypted env list with no transform or oracle; owner allows plain display. Treating --decrypt as display, not a listed transform.)"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "decrypted URL password redacted at source, name and environment columns kept (cat stands in for vercel output)",
+   "files": {
+    "vercel-env.txt": "DATABASE_URL  postgres://app:FAKESECRET_vrc@db  Production\n"
+   },
+   "command": "cat vercel-env.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_vrc"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "postgres://app:",
+    "@db",
+    "Production"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "successful Bash output with URL password redacted, columns kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat vercel-env.txt"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL  postgres://app:FAKESECRET_vrc@db  Production\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_vrc"
+   ],
+   "must_see": [
+    "DATABASE_URL",
+    "postgres://app:",
+    "@db",
+    "Production"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

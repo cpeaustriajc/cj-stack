@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-1604",
+ "title": "ssh docker inspect Env array baseline (remote simulated locally)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash docker inspect Env array shape kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh dokploy-host docker inspect app-web"
+    },
+    "tool_response": {
+     "stdout": "[{\"Config\":{\"Env\":[\"POSTGRES_PASSWORD=FAKESECRET_pw2\",\"PATH=/usr/bin:/bin\"]}}]",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    },
+    "tool_use_id": "toolu_1604"
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=[REDACTED]",
+    "PATH=/usr/bin:/bin"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "simulated remote docker inspect output via local file",
+   "files": {
+    "remote/inspect.json": "[{\"Config\":{\"Env\":[\"POSTGRES_PASSWORD=FAKESECRET_pw2\",\"PATH=/usr/bin:/bin\"]}}]\n"
+   },
+   "command": "cat remote/inspect.json",
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": [
+    "POSTGRES_PASSWORD=[REDACTED]",
+    "PATH=/usr/bin:/bin"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

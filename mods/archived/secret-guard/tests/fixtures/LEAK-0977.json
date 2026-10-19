@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-0977",
+ "title": "Literal bearer token typed into curl -H tool input",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl with literal Authorization Bearer value is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sS -H 'Authorization: Bearer FAKESECRET_tok_C2' https://api.example.test/v1/things"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (No secret source and no transform/oracle in the command, and no item 4 rule covers a literal Authorization header in Bash. Spec gap: the fixture's deny is not s)"
+  },
+  {
+   "kind": "pre",
+   "name": "same curl without the header stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -sS https://api.example.test/v1/things"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

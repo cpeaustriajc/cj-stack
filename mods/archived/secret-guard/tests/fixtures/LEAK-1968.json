@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1968",
+ "title": "Content gate enabled, exporter reads raw tool output",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The assertion is about the OTEL exporter span event body (tool.output with OTEL_LOG_TOOL_CONTENT=1). The fixture format cannot set OTEL_* env for claude -p, cannot run a collector, and cannot observe exporter output. Only the Read tool_response is observable, and the rewrite of that is not what the case asserts. Non-hook control: managed settings pinning OTEL_LOG_TOOL_CONTENT off, plus collector-side scrubbing (https://code.claude.com/docs/en/monitoring-usage).",
+ "duplicate_of_dropped": false
+}

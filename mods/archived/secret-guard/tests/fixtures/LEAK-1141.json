@@ -1,0 +1,36 @@
+{
+ "case_id": "LEAK-1141",
+ "title": "MCP postgres query returning password_hash column: mask the hash value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "password_hash row value masked in MCP output",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__postgres__query",
+    "tool_input": {
+     "sql": "select * from users"
+    },
+    "tool_response": {
+     "rows": [
+      {
+       "email": "a@x",
+       "password_hash": "FAKESECRET_hash"
+      }
+     ]
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hash"
+   ],
+   "must_see": [
+    "a@x",
+    "password_hash",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

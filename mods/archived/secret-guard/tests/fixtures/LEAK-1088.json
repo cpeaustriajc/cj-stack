@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1088",
+ "title": "Hook sleeps 5 s against a 2 s timeout: raw .env output must not reach the model",
+ "level": "not-testable",
+ "reason_not_testable": "Requires a PostToolUse hook that overruns the harness timeout. The unit runner calls the hook scripts directly, and the e2e runner uses the real hook settings, so no slow hook can be injected. The timeout-discard behaviour is itself an UNVERIFIED docs claim (batch source F0474). Non-hook control: keep the redaction hook linear-time with no network or disk I/O, set its internal deadline below the harness timeout, and read the configured timeout in the settings file.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

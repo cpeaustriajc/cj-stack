@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1091",
+ "title": "2 MB Read with invalid UTF-8 and a throwing redactor: value must not reach the model",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read whose file.content is not a string (decode-failure proxy): hook must withhold",
+   "files": {
+    "dump/dump.bin": "FAKESECRET_dump9\n",
+    ".env": "PLANTED_SERVICE_SECRET_0=FAKESECRET_dump9\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "dump/dump.bin"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "dump/dump.bin",
+      "content": [
+       "FAKESECRET_dump9 raw dump bytes"
+      ],
+      "numLines": 1,
+      "startLine": 1,
+      "totalLines": 1
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_dump9"
+   ],
+   "policy_note": "R5: unnamed value in an ordinary file or output; planted in a harvested file"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

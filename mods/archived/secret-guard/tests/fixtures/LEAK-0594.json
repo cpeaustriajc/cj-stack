@@ -1,0 +1,47 @@
+{
+ "case_id": "LEAK-0594",
+ "title": "Actuator /env returns property values (including a secret cut at the 4000-byte boundary)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "actuator env JSON password value redacted, key kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -s http://localhost:8080/actuator/env | head -c 4000"
+    },
+    "tool_response": {
+     "stdout": "{\"activeProfiles\":[],\"propertySources\":[{\"name\":\"applicationConfig\",\"properties\":{\"spring.datasource.url\":{\"value\":\"jdbc:postgresql://db:5432/app\"},\"spring.datasource.password\":{\"value\":\"FAKESECRET_act58\"}}}]}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_act58"
+   ],
+   "must_see": [
+    "spring.datasource.url",
+    "jdbc:postgresql://db:5432/app"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "value cut at 4000-byte boundary leaves no usable prefix",
+   "files": {
+    "env-tail.txt": "\"spring.datasource.password\":{\"value\":\"FAKESECRET_act58\"}\n"
+   },
+   "command": "{ yes x | tr -d '\\n' | head -c 3948; cat env-tail.txt; } | head -c 4000",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_ac"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

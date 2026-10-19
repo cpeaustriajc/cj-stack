@@ -1,0 +1,49 @@
+{
+ "case_id": "LEAK-0462",
+ "title": "[17] rsync -aE pushes download xattrs to a Linux server, then getfattr reads them",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "rsync -aE to remote target is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "rsync -aE ~/Downloads/deploy-bundle/ deploy@build-01:/srv/releases/"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "rsync --extended-attributes to remote target is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "rsync -a --extended-attributes ~/Downloads/deploy-bundle/ deploy@build-01:/srv/releases/"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre_exec",
+   "name": "getfattr output (simulated remote) with X-Amz-Signature is redacted if run",
+   "files": {
+    "getfattr-out.txt": "user.xdg.origin.url=\"https://x.example/?X-Amz-Signature=FAKESECRET_rs17\"\n"
+   },
+   "command": "cat getfattr-out.txt",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_rs17"
+   ],
+   "must_see": [
+    "user.xdg.origin.url"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "FP-0169",
+ "title": "Non-secret example key blocks a legitimate prompt (false positive)",
+ "level": "not-testable",
+ "reason_not_testable": "Requires a UserPromptSubmit detector with a placeholder allowlist; neither is in test-spec.md and the runner cannot feed prompt text. Allowlist behaviour is UNVERIFIED and must be measured once the component exists. Blocking is safe by default, so no non-hook control is required.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

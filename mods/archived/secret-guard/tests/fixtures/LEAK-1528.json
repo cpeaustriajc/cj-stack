@@ -1,0 +1,28 @@
+{
+ "case_id": "LEAK-1528",
+ "title": "ssh MCP exec runs sudo cat of secrets file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "mcp__ssh__exec result: value replaced, name kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__ssh__exec",
+    "tool_input": {
+     "host": "prod-1",
+     "command": "sudo cat /etc/secrets/db.env"
+    },
+    "tool_response": "DB_PASSWORD=FAKESECRET_db\n"
+   },
+   "must_not_see": [
+    "FAKESECRET_db"
+   ],
+   "must_see": [
+    "DB_PASSWORD="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

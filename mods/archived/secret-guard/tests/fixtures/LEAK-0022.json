@@ -1,0 +1,51 @@
+{
+ "case_id": "LEAK-0022",
+ "title": "git commit runs a core.hooksPath pre-commit hook that prints .env [catalog level e2e; fixtures are unit per spec]",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "URL userinfo password in hook output is redacted, host and path kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git commit -m 'fix'"
+    },
+    "tool_response": {
+     "stdout": "DB_URL=postgres://app:FAKESECRET_HK_014@db/x\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_HK_014"
+   ],
+   "must_see": [
+    "DB_URL=postgres://app:",
+    "@db/x",
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "failing pre-commit stand-in exits 1 with the URL on stdout; exit code and redaction both preserved",
+   "files": {
+    "fake-pre-commit.sh": "echo 'DB_URL=postgres://app:FAKESECRET_HK_014@db/x'\nexit 1\n"
+   },
+   "command": "sh ./fake-pre-commit.sh",
+   "must_not_see": [
+    "FAKESECRET_HK_014"
+   ],
+   "must_see": [
+    "DB_URL=postgres://app:",
+    "@db/x"
+   ],
+   "exit_code": 1
+  }
+ ],
+ "duplicate_of_dropped": false
+}

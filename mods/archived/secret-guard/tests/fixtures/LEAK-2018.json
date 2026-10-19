@@ -1,0 +1,83 @@
+{
+ "case_id": "LEAK-2018",
+ "title": "Bash cat with changed case or quoting evades text-matched deny rule",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "cat of ./.ENV (case variant) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./.ENV"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (cat ./.ENV is a plain display of a secret file with nothing combined; the owner allows it.)"
+  },
+  {
+   "kind": "pre",
+   "name": "cat of .e''nv (quoted) is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .e''nv"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (cat of a quoted .env name is a plain display with nothing combined; the owner allows it.)"
+  },
+  {
+   "kind": "post",
+   "name": "stdout of cat ./.ENV is redacted by value",
+   "files": {
+    ".env": "DATABASE_URL=postgres://u:FAKESECRET_pw_0005@h/db\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./.ENV"
+    },
+    "tool_response": {
+     "stdout": "DATABASE_URL=postgres://u:FAKESECRET_pw_0005@h/db\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw_0005"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "DATABASE_URL",
+    "@h/db"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "non-.env file containing the same value is redacted at source",
+   "files": {
+    "notes-config.txt": "DATABASE_URL=postgres://u:FAKESECRET_pw_0005@h/db\n",
+    ".env": "DATABASE_URL=postgres://u:FAKESECRET_pw_0005@h/db\n"
+   },
+   "command": "cat notes-config.txt",
+   "must_not_see": [
+    "FAKESECRET_pw_0005"
+   ],
+   "must_see": [
+    "[REDACTED]",
+    "DATABASE_URL",
+    "@h/db"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

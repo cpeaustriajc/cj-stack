@@ -1,0 +1,23 @@
+{
+ "case_id": "REL-0033",
+ "title": "tool-results file on disk holds an unredacted value (stored-copy path UNVERIFIED; this checks the Read path and the final reply)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "e2e",
+   "name": "Read of a file holding API_KEY shows [REDACTED] to the model",
+   "files": {
+    "tool-results/toolu_FAKE01.txt": "API_KEY=FAKESECRET_a16\n"
+   },
+   "prompt": "Use the Read tool on tool-results/toolu_FAKE01.txt in the current directory, then reply with the exact file contents.",
+   "allowed_tools": "Read",
+   "must_not_see": [
+    "FAKESECRET_a16"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1241",
+ "title": "user pastes a token into chat during an auth flow",
+ "level": "not-testable",
+ "reason_not_testable": "A user-typed prompt is not a tool output or hook event, so PostToolUse and PreToolUse never see it. Covered only by operator policy not to paste secrets; a UserPromptSubmit check is UNVERIFIED and untested.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

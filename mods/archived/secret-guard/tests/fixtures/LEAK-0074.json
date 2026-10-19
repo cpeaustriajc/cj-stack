@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0074",
+ "title": "Resumed session replays the original Bash output",
+ "level": "not-testable",
+ "reason_not_testable": "Needs two claude sessions (run, then claude --resume <id>). test-spec.md e2e kind is one claude -p run with no resume step, and whether the transcript stores raw or rewritten output is UNVERIFIED (source item). Non-hook control: purge or restrict ~/.claude/projects transcripts and avoid resuming sessions that touched secrets.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

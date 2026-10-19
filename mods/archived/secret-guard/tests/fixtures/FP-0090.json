@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0090",
+ "title": "Harvested 8-char hex prefix does not partially redact a git log line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "git log --oneline line with harvested 9d07a1d3 (printf stand-in)",
+   "files": {
+    ".env": "BUILD_REV=9d07a1d3\n"
+   },
+   "command": "printf '9d07a1d3 docs: error-handling rule names what Biome enforces (#282)\\n'",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "9d07a1d3 docs: error-handling rule names what Biome enforces (#282)"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

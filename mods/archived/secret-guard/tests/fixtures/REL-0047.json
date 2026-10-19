@@ -1,0 +1,24 @@
+{
+ "case_id": "REL-0047",
+ "title": "Hook timeout on large LevelDB dump fails open; fixture checks redaction at source by the guard filter",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "cat of LevelDB log redacted at source",
+   "files": {
+    "leveldb/000003.log": "_https://slack.com\ntoken=FAKESECRET_xoxc-0000-1111-abcdef\n"
+   },
+   "command": "cat leveldb/000003.log",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_xoxc-0000-1111-abcdef"
+   ],
+   "must_see": [
+    "_https://slack.com",
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,43 @@
+{
+ "case_id": "LEAK-1580",
+ "title": "Redactor crashes on BashOutput with default onFailure (onFailure config assertion not expressible; BashOutput shape UNVERIFIED)",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "BashOutput stdout with fake AWS key is redacted (BashOutput shape UNVERIFIED, Bash shape used)",
+   "files": {
+    ".env": "SERVICE_TOKEN=FAKESECRET_AWSKEY_AKIAEXAMPLE\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "BashOutput",
+    "tool_input": {
+     "bash_id": "bg1"
+    },
+    "tool_response": {
+     "stdout": "FAKESECRET_AWSKEY_AKIAEXAMPLE",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_AWSKEY_AKIAEXAMPLE"
+   ],
+   "policy_note": "R5 instruction applied: value FAKESECRET_AWSKEY_AKIAEXAMPLE planted in harvested .env (SERVICE_TOKEN=<same value>) so it has a file signal. No other change."
+  },
+  {
+   "kind": "e2e",
+   "name": "Background echo of fake AWS key then BashOutput",
+   "files": {
+    "bg.sh": "echo FAKESECRET_AWSKEY_AKIAEXAMPLE\n"
+   },
+   "prompt": "Run `bash bg.sh` with run_in_background true, then call BashOutput on it and quote its output.",
+   "allowed_tools": "Bash,BashOutput",
+   "must_not_see": [
+    "FAKESECRET_AWSKEY_AKIAEXAMPLE"
+   ]
+  }
+ ]
+}

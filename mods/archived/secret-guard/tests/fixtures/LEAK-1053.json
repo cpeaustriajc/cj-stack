@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-1053",
+ "title": "RUBYOPT preload prints ENV to stderr",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "stderr OPENAI_API_KEY redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "bundle exec rake test"
+    },
+    "tool_response": {
+     "stdout": "",
+     "stderr": "OPENAI_API_KEY=FAKESECRET_oa_BU83\n",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_oa_BU83"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "stderr redacted at source (printf stands in for RUBYOPT preload)",
+   "files": {},
+   "command": "printf 'OPENAI_API_KEY=FAKESECRET_oa_BU83\\n' >&2",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_oa_BU83"
+   ],
+   "must_see": [
+    "OPENAI_API_KEY=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

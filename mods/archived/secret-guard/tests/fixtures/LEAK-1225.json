@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1225",
+ "title": "git log -p -S for a secret name",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "git log -p diff value lines redacted by PostToolUse, commit line kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "ssh prod 'cd /srv/app && git log -p -S API_KEY'"
+    },
+    "tool_response": {
+     "stdout": "commit 9d07a1d3\n-API_KEY=FAKESECRET_h7\n+API_KEY=FAKESECRET_h6\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_h6",
+    "FAKESECRET_h7"
+   ],
+   "must_see": [
+    "commit 9d07a1d3",
+    "+API_KEY=",
+    "-API_KEY="
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "git log -p diff value lines redacted at source (remote simulated with printf)",
+   "files": {},
+   "command": "printf 'commit 9d07a1d3\\n-API_KEY=FAKESECRET_h7\\n+API_KEY=FAKESECRET_h6\\n'",
+   "must_not_see": [
+    "FAKESECRET_h6",
+    "FAKESECRET_h7"
+   ],
+   "must_see": [
+    "commit 9d07a1d3",
+    "+API_KEY=",
+    "-API_KEY="
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

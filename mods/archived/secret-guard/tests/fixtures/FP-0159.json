@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0159",
+ "title": "Credentials-free proxy URL is not a false positive",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "env | grep proxy is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i proxy"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "credentials-free proxy URL passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "env | grep -i proxy"
+    },
+    "tool_response": {
+     "stdout": "HTTP_PROXY=http://proxy.example.internal:3128\nno_proxy=.internal.example\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "HTTP_PROXY=http://proxy.example.internal:3128",
+    "no_proxy=.internal.example"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-1325",
+ "title": "git clone with token in command text is denied before run",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "git clone with x-access-token userinfo",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git clone https://x-access-token:FAKESECRET_clonetok0049@github.com/org/repo.git"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-1929",
+ "title": "Plugin bin/ executable on Bash PATH prints a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "plugin bin stdout with known fake value is redacted",
+   "files": {
+    ".env": "PLUGIN_TOKEN=FAKESECRET_PLUGIN_BIN_001\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "fake-plugin-dump"
+    },
+    "tool_response": {
+     "stdout": "token=FAKESECRET_PLUGIN_BIN_001\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PLUGIN_BIN_001"
+   ],
+   "must_see": [
+    "token="
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-1562",
+ "title": "Typosquat marketplace install",
+ "level": "not-testable",
+ "fixtures": [],
+ "reason_not_testable": "The choice happens at install time in the /plugin UI, not in a tool call, so no PreToolUse or PostToolUse hook fires. Non-hook control: allowlist marketplace names and verify the source before installing.",
+ "duplicate_of_dropped": false
+}

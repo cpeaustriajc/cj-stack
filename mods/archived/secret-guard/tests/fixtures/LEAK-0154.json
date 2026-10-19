@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0154",
+ "title": "Cloud or remote session sync uploads raw tool results",
+ "level": "not-testable",
+ "reason_not_testable": "Requires a Claude Code remote or cloud session that syncs to claude.ai and an egress proxy capturing the sync body. The runner cannot create that environment under claude -p in a temp project. Non-hook control: do not read secret-bearing output in syncing sessions; guard ssh and docker env dumps (LEAK-0150).",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

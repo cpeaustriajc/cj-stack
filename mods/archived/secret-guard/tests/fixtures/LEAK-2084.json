@@ -1,0 +1,63 @@
+{
+ "case_id": "LEAK-2084",
+ "title": "Secret split across two output lines escapes a line-by-line match",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "split form: value spans a newline in Bash stdout",
+   "files": {
+    ".env": "SPLIT_TOKEN=FAKESECRET_SPLIT_0004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sample 4242 5"
+    },
+    "tool_response": {
+     "stdout": "Sampling pid 4242\nheap key=FAKESECRET_SPL\nIT_0004 ok\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SPL",
+    "IT_0004"
+   ],
+   "must_see": [
+    "Sampling pid 4242"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "one-line form of the same value",
+   "files": {
+    ".env": "SPLIT_TOKEN=FAKESECRET_SPLIT_0004\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sample 4242 5"
+    },
+    "tool_response": {
+     "stdout": "Sampling pid 4242\nheap key=FAKESECRET_SPLIT_0004\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_SPLIT_0004"
+   ],
+   "must_see": [
+    "Sampling pid 4242"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

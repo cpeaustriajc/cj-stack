@@ -1,0 +1,60 @@
+{
+ "case_id": "LEAK-1160",
+ "title": "age-keygen without -o prints the identity to stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "P denies age-keygen without -o",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "age-keygen"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "age-keygen with -o stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "age-keygen -o ./keys/age.txt"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "O masks AGE-SECRET-KEY-1 if reached",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "age-keygen"
+    },
+    "tool_response": {
+     "stdout": "# created 2026-10-10T00:00:00Z\nAGE-SECRET-KEY-1FAKESECRET_age\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "AGE-SECRET-KEY-1FAKESECRET_age",
+    "FAKESECRET_age"
+   ],
+   "must_see": [
+    "AGE-SECRET-KEY-1[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1407",
+ "title": "Bash: base64 of a harvested value after a byte shift (tail -c +2)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 of harvested value after tail -c +2 is redacted at source (leading byte x is dropped so the encoded value is the whole FAKE token)",
+   "files": {
+    ".env": "DB_TOKEN=FAKESECRET_p@ss#1\n"
+   },
+   "command": "printf '%s' 'xFAKESECRET_p@ss#1' | tail -c +2 | base64",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF9wQHNzIzE="
+   ],
+   "policy_note": "R3: the combo is denied; a deny passes"
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "case_id": "LEAK-1902",
+ "title": "Read of .envrc returns the literal secret in the file",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of .envrc masks the export value and keeps the variable name",
+   "files": {
+    ".envrc": "# deploy\nexport FAKE_DEPLOY_TOKEN=FAKESECRET_fff666\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/fake/proj/.envrc"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/Users/fake/proj/.envrc",
+      "content": "# deploy\nexport FAKE_DEPLOY_TOKEN=FAKESECRET_fff666\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_fff666"
+   ],
+   "must_see": [
+    "export FAKE_DEPLOY_TOKEN=",
+    "# deploy"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "Read of .envrc is not blocked by the guard",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/Users/fake/proj/.envrc"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

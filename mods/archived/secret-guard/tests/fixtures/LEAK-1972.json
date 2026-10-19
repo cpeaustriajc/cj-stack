@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1972",
+ "title": "Helper failure leaks partial token into a readable debug log",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Read of helper debug log with truncated Bearer JSON is redacted",
+   "files": {
+    "debug/helper.log": "otelHeadersHelper failed; telemetry is not being exported\n{\"Authorization\": \"Bearer FAKESECRET_hdr_007\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "/home/fakeuser/proj/debug/helper.log"
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "/home/fakeuser/proj/debug/helper.log",
+      "content": "otelHeadersHelper failed; telemetry is not being exported\n{\"Authorization\": \"Bearer FAKESECRET_hdr_007\"\n",
+      "numLines": 2,
+      "startLine": 1,
+      "totalLines": 2
+     }
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_hdr_007"
+   ],
+   "must_see": [
+    "otelHeadersHelper failed; telemetry is not being exported",
+    "Authorization"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

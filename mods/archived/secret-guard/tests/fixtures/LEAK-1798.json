@@ -1,0 +1,24 @@
+{
+ "case_id": "LEAK-1798",
+ "title": "pytest -l prints local variable values",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "pytest -l frame locals, local script stands in",
+   "files": {
+    "pytest-sim.sh": "echo \"tests/test_billing.py:42: AssertionError\"\necho \"    api_key = 'FAKESECRET_PYLOC_01'\"\necho \"    amount = 4200\"\nexit 1\n"
+   },
+   "command": "sh ./pytest-sim.sh",
+   "exit_code": 1,
+   "must_not_see": [
+    "FAKESECRET_PYLOC_01"
+   ],
+   "must_see": [
+    "api_key = ",
+    "amount = 4200"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

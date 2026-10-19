@@ -1,0 +1,21 @@
+{
+ "case_id": "LEAK-0934",
+ "title": "glpat- token echoed through a non-secret variable name is redacted at source",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "echo of FAKE_NOTE holding a glpat- value",
+   "files": {},
+   "command": "FAKE_NOTE=glpat-FAKESECRET_0123456789abcdef; echo \"note: $FAKE_NOTE\"",
+   "must_not_see": [
+    "glpat-FAKESECRET_0123456789abcdef"
+   ],
+   "must_see": [
+    "note:"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

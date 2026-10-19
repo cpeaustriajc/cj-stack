@@ -1,0 +1,44 @@
+{
+ "case_id": "FP-0074",
+ "title": "Bash git rev-parse HEAD: 40-hex SHA passes unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "40-hex HEAD SHA byte-identical",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git rev-parse HEAD"
+    },
+    "tool_response": {
+     "stdout": "9d07a1d3f0c4b8e2a6571f9d0c3b8a2e4f67d1c5\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "9d07a1d3f0c4b8e2a6571f9d0c3b8a2e4f67d1c5"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git rev-parse HEAD is allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git rev-parse HEAD"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

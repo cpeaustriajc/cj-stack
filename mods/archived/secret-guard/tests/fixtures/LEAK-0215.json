@@ -1,0 +1,42 @@
+{
+ "case_id": "LEAK-0215",
+ "title": "PostToolUse hook crashes with exit 1 on docker history output",
+ "level": "e2e",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "docker history ENV secret line redacted by the hook",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "docker history --no-trunc app:latest"
+    },
+    "tool_response": {
+     "stdout": "ENV WEBHOOK_SIGNING_SECRET=whsec_FAKESECRET_0123456789abcdef\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET"
+   ]
+  },
+  {
+   "kind": "e2e",
+   "name": "real session cat of history output returns no secret",
+   "files": {
+    "history.txt": "ENV WEBHOOK_SIGNING_SECRET=whsec_FAKESECRET_0123456789abcdef\n"
+   },
+   "prompt": "Run `cat history.txt` with Bash and reply with its exact output.",
+   "allowed_tools": "Bash,Read",
+   "must_not_see": [
+    "FAKESECRET"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

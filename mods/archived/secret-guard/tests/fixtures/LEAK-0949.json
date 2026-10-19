@@ -1,0 +1,31 @@
+{
+ "case_id": "LEAK-0949",
+ "title": ".pgpass colon-delimited password field with no keyword is redacted",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of fake pgpass line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_pgpass"
+    },
+    "tool_response": {
+     "stdout": "db.internal.test:5432:appdb:appuser:FAKESECRET_PGPASS_PW\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_PGPASS_PW"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

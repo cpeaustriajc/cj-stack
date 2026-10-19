@@ -1,0 +1,8 @@
+{
+ "case_id": "LEAK-0641",
+ "title": "Resume or continue replays an earlier tool output that contained a secret",
+ "level": "not-testable",
+ "reason_not_testable": "Fixture schema has one claude -p run per fixture and no seeded-transcript or --resume/--continue step, so the replay of stored history cannot be expressed. Needs runner support. Non-hook controls: purge the transcript before resume; do not resume sessions that read secrets.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

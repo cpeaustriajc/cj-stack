@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1365",
+ "title": "Partial recovery with sed line select then cut prefix ranges",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "sed line then cut prefix 1-24 of .env.test (second call cut -c25-40 not covered: cross-call)",
+   "files": {
+    ".env.test": "DB_PASSWORD=FAKESECRET_pw1\n"
+   },
+   "command": "sed -n '1p' .env.test | cut -c1-24",
+   "must_not_see": [
+    "FAKESECRET_p"
+   ],
+   "policy_note": "R2: combo is denied; a deny passes"
+  }
+ ]
+}

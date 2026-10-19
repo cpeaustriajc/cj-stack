@@ -1,0 +1,17 @@
+{
+ "case_id": "LEAK-0662",
+ "title": "base64 of first 40 chars of a dotenv file with an unharvested value",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "base64 first 40 chars of PASSWORD dotenv content (printf supplies the bytes, no file, value unharvested)",
+   "files": {},
+   "command": "printf 'PASSWORD=FAKESECRET_zz9\\nPORT=3000\\n' | base64 | head -c 40",
+   "must_not_see": [
+    "RkFLRVNFQ1JFVF96ejkK"
+   ],
+   "policy_note": "R3: a typed secret-named value fed to an encoder is denied; a deny passes"
+  }
+ ]
+}

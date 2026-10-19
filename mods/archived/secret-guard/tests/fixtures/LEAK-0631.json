@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-0631",
+ "title": "Bash env/printenv dump prints secret values (bare value case run as pre_exec; catalog lists e2e)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "printenv of a bare secret value: value must be [REDACTED] (expected to fail unless exact-value harvesting applies)",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_env_1\nAPI_TOKEN=FAKESECRET_tok_env_2\n"
+   },
+   "command": "STRIPE_SECRET_KEY=FAKESECRET_sk_env_1 printenv STRIPE_SECRET_KEY",
+   "must_not_see": [
+    "FAKESECRET_sk_env_1"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "pre_exec",
+   "name": "env | grep key/secret/token: NAME=value pairs redacted for both variables",
+   "files": {
+    ".env": "STRIPE_SECRET_KEY=FAKESECRET_sk_env_1\nAPI_TOKEN=FAKESECRET_tok_env_2\n"
+   },
+   "command": "STRIPE_SECRET_KEY=FAKESECRET_sk_env_1 API_TOKEN=FAKESECRET_tok_env_2 env | grep -i -E 'key|secret|token'",
+   "must_not_see": [
+    "FAKESECRET_sk_env_1",
+    "FAKESECRET_tok_env_2"
+   ],
+   "must_see": [
+    "STRIPE_SECRET_KEY=[REDACTED]",
+    "API_TOKEN=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,45 @@
+{
+ "case_id": "FP-0120",
+ "title": "False positive: shasum digest of package-lock.json",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "guard allows shasum -a 256 package-lock.json",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "shasum -a 256 package-lock.json"
+    }
+   },
+   "expect": "allow"
+  },
+  {
+   "kind": "post",
+   "name": "64-char hex digest passes through unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "shasum -a 256 package-lock.json"
+    },
+    "tool_response": {
+     "stdout": "3f9c1a7e5b2d8046c9e1f3a2b7d4058e6c1f9a3b2d7e8054c6b1a9f2e3d7c805  package-lock.json\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [],
+   "must_see": [
+    "3f9c1a7e5b2d8046c9e1f3a2b7d4058e6c1f9a3b2d7e8054c6b1a9f2e3d7c805",
+    "package-lock.json"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

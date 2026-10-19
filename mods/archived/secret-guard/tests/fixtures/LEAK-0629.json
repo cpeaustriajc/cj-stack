@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0629",
+ "title": "cut slices a generic crash-report value into fragments",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Middle fragment of a harvested crash-report value is redacted or withheld",
+   "files": {
+    "node-2026-10-09-1.ips": "Process: node [4121]\n\"procCmdLine\" : \"node /srv/app/server.js FAKESECRET_crash_010\"\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cut -c 60-96 node-2026-10-09-1.ips"
+    },
+    "tool_response": {
+     "stdout": "ESECRET_crash_0\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "ESECRET_crash_0"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

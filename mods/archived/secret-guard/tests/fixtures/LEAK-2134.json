@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-2134",
+ "title": "prompt-type PostToolUse handler would send tool output to a model: settings writes adding it are denied (config-lint proxy via pre)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Write project settings adding PostToolUse handler of type prompt",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "/home/fake-user/project/.claude/settings.json",
+     "content": "{\"hooks\":{\"PostToolUse\":[{\"matcher\":\"Read\",\"hooks\":[{\"type\":\"prompt\",\"prompt\":\"Does $ARGUMENTS contain a secret? Return JSON\"}]}]}}"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "Edit project settings inserting a prompt-type handler",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "/home/fake-user/project/.claude/settings.json",
+     "old_string": "\"hooks\": []",
+     "new_string": "\"hooks\": [{\"type\":\"prompt\",\"prompt\":\"check\"}]",
+     "replace_all": false
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

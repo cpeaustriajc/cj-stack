@@ -1,0 +1,23 @@
+{
+ "case_id": "LEAK-1200",
+ "title": "ansible ad-hoc shell env dump across a group",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "AWS_SECRET value replaced in every host block, headers pass",
+   "files": {},
+   "command": "printf '%s\\n' 'web1 | CHANGED | rc=0 >>' 'AWS_SECRET=FAKESECRET_aws2' 'web2 | CHANGED | rc=0 >>' 'AWS_SECRET=FAKESECRET_aws3'",
+   "must_not_see": [
+    "FAKESECRET_aws2",
+    "FAKESECRET_aws3"
+   ],
+   "must_see": [
+    "web1 | CHANGED | rc=0 >>",
+    "web2 | CHANGED | rc=0 >>"
+   ],
+   "exit_code": 0
+  }
+ ],
+ "duplicate_of_dropped": false
+}

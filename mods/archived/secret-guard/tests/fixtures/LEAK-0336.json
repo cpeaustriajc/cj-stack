@@ -1,0 +1,77 @@
+{
+ "case_id": "LEAK-0336",
+ "title": "Tool-name bypass: xcrun, absolute path, command builtin",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "xcrun leaks denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "xcrun leaks 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (xcrun leaks; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "absolute path heap denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "/usr/bin/heap -addresses NSString 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Absolute-path heap; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "pre",
+   "name": "command builtin heap denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "command heap -addresses NSString 4242"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (command-builtin heap; no item-4 rule covers it. Flag as a spec gap.)"
+  },
+  {
+   "kind": "post",
+   "name": "bypass heap output redacted if run",
+   "files": {
+    ".env": "API_TOKEN=FAKESECRET_BYPASS\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "heap -addresses NSString 4242"
+    },
+    "tool_response": {
+     "stdout": "0x600000 NSString \"FAKESECRET_BYPASS\"\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_BYPASS"
+   ],
+   "must_see": [
+    "0x600000 NSString"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,65 @@
+{
+ "case_id": "LEAK-0230",
+ "title": "test -n of a grep match on a secret file, printed as yes or no",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "test -n over grep of DB_PASSWORD on .dev.vars is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "test -n \"$(grep '^DB_PASSWORD=FAKESECRET_a' .dev.vars)\" && echo yes || echo no"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "yes output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "test -n \"$(grep '^DB_PASSWORD=FAKESECRET_a' .dev.vars)\" && echo yes || echo no"
+    },
+    "tool_response": {
+     "stdout": "yes\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "yes"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "no output passes unchanged",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "test -n \"$(grep '^DB_PASSWORD=FAKESECRET_a' .dev.vars)\" && echo yes || echo no"
+    },
+    "tool_response": {
+     "stdout": "no\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_see": [
+    "no"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,45 @@
+{
+ "case_id": "LEAK-0657",
+ "title": "grep over transcripts: JSON-escaped line containing a secret",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "grep -rh over a transcript dir with escaped content",
+   "files": {
+    "transcripts/s1.jsonl": "{\"type\":\"user\",\"content\":\"export DB_PASSWORD=FAKESECRET_pw2\\n\"}\n"
+   },
+   "command": "grep -rh 'PASSWORD=' transcripts",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "grep -rh tool_response with escaped line",
+   "files": {
+    "transcripts/s1.jsonl": "{\"type\":\"user\",\"content\":\"export DB_PASSWORD=FAKESECRET_pw2\\n\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -rh 'PASSWORD=' transcripts"
+    },
+    "tool_response": {
+     "stdout": "{\"type\":\"user\",\"content\":\"export DB_PASSWORD=FAKESECRET_pw2\\n\"}\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_pw2"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

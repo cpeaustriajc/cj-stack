@@ -1,0 +1,38 @@
+[
+ {
+  "query": "run the cj-stack checks before I commit this skill change",
+  "should_trigger": true
+ },
+ {
+  "query": "run skill-doctor on cj-stack",
+  "should_trigger": true
+ },
+ {
+  "query": "how many tokens does each cj-stack skill cost per turn",
+  "should_trigger": true
+ },
+ {
+  "query": "test all the mods and validate the marketplace",
+  "should_trigger": true
+ },
+ {
+  "query": "write a new skill for formatting changelogs",
+  "should_trigger": false
+ },
+ {
+  "query": "run the app",
+  "should_trigger": true
+ },
+ {
+  "query": "run the unit tests for the cart module",
+  "should_trigger": false
+ },
+ {
+  "query": "install the cj-stack plugin",
+  "should_trigger": false
+ },
+ {
+  "query": "run the dev server for my nextjs app in ~/projects/shop",
+  "should_trigger": false
+ }
+]

@@ -1,0 +1,101 @@
+{
+ "case_id": "FP-0189",
+ "title": "Status line script edits and wc -l line counts are allowed",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "Edit of the status line's lsof/awk port filter is allowed",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/statusline-command.sh",
+     "old_string": "ports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')",
+     "new_string": "ports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 && $1 ~ /node|python|ruby/ {print $9}' | sed 's/.*://' | sort -un | head -5 | tr '\\n' ' ')"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: the status line never shows a secret to Claude, so its scripts get only the hook-script content scan; a line count cannot reveal a value."
+  },
+  {
+   "kind": "pre",
+   "name": "Write of a new status line printing model and git branch is allowed",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+     "file_path": "{HOME}/.claude/statusline.sh",
+     "content": "#!/bin/sh\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nbranch=$(git branch --show-current 2>/dev/null)\necho \"$model | $branch\"\n"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: the status line never shows a secret to Claude, so its scripts get only the hook-script content scan; a line count cannot reveal a value."
+  },
+  {
+   "kind": "pre",
+   "name": "sed -i on the status line script is allowed",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sed -i '' 's/sort -u/sort -un/' ~/.claude/statusline-command.sh"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: the status line never shows a secret to Claude, so its scripts get only the hook-script content scan; a line count cannot reveal a value."
+  },
+  {
+   "kind": "pre",
+   "name": "wc -l of a session transcript is allowed",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -l ~/.claude/projects/p/s1.jsonl"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: the status line never shows a secret to Claude, so its scripts get only the hook-script content scan; a line count cannot reveal a value."
+  },
+  {
+   "kind": "pre",
+   "name": "wc -l of an env file is allowed",
+   "files": {
+    "~/.claude/statusline-command.sh": "#!/bin/bash\ninput=$(cat)\nmodel=$(echo \"$input\" | jq -r '.model.display_name')\nports=$(lsof -iTCP -sTCP:LISTEN -P -n 2>/dev/null | awk 'NR>1 {print $9}' | sed 's/.*://' | sort -u | tr '\\n' ' ')\necho \"$model | $ports\"\n",
+    "~/.env": "A=1\n",
+    "~/.claude/projects/p/s1.jsonl": "{\"type\":\"user\"}\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "wc -l ~/.env"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner 2026-10-11: the status line never shows a secret to Claude, so its scripts get only the hook-script content scan; a line count cannot reveal a value."
+  }
+ ],
+ "duplicate_of_dropped": false
+}

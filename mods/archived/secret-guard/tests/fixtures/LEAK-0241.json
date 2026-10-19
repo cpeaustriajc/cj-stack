@@ -1,0 +1,46 @@
+{
+ "case_id": "LEAK-0241",
+ "title": "Reversed secret value slips past exact-value match",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "rev of GH_TOKEN is denied (withheld)",
+   "files": {
+    ".env": "GH_TOKEN=FAKESECRET_ghp_zqEKAF\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$GH_TOKEN\" | rev"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "post",
+   "name": "reversed harvested value is not shown (reversed form contains FAKE; is the exact rev of the .env value)",
+   "files": {
+    ".env": "GH_TOKEN=FAKESECRET_ghp_zqEKAF\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printf '%s' \"$GH_TOKEN\" | rev"
+    },
+    "tool_response": {
+     "stdout": "FAKEqz_phg_TERCESEKAF\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKEqz_phg_TERCESEKAF"
+   ]
+  }
+ ]
+}

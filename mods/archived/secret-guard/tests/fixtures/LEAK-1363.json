@@ -1,0 +1,50 @@
+{
+ "case_id": "LEAK-1363",
+ "title": "Quoted value with inline comment appended to .env",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "quoted value with inline comment appended then cat is redacted keeping quotes and comment",
+   "files": {
+    ".env": "BASE=1\n"
+   },
+   "command": "printf 'MY_VAL=\"FAKESECRET_q_0009\"  # local note\\n' >> .env && cat .env",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_q_0009"
+   ],
+   "must_see": [
+    "MY_VAL=\"[REDACTED]\"  # local note"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "post-output path: quoted value line in stdout is redacted keeping quotes and comment",
+   "files": {
+    ".env": "BASE=1\nMY_VAL=\"FAKESECRET_q_0009\"  # local note\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat .env"
+    },
+    "tool_response": {
+     "stdout": "BASE=1\nMY_VAL=\"FAKESECRET_q_0009\"  # local note\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_q_0009"
+   ],
+   "must_see": [
+    "MY_VAL=\"[REDACTED]\"  # local note"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

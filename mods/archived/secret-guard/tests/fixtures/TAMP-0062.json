@@ -1,0 +1,8 @@
+{
+ "case_id": "TAMP-0062",
+ "title": "agent forwarding reaches a second hop through ProxyJump",
+ "level": "not-testable",
+ "reason_not_testable": "Forwarding across the ProxyJump hop is not visible in the command text, so no guard fixture can prove the hop is covered. The public-fingerprint output half is a false-positive property covered by FP-0106. Non-hook control: do not forward agents across hops; use ProxyJump without ForwardAgent.",
+ "fixtures": [],
+ "duplicate_of_dropped": false
+}

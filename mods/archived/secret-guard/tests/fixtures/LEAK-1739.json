@@ -1,0 +1,38 @@
+{
+ "case_id": "LEAK-1739",
+ "title": "git show / git diff of a commit that removed a secret line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "removed secret value replaced, added env-reference line unchanged",
+   "files": {
+    "git-show-config.out": "commit 8b5ac958\ndiff --git a/src/config.ts b/src/config.ts\n@@ -1 +1 @@\n-CLIENT_SECRET=FAKESECRET_DIFF_01\n+CLIENT_SECRET=process.env.CLIENT_SECRET\n"
+   },
+   "command": "cat git-show-config.out",
+   "exit_code": 0,
+   "must_not_see": [
+    "FAKESECRET_DIFF_01"
+   ],
+   "must_see": [
+    "+CLIENT_SECRET=process.env.CLIENT_SECRET",
+    "-CLIENT_SECRET=[REDACTED]",
+    "src/config.ts"
+   ]
+  },
+  {
+   "kind": "pre",
+   "name": "git show of commit with removed secret stays allowed",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "git show 8b5ac958 -- src/config.ts"
+    }
+   },
+   "expect": "allow"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

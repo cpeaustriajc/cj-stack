@@ -1,0 +1,33 @@
+{
+ "case_id": "LEAK-0916",
+ "title": "Hook must answer with JSON updatedToolOutput, never plain text on stdout",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Bash echo DB_PASSWORD: model-visible output must be the JSON replacement, not the raw line",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "echo DB_PASSWORD=FAKESECRET_plain"
+    },
+    "tool_response": {
+     "stdout": "DB_PASSWORD=FAKESECRET_plain\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_plain"
+   ],
+   "must_see": [
+    "REDACTED",
+    "DB_PASSWORD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

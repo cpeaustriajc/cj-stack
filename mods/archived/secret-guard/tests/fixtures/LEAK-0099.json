@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0099",
+ "title": "Claude types the secret literal into its own Bash command",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "curl with a literal bearer token typed into the command is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "curl -H \"Authorization: Bearer FAKESECRET_tok_1\" https://example.invalid"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Typed bearer token in a curl command is not in item 4's deny list. Disputed fixture; owner to decide.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

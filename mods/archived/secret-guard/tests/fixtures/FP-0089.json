@@ -1,0 +1,21 @@
+{
+ "case_id": "FP-0089",
+ "title": "Bash JSON debug output with sessionTokenId UUID and commit SHA: unchanged",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "JSON line with sessionTokenId UUID and commit SHA",
+   "files": {},
+   "command": "printf '{\"sessionTokenId\":\"6f1d2c3b-4a5e-4f7a-8b9c-0d1e2f3a4b5c\",\"commit\":\"3f9c2e8d7a1b4c6e9d0f2a5b8c1d4e7f0a3b6c9d\"}\\n'",
+   "exit_code": 0,
+   "must_not_see": [],
+   "must_see": [
+    "sessionTokenId",
+    "6f1d2c3b-4a5e-4f7a-8b9c-0d1e2f3a4b5c",
+    "3f9c2e8d7a1b4c6e9d0f2a5b8c1d4e7f0a3b6c9d"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

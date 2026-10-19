@@ -1,0 +1,22 @@
+{
+ "case_id": "LEAK-0363",
+ "title": "K18 security unlock-keychain with login password in argv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "unlock-keychain with -p literal value is denied (deny-message content not checkable in pre format)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "security unlock-keychain -p 'FAKESECRET_loginpw' ~/Library/Keychains/login.keychain-db"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (Keychain CLI with a literal password. Item 4 denies combos only, and this has no transform or oracle. Flag as a gap.)"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,39 @@
+{
+ "case_id": "LEAK-1328",
+ "title": "Grep content line with URL credentials in .env.example",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "Grep content output with URL userinfo",
+   "files": {
+    ".env.example": "# proxy settings\nNODE_ENV=dev\nPROXY=https://FAKEUSER:FAKESECRET_grepurl0051@proxy.example\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+     "pattern": "https?://[^/:@ ]+:[^@ ]+@",
+     "path": "<fixture repo>",
+     "output_mode": "content"
+    },
+    "tool_response": {
+     "mode": "content",
+     "numFiles": 0,
+     "filenames": [],
+     "content": ".env.example:3:PROXY=https://FAKEUSER:FAKESECRET_grepurl0051@proxy.example",
+     "numLines": 1,
+     "totalLines": 1
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_grepurl0051"
+   ],
+   "must_see": [
+    ".env.example:3:PROXY=https://",
+    "@proxy.example"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

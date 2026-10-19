@@ -1,0 +1,35 @@
+{
+ "case_id": "LEAK-2091",
+ "title": "GRADLE_USER_HOME relocates credentials away from ~/.gradle",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat via $GRADLE_USER_HOME: redaction by content, no path rule involved",
+   "files": {
+    "gradle-home/gradle.properties": "mavenPassword=FAKESECRET_gradle_D4\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat \"$GRADLE_USER_HOME/gradle.properties\""
+    },
+    "tool_response": {
+     "stdout": "mavenPassword=FAKESECRET_gradle_D4\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_gradle_D4"
+   ],
+   "must_see": [
+    "mavenPassword=[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

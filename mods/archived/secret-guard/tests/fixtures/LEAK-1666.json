@@ -1,0 +1,30 @@
+{
+ "case_id": "LEAK-1666",
+ "title": "MCP tab or navigation result with access_token in URL (MCP tool name UNVERIFIED)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "access_token query value is redacted, title kept",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "mcp__browser__browser_navigate_back",
+    "tool_input": {},
+    "tool_response": {
+     "url": "https://app.example.com/callback?access_token=FAKESECRET_URL_0001",
+     "title": "Signed in"
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_URL_0001"
+   ],
+   "must_see": [
+    "Signed in",
+    "https://app.example.com/callback?access_token=",
+    "access_token"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

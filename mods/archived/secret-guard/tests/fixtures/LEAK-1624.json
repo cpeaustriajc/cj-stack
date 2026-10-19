@@ -1,0 +1,56 @@
+{
+ "case_id": "LEAK-1624",
+ "title": "printenv DB_PASSWORD with hook crash on unexpected tool_response type",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "tool_response is a bare string",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_crash10\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD"
+    },
+    "tool_response": "DB_PASSWORD=FAKESECRET_crash10"
+   },
+   "must_not_see": [
+    "FAKESECRET_crash10"
+   ],
+   "must_see": [
+    "WITHHELD"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "nested stdout is an object not a string",
+   "files": {
+    ".env": "DB_PASSWORD=FAKESECRET_crash10\n"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "printenv DB_PASSWORD"
+    },
+    "tool_response": {
+     "stdout": {
+      "text": "DB_PASSWORD=FAKESECRET_crash10"
+     },
+     "stderr": "",
+     "interrupted": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_crash10"
+   ],
+   "must_see": [
+    "WITHHELD"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

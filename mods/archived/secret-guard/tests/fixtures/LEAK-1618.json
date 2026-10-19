@@ -1,0 +1,81 @@
+{
+ "case_id": "LEAK-1618",
+ "title": "PEM block split across Read chunks of background output file (chunk excerpts; each chunk must be fully redacted)",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "chunk A: lines 90-100 (BEGIN plus body lines)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "tasks/bg1618.output",
+     "offset": 89,
+     "limit": 11
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "tasks/bg1618.output",
+      "content": "-----BEGIN PRIVATE KEY-----\nMIIFAKEPEM0091\nMIIFAKEPEM0092\nMIIFAKEPEM0093\nMIIFAKEPEM0094\nMIIFAKEPEM0095\nMIIFAKEPEM0096\nMIIFAKEPEM0097\nMIIFAKEPEM0098\nMIIFAKEPEM0099\nMIIFAKEPEM0100",
+      "numLines": 11,
+      "startLine": 90,
+      "totalLines": 110
+     }
+    }
+   },
+   "must_not_see": [
+    "MIIFAKEPEM0091",
+    "MIIFAKEPEM0092",
+    "MIIFAKEPEM0093",
+    "MIIFAKEPEM0094",
+    "MIIFAKEPEM0095",
+    "MIIFAKEPEM0096",
+    "MIIFAKEPEM0097",
+    "MIIFAKEPEM0098",
+    "MIIFAKEPEM0099",
+    "MIIFAKEPEM0100"
+   ],
+   "must_see": []
+  },
+  {
+   "kind": "post",
+   "name": "chunk B: lines 101-110 (body lines plus END)",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+     "file_path": "tasks/bg1618.output",
+     "offset": 100,
+     "limit": 10
+    },
+    "tool_response": {
+     "type": "text",
+     "file": {
+      "filePath": "tasks/bg1618.output",
+      "content": "MIIFAKEPEM0101\nMIIFAKEPEM0102\nMIIFAKEPEM0103\nMIIFAKEPEM0104\nMIIFAKEPEM0105\nMIIFAKEPEM0106\nMIIFAKEPEM0107\nMIIFAKEPEM0108\nMIIFAKEPEM0109\n-----END PRIVATE KEY-----",
+      "numLines": 10,
+      "startLine": 101,
+      "totalLines": 110
+     }
+    }
+   },
+   "must_not_see": [
+    "MIIFAKEPEM0101",
+    "MIIFAKEPEM0102",
+    "MIIFAKEPEM0103",
+    "MIIFAKEPEM0104",
+    "MIIFAKEPEM0105",
+    "MIIFAKEPEM0106",
+    "MIIFAKEPEM0107",
+    "MIIFAKEPEM0108",
+    "MIIFAKEPEM0109"
+   ],
+   "must_see": []
+  }
+ ],
+ "duplicate_of_dropped": false
+}

@@ -1,0 +1,48 @@
+{
+ "case_id": "LEAK-1644",
+ "title": "sqlite3 .dump of VS Code state.vscdb",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "sqlite3 .dump of state.vscdb is denied",
+   "files": {},
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Application Support/Code/User/globalStorage/state.vscdb\" .dump"
+    }
+   },
+   "expect": "allow",
+   "policy_note": "owner policy: plain reads allowed, values redacted (sqlite3 .dump of a VS Code state DB with no filter. Plain display. Borderline: the dump prints values and the redactor may not harvest them.)"
+  },
+  {
+   "kind": "post",
+   "name": "If allowed, JSON-escaped accessToken value is redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "sqlite3 \"$HOME/Library/Application Support/Code/User/globalStorage/state.vscdb\" .dump"
+    },
+    "tool_response": {
+     "stdout": "INSERT INTO ItemTable VALUES('github.auth','{\"accessToken\":\"FAKESECRET_VSC_0001\"}');\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_VSC_0001"
+   ],
+   "must_see": [
+    "ItemTable",
+    "github.auth"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}

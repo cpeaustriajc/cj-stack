@@ -1,0 +1,163 @@
+{
+ "case_id": "LEAK-2187",
+ "title": "Count, match and compare probes of a value in Claude Code's settings, ~/.claude.json or .mcp.json are denied",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre",
+   "name": "grep -c of a key value over chezmoi diff of settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "chezmoi diff ~/.claude/settings.json | grep -c 'sk-ant-api03-FAKESECRET'"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -q of a key value in settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q 'sk-ant-api03-FAKESECRET' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -l of a key value in settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -l 'sk-ant-api03-FAKESECRET' ~/.claude/settings.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -c of a key value in ~/.claude.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -c 'sk-ant-api03-FAKESECRET' ~/.claude.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep -q of a key value in .mcp.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n",
+    ".mcp.json": "{\"mcpServers\": {\"x\": {\"type\": \"http\", \"url\": \"https://x.example\"}}}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep -q 'sk-ant-api03-FAKESECRET' .mcp.json"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "grep chained with && as an exit-status probe is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "grep 'sk-ant-api03-FAKESECRET' ~/.claude/settings.json && echo yes"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "[[ == ]] glob compare over settings.json is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[[ $(cat ~/.claude/settings.json) == *sk-ant* ]] && echo y"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "[[ == ]] glob compare over an env file is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "[[ $(cat ~/.env) == *sk-ant* ]] && echo y"
+    }
+   },
+   "expect": "deny"
+  },
+  {
+   "kind": "pre",
+   "name": "head -c of an .mcp.json header value is denied",
+   "files": {
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"allow\": [],\n    \"defaultMode\": \"default\"\n  },\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"*\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/secret_redact.py\",\n            \"timeout\": 30\n          }\n        ]\n      }\n    ]\n  }\n}",
+    "~/.claude.json": "{\"numStartups\": 3, \"mcpServers\": {}}",
+    "~/.env": "A=1\n",
+    ".mcp.json": "{\"mcpServers\": {\"x\": {\"type\": \"http\", \"url\": \"https://x.example\"}}}"
+   },
+   "event": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "jq -r .mcpServers.x.headers.Authorization .mcp.json | head -c 4"
+    }
+   },
+   "expect": "deny"
+  }
+ ],
+ "duplicate_of_dropped": false
+}

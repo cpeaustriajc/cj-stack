@@ -1,0 +1,32 @@
+{
+ "case_id": "LEAK-0951",
+ "title": "Docker config.json auth value (base64 of FAKEUSER:FAKESECRET_DOCKER) is redacted; plaintext added as whole-file content so the base64 marker is derivable",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "cat of fake docker config.json with auth field",
+   "files": {
+    "fake_docker_auth.txt": "FAKEUSER:FAKESECRET_DOCKER"
+   },
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat /Users/cj/fixtures/fake_docker_config.json"
+    },
+    "tool_response": {
+     "stdout": "{\"auths\":{\"registry.example.test\":{\"auth\":\"RkFLRVVTRVI6RkFLRVNFQ1JFVF9ET0NLRVI=\"}}}",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "RkFLRVVTRVI6RkFLRVNFQ1JFVF9ET0NLRVI="
+   ],
+   "must_see": []
+  }
+ ]
+}

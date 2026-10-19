@@ -1,0 +1,19 @@
+{
+ "case_id": "LEAK-1433",
+ "title": "UTF-16LE transcoding of a .env file via iconv",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "pre_exec",
+   "name": "iconv UTF-16LE output of a .dev.vars secret is replaced by [REDACTED] (no must_not_see: NUL-separated UTF-16 form is not a listed rule-2 encoding; asserts marker presence only)",
+   "files": {
+    ".dev.vars": "STRIPE_SECRET=FAKESECRET_k1\n"
+   },
+   "command": "iconv -f UTF-8 -t UTF-16LE .dev.vars",
+   "must_not_see": [
+    "FAKESECRET_k1"
+   ],
+   "policy_note": "R2: re-encoding a secret file is denied; a deny passes. must_not_see is checked in its derived UTF-16 forms too"
+  }
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "case_id": "LEAK-2098",
+ "title": "Redact a multi-line PEM private key body, not just the header line",
+ "level": "unit",
+ "fixtures": [
+  {
+   "kind": "post",
+   "name": "PKCS8 PEM block with three body lines: whole block redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "openssl pkcs12 -in FAKESECRET_bundle.p12 -nodes -nocerts"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN PRIVATE KEY-----\nFAKESECRET_LINE_ONE_aGVsbG8=\nFAKESECRET_LINE_TWO_d29ybGQ=\nFAKESECRET_LINE_THREE_Zm9v\n-----END PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_LINE_ONE",
+    "FAKESECRET_LINE_TWO",
+    "FAKESECRET_LINE_THREE"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  },
+  {
+   "kind": "post",
+   "name": "OPENSSH PRIVATE KEY block: whole block redacted",
+   "files": {},
+   "event": {
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+     "command": "cat ./id_ed25519"
+    },
+    "tool_response": {
+     "stdout": "-----BEGIN OPENSSH PRIVATE KEY-----\nFAKESECRET_OSSH_ONE\nFAKESECRET_OSSH_TWO\n-----END OPENSSH PRIVATE KEY-----\n",
+     "stderr": "",
+     "interrupted": false,
+     "isImage": false,
+     "noOutputExpected": false
+    }
+   },
+   "must_not_see": [
+    "FAKESECRET_OSSH_ONE",
+    "FAKESECRET_OSSH_TWO"
+   ],
+   "must_see": [
+    "[REDACTED]"
+   ]
+  }
+ ],
+ "duplicate_of_dropped": false
+}
