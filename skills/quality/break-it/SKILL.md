@@ -3,9 +3,9 @@ name: break-it
 description: >
   This skill should be used when the user says "break it", "try to break this", "dumb user",
   "monkey test", "bug bash", "dogfood" or "QA this like a user", and after a change to a user flow
-  (forms, checkout, multi-step flows) before review. It drives the real app as a careless,
-  impatient or confused user with worst-case data and hands back ranked bugs with repro steps and
-  video. Visual sign-off is ui-polish.
+  (forms, checkout, multi-step flows) before review. It drives the running app or a design
+  prototype as a careless, impatient or confused user with worst-case data and hands back ranked
+  bugs with repro steps and video. Visual sign-off is ui-polish.
 ---
 
 # Break it
@@ -16,9 +16,12 @@ fix.
 
 ## 1. Before touching the app
 
-- **Target**: only localhost, a preview deploy, staging or a sandbox. If the URL looks like
-  production, or you can't tell, stop and ask. Never touch a third-party domain except the
-  test mode of one the flow needs, such as a payment provider's test checkout.
+- **Target**: say in one line what you will drive: the running app or a design prototype
+  (canvas, mockup, static boards). Take it from my words; if you can't tell, ask before the
+  first step. Example: "break the redesign" can mean a canvas board, not the live home page.
+- **Where**: only localhost, a preview deploy, staging, a sandbox or the design file. If the
+  URL looks like production, or you can't tell, stop and ask. Never touch a third-party domain
+  except the test mode of one the flow needs, such as a payment provider's test checkout.
 - **Accounts and money**: throwaway test accounts only, with secrets read from env vars or
   the project's test setup, never typed into the report. Payments use the provider's test
   cards. Nothing that sends a real email, SMS or webhook to a real person.
@@ -37,8 +40,9 @@ fix.
 ## 2. Pick the users
 
 Run 2-4 of these against the flow. Pick the ones most likely to break it and say which and why
-in one line. Run them in parallel subagents with separate browser contexts when the tooling
-allows.
+in one line. Run them in parallel subagents with separate browser contexts, at most three at
+once. Each opens one browser and one page at a time, closes both when done, and leaves no
+script or server running. Pace repeated loads under the app's rate limit.
 
 | User | Does |
 |---|---|
@@ -87,5 +91,10 @@ Then in chat, plain words and no internal jargon:
 2. **Decisions for me**: behaviour that is odd but matches the spec, or where the right fix is
    a product call. Each one gets a recommended answer.
 3. **What held up**: one line listing the attacks that did nothing.
+4. **Not tested**: each user, board or attack not run, and each finding not re-run after its
+   fix. Never call a run clean or ask for sign-off while a Broken finding is open or untested.
+   A finding blamed on setup or another branch stays open until a rerun proves it.
 
-Stop there. Fix only what I name. When I say to file them, file each as a Bug via `tickets`.
+Stop there. Fix only what I name. When I say to file them, file each finding reproduced in the
+running app as a Bug via `tickets`. A finding that exists only in a design prototype goes back
+to the design's fix list, never the tracker: its readers would think the app is broken.

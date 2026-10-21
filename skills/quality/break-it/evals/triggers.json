@@ -16,6 +16,10 @@
   "should_trigger": true
  },
  {
+  "query": "break the redesign canvas boards like a careless user, every page",
+  "should_trigger": true
+ },
+ {
   "query": "review the pricing page against the figma before I sign off on the visuals",
   "should_trigger": false
  },

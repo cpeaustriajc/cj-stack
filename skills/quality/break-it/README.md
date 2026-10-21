@@ -1,6 +1,6 @@
 # break-it
 
-A skill that drives your running app as a careless, impatient or confused user with worst-case data. It hands back ranked bugs with repro steps and video.
+A skill that drives your running app or a design prototype as a careless, impatient or confused user with worst-case data. It hands back ranked bugs with repro steps and video.
 
 ## When to use it
 
@@ -37,12 +37,12 @@ Requirement: a browser skill or tool that Claude can drive. Video or GIF recordi
 
 ## What it does
 
-- Claude runs only against localhost, a preview deploy, staging or a sandbox. If the URL looks like production, Claude stops and asks.
+- Claude runs only against localhost, a preview deploy, staging, a sandbox or the design file. If the URL looks like production, Claude stops and asks.
 - Claude uses throwaway test accounts and the payment provider's test cards. It sends no real email, SMS or webhook.
 - For worst-case data, Claude first finds each field's limit in the schema, then seeds values from the catalog through a dev-only fixture. The fixture stays as a regression test.
 - Claude gives each user type one goal and notes what that user expected and what happened. It checks the console and failed network requests.
 - Claude writes `break-it-<date>-<flow>/` with `report.md`, numbered screenshots and the video. The report starts with the URL, the commit and the users run.
-- The chat summary adds Decisions for you and What held up.
+- The chat summary adds Decisions for you, What held up and Not tested.
 
 ## Limits
 
@@ -50,7 +50,7 @@ Requirement: a browser skill or tool that Claude can drive. Video or GIF recordi
 - It does not review visual design. It does not review a diff.
 - A setup failure, such as a dead app or missing test data, is reported as a setup problem and not as a bug.
 - A confusing behavior that the spec asks for is a decision for you, not a bug.
-- If you ask to file the bugs, Claude files each one as a Bug through `tickets`.
+- If you ask to file the bugs, Claude files each bug it reproduced in the running app as a Bug through `tickets`. A bug found only in a design prototype goes back to the design's fix list, not the tracker.
 - It has no settings.
 
 ## More
