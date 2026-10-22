@@ -69,6 +69,9 @@ means open it as a draft. Any other word is the base branch.
        follow.
      - starts after sign-in and setup and ends before cleanup, so it shows only the user's
        steps.
+     - opens each step with a chapter card (Playwright: `screencast.show_chapter(title,
+       description=...)`) and reaches each page by the click a person would make, never a
+       URL jump. Without both, the video jumps from page to page and the viewer gets lost.
 
      Before you attach a video, read a contact sheet of its frames to check the marks and
      the pace. Attach each file with `--attach ./file` and reference it in the body as
