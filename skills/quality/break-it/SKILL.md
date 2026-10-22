@@ -21,7 +21,9 @@ fix.
   first step. Example: "break the redesign" can mean a canvas board, not the live home page.
 - **Where**: only localhost, a preview deploy, staging, a sandbox or the design file. If the
   URL looks like production, or you can't tell, stop and ask. Never touch a third-party domain
-  except the test mode of one the flow needs, such as a payment provider's test checkout.
+  except the test mode of one the flow needs, such as a payment provider's test checkout. On a
+  site other people also test, such as a shared staging, change no data: a user who must write
+  (an order, a cart, a saved item) runs on a private stack.
 - **Accounts and money**: throwaway test accounts only, with secrets read from env vars or
   the project's test setup, never typed into the report. Payments use the provider's test
   cards. Nothing that sends a real email, SMS or webhook to a real person.
@@ -56,7 +58,8 @@ script or server running. Pace repeated loads under the app's rate limit.
 
 Then add **worst-case data**: map each rendered field to its schema limit, then seed the
 screen from `references/catalog.md`. Use a dev-only toggle or fixture, never a change the user
-can see, and keep the fixture as a regression test.
+can see, and keep the fixture as a regression test. Name each value and the rule it attacks ("a
+63-character label stays on one line"), never only a technique ("fuzz the form").
 
 ## 3. The loop
 
@@ -88,13 +91,17 @@ Then in chat, plain words and no internal jargon:
    misaligned layout. **Fragile**: works now but breaks under a plausible change, such as a
    longer name or another locale. Each one gets a one-line title, the user who found it,
    numbered repro steps, expected versus actual, and the screenshot or video timestamp.
+   Each Broken finding also gets a failing test: an end-to-end test in the project's suite that
+   drives the repro steps and asserts the expected result. It is a bug only when that test fails
+   for the stated reason; otherwise mark it UNPROVEN. Keep the test out of the merge gate (the
+   suite's skip or tag) until the fix; then it stays as a regression test.
 2. **Decisions for me**: behaviour that is odd but matches the spec, or where the right fix is
    a product call. Each one gets a recommended answer.
 3. **What held up**: one line listing the attacks that did nothing.
-4. **Not tested**: each user, board or attack not run, and each finding not re-run after its
-   fix. Never call a run clean or ask for sign-off while a Broken finding is open or untested.
+4. **Not tested**: each user, board or attack not run, each UNPROVEN finding, and each finding
+   not re-run after its fix. Never call a run clean or ask for sign-off while a Broken finding is open or untested.
    A finding blamed on setup or another branch stays open until a rerun proves it.
 
 Stop there. Fix only what I name. When I say to file them, file each finding reproduced in the
-running app as a Bug via `tickets`. A finding that exists only in a design prototype goes back
+running app as a Bug via `tickets`, never an UNPROVEN one. A Broken bug links its failing test. A finding that exists only in a design prototype goes back
 to the design's fix list, never the tracker: its readers would think the app is broken.

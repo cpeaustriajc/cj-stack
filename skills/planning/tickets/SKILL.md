@@ -106,6 +106,9 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
 - **Each check has an oracle the verifier can see.** Not "matches what the vendor does" without
   the exact text or state; not a count the screen does not show. A setting that persists says
   where it holds: this tab, this browser, any device.
+- **A value on several pages agrees.** When the item shows one value (a price, a total, a count)
+  on more than one page, one check names those pages and says each shows the same value for the
+  same input: "the same name shows the same price on the shortlist, in the cart and at checkout".
 - **Out of Scope:** 0–3 bullets.
 - **Stack:** one line, only on an item in a stack. It tells the thread that builds the item which
   branch to start from and to open its PR against. Omit it on an item that branches off the trunk.

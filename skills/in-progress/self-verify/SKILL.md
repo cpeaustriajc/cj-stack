@@ -38,7 +38,11 @@ A proof is a command that a person can re-run. The proof leaves evidence that a 
   file. Never trust `tail`.
 - Count the tests. Zero tests run is NOT VERIFIED.
 - A timeout, a missing prerequisite or a skipped check is BLOCKED. Name the missing item.
-- Each step pairs an action with a user-visible end state. A toast alone is not proof.
+- Each step pairs an action with a user-visible end state. A toast alone is not proof. An
+  attribute a person cannot see, such as an `aria-label` or a `data-*` value, is not a
+  user-visible end state.
+- An exact check (text, value or state) decides the result. An agent's opinion of a screen,
+  the capture reviewer's included, can only add a gate on top of it.
 - Use the real environment the feature file names. A mock counts only at a boundary the project
   already isolates.
 - Write one result line per feature: `VERIFIED`, `NOT VERIFIED` or `BLOCKED`, plus the command.
@@ -61,6 +65,7 @@ Reject a test that passes without proving the feature. Reject these patterns:
 - Snapshot tests that accept any output.
 - A test that asserts on its own fixture.
 - Expected values computed by the code under test.
+- A claim about what the screen shows, asserted only on an attribute a person cannot see.
 
 Delete or rewrite a test that would still pass if the code under test returned `undefined`.
 Never edit a test to match wrong code.
