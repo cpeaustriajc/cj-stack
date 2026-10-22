@@ -69,6 +69,10 @@ means open it as a draft. Any other word is the base branch.
        follow.
      - starts after sign-in and setup and ends before cleanup, so it shows only the user's
        steps.
+     - comes from a hero script: a standalone script made only for the video, run outside the
+       test runner, that reuses the tests' setup helpers. Never film a test run with tracing on:
+       tracing claims the page capture first, and the video shows a small corner of the page at
+       about one frame a second.
      - opens each step with a chapter card (Playwright: `screencast.show_chapter(title,
        description=...)`) and reaches each page by the click a person would make, never a
        URL jump. Without both, the video jumps from page to page and the viewer gets lost.
