@@ -96,9 +96,11 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
   the kind of data ("a cart with a premium name", not "a domain"), the test switch, the payment
   method ("bank transfer, left unpaid"). If the state needs a trigger the reader would not guess,
   name the trigger. A verifier who must ask how to reach a state cannot test it.
-- **Each check names who proves it.** `test`: an end-to-end test proves it, and the pull request
-  gives the one command and where its report lands, so the verifier runs it instead of clicking
-  through. `eye`: only a person can judge it (look, wording, motion). `engineer`: it needs access
+- **Each check names who proves it.** Hand testing, by a person or an agent clicking through, is
+  the exception. `test` (the default): an end-to-end test drives it and records a video; the pull
+  request gives the one command and where the video and report land. The verifier watches the
+  video, so look and wording checks are `test` too. `eye`: no automation can reach it (a real
+  device, a third-party inbox); say why. `engineer`: it needs access
   the verifier lacks (a database, a server setting, a burst of requests, a secret key), so the
   engineer runs it and attaches the command and its evidence; the verifier reviews that evidence.
 - **Each check has an oracle the verifier can see.** Not "matches what the vendor does" without
