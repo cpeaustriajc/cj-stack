@@ -56,8 +56,24 @@ means open it as a draft. Any other word is the base branch.
      a call tree or pseudocode, then a Mermaid diagram when a flow changes. A typo or
      one-line fix gets none. The visual replaces prose and is never added on top of it.
 
-     Evidence shows before and after. Visual changes get screenshots. Otherwise name the test
-     that failed before and passes after.
+     Evidence shows before and after of the same state. A visual change gets a screenshot
+     cropped to the change. A flow, a motion or a timing also gets a short video. Each video
+     and screenshot:
+     - shows where each click lands and which key was pressed, with no test code on screen.
+       Use the project's helper when it has one. Playwright 1.64+:
+       `screencast.show_actions(cursor="pointer", style={"title": "display: none"})` plus a
+       key label of your own.
+     - plays at a person's pace: a pause before each action, human typing speed, and time to
+       read each result. Never record with the pace switched off for speed (`CI=1`,
+       `slow_mo` 0). Failure: a 16-second clip of two whole flows that a reviewer could not
+       follow.
+     - starts after sign-in and setup and ends before cleanup, so it shows only the user's
+       steps.
+
+     Before you attach a video, read a contact sheet of its frames to check the marks and
+     the pace. Attach each file with `--attach ./file` and reference it in the body as
+     `![alt](./file)`; gh uploads it and rewrites the path. Put a video alone in its
+     paragraph. Otherwise name the test that failed before and passes after.
 
      Merge danger says whether the change is a one-way door (a migration, sent email, a
      charge, deleted data, a public API change) or a two-way door (a revert is clean), plus
