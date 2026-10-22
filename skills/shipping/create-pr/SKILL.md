@@ -61,12 +61,12 @@ means open it as a draft. Any other word is the base branch.
      and screenshot:
      - shows where each click lands and which key was pressed, with no test code on screen.
        Use the project's helper when it has one. Playwright 1.64+:
-       `screencast.show_actions(cursor="pointer", style={"title": "display: none"})` plus a
-       key label of your own.
-     - plays at a person's pace: a pause before each action, human typing speed, and time to
-       read each result. Never record with the pace switched off for speed (`CI=1`,
-       `slow_mo` 0). Failure: a 16-second clip of two whole flows that a reviewer could not
-       follow.
+       `screencast.show_actions(cursor="pointer", style={"title": "display: none", "point":
+       "width: 28px; height: 28px; border: 3px solid red; border-radius: 50%"})` plus a key
+       label of your own. Playwright draws no click mark unless `point` is styled.
+     - plays at a person's pace: the hero script pauses before each action (`show_actions`
+       `duration` does this), types at human speed and holds where the viewer reads.
+       Failure: a 16-second clip of two whole flows that a reviewer could not follow.
      - starts after sign-in and setup and ends before cleanup, so it shows only the user's
        steps.
      - comes from a hero script: a standalone script made only for the video, run outside the
@@ -76,9 +76,13 @@ means open it as a draft. Any other word is the base branch.
      - opens each step with a chapter card (Playwright: `screencast.show_chapter(title,
        description=...)`) and reaches each page by the click a person would make, never a
        URL jump. Without both, the video jumps from page to page and the viewer gets lost.
+     - closes on screen each tool it opens (a dev panel, a QA menu) before the user's next
+       step, so no state changes without a visible cause.
 
-     Before you attach a video, read a contact sheet of its frames to check the marks and
-     the pace. Attach each file with `--attach ./file` and reference it in the body as
+     Before you attach a video, run `scripts/check-video.sh <file>` on the file you attach. It
+     fails a file over the upload limit or a frame padded with grey, and lists each still over
+     3 s: a chapter card is fine, a frozen step is not. Then read a contact sheet of its
+     frames for the marks. Attach each file with `--attach ./file` and reference it in the body as
      `![alt](./file)`; gh uploads it and rewrites the path. Put a video alone in its
      paragraph. Otherwise name the test that failed before and passes after.
 
