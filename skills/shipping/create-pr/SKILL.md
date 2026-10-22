@@ -56,8 +56,35 @@ means open it as a draft. Any other word is the base branch.
      a call tree or pseudocode, then a Mermaid diagram when a flow changes. A typo or
      one-line fix gets none. The visual replaces prose and is never added on top of it.
 
-     Evidence shows before and after. Visual changes get screenshots. Otherwise name the test
-     that failed before and passes after.
+     Evidence shows before and after of the same state. A visual change gets a screenshot
+     cropped to the change. A flow, a motion or a timing also gets a short video. Each video
+     and screenshot:
+     - shows where each click lands and which key was pressed, with no test code on screen.
+       Use the project's helper when it has one. Playwright 1.64+:
+       `screencast.show_actions(cursor="pointer", style={"title": "display: none", "point":
+       "width: 28px; height: 28px; border: 3px solid red; border-radius: 50%"})` plus a key
+       label of your own. Playwright draws no click mark unless `point` is styled.
+     - plays at a person's pace: the hero script pauses before each action (`show_actions`
+       `duration` does this), types at human speed and holds where the viewer reads.
+       Failure: a 16-second clip of two whole flows that a reviewer could not follow.
+     - starts after sign-in and setup and ends before cleanup, so it shows only the user's
+       steps.
+     - comes from a hero script: a standalone script made only for the video, run outside the
+       test runner, that reuses the tests' setup helpers. Never film a test run with tracing on:
+       tracing claims the page capture first, and the video shows a small corner of the page at
+       about one frame a second.
+     - opens each step with a chapter card (Playwright: `screencast.show_chapter(title,
+       description=...)`) and reaches each page by the click a person would make, never a
+       URL jump. Without both, the video jumps from page to page and the viewer gets lost.
+     - closes on screen each tool it opens (a dev panel, a QA menu) before the user's next
+       step, so no state changes without a visible cause.
+
+     Before you attach a video, run `scripts/check-video.sh <file>` on the file you attach. It
+     fails a file over the upload limit or a frame padded with grey, and lists each still over
+     3 s: a chapter card is fine, a frozen step is not. Then read a contact sheet of its
+     frames for the marks. Attach each file with `--attach ./file` and reference it in the body as
+     `![alt](./file)`; gh uploads it and rewrites the path. Put a video alone in its
+     paragraph. Otherwise name the test that failed before and passes after.
 
      Merge danger says whether the change is a one-way door (a migration, sent email, a
      charge, deleted data, a public API change) or a two-way door (a revert is clean), plus
