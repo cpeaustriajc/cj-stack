@@ -74,7 +74,7 @@ being settled inside a ticket, where nobody would find it again.
 ## Done When
 
 - [ ] R3: <the requirement, quoted word for word>
-- [ ] You see: <the screen, message or state that proves it, specific enough to check>
+- [ ] You see: <the screen, message or state that proves it>. Reach it with: <the account, data, switch or payment method that sets up that state>. (test | eye | engineer)
 - [ ] <Any finer condition the verifier needs.>
 
 ## Out of Scope
@@ -92,6 +92,18 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
 - **Done When:** 3–5 checks. Every requirement the item meets is quoted with its number; at least
   one **You see** line says what the verifier observes. No click-by-click steps, no "record only"
   measurements, no "deliberately absent" lists.
+- **Each check is reachable.** It names what puts the app in its starting state: the account type,
+  the kind of data ("a cart with a premium name", not "a domain"), the test switch, the payment
+  method ("bank transfer, left unpaid"). If the state needs a trigger the reader would not guess,
+  name the trigger. A verifier who must ask how to reach a state cannot test it.
+- **Each check names who proves it.** `test`: an end-to-end test proves it, and the pull request
+  gives the one command and where its report lands, so the verifier runs it instead of clicking
+  through. `eye`: only a person can judge it (look, wording, motion). `engineer`: it needs access
+  the verifier lacks (a database, a server setting, a burst of requests, a secret key), so the
+  engineer runs it and attaches the command and its evidence; the verifier reviews that evidence.
+- **Each check has an oracle the verifier can see.** Not "matches what the vendor does" without
+  the exact text or state; not a count the screen does not show. A setting that persists says
+  where it holds: this tab, this browser, any device.
 - **Out of Scope:** 0–3 bullets.
 - **Stack:** one line, only on an item in a stack. It tells the thread that builds the item which
   branch to start from and to open its PR against. Omit it on an item that branches off the trunk.
@@ -105,7 +117,8 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
   where mechanism and timing tend to sneak in.
 
 A **Bug** adds what was expected and what happened, with the steps that reproduce it, under
-Context, and cites the requirement it breaks.
+Context, and cites the requirement it breaks. The steps start from the reachable state, with its
+trigger named, as a Done When check does.
 
 ## 4. Work types and rules
 

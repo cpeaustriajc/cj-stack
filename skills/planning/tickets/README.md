@@ -43,6 +43,8 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - A lone backlog item, a small fix, and Demo, Launch and Post Launch items branch off main.
 - Claude asks one question: are the size and the blocking right? Any other question goes up to `shape` as a spec change.
 - Each Done When quotes the requirement with its number and has a "You see" line that says what the verifier observes.
+- Each check names the account, data or switch that reaches its state.
+- Each check names who proves it: a one-command test, a person's eye, or the engineer.
 - An item has 3 to 5 Done When checks and a body under about 1,500 characters. A longer item is split.
 - Claude labels each item Task, Bug or Chore. A Chore adds a No-QA check and cites no requirement.
 - A bug found after Done becomes a new item, related to the original.
