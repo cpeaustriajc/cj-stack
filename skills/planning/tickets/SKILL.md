@@ -96,6 +96,11 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
   the kind of data ("a cart with a premium name", not "a domain"), the test switch, the payment
   method ("bank transfer, left unpaid"). If the state needs a trigger the reader would not guess,
   name the trigger. A verifier who must ask how to reach a state cannot test it.
+- **A control's state is one exact word.** A check about a button, link or section says who sees
+  it and gives one state: `visible`, `visible, refuses` (quote the message), `disabled` or
+  `hidden`. Never "offers nothing", "does nothing", "unavailable" or "blocked": each reads as
+  any of the four. Failure: "the panel offers nothing" meant `visible, refuses`; QA passed it as
+  "hidden", and agents later treated both as true.
 - **Each check names who proves it.** Hand testing, by a person or an agent clicking through, is
   the exception. `test` (the default): an end-to-end test drives it and records a video; the pull
   request gives the one command and where the video and report land. The verifier watches the
