@@ -29,8 +29,8 @@ still open this round waits for a later round.
 
 ## Facts are your job, decisions are mine
 
-- Before round 1, and whenever a question needs a fact, look it up: yourself for a known file
-  or one command, read-only subagents for broad searches. Look in code, specs, mockups, the
+- Before round 1, and whenever a question needs a fact, look it up: yourself, broad searches
+  included; read-only subagents only for parallel searches too large for your context. Look in code, specs, mockups, the
   tracker, docs, earlier transcripts and the live app in a browser. Asking me something you
   could have looked up is the fastest way to annoy me. Hold only the questions downstream of a
   running lookup; ask the rest now.

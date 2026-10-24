@@ -1,13 +1,15 @@
 # cj-stack
 
-When a new frontier model ships (Fable or Opus tier), audit the stack with the instruction-file
+When a new frontier model ships (Fable or Opus tier), or Anthropic publishes a best-practice
+article on agents or Claude Code (claude.com/resources, anthropic.com/engineering), audit the stack with the instruction-file
 tools below and trim before you add: cut any rule you would follow without being told.
 
 ## Prior art
 
 Before adding or changing a skill or mod, research how public AI-coding practitioners solve it:
 their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan's pstack
-(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy fan-outs too, with each
+(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy a fan-out only when its
+agents work in parallel or need a fresh context; otherwise fold it into the main loop. Put each
 agent on the cheapest model that can do its job (see `models/README.md`). Skip only what needs
 another vendor's models or a fleet of agents. Check `SCOPE.md` before adding a skill or mod.
 
