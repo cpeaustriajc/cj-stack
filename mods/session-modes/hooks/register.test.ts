@@ -107,6 +107,8 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
     'git status', 'git log --oneline', 'ls -la', 'gh pr view 4', 'gh issue list', 'gh api repos/o/r/milestones',
     'gh api repos/o/r/pulls', 'pnpm test 2>&1', 'pnpm test 2>&1 | tail -5', 'pnpm test >/dev/null',
     'pnpm test > /dev/null 2>&1', 'pnpm test 2>/dev/null', 'echo oops >&2', 'gh api repos/o/r/pulls -X GET -f state=open',
+    "sed -E 's/[0-9a-f]{8,}/<id>/g' log.txt", "grep '<task-notification>' t.jsonl", 'grep "a -> b" notes.txt',
+    'grep "say \\"hi>\\"" f.txt', "grep 'a|<b>' f.txt", "grep \"it's\" f.txt | grep '>'", 'echo a\\>b',
   ].map(c => [c, bashCall(c), 'readonly'] as [string, Record<string, unknown>, Need]),
   ...['Read', 'Grep', 'mcp__github__list_pull_requests', 'mcp__linear-server__get_issue', 'mcp__linear-server__list_projects',
     'mcp__atlassian__getJiraIssue', 'mcp__github__get_settings',
@@ -132,7 +134,9 @@ const NEEDS: [string, Record<string, unknown>, Need][] = [
   ['echo x > .claude/work/a/b.html', bashCall('echo x > .claude/work/a/b.html'), 'prototype'],
   ['Write /repo/.claude/workflows/x.js', { tool: 'Write', file_path: '/repo/.claude/workflows/x.js' }, 'build'],
   ['Write /repo/src/.claude/work-notes.ts', { tool: 'Write', file_path: '/repo/src/.claude/work-notes.ts' }, 'build'],
-  ...['echo hi > out.txt', 'echo hi >out.txt', 'echo hi >> notes/out.txt', 'echo x > src/app.ts'].map(
+  ...['echo hi > out.txt', 'echo hi >out.txt', 'echo hi >> notes/out.txt', 'echo x > src/app.ts',
+    "echo '<a>' > out.html", 'echo x > "out.txt"', "echo 'abc > out.txt",
+  ].map(
     c => [c, bashCall(c), 'build'] as [string, Record<string, unknown>, Need],
   ),
   ['Edit /repo/src/app.ts', { tool: 'Edit', file_path: '/repo/src/app.ts' }, 'build'],

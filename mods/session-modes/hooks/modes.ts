@@ -151,6 +151,33 @@ const HARMLESS_REDIRECT = /\d*>&\d+|\d*>>?\s*\/dev\/null/g
 const REDIRECT_TARGET = />>?\s*([^\s>&|;]+)/g
 const PART_SPLIT = /&&|\|\|?|;|\n/
 
+// An unterminated quote masks nothing, so a broken command stays judged strictly.
+function maskQuotedRedirects(command: string): string {
+  const out = [...command]
+  let quote: "'" | '"' | null = null
+  let start = 0
+  const masked: number[] = []
+  for (let i = 0; i < out.length; i++) {
+    const c = out[i]
+    if (quote === "'") {
+      if (c === "'") quote = null
+      else if (c === '>') masked.push(i)
+    } else if (c === '\\') {
+      if (out[i + 1] === '>') masked.push(i + 1)
+      i++
+    } else if (quote === '"') {
+      if (c === '"') quote = null
+      else if (c === '>') masked.push(i)
+    } else if (c === "'" || c === '"') {
+      quote = c
+      start = masked.length
+    }
+  }
+  if (quote) masked.length = start
+  for (const i of masked) out[i] = '_'
+  return out.join('')
+}
+
 const top = (needs: Mode[]): Mode => needs.reduce((a, b) => (MODES.indexOf(b) > MODES.indexOf(a) ? b : a), 'readonly')
 
 function bashPartNeed(part: string): Mode {
@@ -178,7 +205,7 @@ export function need({ tool, command = '', path = '', action = '' }: Call): Mode
   if (tool === 'Edit' || tool === 'Write' || tool === 'NotebookEdit')
     return PLAN_FILE.test(path) ? 'research' : WORK_FILE.test(path) ? 'prototype' : 'build'
   if (tool === 'Artifact') return ARTIFACT_READS.has(action) ? 'readonly' : 'research'
-  if (tool === 'Bash') return top(command.replace(/\\\n/g, ' ').split(PART_SPLIT).map(bashPartNeed))
+  if (tool === 'Bash') return top(maskQuotedRedirects(command.replace(/\\\n/g, ' ')).split(PART_SPLIT).map(bashPartNeed))
   return mcpNeed(tool)
 }
 

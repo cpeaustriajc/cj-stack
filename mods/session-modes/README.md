@@ -88,7 +88,7 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - Claude picks the mode, and the mod does not check the pick. The "Set by Claude" row in the band shows it.
 - `readonly` does not block a Bash command that writes without a redirect, such as `sed -i`.
 - The mod judges an MCP tool by its name only. A tool with no write word in the name passes in every mode, such as `mcp__ccd_host__sync_with_base_branch`. The bookkeeping tools pass too, also `mcp__ccd_sidebar__delete_group`.
-- The mod finds a Bash redirect and the commands above by their text. A command inside a script or an alias passes, and the same words inside a quoted string or a heredoc are blocked.
+- The mod finds a Bash redirect and the commands above by their text. A command inside a script or an alias passes. A `>` inside quotes is not a redirect, but one inside a heredoc is, and the commands above inside quotes or a heredoc are blocked.
 - A subagent that is already running gets no new task note when a mode above it changes. The new rule applies to its tool calls at once, and only the deny message tells it.
 - If the mod cannot find a home directory, it writes and prunes no state file. If a write fails, the hook throws "session-modes: could not publish state for the status line". If a prune fails, it throws "session-modes: could not prune old state files".
 
