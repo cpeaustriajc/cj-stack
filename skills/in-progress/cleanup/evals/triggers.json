@@ -1,0 +1,10 @@
+[
+  {"query": "cleanup after yourself and archive this session", "should_trigger": true},
+  {"query": "merged, clean up the worktree", "should_trigger": true},
+  {"query": "tear down the dev server and mock, clean up things", "should_trigger": true},
+  {"query": "we should probably clean up stale branches and worktrees", "should_trigger": true},
+  {"query": "push the branch, merge the pr, cleanup after yourself and close this session", "should_trigger": true},
+  {"query": "clean up this function, it's too long", "should_trigger": false},
+  {"query": "update the stale doc", "should_trigger": false},
+  {"query": "what do I keep correcting you about", "should_trigger": false}
+]
