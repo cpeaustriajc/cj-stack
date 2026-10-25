@@ -54,8 +54,12 @@ PY
 
 doctor() {
   say "/skill-doctor with cj-stack installed"; installed
-  local out; out="$(CLAUDE_CONFIG_DIR="$cfg" claude -p '/skill-doctor' --max-budget-usd 1 2>&1)"; local st=$?
-  if grep -q 'Not logged in' <<<"$out"; then echo "BLOCKED: the throwaway config is not signed in"; blocked=1; return; fi
+  local ref='op://Personal/Claude Code OAuth token/credential' token="${CLAUDE_CODE_OAUTH_TOKEN:-}"
+  if [[ -z "$token" ]] && ! token="$(op read "$ref" 2>&1)"; then
+    echo "BLOCKED: CLAUDE_CODE_OAUTH_TOKEN is not set and \`op read '$ref'\` failed: $token"; blocked=1; return
+  fi
+  local out; out="$(CLAUDE_CODE_OAUTH_TOKEN="$token" CLAUDE_CONFIG_DIR="$cfg" claude -p '/skill-doctor' --max-budget-usd 1 2>&1)"; local st=$?
+  if grep -qE 'Not logged in|Failed to authenticate' <<<"$out"; then echo "BLOCKED: the token was refused; run \`claude setup-token\` and save the new token at $ref"; blocked=1; return; fi
   grep -v anthropic-skills <<<"$out"; [[ $st -eq 0 ]] || { failed=1; echo "FAILED: /skill-doctor exit $st"; }
 }
 

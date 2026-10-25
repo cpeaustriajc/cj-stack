@@ -55,7 +55,9 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
   skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
   as the driver does.
 - **A fresh `CLAUDE_CONFIG_DIR` is signed out on macOS** (the sign-in is in the keychain under the
-  default config), so `doctor` prints `BLOCKED` and smoke exits 2. In a container it authenticates.
+  default config). `doctor` signs in with `CLAUDE_CODE_OAUTH_TOKEN`, read from 1Password
+  (`op://Personal/Claude Code OAuth token/credential`) when it is not set; without either it prints
+  `BLOCKED` and smoke exits 2.
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.
