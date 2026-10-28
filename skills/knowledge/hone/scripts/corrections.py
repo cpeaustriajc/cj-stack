@@ -135,7 +135,11 @@ def main():
     ap.add_argument("--skill", default="", help="only corrections made while this skill was active (plugin prefix ok)")
     ap.add_argument("--since", default="", help="YYYY-MM-DD; skip files last modified before it")
     ap.add_argument("--turns", action="store_true", help="write every turn with its tool calls, not only corrections")
+    ap.add_argument("--chunk-lines", type=int,
+                    help="also write <out>.NN.md chunks of about this many lines, cut only between sessions")
     args = ap.parse_args()
+    if args.chunk_lines is not None and args.chunk_lines < 1:
+        ap.error("--chunk-lines takes a number of lines, 1 or more")
     if args.turns and args.skill:
         ap.error("--turns reads whole sessions; it takes no --skill")
 
@@ -168,6 +172,33 @@ def main():
                 print(f"[{i}/{len(files)}] files, {stats['hits']} exchanges", flush=True)
     print(f"done: {stats['hits']} exchanges from {len(files)} files -> {args.out}"
           f" ({stats['bad_lines']} unreadable lines skipped)")
+    if args.chunk_lines:
+        chunk(args.out, args.chunk_lines)
+
+
+def chunk(path, size):
+    """Split the written file into chunks a miner can read whole; a session never spans two chunks."""
+    base = path[:-3] if path.endswith(".md") else path
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.readlines()
+    parts, cur, last = [], [], None
+    for line in lines:
+        m = re.match(r"### \w+ s=(\S+)", line)
+        if m and m.group(1) != last and len(cur) >= size:
+            parts.append(cur)
+            cur = []
+        if m:
+            last = m.group(1)
+        cur.append(line)
+    if cur:
+        parts.append(cur)
+    start = 1
+    for i, part in enumerate(parts):
+        name = f"{base}.{i:02d}.md"
+        with open(name, "w", encoding="utf-8") as out:
+            out.writelines(part)
+        print(f"chunk {name}: lines {start}-{start + len(part) - 1}")
+        start += len(part)
 
 
 if __name__ == "__main__":

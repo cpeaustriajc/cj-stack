@@ -16,7 +16,9 @@
 - `python3 -I scripts/corrections.py --turns --out <file>` with the same `--project` and `--since`
   as the correction run. It refuses `--skill`: for `/hone <skill>`, run it without and keep only
   the findings about that skill. The file is about 6 times the size of the corrections file.
-- Split at a `### TURN` header where the `s=` session id changes, about 150 KB per chunk.
+- Add `--chunk-lines 1500` to both runs: the script writes `<out>.NN.md` chunks, cut only between
+  sessions. Tell each miner to read its chunk in 500-line parts; a Haiku miner given a bigger chunk
+  stops at about 2,000 lines, and an `Explore` agent stops at 15 turns.
 - Start the lens subagents and the correction miners in one message, so they run in parallel:
   one `Agent` per chunk, `model: "haiku"`, `effort: "medium"`, told to only read. Use
   `model: "sonnet"` when an eval shows Haiku misreads a lens.

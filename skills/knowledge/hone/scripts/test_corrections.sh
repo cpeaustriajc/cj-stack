@@ -115,4 +115,28 @@ check "without --turns an uncorrected turn is not written" 0
 python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --turns --skill x >/dev/null 2>&1
 [[ $? -ne 0 ]] && { pass=$((pass+1)); echo "ok   --turns with --skill is refused"; } || { fail=$((fail+1)); echo "FAIL --turns with --skill is refused"; }
 
+# --chunk-lines: chunk files for the miners, cut only where the session changes
+shopt -s nullglob
+rm -rf "$tmp/root"; mkdir -p "$tmp/root/-proj"
+for s in aaaa1111 bbbb2222 cccc3333; do printf '%s\n%s\n%s\n%s\n' "$(U "first in $s")" "$DONE" "$(U "second in $s")" "$DONE" > "$tmp/root/-proj/$s.jsonl"; done
+rm -f "$tmp"/out.*.md
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --turns --chunk-lines 6 >/dev/null
+chunks=("$tmp"/out.*.md)
+(( ${#chunks[@]} == 3 )) && { pass=$((pass+1)); echo "ok   one chunk per session once a chunk reaches the limit"; } || { fail=$((fail+1)); echo "FAIL chunk count ${#chunks[@]}, want 3"; }
+[[ "$(cat ${chunks[@]+"${chunks[@]}"} /dev/null)" == "$(cat "$tmp/out.md")" ]] && { pass=$((pass+1)); echo "ok   chunks add up to the whole file"; } || { fail=$((fail+1)); echo "FAIL chunks add up to the whole file"; }
+cut=0; for c in ${chunks[@]+"${chunks[@]}"}; do [[ "$(grep -o 's=[a-z0-9]*' "$c" | sort -u | wc -l | tr -d ' ')" == 1 ]] || cut=1; done
+(( cut == 0 )) && { pass=$((pass+1)); echo "ok   no session is cut across two chunks"; } || { fail=$((fail+1)); echo "FAIL a session spans two chunks"; }
+
+rm -f "$tmp"/out.*.md
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --turns --chunk-lines 1000 >/dev/null
+chunks=("$tmp"/out.*.md)
+(( ${#chunks[@]} == 1 )) && { pass=$((pass+1)); echo "ok   a file under the limit is one chunk"; } || { fail=$((fail+1)); echo "FAIL small file gave ${#chunks[@]} chunks"; }
+
+rm -f "$tmp"/out.*.md
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --turns >/dev/null
+compgen -G "$tmp/out.*.md" >/dev/null && { fail=$((fail+1)); echo "FAIL chunk files written without --chunk-lines"; } || { pass=$((pass+1)); echo "ok   no chunk files without --chunk-lines"; }
+
+python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" --chunk-lines 0 >/dev/null 2>&1
+[[ $? -ne 0 ]] && { pass=$((pass+1)); echo "ok   --chunk-lines below 1 is refused"; } || { fail=$((fail+1)); echo "FAIL --chunk-lines 0 is refused"; }
+
 echo "$pass passed, $fail failed"; (( fail == 0 ))
