@@ -27,8 +27,8 @@ Add any mod or other plugin the same way: `/plugin install <name>@cj-stack`.
 
 ## Skills
 
-All skills are model-invoked (Claude picks them from their description), except `commit` and
-`create-pr`, which run only when typed.
+All skills are model-invoked (Claude picks them from their description), except `commit`, which
+runs only when typed.
 
 | Skill | Bucket | What it is for |
 |---|---|---|
@@ -44,7 +44,7 @@ All skills are model-invoked (Claude picks them from their description), except 
 | [feature-files](skills/quality/feature-files/README.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
 | [interrogate](skills/quality/interrogate/README.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
 | [commit](skills/shipping/commit/README.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
-| [create-pr](skills/shipping/create-pr/README.md) | shipping | typed `/create-pr [draft]`: commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
+| [create-pr](skills/shipping/create-pr/README.md) | shipping | `/create-pr [draft]` or "open the PR": commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
 | [painting-craft](skills/craft/painting-craft/README.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
 
 `craft` skills ship in `cj-paint` (see [Other plugins](#other-plugins)). Shipped skills stay tool-neutral:

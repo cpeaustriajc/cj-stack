@@ -5,7 +5,6 @@ description: >
   this branch", "create a draft PR" or "PR this against develop". It commits, runs the fast
   checks, pushes and opens a PR that links the issue and the evidence ("draft" for a draft, or a
   base branch). The terminal version of the desktop Create PR button.
-disable-model-invocation: true
 argument-hint: "[draft] [base-branch]"
 ---
 

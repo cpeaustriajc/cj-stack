@@ -4,7 +4,7 @@ A skill that commits your work, runs the fast checks, pushes, and opens a GitHub
 
 ## When to use it
 
-Type `/create-pr` when a branch is ready for review. The skill sets `disable-model-invocation`, so it runs only when you type the command. Claude never starts it alone.
+Type `/create-pr`, or ask Claude to open a PR, when a branch is ready for review. Claude also loads it on a request such as "push it and open the PR".
 
 Do not use it for commits alone: use `commit`. Do not use it to review the diff: use `interrogate`.
 
