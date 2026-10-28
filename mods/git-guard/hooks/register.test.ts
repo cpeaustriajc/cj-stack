@@ -53,6 +53,7 @@ const DENY_PUSH_MAIN = [
 ]
 
 const DENY_DISCARD = [
+  'git restore . && git clean -fd',
   'git checkout -- .',
   'git checkout .',
   'git checkout HEAD -- .',
