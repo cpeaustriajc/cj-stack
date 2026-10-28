@@ -30,8 +30,8 @@ Paths here are relative to the repo root.
 ```
 
 `routing` checks that each request loads its own skill and not its nearest neighbour, with every
-shipped skill installed together, plus `drive` and `scout` from `in-progress` (linked into the
-eval plugin only), and that the typed-only `commit` and `create-pr` never load on their own. Each case in `skills/evals/<case>/` is a `prompt.md` plus
+shipped skill installed together, plus `drive`, `scout` and `triage` from `in-progress` (copied
+into the eval plugin only), that the typed-only `commit` never loads on its own, and that `create-pr` loads on "open the PR". Each case in `skills/evals/<case>/` is a `prompt.md` plus
 `tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
 an old one's.
 
@@ -51,8 +51,8 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 
 - **`/skill-doctor` runs headless**: `claude -p "/skill-doctor"` prints its table and exits.
 - **`--plugin-dir .` loads none of cj-stack's skills.** The repo root is a marketplace
-  (`.claude-plugin/marketplace.json` with `"source": "./"`, `"strict": false`), not a plugin, so
-  skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
+  (`.claude-plugin/marketplace.json`, one source per plugin such as `./skills`), not a plugin,
+  so skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
   as the driver does.
 - **A fresh `CLAUDE_CONFIG_DIR` is signed out on macOS** (the sign-in is in the keychain under the
   default config). `doctor` signs in with `CLAUDE_CODE_OAUTH_TOKEN`, read from 1Password
@@ -61,8 +61,8 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.
-- **Skills in `skills/in-progress/` never appear**: they are not in the marketplace's skills
-  array, by design.
+- **Skills in `skills/in-progress/` never appear**: they ship only in the opt-in cj-lab plugin,
+  and the driver installs only `cj-stack@cj-stack`.
 - **`claude plugin eval .` resolves no plugin** ("none resolved — cases run against baseline"):
   the repo root has no `plugin.json`. The driver builds a throwaway plugin of symlinks instead.
   The routing cases cap `max_turns` at 3, so "Reached maximum number of turns" in the notes is
@@ -78,8 +78,8 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
   skill's `evals/`; in the driver only `routing` runs it, and `all` leaves it out.
 - **Trigger checks.** Each skill's `evals/triggers.json` holds should-trigger and near-miss prompts
   for skill-creator's `run_eval`. `run_eval` ignores
-  `disable-model-invocation`, so for the typed-only `commit` and `create-pr` it measures only the
-  description; the routing suite checks that they never load on their own. Run `run_eval` from an
+  `disable-model-invocation`, so for the typed-only `commit` it measures only the
+  description; the routing suite checks that it never loads on its own. Run `run_eval` from an
   empty folder that has a `.claude/` directory, with `--num-workers 1`: parallel workers each write a
   copy of the skill into the same `.claude/commands/`, Claude invokes another worker's copy, and
   the run scores as a miss. A prompt that points at content it doesn't include ("file these
