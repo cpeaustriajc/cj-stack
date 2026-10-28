@@ -1,5 +1,7 @@
 # usage-pace
 
+> Archived: not maintained.
+
 A mod (a plugin that adds hooks to Claude Code) that shows your weekly usage in the status row. It also tells you if the weekly allowance lasts until the reset.
 
 ## Why
@@ -8,12 +10,9 @@ A weekly usage limit is easy to burn through by mid-week. A percentage alone doe
 
 ## Install
 
-```
-/plugin marketplace add cpeaustriajc/cj-stack
-/plugin install usage-pace@cj-stack
-```
+It is not installable from the marketplace. No plugin in `.claude-plugin/marketplace.json` lists it, so no cj-stack plugin ships it. The Claude desktop app shows its own weekly pace banner:
 
-To see that it is on, run `claude plugin list` and look for `usage-pace`. The mod is optional: `cj-stack` does not install it.
+![Claude desktop banner: On pace to hit your weekly limit early, 25% used, resets Tue, Nov 3, 4:00 PM](desktop-banner.png)
 
 ## Example
 

@@ -68,7 +68,6 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | Mod | What it does | Install |
 |---|---|---|
 | [linear-gate](mods/linear-gate/README.md) | blocks Linear writes off shift; on shift, asks only before a delete or cancel | by default |
-| [usage-pace](mods/usage-pace/README.md) | weekly usage in the status line, and whether it lasts until your reset | optional |
 | [session-modes](mods/session-modes/README.md) | `/mode readonly`, `research`, `prototype`, `build` or `off`, enforced for the session | optional |
 | [loop-brake](mods/loop-brake/README.md) | ends a turn after N forced Stop-hook continuations | optional |
 | [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |

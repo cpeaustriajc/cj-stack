@@ -67,12 +67,6 @@
       "category": "productivity"
     },
     {
-      "name": "usage-pace",
-      "source": "./mods/usage-pace",
-      "description": "Weekly usage in the status line, and whether it lasts until the reset.",
-      "category": "productivity"
-    },
-    {
       "name": "session-modes",
       "source": "./mods/session-modes",
       "description": "/mode readonly, research or edit, enforced for the rest of the session.",
