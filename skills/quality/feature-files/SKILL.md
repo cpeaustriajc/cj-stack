@@ -44,8 +44,8 @@ saved item; a toast alone is not proof. Put no
 dates, statuses, ticket numbers or "fixed in…" notes in it: those go stale. They belong in the
 tracker and git history.
 
-Feature files say *what* to check. Launching the app stays with the built-in `run` skill or the
-project's launch skill. Don't copy launch steps into them.
+Feature files say *what* to check. Launching the app stays with the project's launch skill or the
+harness's built-in one. Don't copy launch steps into them.
 
 ## Using them
 

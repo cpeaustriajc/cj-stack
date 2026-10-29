@@ -67,8 +67,8 @@ about that conflict only.
 ## How to ask
 
 - Use the ask tool (a form with options), not a numbered list in chat. One call per round,
-  with up to 4 questions: pick the frontier questions that unblock the most. The rest wait.
-  `references/<tool>.md` names the tool.
+  with as many questions as the tool takes: pick the frontier questions that unblock the most.
+  The rest wait. `references/<tool>.md` names the tool and its limit.
 - Put the recommended option first, marked "(Recommended)". Each option gets a one-line
   consequence: what it costs, what it touches, what it locks in.
 - Every question carries a concrete scenario: a specific person, input or situation, and what
