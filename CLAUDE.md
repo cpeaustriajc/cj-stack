@@ -38,7 +38,7 @@ Use what Claude Code ships before writing your own checks:
 - Copy a fan-out only when its agents work in parallel or need a fresh context; otherwise fold
   it into the main loop.
 - Put each agent on the cheapest model that can do its job (see `models/README.md`).
-- `docs/sources.md` lists where to look for new articles and leads; being on it is no reason to
+- `SOURCES.md` lists where to look for new articles and leads; being on it is no reason to
   trust a claim.
 - `claude plugin validate .` after any manifest, skill or frontmatter change.
 - `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin

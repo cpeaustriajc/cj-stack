@@ -30,7 +30,7 @@ again: the evidence may no longer hold.
 | claude.com/blog | Anthropic |
 | developers.openai.com/blog | OpenAI |
 | developers.googleblog.com | Google |
-| cursor.com/blog | Cursor |
+| cursor.com/blog | SpaceX AI (Cursor) |
 | x.ai/news | SpaceX AI |
 | github.blog/ai-and-ml | GitHub |
 | kiro.dev/blog | Kiro |
