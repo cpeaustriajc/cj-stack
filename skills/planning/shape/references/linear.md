@@ -41,6 +41,9 @@ Write checkboxes in Done When as `- [ ]`. Linear renders them as task lists.
 - Relations: `blockedBy`, `relatedTo` and `parentId` on `save_issue`. They only add; removing
   needs the matching `remove…` field.
 - Prefer `patch` over a full `description` when changing part of an existing body.
+- Files (screenshots, videos): `prepare_attachment_upload`, then PUT the file to the URL it
+  returns, then `create_attachment_from_upload`. A Linear asset URL needs a Linear sign-in:
+  never embed one in GitHub; upload the file there with the GitHub adapter instead.
 
 ## Things to know
 

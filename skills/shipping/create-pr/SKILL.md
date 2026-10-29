@@ -79,9 +79,9 @@ means open it as a draft. Any other word is the base branch.
      Before you attach a video, run `scripts/check-video.sh <file>` on the file you attach. It
      fails a file over the upload limit or a frame padded with grey, and lists each still over
      3 s: a chapter card is fine, a frozen step is not. Then read a contact sheet of its
-     frames for the marks. Attach each file with `--attach ./file` and reference it in the body as
-     `![alt](./file)`; gh uploads it and rewrites the path. Put a video alone in its
-     paragraph. Otherwise name the test that failed before and passes after.
+     frames for the marks. Upload each file to the code host and reference it in the body by
+     its relative path, as the host's adapter says (`references/github.md`). Put a video alone
+     in its paragraph. Otherwise name the test that failed before and passes after.
 
      Merge danger says whether the change is a one-way door (a migration, sent email, a
      charge, deleted data, a public API change) or a two-way door (a revert is clean), plus
