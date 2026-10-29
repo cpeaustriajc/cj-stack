@@ -29,7 +29,7 @@ not make a claim true, and a source that was right before can be wrong now.
 
 - Weigh each claim by what it shows, not by who wrote it: code you can read or run, a measured
   result, a failure it names. A claim with no evidence is only a lead.
-- Adopt an idea only when `claude plugin eval` shows a gain over the no-plugin baseline. Until
+- Adopt an idea only when the skill eval shows a gain over a run without the plugin. Until
   then, mark it untested.
 - In the skill's or mod's README, name the source and the evidence you used, so an audit can
   remove the idea when that evidence no longer holds.
@@ -76,7 +76,7 @@ A skill changes bucket in one commit that also updates:
 2. its row in the README Skills table
 3. the `version` in that `plugin.json` (minor for an added or moved skill, patch for an edit)
 
-Then run `claude plugin validate .`.
+Then validate the manifests.
 
 ## Tool-neutral
 
