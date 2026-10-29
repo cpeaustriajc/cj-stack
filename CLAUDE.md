@@ -56,8 +56,6 @@ not make a claim true, and a source that was right before can be wrong now.
   never drops.
 - Draft skills and plugin parts with the harness's own authoring helpers.
 
-The Claude Code command for each step is in `.claude/rules/claude-code-authoring.md`.
-
 ## Buckets
 
 - `skills/planning/`, `skills/knowledge/`, `skills/quality/`, `skills/shipping/`: shipped in the `cj-stack` plugin.
