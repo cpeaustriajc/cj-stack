@@ -2,7 +2,8 @@
 
 ## Two design sketches (`design.md` step 3)
 
-- Send two `Agent` calls in one message, each with `model: "sonnet"` and `effort: "medium"`.
+- Send two `Agent` calls in one message, each with `model` one step cheaper than the
+  session's: a sketch needs judgment, but the main session scores and picks.
 - Give each the same brief: the criteria, the call sites, the files to read, and "read only:
   edit no file, return the sketch in your final reply".
 - Do not tell either agent that the other exists, and do not pass one sketch to the other.

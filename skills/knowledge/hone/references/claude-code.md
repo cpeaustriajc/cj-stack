@@ -1,6 +1,6 @@
 # Claude Code
 
-- `/doctor prompt-audit` (v2.1.283+) audits CLAUDE.md, AGENTS.md, rules, skills, commands and
+- `/doctor prompt-audit` audits CLAUDE.md, AGENTS.md, rules, skills, commands and
   agents for dated instructions, contradictions and missing files. It reports and edits nothing.
   Pass a path to audit one skill or folder.
 - Headless (`claude -p "/doctor prompt-audit" --add-dir ~/.claude`) it needs the flag to read the
@@ -8,6 +8,8 @@
 - It reports installed plugin skills without proposing edits; audit the skill's source path instead.
 - `claude-md-improver` (claude-md-management plugin) checks CLAUDE.md against the current code:
   stale commands and paths are prune candidates; its additions still pass step 2.
+- Size limit: keep each always-loaded file (CLAUDE.md, a rule without `paths:`) under 200 lines;
+  past that, Claude follows it less reliably.
 - `/revise-claude-md` drafts one session's learnings; they are single-run corrections until they
   recur.
 
@@ -17,11 +19,11 @@
   as the correction run. It refuses `--skill`: for `/hone <skill>`, run it without and keep only
   the findings about that skill. The file is about 6 times the size of the corrections file.
 - Add `--chunk-lines 1500` to both runs: the script writes `<out>.NN.md` chunks, cut only between
-  sessions. Tell each miner to read its chunk in 500-line parts; a Haiku miner given a bigger chunk
-  stops at about 2,000 lines, and an `Explore` agent stops at 15 turns.
+  sessions. Tell each miner to read its chunk in 500-line parts: a miner on a cheap model given a bigger
+  chunk stops early and reports a partial read as whole.
 - Start the lens subagents and the correction miners in one message, so they run in parallel:
-  one `Agent` per chunk, `model: "haiku"`, `effort: "medium"`, told to only read. Use
-  `model: "sonnet"` when an eval shows Haiku misreads a lens.
+  one `Agent` per chunk on the cheapest model the session can pick, told to only read. Move
+  up one model when an eval shows a miner misreads a lens.
 - The skill list for the missed-trigger lens is the skills listing in this session's context plus
   the frontmatter of each `.claude/skills/*/SKILL.md` in the project.
 

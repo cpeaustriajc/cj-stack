@@ -1,6 +1,7 @@
 # Claude Code adapter
 
-- The comment reader is one `Agent` call with `model: "haiku"`. Paste the output of
+- The comment reader is one `Agent` call with `model` set to the cheapest model the session
+  can pick: it only matches comments against one rule. Paste the output of
   `git diff <base>...HEAD` and the comment rule into its prompt, so it needs no tools and sees
   nothing of this session.
 - Neither built-in replaces it. `/simplify` checks reuse, simplification, efficiency and
