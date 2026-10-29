@@ -1,6 +1,6 @@
 {
   "name": "linear-gate",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Blocks Linear writes off shift; on shift, leaves them to your permission mode and asks only before a delete or cancel.",
   "author": { "name": "CJ" },
   "types": "./types/index.d.ts",

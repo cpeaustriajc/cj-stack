@@ -76,11 +76,11 @@ for (const surface of SURFACES) {
     expect(out.deny).toBe(undefined)
   })
 
-  asking(`${surface}: a delete shows its warning in yellow`, async ($, on) => {
+  asking(`${surface}: a delete shows its warning in the theme's warning color`, async ($, on) => {
     engine(on)
     const seen = gate($, on, surface)
     await $.tool.call({ tool: `${LINEAR}delete_comment`, id: 'c1' } as never)
-    expect(seen[0].texts.find(t => t.text.startsWith('⚠'))?.props.color).toBe('yellow')
+    expect(seen[0].texts.find(t => t.text.startsWith('⚠'))?.props.color).toBe('warning')
   })
 
   asking(`${surface}: another dialog is left alone`, async ($, on) => {
