@@ -14,6 +14,10 @@ and trim before you add: cut any rule whose failure a model no longer makes with
 - If a tool does the job, use its feature. If it does part of the job, build only the missing
   part. A skill holds the method; its per-tool adapter points to the native feature, and
   rebuilds it only for a tool that has none.
+- Hand off only to a stable feature. A preview can go away, so for a preview the skill keeps its
+  method and the adapter only points to the feature.
+- A guard hands off only to a feature with the same guarantee: one that holds every time. A
+  model's judgment or a mode the user switches can fail, so it never replaces a guard.
 - Failure: `hone` re-read transcripts that Claude Code's `/insights` and auto memory already
   mine.
 
