@@ -16,8 +16,8 @@ means open it as a draft. Any other word is the base branch.
 0. **Remote.** If `gh auth status` fails, say so and stop. If there is no GitHub remote,
    look for a matching repo with `gh repo list`, then ask with the ask tool: link the match,
    create a private repo, or create a public one.
-1. **Branch.** If you're on the default branch, create one named `claude/<short-topic>`
-   (`claude/` is required by a hook). Otherwise stay on the current branch.
+1. **Branch.** If you're on the default branch, create one: use the project's branch-name rule,
+   else `claude/<short-topic>`. Otherwise stay on the current branch.
 2. **Commit.** Keep the existing commits as they are; never squash or rewrite them. If
    changes are still uncommitted, commit them in small logical slices, with messages in the
    repo's style taken from `git log`. Never commit `.env`, credentials or files in
