@@ -28,6 +28,7 @@ again: the evidence may no longer hold.
 | anthropic.com/engineering | Anthropic |
 | claude.dev | Anthropic |
 | claude.com/blog | Anthropic |
+| claude.com/resources | Anthropic |
 | developers.openai.com/blog | OpenAI |
 | developers.googleblog.com | Google |
 | cursor.com/blog | SpaceX AI (Cursor) |
@@ -40,3 +41,27 @@ again: the evidence may no longer hold.
 | augmentcode.com/blog | Augment Code |
 | ampcode.com/news | Amp |
 | factory.com/news | Factory |
+
+## Tool docs
+
+How each tool behaves today: read these before you trust an adapter in `references/<tool>.md`.
+
+- code.claude.com/docs (Claude Code)
+- developers.openai.com/codex (Codex)
+- docs.github.com/copilot (GitHub Copilot)
+
+## Accounts on X
+
+A post is a lead. Follow it to the work it reports (the repo, the data, the benchmark) and weigh
+that. These accounts posted their own methods, numbers or failures on code review, instruction
+files or evals.
+
+**Vendor accounts:** @ClaudeDevs, @OpenAIDevs, @cursor_ai, @github, @nextjs, @augmentcode,
+@coderabbitai, @QodoAI, @Macroscope, @LangChain, @EntelligenceAI, @withmartian
+
+**People:** @addyosmani, @bcherny, @trq212, @poteto, @leerob, @ericzakariasson, @jediahkatz,
+@aye_aye_kaplan, @garrytan, @mattpocockuk, @emilkowalski, @cramforce, @_philschmid,
+@HamelHusain, @walden_yan, @harris_p10, @jhh1992, @nielstron, @kentcdodds, @dakshgup, @kayvz,
+@gamalinosqui, @PawelHuryn, @elitemaks, @triviwritescode, @kunchenguid, @MarkAIbuilder,
+@paulhq, @jondot, @p_rabtsevich, @jana_builds, @ZetsubosenseiG, @brungarc, @nzhlsk,
+@davekiss, @inc_ongi, @iPuneetSingh
