@@ -8,8 +8,8 @@ Check each rule against the change. A row in the report names the rule it breaks
 - No double-tap delay; set `touch-action: manipulation`.
 
 **Hit targets**
-- At least 24x24 CSS px (WCAG 2.2 SC 2.5.8). Smaller targets pass only with the spacing, equivalent, inline, user-agent or essential exception.
-- At least 44x44 at every viewport, not only on touch (the Apple HIG minimum). A row a person selects is at least 44 tall.
+- At least 44x44 CSS px at every viewport, not only on touch (the Apple HIG minimum). A row a person selects is at least 44 tall.
+- Below 24x24 is also a WCAG 2.2 failure (SC 2.5.8) unless the spacing, equivalent, inline, user-agent or essential exception applies; say which in the row.
 - Draw the control at its full target size. No invisible hit area around a small control: at a card edge it covers a neighbour.
 - A checkbox or radio and its label form one target.
 
