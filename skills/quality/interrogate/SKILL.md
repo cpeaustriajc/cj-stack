@@ -29,8 +29,9 @@ parallel. Diversity comes from what each one sees, never from personas. Tool mec
 `references/claude-code.md`.
 
 - **Full**: the whole bundle, on the session's own model.
-- **Blind**: the diff and the changed files with no description or spec, one model tier below
-  the session's (the same model when none is below). It judges
+- **Blind**: the diff and the changed files with no description or spec, on a cheaper model
+  than the session's when one exists, so it does not share every blind spot of the Full
+  reviewer. It judges
   what the code does, not what it was meant to do, so it catches what the description explains
   away.
 - **Spec**: only when a spec or issue exists. It gets the spec and the diff with no description,
@@ -74,7 +75,7 @@ blind spots.
 
 Show the four groups as tables, one row per finding with its reviewers, file:line, proof level
 and failure scenario. Every row has a proof level, in Noted and Dismissed too. Ask with the ask tool which to fix. Apply nothing until I pick. Save the
-bundle and the raw reviews in the ignored work folder (`.claude/work/<topic>/` in Claude Code)
+bundle and the raw reviews in the ignored work folder (`references/<tool>.md` names it)
 and say where they are, so the review can be re-run.
 
 ## 5. Quality pass, only when I ask

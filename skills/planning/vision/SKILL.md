@@ -19,14 +19,14 @@ Product row), and how writes are made and checked.
 Run the interview from `../grill/SKILL.md`, from **Grilling** to **Ending**: the ledger, rounds
 of questions with recommended answers, lookups before asking. Skip its sizing; a product idea is
 always grilled. An idea handed over from `scout` arrives with its filter scores, which answer
-section 2's Real, Reach and copies rows; start the ledger from them and ask only what scored
+the Real, Reach and copies rows of "Is it worth building"; start the ledger from them and ask only what scored
 unknown. What changes at this level:
 
 - **Breadth first.** Round 1 asks one question per branch before going deep on any: who it is
-  for, their problem today, whether it is worth it (section 2), the destination, how we'll know it
+  for, their problem today, whether it is worth it ("Is it worth building"), the destination, how we'll know it
   worked, the first version's cut, and the riskiest unknown. Going deep early spends the
   interview on a branch that the worth-it answer may cut.
-- **The ledger grows the product.** Each settled branch becomes a line of section 3. Show the
+- **The ledger grows the product.** Each settled branch becomes a line of "Write the product". Show the
   Features list growing each round, numbered F1…Fn.
 - **Vague may stay vague.** When I can't answer sharply and no lookup or prototype would settle
   it, put it under Not yet specified and move on. Pressing a vague answer into a feature invents
@@ -71,7 +71,7 @@ Status: Draft | Confirmed (<date>, <approver>)
 tense: "Buyers find and buy a domain in one visit".>
 
 ## Worth it
-<The verdict and why, from section 2.>
+<The verdict and why, from "Is it worth building".>
 
 ## Success
 <One or two observations or measures that say it worked.>
@@ -113,7 +113,7 @@ version of the whole product that works end to end and answers the riskiest unkn
 
 ## 5. From personal to sellable
 
-When something I built for myself might sell, run section 2 again for others. Two things differ
+When something I built for myself might sell, run "Is it worth building" again for others. Two things differ
 from a fresh idea:
 
 - **I am user one, which is evidence and bias at once.** My weekly use proves it works for one

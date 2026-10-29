@@ -54,4 +54,4 @@ initiative when it spans that initiative's projects only.
   what replaced it and where that is recorded.
 
 Linear saves on write, and the whole team sees it at once. So the first write to a team's project
-follows SKILL.md section 5: show the user the text first.
+follows "Writing safely" in SKILL.md: show the user the text first.

@@ -156,7 +156,7 @@ gap: every later decision builds on it.
   - every internal link resolves
   - Home lists every page
   - the index, where there is one, is newest first
-  - every page passes **6. Plain prose**
+  - every page passes **Plain prose** below
 
 ## 6. Plain prose
 

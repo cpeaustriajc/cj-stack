@@ -38,5 +38,5 @@ than creating a second one.
 - **Link.** Use a page mention, not a pasted URL, so a rename does not break it.
 
 Notion saves as you write, so there is no separate commit step. That also means a write is
-immediately visible to the whole workspace. That is why SKILL.md §5 asks for the user's review
+immediately visible to the whole workspace. That is why "Writing safely" in SKILL.md asks for the user's review
 before the first write.

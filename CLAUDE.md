@@ -1,8 +1,10 @@
 # cj-stack
 
-When a new frontier model ships (Fable or Opus tier), or Anthropic publishes a best-practice
-article on agents or Claude Code (claude.com/resources, anthropic.com/engineering), audit the stack with the instruction-file
-tools below and trim before you add: cut any rule you would follow without being told.
+Write every rule, skill line and mod on the assumption that a later model makes it obsolete:
+name the failure it prevents, so a run without it can show when that failure stops. When a
+frontier model ships from any vendor the stack runs on, or a vendor engineering blog publishes
+a best-practice article on coding agents, audit the stack with the instruction-file tools below
+and trim before you add: cut any rule whose failure a model no longer makes without it.
 
 ## Build only what the tools lack
 
@@ -17,17 +19,27 @@ tools below and trim before you add: cut any rule you would follow without being
 
 ## Prior art
 
-Before adding or changing a skill or mod, research how public AI-coding practitioners solve it:
-their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan's pstack
-(`cursor/plugins`), `mattpocock/skills` and `emilkowalski/skills`. Copy a fan-out only when its
-agents work in parallel or need a fresh context; otherwise fold it into the main loop. Put each
-agent on the cheapest model that can do its job (see `models/README.md`). Skip only what needs
-another vendor's models or a fleet of agents. Check `SCOPE.md` before adding a skill or mod.
+After the native-feature check above, look for others who solved the same problem before you
+add or change a skill or mod. Prior art is a hypothesis, not an authority: a known name does
+not make a claim true, and a source that was right before can be wrong now.
+
+- Weigh each claim by what it shows, not by who wrote it: code you can read or run, a measured
+  result, a failure it names. A claim with no evidence is only a lead.
+- Adopt an idea only when `claude plugin eval` shows a gain over the no-plugin baseline. Until
+  then, mark it untested.
+- In the skill's or mod's README, name the source and the evidence you used, so an audit can
+  remove the idea when that evidence no longer holds.
 
 ## Authoring tools
 
 Use what Claude Code ships before writing your own checks:
 
+- Check `SCOPE.md` before adding a skill or mod.
+- Copy a fan-out only when its agents work in parallel or need a fresh context; otherwise fold
+  it into the main loop.
+- Put each agent on the cheapest model that can do its job (see `models/README.md`).
+- `SOURCES.md` lists where to look for new articles and leads; being on it is no reason to
+  trust a claim.
 - `claude plugin validate .` after any manifest, skill or frontmatter change.
 - `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
   baseline. It reads cases from `evals/` at the plugin root (`skills/` for cj-stack,
@@ -45,8 +57,9 @@ Use what Claude Code ships before writing your own checks:
   skip `~/.claude` unless given `--add-dir ~/.claude`.
 - `claude-md-improver` (claude-md-management) when CLAUDE.md drifts from the code;
   `/revise-claude-md` at the end of a session that exposed missing context.
-- From any of these audits, cut only duplicate, dead or stale lines; a real rule moves to its
-  right file, never drops.
+- From any of these audits, cut duplicate, dead or stale lines and rules whose failure no
+  longer occurs without them; a rule that still prevents a failure moves to its right file,
+  never drops.
 - `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
 
 ## Buckets

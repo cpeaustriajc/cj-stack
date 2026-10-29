@@ -1,7 +1,8 @@
 # Claude Code adapter
 
 - Reviewers are `Agent` calls. Send all of them in one message. The Blind reviewer sets
-  `model` one tier below the session's.
+  `model` to the next cheaper model the session can pick.
+- The ignored work folder is `.claude/work/<topic>/`.
 - `/code-review` is the built-in correctness pass. For a quick single-pass review, point me to
   it instead of this skill. Never use it as one of the reviewers: it has a usage cap and can stop
   mid-review.

@@ -116,8 +116,8 @@ A picture rarely fails as a composition. It fails in its parts: a crown of blobs
 
 **Reference images are the spec.** Follow them closely. When several disagree, follow the majority and name the one you set aside.
 
-**Research before drawing.** Brief a `researcher` agent for shapes and sizes, not essays: each piece's name, shape and size in centimetres or metres, the layering order, what the game's own art shows, source URLs, and guesses marked UNVERIFIED. Good sources:
-- the game's cover art, key art and in-game stills; ask the user for screenshots when wikis block fetching
+**Research before drawing.** Brief a `researcher` agent for shapes and sizes, not essays: each piece's name, shape and size in centimetres or metres, the layering order, what the source work's own art shows (when the subject comes from a game, film or book), source URLs, and guesses marked UNVERIFIED. Good sources:
+- the source work's cover art, key art and stills; ask the user for screenshots when wikis block fetching
 - museum collections, for period costume
 - makers' spec pages, for sizes
 - Wikipedia and survey data, for buildings and places

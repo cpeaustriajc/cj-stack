@@ -32,7 +32,7 @@ fix.
   what it touches, not on the whole app.
 - **Spec**: find the spec or design for the flow. A difference from the spec is a bug. A
   confusing behaviour the spec asks for is a decision for me, not a bug.
-- Launch the app with the built-in `run` skill or the project's own launch skill, and follow
+- Launch the app with the project's own launch skill or the harness's built-in one, and follow
   the loaded browser skill for driving the browser. Don't reinvent either.
 - **Health check**: before gathering evidence, confirm the app responds, the test data is
   loaded and the browser connection works. A failed check is a setup problem, so report it

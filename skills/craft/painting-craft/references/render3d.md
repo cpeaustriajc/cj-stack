@@ -16,7 +16,7 @@
 
 - Units are centimetres. World axes are x right, y down, z toward the viewer. That is a left-handed frame, so a cross product points the opposite way from what you'd guess. Build body frames from explicit vectors, as knight.py does. Its `F_` is forward, `R_` is his right and `U_` is up. `B(f, u, r)` and `Tp(h, f, r)` map body-frame coordinates to world.
 - The camera is orthographic and pitched down by `PITCH` (14°). `project(P)` returns screen xy (cm) and depth (larger is nearer). `VIEW` is the direction toward the camera.
-- `SUN` is the light direction. Keep it consistent with the light in the painted scene. For Henry the light comes from the right and slightly toward the viewer.
+- `SUN` is the light direction. Set it to the painted scene's light for every new figure: its default in render3d.py (from the right, slightly toward the viewer) fits only the knight.py example.
 - A figure's origin is its hip midpoint. The scene file pins that origin to a scene point (a constant such as `SCN`) at `S_H` scene units per cm. Real proportions come from real measurements: thigh 44, shin 42, upper arm 33, forearm 26, hip joint to shoulder joint about 50, for a 180 cm man.
 
 ## Building a mesh

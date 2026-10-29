@@ -24,7 +24,7 @@ $S status [owner/repo]     # uncommitted files and ahead/behind counts
 
 If `owner/repo` is left out, it comes from the current directory's `origin` remote. Read and edit
 the files under `$($S path)` with the normal file tools, then `save` straight away. `push` runs
-only once the user has seen the change (see SKILL.md §5).
+only once the user has seen the change (see "Writing safely" in SKILL.md).
 
 ## Quirks
 

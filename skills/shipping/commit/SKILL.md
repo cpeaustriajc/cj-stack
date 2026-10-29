@@ -18,8 +18,8 @@ Commit my uncommitted changes and push the current branch. Arguments: `$ARGUMENT
 2. Split the work into small logical commits: one per concern, not one blob. Stage by path,
    never with `git add -A` blindly. Never commit `.env`, credentials or ignored files. Add no
    AI attribution or co-author trailers.
-3. If you're on the default branch, create `claude/<short-topic>` first, since a hook
-   requires the prefix.
+3. If you're on the default branch, create a branch first: use the project's branch-name rule,
+   else `claude/<short-topic>`.
 4. Push with `-u` unless `local` was passed. If the push is rejected because the remote
    moved, pull with rebase only when it applies cleanly. On any conflict, stop and tell me.
    Don't resolve it.

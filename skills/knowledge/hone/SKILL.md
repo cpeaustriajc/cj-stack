@@ -92,7 +92,7 @@ Strongest first:
 6. **Agent definition** (`.claude/agents/*.md` or a plugin's agents).
 7. **Instruction file**: CLAUDE.md, AGENTS.md or a `paths:`-scoped rule. Only rules and
    preferences belong here, each one line, never a status, a date or a finding. Keep each
-   always-loaded file under 200 lines. A rule that needs judgment carries one short example of
+   always-loaded file under the tool's size limit (`references/<tool>.md`). A rule that needs judgment carries one short example of
    the failure.
 
 A proposed lint, test or hook must first be shown failing on a real past instance of the

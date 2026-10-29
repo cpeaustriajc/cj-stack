@@ -1,6 +1,6 @@
 # Claude Code
 
-- The ask tool is `AskUserQuestion`.
+- The ask tool is `AskUserQuestion`. It takes at most 4 questions per call.
 - A layout or look option is a mockup in a visualize widget: one card per option, with a
   `sendPrompt` button on each. Without the visualize tools, the option's `preview` holds an
   ASCII sketch.
