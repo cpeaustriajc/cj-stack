@@ -1,8 +1,11 @@
 # cj-stack
 
-When a new frontier model ships (Fable or Opus tier), or Anthropic publishes a best-practice
-article on agents or Claude Code (claude.com/resources, anthropic.com/engineering), audit the stack with the instruction-file
-tools below and trim before you add: cut any rule you would follow without being told.
+Write every rule, skill line and mod on the assumption that a later model makes it obsolete:
+name the failure it prevents, so a run without it can show when that failure stops. When a
+frontier model ships from any vendor the stack runs on, or a vendor engineering blog or a
+prior-art author below publishes a best-practice article on coding agents, audit the stack with
+the instruction-file tools below and trim before you add: cut any rule whose failure a model no
+longer makes without it.
 
 ## Build only what the tools lack
 
@@ -23,6 +26,7 @@ their GitHub repos, blog posts and talks, such as `garrytan/gstack`, Lauren Tan'
 agents work in parallel or need a fresh context; otherwise fold it into the main loop. Put each
 agent on the cheapest model that can do its job (see `models/README.md`). Skip only what needs
 another vendor's models or a fleet of agents. Check `SCOPE.md` before adding a skill or mod.
+`docs/sources.md` lists the blogs and authors to watch and how far to trust each.
 
 ## Authoring tools
 
