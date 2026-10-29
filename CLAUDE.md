@@ -4,6 +4,17 @@ When a new frontier model ships (Fable or Opus tier), or Anthropic publishes a b
 article on agents or Claude Code (claude.com/resources, anthropic.com/engineering), audit the stack with the instruction-file
 tools below and trim before you add: cut any rule you would follow without being told.
 
+## Build only what the tools lack
+
+- Before you add or change a skill, mod, hook, script or rule, find the nearest native feature
+  in each tool in use: the agent harness, the code host, CI and the tracker. Read that tool's
+  current docs and changelog.
+- If a tool does the job, use its feature. If it does part of the job, build only the missing
+  part. A skill holds the method; its per-tool adapter points to the native feature, and
+  rebuilds it only for a tool that has none.
+- Failure: `hone` re-read transcripts that Claude Code's `/insights` and auto memory already
+  mine.
+
 ## Prior art
 
 Before adding or changing a skill or mod, research how public AI-coding practitioners solve it:
