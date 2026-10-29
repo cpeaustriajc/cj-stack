@@ -8,6 +8,7 @@ type World = {
   disk: Record<string, string>
   head: Record<string, string>
   repo: 'yes' | 'no' | 'unborn' | 'broken' | 'throws'
+  root: string
 }
 
 const A = '/repo/tests/a.test.ts'
@@ -23,8 +24,8 @@ const A_HEAD = [
 ].join('\n')
 
 function world(on: On, given: Partial<World> = {}): World {
-  const w: World = { ran: [], commands: [], runs: [], disk: { [A]: A_HEAD }, head: { [A]: A_HEAD }, repo: 'yes', ...given }
-  const isDir = (p: string) => p === '/repo' || Object.keys(w.disk).some(f => f.startsWith(`${p}/`))
+  const w: World = { ran: [], commands: [], runs: [], disk: { [A]: A_HEAD }, head: { [A]: A_HEAD }, repo: 'yes', root: '/repo', ...given }
+  const isDir = (p: string) => p === w.root || Object.keys(w.disk).some(f => f.startsWith(`${p}/`))
   on('session.cwd', () => ({ value: '/repo' }) as never)
   on('fs.exists', (_$, e) => {
     const p = (e as { path: string }).path
@@ -43,6 +44,10 @@ function world(on: On, given: Partial<World> = {}): World {
     if (w.repo === 'no') return fail('fatal: not a git repository (or any of the parent directories): .git')
     if (w.repo === 'unborn') return fail("fatal: invalid object name 'HEAD'.")
     if (w.repo === 'broken') return fail('fatal: unable to read tree 1234abcd')
+    if (argv[1] === 'rev-parse') {
+      const prefix = init?.cwd === w.root ? '' : `${init?.cwd?.slice(w.root.length + 1)}/`
+      return { value: { exitCode: 0, stdout: `${prefix}\n`, stderr: '' } } as never
+    }
     const abs = `${init?.cwd}/${argv[argv.length - 1].replace(/^HEAD:\.\//, '')}`
     if (abs in w.head) return { value: { exitCode: 0, stdout: w.head[abs], stderr: '' } } as never
     return fail(`fatal: path '${abs.slice('/repo/'.length)}' does not exist in 'HEAD'`)
@@ -142,6 +147,23 @@ test('7b. each test file pattern is checked', async ($, on) => {
   for (const p of ['/repo/src/latest.ts', '/repo/src/contest/x.ts', '/repo/docs/testing.md']) {
     expect((await edit($, p, 'a', 'b')).deny).toBeUndefined()
   }
+})
+
+test('7c. a folder named like a test folder above the repo root does not make a file a test', async ($, on) => {
+  const app = '/tmp/e2e/demo/src/app.ts'
+  const t = '/tmp/e2e/demo/tests/a.test.ts'
+  const files = { [app]: 'keep\n', [t]: 'keep\n' }
+  const w = world(on, { disk: files, head: files, root: '/tmp/e2e/demo' })
+  passes(await edit($, app, 'keep', 'gone'), w)
+  expect((await edit($, t, 'keep', 'gone')).deny).toContain('test-guard:')
+  expect(w.ran.length).toBe(1)
+})
+
+test('7d. a test folder inside the repo is found from the repo root', async ($, on) => {
+  const h = '/tmp/e2e/demo/tests/helpers/db.ts'
+  const w = world(on, { disk: { [h]: 'keep\n' }, head: { [h]: 'keep\n' }, root: '/tmp/e2e/demo' })
+  expect((await edit($, h, 'keep', 'gone')).deny).toContain('test-guard:')
+  expect(w.ran).toEqual([])
 })
 
 test('8. after /test-guard allow, a weakening Edit passes on that path only', async ($, on) => {

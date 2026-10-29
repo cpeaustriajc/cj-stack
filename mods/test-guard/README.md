@@ -27,7 +27,7 @@ To see that it is on, run `claude plugin list` and look for `test-guard`. The mo
 
 ## What it does
 
-The hook checks every Edit, MultiEdit and Write to a test file. A test file is a name like `*.test.*`, `*.spec.*`, `test_*.py`, `*_test.py` or `*_test.go`. A file in a `test`, `tests`, `__tests__`, `e2e` or `__snapshots__` folder is also a test file.
+The hook checks every Edit, MultiEdit and Write to a test file. A test file is a name like `*.test.*`, `*.spec.*`, `test_*.py`, `*_test.py` or `*_test.go`. A file in a `test`, `tests`, `__tests__`, `e2e` or `__snapshots__` folder inside the repository is also a test file. The hook asks git for the path from the repository root, so a project in `~/e2e/demo/` does not make every file a test file.
 
 | Case | Decision |
 |---|---|

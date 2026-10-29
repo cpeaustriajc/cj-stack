@@ -18,9 +18,10 @@ const deny = (path: string, line: string) =>
   'Add a new test instead. If the old test is wrong, tell the user which test, the old line and why; ' +
   `the user can run \`/test-guard allow ${path}\`.`
 
-function isTest(path: string): boolean {
+const inTestDir = (path: string) => path.split('/').slice(0, -1).some(s => TEST_DIR.has(s))
+const maybeTest = (path: string) => {
   const p = path.replace(/\\/g, '/')
-  return TEST_NAME.some(re => re.test(p)) || p.split('/').slice(0, -1).some(s => TEST_DIR.has(s))
+  return TEST_NAME.some(re => re.test(p)) || inTestDir(p)
 }
 
 function absolute(path: string, cwd: string): string {
@@ -55,10 +56,26 @@ function firstLost(head: string, next: string): string | undefined {
   return undefined
 }
 
-async function headText($: Api, path: string): Promise<string | undefined> {
+async function nearestDir($: Api, path: string): Promise<{ dir: string; rel: string }> {
   let dir = path.slice(0, path.lastIndexOf('/')) || '/'
   while (dir !== '/' && !(await $.fs.exists(dir))) dir = dir.slice(0, dir.lastIndexOf('/')) || '/'
-  const rel = path.slice(dir === '/' ? 1 : dir.length + 1)
+  return { dir, rel: path.slice(dir === '/' ? 1 : dir.length + 1) }
+}
+
+async function isTest($: Api, path: string): Promise<boolean> {
+  const p = path.replace(/\\/g, '/')
+  if (TEST_NAME.some(re => re.test(p))) return true
+  if (!inTestDir(p)) return false
+  const { dir, rel } = await nearestDir($, path)
+  // --show-prefix, not --show-toplevel: toplevel resolves symlinks (/tmp -> /private/tmp) and breaks the prefix cut.
+  const r = await $.process.run(['git', 'rev-parse', '--show-prefix'], { cwd: dir })
+  if (r.exitCode === 0) return inTestDir(`${r.stdout.trim()}${rel.replace(/\\/g, '/')}`)
+  if (NO_BASELINE.some(re => re.test(r.stderr))) return false
+  throw new Error(`git rev-parse exited ${r.exitCode}: ${r.stderr.trim()}`)
+}
+
+async function headText($: Api, path: string): Promise<string | undefined> {
+  const { dir, rel } = await nearestDir($, path)
   const r = await $.process.run(['git', 'show', `HEAD:./${rel}`], { cwd: dir })
   if (r.exitCode === 0) return r.stdout
   if (NO_BASELINE.some(re => re.test(r.stderr))) return undefined
@@ -91,8 +108,9 @@ export const register: Register = on => {
   on('tool.call', async ($, e, next) => {
     if (!TOOLS.has(e.tool)) return next(e)
     const input = e as unknown as Record<string, unknown>
-    if (typeof input.file_path !== 'string' || !isTest(input.file_path)) return next(e)
+    if (typeof input.file_path !== 'string' || !maybeTest(input.file_path)) return next(e)
     const path = absolute(input.file_path, await $.session.cwd())
+    if (!(await isTest($, path))) return next(e)
     if ((await read($, allowed)).includes(path)) return next(e)
     const head = await headText($, path)
     if (head === undefined) return next(e)
