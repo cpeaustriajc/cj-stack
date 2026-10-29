@@ -34,9 +34,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - In the skill's or mod's README, name the source and the evidence you used, so an audit can
   remove the idea when that evidence no longer holds.
 
-## Authoring tools
-
-Use what Claude Code ships before writing your own checks:
+## Authoring
 
 - Check `SCOPE.md` before adding a skill or mod.
 - Copy a fan-out only when its agents work in parallel or need a fresh context; otherwise fold
@@ -44,27 +42,21 @@ Use what Claude Code ships before writing your own checks:
 - Put each agent on the cheapest model that can do its job (see `models/README.md`).
 - `SOURCES.md` lists where to look for new articles and leads; being on it is no reason to
   trust a claim.
-- `claude plugin validate .` after any manifest, skill or frontmatter change.
-- `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
-  baseline. It reads cases from `evals/` at the plugin root (`skills/` for cj-stack,
-  `skills/<bucket>/` for the opt-in plugins); a skill's own `evals/evals.json` is skill-creator's
-  format, which it doesn't read.
-  - While you iterate, run one case with `--case <name> --runs 1 --max-cost-usd 3`. Run the
-    full suite at the default runs once, at the end.
-  - After a grader fix, rerun only the cases that grader scores (`--case`).
-  - If the no-plugin baseline passes a case, the case cannot show a gain. Make it harder or
-    drop it; do not rerun it.
-- `claude plugin details <plugin>` for a plugin's components and projected token cost.
-- `claude plugin test mods/<mod>` for a mod's hook tests.
-- `/doctor prompt-audit` when a new frontier model ships, and `/doctor prompt-audit <path>` after
-  editing a skill or rule: flags dated instructions, conflicts and missing files. Headless runs
-  skip `~/.claude` unless given `--add-dir ~/.claude`.
-- `claude-md-improver` (claude-md-management) when CLAUDE.md drifts from the code;
-  `/revise-claude-md` at the end of a session that exposed missing context.
+- Validate the manifests after any manifest, skill or frontmatter change.
+- Prove a skill fires and helps, scored against a run without the plugin. While you iterate,
+  run one case once at a capped cost; run the full suite once, at the end. After a grader fix,
+  rerun only the cases that grader scores. A case the no-plugin run already passes cannot show
+  a gain: make it harder or drop it.
+- Check a plugin's components and projected token cost.
+- Run a mod's hook tests after you change the mod.
+- Audit the instruction files when a new frontier model ships, and audit a skill or rule after
+  you edit it.
 - From any of these audits, cut duplicate, dead or stale lines and rules whose failure no
   longer occurs without them; a rule that still prevents a failure moves to its right file,
   never drops.
-- `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
+- Draft skills and plugin parts with the harness's own authoring helpers.
+
+The Claude Code command for each step is in `.claude/rules/claude-code-authoring.md`.
 
 ## Buckets
 
