@@ -109,6 +109,12 @@
       "category": "productivity"
     },
     {
+      "name": "test-guard",
+      "source": "./mods/test-guard",
+      "description": "Denies an Edit, MultiEdit or Write that changes or removes a line a test file has at HEAD; additions pass, and only the user can allow one file with /test-guard allow <path>.",
+      "category": "productivity"
+    },
+    {
       "name": "bash-trim",
       "source": "./mods/bash-trim",
       "description": "Cuts a long successful Bash output to its first 2,000 and last 3,000 characters with a cut count; read-like commands, failures and saved outputs pass whole.",

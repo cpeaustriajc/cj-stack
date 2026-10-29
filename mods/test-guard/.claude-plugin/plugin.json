@@ -1,0 +1,6 @@
+{
+  "name": "test-guard",
+  "version": "0.1.0",
+  "description": "Denies an Edit, MultiEdit or Write that changes or removes a line a test file has at HEAD; additions pass, and only the user can allow one path with /test-guard allow <path>",
+  "author": { "name": "CJ" }
+}

@@ -76,6 +76,7 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [kill-guard](mods/kill-guard/README.md) | denies a shell command that stops processes by name or port, which can also stop another checkout's dev server | optional |
 | [bash-trim](mods/bash-trim/README.md) | cuts a long successful Bash output to its start and end, with a count of the cut lines | optional |
 | [git-guard](mods/git-guard/README.md) | denies `git branch -D`, a force push to main or master, and `git checkout -- .` or `git restore .` on a dirty tree; names the safe alternative | optional |
+| [test-guard](mods/test-guard/README.md) | denies an Edit or Write that changes or removes a line a test file has at `HEAD`; additions pass, `/test-guard allow <path>` lets one file change | optional |
 
 ## Other plugins
 
