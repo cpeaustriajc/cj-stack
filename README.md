@@ -69,7 +69,6 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 |---|---|---|
 | [linear-gate](mods/linear-gate/README.md) | blocks Linear writes off shift; on shift, asks only before a delete or cancel | by default |
 | [session-modes](mods/session-modes/README.md) | `/mode readonly`, `research`, `prototype`, `build` or `off`, enforced for the session | optional |
-| [loop-brake](mods/loop-brake/README.md) | ends a turn after N forced Stop-hook continuations | optional |
 | [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
 | [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list, and removes `.claude/work/` entries not changed for a day | optional |

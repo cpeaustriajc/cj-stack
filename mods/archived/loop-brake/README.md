@@ -1,5 +1,7 @@
 # loop-brake
 
+> Archived: not maintained.
+
 A mod (a plugin that adds a hook to Claude Code) that ends a turn after a set number of forced continuations. A looping goal hook then cannot burn your usage.
 
 ## Why
@@ -10,12 +12,7 @@ loop-brake counts these forced continuations. At the cap, it lets the stop throu
 
 ## Install
 
-```
-/plugin marketplace add cpeaustriajc/cj-stack
-/plugin install loop-brake@cj-stack
-```
-
-To see that it is on, run `claude plugin list` and look for `loop-brake`. The mod is optional: `cj-stack` does not install it.
+It is not installable from the marketplace. No plugin in `.claude-plugin/marketplace.json` lists it, so no cj-stack plugin ships it. Claude Code now has its own brake. After Stop hooks continue a turn 8 times in a row, Claude Code overrides the next block and ends the turn. Each tool call resets the count. Set the `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` environment variable to change the cap, for example `3` for the old loop-brake default, or `0` to turn the brake off. See the Stop section of the [hooks reference](https://code.claude.com/docs/en/hooks).
 
 ## Example
 
@@ -48,8 +45,6 @@ The mod also writes `{ "v": 1, "streak": 1, "cap": 3 }` to `~/.claude/mod-state/
 | `maxContinuations` | 3 | Forced continuations allowed per turn, 1 to 20. |
 
 A value that is not a whole number from 1 to 20 falls back to 3. Run `claude plugin configure loop-brake@cj-stack` to show the options and which are unset.
-
-To turn the mod off, run `claude plugin disable loop-brake@cj-stack`.
 
 ## Limits
 

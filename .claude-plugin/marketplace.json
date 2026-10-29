@@ -73,12 +73,6 @@
       "category": "productivity"
     },
     {
-      "name": "loop-brake",
-      "source": "./mods/loop-brake",
-      "description": "Ends a turn after N forced Stop-hook continuations, so a goal hook can't burn your usage.",
-      "category": "productivity"
-    },
-    {
       "name": "hone-nudge",
       "source": "./mods/hone-nudge",
       "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run.",

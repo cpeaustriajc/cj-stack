@@ -46,7 +46,7 @@ The Claude Code adapter turns the exit check into a `/goal` condition. It can al
 - It does not deploy, delete data, take payments or message people inside the loop.
 - It does not relax the exit check to finish a run.
 - A `/goal` evaluator reads only the transcript, so the check output must appear there.
-- The `loop-brake` mod can cap a `/goal` run. The adapter explains how to raise or turn off that cap.
+- Claude Code's Stop-hook cap (`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP`, 8 by default) can end a `/goal` run. Each tool call resets the count. The adapter explains how to raise the cap for a run or turn it off with `0`.
 - It has no settings.
 
 ## More

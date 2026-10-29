@@ -61,7 +61,7 @@ Keep the README under 100 lines. Use `###` headings inside a section only when i
 
 ## Check
 
-`skills/quality/playbooks/README.md` and `mods/loop-brake/README.md` show the expected result.
+`skills/quality/playbooks/README.md` and `mods/git-guard/README.md` show the expected result.
 
 Run `python3 -I scripts/check_readmes.py`. Then read the README as the reader above: can you say
 in one sentence what it does, when you would use it, and how to turn it on?

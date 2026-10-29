@@ -30,8 +30,11 @@ For a run that matters, add a Stop hook of `type: "agent"` (https://code.claude.
 that runs the check itself and blocks the stop until it passes. That is section 7's separate
 checker. Agent hooks are experimental; a command hook running the check script also works.
 
-Claude Code overrides a Stop hook after it blocks eight times in a row with no tool call in
-between; `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` changes that.
+Claude Code overrides a Stop hook after it blocks eight times in a row, and ends the turn. Each
+tool call resets the count. `CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` sets the cap, and a `/goal` run can
+hit it: the user's settings may set it lower than 8. For a long run, raise it for that run
+(`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP=20 claude`), or set `0` to turn it off and rely on section 6's
+brake instead.
 
 ## The handback audit
 
@@ -57,7 +60,4 @@ wakeup and are not restored on resume.
 
 ## With cj-stack mods
 
-- **`loop-brake`** ends a turn after its cap of forced Stop-hook continuations (3 by default). If
-  it is installed, it may also cap a `/goal` run; raise its `maxContinuations` (up to 20) for the
-  session, or turn it off for the run, and rely on section 6's brake instead.
 - **`session-modes`**: `/mode no-pr` suits a loop whose work I review before a pull request.
