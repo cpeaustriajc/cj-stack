@@ -57,8 +57,9 @@ Use what Claude Code ships before writing your own checks:
   skip `~/.claude` unless given `--add-dir ~/.claude`.
 - `claude-md-improver` (claude-md-management) when CLAUDE.md drifts from the code;
   `/revise-claude-md` at the end of a session that exposed missing context.
-- From any of these audits, cut only duplicate, dead or stale lines; a real rule moves to its
-  right file, never drops.
+- From any of these audits, cut duplicate, dead or stale lines and rules whose failure no
+  longer occurs without them; a rule that still prevents a failure moves to its right file,
+  never drops.
 - `skill-creator` and `plugin-dev` (claude-plugins-official) for drafting skills and plugin parts.
 
 ## Buckets
