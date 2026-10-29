@@ -60,12 +60,10 @@ means open it as a draft. Any other word is the base branch.
      cropped to the change. A flow, a motion or a timing also gets a short video. Each video
      and screenshot:
      - shows where each click lands and which key was pressed, with no test code on screen.
-       Use the project's helper when it has one. Playwright 1.64+:
-       `screencast.show_actions(cursor="pointer", style={"title": "display: none", "point":
-       "width: 28px; height: 28px; border: 3px solid red; border-radius: 50%"})` plus a key
-       label of your own. Playwright draws no click mark unless `point` is styled.
-     - plays at a person's pace: the hero script pauses before each action (`show_actions`
-       `duration` does this), types at human speed and holds where the viewer reads.
+       Use the project's helper when it has one, else the recorder's own marks
+       (`references/<recorder>.md`).
+     - plays at a person's pace: the hero script pauses before each action, types at human
+       speed and holds where the viewer reads.
        Failure: a 16-second clip of two whole flows that a reviewer could not follow.
      - starts after sign-in and setup and ends before cleanup, so it shows only the user's
        steps.
@@ -73,9 +71,8 @@ means open it as a draft. Any other word is the base branch.
        test runner, that reuses the tests' setup helpers. Never film a test run with tracing on:
        tracing claims the page capture first, and the video shows a small corner of the page at
        about one frame a second.
-     - opens each step with a chapter card (Playwright: `screencast.show_chapter(title,
-       description=...)`) and reaches each page by the click a person would make, never a
-       URL jump. Without both, the video jumps from page to page and the viewer gets lost.
+     - opens each step with a chapter card and reaches each page by the click a person would
+       make, never a URL jump. Without both, the video jumps from page to page and the viewer gets lost.
      - closes on screen each tool it opens (a dev panel, a QA menu) before the user's next
        step, so no state changes without a visible cause.
 
