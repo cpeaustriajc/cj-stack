@@ -41,7 +41,7 @@ This skill is not shipped in any plugin, so you cannot install it yet.
 - A fresh agent looks at each screenshot or output before the result line. If it cannot see the claimed state, the line is `NOT VERIFIED`.
 - A weekly audit first starts one read-only agent per feature file to compare the file with the code. Another agent lists new routes, commands and screens that no feature file names.
 - The audit then drives every feature in the live app. It ends as clean, changed (one PR for feature files and the verify skill only) or blocked.
-- A fresh agent posts a PR verdict: `PASS`, `PASS+NOTES`, `FAIL` or `BLOCKED`. The comment holds the head SHA and the `git patch-id`.
+- A fresh agent posts a PR verdict: `PASS`, `PASS+NOTES`, `FAIL` or `BLOCKED`. The comment holds the head SHA and the `git patch-id`. A changed or removed test assertion that the PR body does not name is a `FAIL`.
 - Each `FAIL` ends with one prevention proposal. Nothing is applied until you accept it.
 
 ## Limits

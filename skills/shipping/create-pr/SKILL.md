@@ -48,6 +48,7 @@ means open it as a draft. Any other word is the base branch.
      Related: <issue link or key>
      Evidence: <before and after: E2E report, screenshots or video path/link, and the command to re-run it>
      Merge danger: <one-way or two-way door; blast radius>
+     Test changes: <each changed or removed test line and why, or "additions only">
      ```
 
      Summary visual: only when it clarifies, add the smallest one right after the line it
@@ -89,6 +90,10 @@ means open it as a draft. Any other word is the base branch.
      charge, deleted data, a public API change) or a two-way door (a revert is clean), plus
      the blast radius in a few words, such as `Merge danger: one-way door, adds
      premium_prices table; blast radius: search results and checkout totals.`
+
+     Test changes names each test line the PR changes or removes against the base, with the
+     reason, such as `Test changes: notify.test.ts toHaveBeenCalledTimes(1) to (2), the
+     digest now sends twice.` Write `additions only` when no old test line changed.
 
      Link the issue as related; never write `Closes`, `Fixes` or `Resolves`, since merging
      would close the issue before the verifier marks it done. Find the issue

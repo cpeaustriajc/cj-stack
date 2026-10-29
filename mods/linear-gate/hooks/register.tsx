@@ -293,7 +293,7 @@ function diffColor(line: string, current: string | undefined): string | undefine
   if (line.startsWith('  − ')) return 'red'
   if (line.startsWith('  + ')) return 'green'
   if (line.startsWith('    ') && line.trim()) return current
-  if (line.startsWith('⚠')) return 'yellow'
+  if (line.startsWith('⚠')) return 'warning'
   return undefined
 }
 

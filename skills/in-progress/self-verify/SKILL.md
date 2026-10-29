@@ -121,7 +121,11 @@ Green CI or a bot approval is not a verdict.
 
 The verifier reports only correctness and spec gaps. Asked for gaps, a reviewer always finds some;
 do not add style notes. The verifier also checks that the PR body's Evidence line re-runs. The
-`create-pr` step writes the Evidence and Merge danger lines.
+`create-pr` step writes the Evidence, Merge danger and Test changes lines.
+
+The verifier diffs every test file between base and head and asks: did any assertion get weaker?
+Each changed or removed assertion line that the Test changes line does not name is a FAIL. A named
+one is PASS+NOTES, with the old and new line quoted.
 
 ## Never twice
 
