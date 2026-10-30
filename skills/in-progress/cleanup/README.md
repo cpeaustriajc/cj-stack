@@ -2,7 +2,7 @@
 
 A skill that removes what a Claude session left behind, keeps anything that still holds work, and then archives the session.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

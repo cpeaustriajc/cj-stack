@@ -2,7 +2,7 @@
 
 A typed `/microinteraction` command that finds where a web page should animate, and where it should not. Each proposal plays inline, and you pick which ones you want.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

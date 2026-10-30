@@ -2,7 +2,7 @@
 
 A skill that writes a short brief of where your work stands: recent threads, their state and one next step.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

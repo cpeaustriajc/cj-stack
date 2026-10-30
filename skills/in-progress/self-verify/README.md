@@ -2,7 +2,7 @@
 
 A skill that sets up your project's own `verify` skill. An agent then proves its change works before commit. A fresh agent checks that proof before merge.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 
@@ -32,7 +32,14 @@ You get the new `verify` skill and one result line per feature: `VERIFIED`, `NOT
 
 ## Install
 
-This skill is not shipped in any plugin, so you cannot install it yet.
+The `cj-lab` plugin lists this skill. Add the marketplace, then install the plugin:
+
+```
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install cj-lab@cj-stack
+```
+
+To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off the other `cj-lab` skills.
 
 ## What it does
 

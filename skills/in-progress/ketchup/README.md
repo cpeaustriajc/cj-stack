@@ -2,7 +2,7 @@
 
 A typed `/ketchup` command that catches you up on a chat after you step away. It tells you what changed since your last message and what waits on you.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

@@ -2,7 +2,7 @@
 
 A typed `/blast-radius` command that finds what a change can break outside its diff. It proves the one fact the change is safe because of, or says that fact is unproven.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

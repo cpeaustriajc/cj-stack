@@ -29,7 +29,10 @@ to learn what the thing is, whether they need it, and how to turn it on.
 
 Line 1 is `# <folder name>`. Then one or two sentences: what it is and what it does for the
 reader. An archived or in-progress folder adds a status line next:
-`> Archived: not maintained.` or `> In progress: not shipped in any plugin.`
+- archived: `> Archived: not maintained.`
+- in progress, listed in `skills/in-progress/.claude-plugin/plugin.json` (cj-lab):
+  ``> In progress: only in the opt-in `cj-lab` plugin.``
+- in progress, listed in no plugin: `> In progress: not shipped in any plugin.`
 
 Then these `##` headings, in this order, with no other `##` headings:
 

@@ -2,7 +2,7 @@
 
 A skill that checks an issue or pull request before anyone builds it. It gives the item one state and writes a brief that an agent can work from.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

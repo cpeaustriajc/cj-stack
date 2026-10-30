@@ -2,7 +2,7 @@
 
 A skill that sweeps a codebase for real bugs. Three parallel reviewers search, fix each bug test-first, and search again until a full round finds nothing.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 
@@ -27,7 +27,14 @@ You get a report with the coverage percent, the rounds run, the verified bugs wi
 
 ## Install
 
-This skill is not shipped in any plugin, so you cannot install it yet.
+The `cj-lab` plugin lists this skill. Add the marketplace, then install the plugin:
+
+```
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install cj-lab@cj-stack
+```
+
+To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off the other `cj-lab` skills.
 
 ## What it does
 

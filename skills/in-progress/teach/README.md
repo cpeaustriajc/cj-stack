@@ -2,7 +2,7 @@
 
 A typed `/teach` command that explains a part of your codebase in plain words. It joins how the code works and why it has its shape into one answer.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

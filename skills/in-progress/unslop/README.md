@@ -2,7 +2,7 @@
 
 A typed `/unslop` command that rewrites your text without the common tells of AI-written prose. The rewrite keeps the meaning and the tone you want.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

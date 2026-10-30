@@ -2,7 +2,7 @@
 
 A typed `/no-comments` command that sweeps a folder of old code for comment slop. It deletes the comments, flags the code they excused, and proves that the tests did not change.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

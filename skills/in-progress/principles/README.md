@@ -2,7 +2,7 @@
 
 A skill that gives you and Claude one vocabulary of 20 engineering principles. You steer Claude with a principle's name, and Claude names each principle that changed one of its decisions.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 
