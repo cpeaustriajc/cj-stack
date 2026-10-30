@@ -32,8 +32,9 @@ fix.
   what it touches, not on the whole app.
 - **Spec**: find the spec or design for the flow. A difference from the spec is a bug. A
   confusing behaviour the spec asks for is a decision for me, not a bug.
-- Launch the app with the project's own launch skill or the harness's built-in one, and follow
-  the loaded browser skill for driving the browser. Don't reinvent either.
+- Launch the app with the harness's run command, which follows the project's recorded launch
+  recipe (Claude Code: `references/claude-code.md`). Do not work out the launch again: this
+  skill's work starts after the launch. Follow the loaded browser skill for driving the browser.
 - **Health check**: before gathering evidence, confirm the app responds, the test data is
   loaded and the browser connection works. A failed check is a setup problem, so report it
   as one and not as an app bug.
