@@ -15,6 +15,14 @@ worktree, on Opus at medium effort.
 
 Cap: three sessions at a time. More burns the weekly usage faster than drains can check the work.
 
+## Work with no tickets
+
+`/batch <instruction>` researches the code, splits the work into 5 to 30 independent units and
+shows a plan. After approval it starts one background subagent per unit, each in its own
+worktree; each one builds its unit, runs the tests and publishes its change. It reads no
+tracker, keeps no blocked-by order and closes no ticket, so use it only when no unit blocks
+another. Source: https://code.claude.com/docs/en/commands (`/batch`).
+
 ## Traps
 
 - **Close words act only on the default branch.** On GitHub, `Closes #N` in a PR into the

@@ -44,8 +44,9 @@ saved item; a toast alone is not proof. Put no
 dates, statuses, ticket numbers or "fixed in…" notes in it: those go stale. They belong in the
 tracker and git history.
 
-Feature files say *what* to check. Launching the app stays with the project's launch skill or the
-harness's built-in one. Don't copy launch steps into them.
+Feature files say *what* to check. Build and launch steps live only in the recipe the harness
+records for the project (Claude Code: `references/claude-code.md`), so two launch recipes cannot
+drift apart.
 
 ## Using them
 

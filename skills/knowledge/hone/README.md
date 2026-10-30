@@ -10,7 +10,7 @@ Use it when you tell Claude the same thing in many sessions and want a fix that 
 - A session had several corrections.
 - You type `/hone <skill>` to review only the corrections you made while one skill ran.
 
-Do not use it to update `CLAUDE.md` from one session. A correction from a single run does not qualify. Do not use it to review a diff: use `interrogate`.
+Do not use it to update `CLAUDE.md` from one session. A correction from a single run does not qualify. Do not use it to review a diff: use `interrogate`. For a general report on how you use Claude Code, run the built-in `/insights` command.
 
 The optional [hone-nudge](../../../mods/hone-nudge/) mod suggests `/hone <skill>` after you correct Claude during a cj-stack skill run.
 
@@ -38,6 +38,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## What it does
 
 - It reads the transcripts in `~/.claude/projects` and skips folders with `-private-` in the path.
+- When an `/insights` report exists, it gives the report's friction points to the miners as known patterns. For each one, the miners return only quotes and a session count from your scope.
 - It runs `scripts/corrections.py`, which needs Python 3, prints progress and writes one markdown file of exchanges.
 - The script flags interrupted requests, rejected tool calls, dismissed forms and replies that open with "no", "why", "stop" or "don't".
 - Stop-hook feedback appears as `HOOK`, so a hook loop can become a lesson too.
@@ -62,7 +63,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
-- [references/claude-code.md](references/claude-code.md): the Claude Code audit commands it starts from.
+- [references/claude-code.md](references/claude-code.md): the Claude Code commands it uses: the `/insights` report, the instruction-file audit, the lens pass and the trigger proof.
 - [scripts/corrections.py](scripts/corrections.py) and [scripts/test_corrections.sh](scripts/test_corrections.sh): the extractor and its test.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
 - [tests/hone-lens](../../../tests/hone-lens/): `claude plugin eval` cases with fixture transcripts that hold no correction; `tests/hone-lens/run.sh` runs them against a no-plugin baseline.

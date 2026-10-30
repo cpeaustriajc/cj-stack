@@ -8,6 +8,7 @@ A typed `/ketchup` command that catches you up on a chat after you step away. It
 
 Use it when you come back to a long session and the state is spread over many messages, agent reports and pull requests.
 
+- For a one-line status of this session, run the built-in `/recap` command. Claude Code also shows one on its own when the terminal is unfocused for 3 minutes and the session has 3 or more turns.
 - For the work of past sessions in this project, use `recall`.
 - For why code has its shape, use `why`.
 

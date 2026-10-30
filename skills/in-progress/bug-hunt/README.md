@@ -42,7 +42,7 @@ This skill is not shipped in any plugin, so you cannot install it yet.
 
 - It is not a per-PR gate.
 - It does not give a report-only review.
-- It does not use `/code-review` as a reviewer, because that command has a usage cap.
+- It does not use `/code-review` as a reviewer. Its `--fix` does not write a failing test first, and it can edit files outside the reviewer's shard.
 - It has no settings.
 
 ## More

@@ -1,5 +1,18 @@
 # Claude Code
 
+## Usage report
+
+- `/insights` writes an HTML report to `~/.claude/usage-data/report.html` and keeps a
+  timestamped copy of each run in that folder. Claude Code deletes files there older than
+  `cleanupPeriodDays` (30 days by default).
+- One run reads up to 200 sessions on this machine that it has not read before. The report gives
+  what I work on, friction points (misunderstood requests, buggy code) and suggestions.
+- I type `/insights`; Claude does not run it. Read the newest file in that folder. If there is
+  none, mine without it and say that `/insights` can give one.
+- Source: https://code.claude.com/docs/en/costs, section "Analyze your usage patterns".
+
+## Instruction-file audit
+
 - `/doctor prompt-audit` audits CLAUDE.md, AGENTS.md, rules, skills, commands and
   agents for dated instructions, contradictions and missing files. It reports and edits nothing.
   Pass a path to audit one skill or folder.

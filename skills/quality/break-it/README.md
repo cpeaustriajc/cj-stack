@@ -8,6 +8,7 @@ Use it after you change a user flow, such as a form, a checkout or a multi-step 
 
 Say "break it", "monkey test", "bug bash", "dogfood" or "QA this like a user".
 
+- To see a change work on the happy path, run the built-in `/run` or `/verify` command.
 - For visual sign-off against a design, use `ui-polish`.
 - For a security or logic review of a diff, use `interrogate`.
 - To fix a known bug, use `playbooks`.
@@ -56,5 +57,6 @@ Requirement: a browser skill or tool that Claude can drive. Video or GIF recordi
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/claude-code.md](references/claude-code.md): how Claude launches the app in Claude Code before the run.
 - [references/catalog.md](references/catalog.md): the worst-case values Claude seeds, by field type.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
