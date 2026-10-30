@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests the banned-word and status-line checks in check_readmes.py. Run: python3 -I scripts/test_check_readmes.py"""
+"""Tests the banned-word and status-line checks in check_readmes.py."""
 import pathlib
 import sys
 import unittest
