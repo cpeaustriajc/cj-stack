@@ -38,7 +38,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## What it does
 
 - It reads the transcripts in `~/.claude/projects` and skips folders with `-private-` in the path.
-- When an `/insights` report exists, it reads the report's friction points first as leads and does not mine again for them.
+- When an `/insights` report exists, it gives the report's friction points to the miners as known patterns. For each one, the miners return only quotes and a session count from your scope.
 - It runs `scripts/corrections.py`, which needs Python 3, prints progress and writes one markdown file of exchanges.
 - The script flags interrupted requests, rejected tool calls, dismissed forms and replies that open with "no", "why", "stop" or "don't".
 - Stop-hook feedback appears as `HOOK`, so a hook loop can become a lesson too.

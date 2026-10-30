@@ -17,8 +17,10 @@ cheapest durable fix for each one. It applies nothing without my approval.
 ## 1. Gather
 
 If the tool keeps a recent usage report of these sessions, read its friction points first
-(Claude Code: `references/claude-code.md`). Each one is a lead: find its quotes and session count
-in the transcripts, and do not mine again for a pattern it already names.
+(Claude Code: `references/claude-code.md`). Give them to the miners as known patterns. For a
+known pattern, a miner returns only its quotes and session count. A miner names a pattern as new
+only when the report does not name it. The report covers all projects and its own dates, so drop
+a known pattern that has no quotes inside the `--project` and `--since` scope.
 
 Run `scripts/corrections.py` to pull, from the transcripts on this machine, every place where I
 corrected Claude: the reply right after Claude asked or acted, interrupted requests, rejected tool
