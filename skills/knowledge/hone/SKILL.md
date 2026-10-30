@@ -16,6 +16,10 @@ cheapest durable fix for each one. It applies nothing without my approval.
 
 ## 1. Gather
 
+If the tool keeps a recent usage report of these sessions, read its friction points first
+(Claude Code: `references/claude-code.md`). Each one is a lead: find its quotes and session count
+in the transcripts, and do not mine again for a pattern it already names.
+
 Run `scripts/corrections.py` to pull, from the transcripts on this machine, every place where I
 corrected Claude: the reply right after Claude asked or acted, interrupted requests, rejected tool
 calls, dismissed forms, and replies that open with "no", "why", "I already said", "stop" or
