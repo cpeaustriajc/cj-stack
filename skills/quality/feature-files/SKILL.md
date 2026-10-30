@@ -44,9 +44,9 @@ saved item; a toast alone is not proof. Put no
 dates, statuses, ticket numbers or "fixed in…" notes in it: those go stale. They belong in the
 tracker and git history.
 
-Feature files say *what* to check. Build and launch stay in the one recipe the harness records
-for the project (Claude Code: `references/claude-code.md`). A feature file points to that recipe
-and never copies its steps, so two launch recipes cannot drift apart.
+Feature files say *what* to check. Build and launch steps live only in the recipe the harness
+records for the project (Claude Code: `references/claude-code.md`), so two launch recipes cannot
+drift apart.
 
 ## Using them
 
