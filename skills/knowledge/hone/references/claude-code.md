@@ -9,6 +9,7 @@
   what I work on, friction points (misunderstood requests, buggy code) and suggestions.
 - I type `/insights`; Claude does not run it. Read the newest file in that folder. If there is
   none, mine without it and say that `/insights` can give one.
+- Source: https://code.claude.com/docs/en/costs, section "Analyze your usage patterns".
 
 ## Instruction-file audit
 
