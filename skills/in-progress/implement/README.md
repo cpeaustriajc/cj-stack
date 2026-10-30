@@ -11,7 +11,7 @@ Use it when a ticket is planned and an agent can prove it done. It stops an agen
 - You type `/implement owner/repo#42` for one `ready-for-agent` ticket.
 - You type `/implement <spec link> orchestrate` to build all ready tickets of a spec.
 
-Do not use it for an idea with open questions: use `grill`. Do not use it for an unchecked ticket: use `triage` first.
+Do not use it for an idea with open questions: use `grill`. Do not use it for an unchecked ticket: use `triage` first. For a change with no tickets that splits into independent parts, such as a migration across the codebase, run the built-in `/batch` command.
 
 ## Example
 

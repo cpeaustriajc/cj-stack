@@ -88,6 +88,10 @@ This session is the coordinator. It owns the program, never the code: it writes 
 finished branches and decides. Each ticket is built by its own session in its own worktree. A
 subagent only scouts or reviews for about five minutes; it never builds a ticket.
 
+Work with no tickets that splits into independent units, such as a migration across the
+codebase, goes to the harness's batch command (Claude Code: `references/claude-code.md`), not
+here. This mode is for tickets with blocked-by links that must close.
+
 1. **Frame.** Read the spec and its items. Build the graph from the blocked-by links. The
    frontier is every `ready-for-agent` item whose blockers are done. State the done predicate as
    a count: "6 of 6 items have a verified branch merged into the integration branch". List the
