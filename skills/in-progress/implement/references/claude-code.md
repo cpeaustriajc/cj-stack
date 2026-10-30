@@ -15,6 +15,10 @@ coordinator's model.
 - **CLI:** `claude --bg -w <item-id> --model <model> --effort medium "<brief>"`. `claude agents`
   lists the sessions; `claude logs <id>` reads one. `-w` does not take a base branch, so the
   brief tells the session to reset onto the integration branch.
+- **The brief starts with `/implement`.** A skill name after other text does not run the skill,
+  and `disable-model-invocation: true` stops Claude from starting it. A brief that starts "Run
+  /implement" builds with no gate and no close-out. Source: https://code.claude.com/docs/en/skills,
+  section "Where you write the skill's name".
 
 Cap: three sessions at a time. More burns the weekly usage faster than drains can check the work.
 

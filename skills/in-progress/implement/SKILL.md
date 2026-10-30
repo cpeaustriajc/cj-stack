@@ -113,15 +113,15 @@ here. This mode is for tickets with blocked-by links that must close.
 
 ### The brief
 
-Every session gets all of this. A field you cannot fill is an item that is not ready.
+Every session gets all of this. A field you cannot fill is an item that is not ready. The
+command stays the first line (why: `references/claude-code.md`).
 
 ```
-Run /implement <item link>.
+/implement <item link>
 Base: <integration branch>. Reset your worktree onto it before you start.
 PR: none. Push your branch and report; the coordinator merges.
 Scope: the item's Out of Scope, plus the files other running sessions own: <list>.
 Report: branch, head SHA, the Done When verdict table, Decided, Needs you, what you ran.
-Standing orders: <the numbered list, pasted word for word>
 ```
 
 ### State on disk
