@@ -36,7 +36,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 
 - Claude writes one file per feature, named after what a user calls it. An `index.md` lists the files in a table.
 - The file describes behavior a user can see. It holds no dates, statuses or ticket numbers.
-- Launch steps stay out of the file. The `run` skill or the project's own launch skill handles them.
+- Launch steps stay out of the file. The file points to the recipe that `/run-skill-generator` records, which `/run` and `/verify` also follow.
 - To verify a change, Claude reads the one or two files for the touched areas. It runs the Check and the Paths to cover.
 - Claude saves the evidence and the command that runs the check again.
 - If the app no longer matches the file, Claude fixes the file in the same change.
@@ -50,4 +50,5 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows and the file template.
+- [references/claude-code.md](references/claude-code.md): the Claude Code build and launch recipe that a feature file points to.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
