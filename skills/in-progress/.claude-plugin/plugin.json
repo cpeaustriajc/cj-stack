@@ -1,6 +1,6 @@
 {
   "name": "cj-lab",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall, triage, why, principles, how, architect, implement, blast-radius, unslop, ketchup, teach, no-comments, bro, microinteraction and cleanup. Expect changes.",
   "author": {
     "name": "CJ"
