@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests the banned-word check in check_readmes.py. Run: python3 -I scripts/test_check_readmes.py"""
+"""Tests the banned-word and status-line checks in check_readmes.py."""
 import pathlib
 import sys
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from check_readmes import banned  # noqa: E402
+from check_readmes import banned, status_line  # noqa: E402
 
 
 def hits(text):
@@ -73,6 +73,20 @@ class Banned(unittest.TestCase):
 
     def test_emoji_presentation_selector(self):
         self.assertEqual(hits("Warn ⚠️ here."), [(1, "⚠️")])
+
+
+class StatusLine(unittest.TestCase):
+    def test_in_progress_skill_that_cj_lab_lists(self):
+        self.assertEqual(status_line("why", "in-progress", {"why"}), "> In progress: only in the opt-in `cj-lab` plugin.")
+
+    def test_in_progress_skill_that_no_plugin_lists(self):
+        self.assertEqual(status_line("scout", "in-progress", {"why"}), "> In progress: not shipped in any plugin.")
+
+    def test_archived_skill(self):
+        self.assertEqual(status_line("old", "archived", {"old"}), "> Archived: not maintained.")
+
+    def test_shipped_skill_has_none(self):
+        self.assertIsNone(status_line("hone", "knowledge", {"hone"}))
 
 
 if __name__ == "__main__":

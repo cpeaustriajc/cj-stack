@@ -2,7 +2,7 @@
 
 A skill that answers "why is this code like this?" from git history, pull request reviews and the team's records. It labels each claim by its evidence.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

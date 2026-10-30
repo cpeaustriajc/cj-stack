@@ -43,7 +43,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 - The script flags interrupted requests, rejected tool calls, dismissed forms and replies that open with "no", "why", "stop" or "don't".
 - Stop-hook feedback appears as `HOOK`, so a hook loop can become a lesson too.
 - A lens pass reads every turn (`corrections.py --turns`) in parallel with the correction pass. It finds failures nobody corrected: "done" with no proof, pasted context Claude could fetch, commands found again, skipped checks, and missed skills.
-- Each lens chunk goes to a Haiku subagent at medium effort.
+- Each lens chunk goes to a read-only subagent on the cheapest model the session can pick.
 - The script accepts `--project <substring>`, `--since <YYYY-MM-DD>` and `--skill <skill>` to narrow the search.
 - A lesson qualifies when it shows up in 2 or more sessions, or once with an obvious cost.
 - Each proposal names a place, from strongest to weakest: code, lint, hook, test, skill, agent definition, instruction file. It says why each stronger place cannot hold the lesson.

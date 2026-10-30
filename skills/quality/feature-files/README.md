@@ -16,10 +16,10 @@ Claude loads it when you write or update a feature file, and when it verifies a 
 
 You say: "Write a feature file for the checkout area so E2E checks know how to reach and drive it."
 
-1. Claude finds the folder the project already uses. If there is none, it proposes `docs/features/` and waits for your yes.
+1. Claude finds the folder the project already uses. If there is none, it uses the `references/features/` folder of the project's verify skill.
 2. Claude reads the app and writes `checkout.md`.
 
-You get a file under about 40 lines. Its fields are What exists, How a user gets there, How to drive it, Check, Paths to cover and What tends to break.
+You get a file under about 40 lines. Its fields are What exists, How a user gets there, How to drive it, Code, Tests, Check, Paths to cover and What tends to break.
 
 ## Install
 
@@ -34,7 +34,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 
 ## What it does
 
-- Claude writes one file per feature, named after what a user calls it. An `index.md` lists the files in a table.
+- Claude writes one file per feature, named after what a user calls it. A `README.md` in that folder lists the files in a table.
 - The file describes behavior a user can see. It holds no dates, statuses or ticket numbers.
 - Launch steps stay out of the file. They live in the recipe that `/run-skill-generator` records, which `/run` and `/verify` follow.
 - To verify a change, Claude reads the one or two files for the touched areas. It runs the Check and the Paths to cover.

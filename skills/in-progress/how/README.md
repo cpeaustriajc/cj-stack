@@ -2,7 +2,7 @@
 
 A typed `/how` command that explains how a part of your codebase works. It names the files and functions, so you can follow it without opening them.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

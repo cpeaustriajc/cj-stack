@@ -2,7 +2,7 @@
 
 A typed `/bro` command for a reply you did not understand. Claude says it again with the missing context first, in plain words and with one picture.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

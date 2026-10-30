@@ -2,7 +2,7 @@
 
 A typed skill that builds a ready ticket without supervision. It ends with a pull request that closes the ticket and shows the proof for each check.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 

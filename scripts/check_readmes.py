@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Checks that each skill and mod folder has a README.md that follows .claude/rules/readme.md."""
+import json
 import pathlib
 import re
 import sys
@@ -8,6 +9,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_HEADINGS = ["When to use it", "Example", "Install", "What it does", "Limits", "More"]
 MOD_HEADINGS = ["Why", "Install", "Example", "What it does", "Settings", "Limits", "More"]
 STATUS = {"archived": "> Archived: not maintained.", "in-progress": "> In progress: not shipped in any plugin."}
+LAB_STATUS = "> In progress: only in the opt-in `cj-lab` plugin."
+LAB_MANIFEST = ROOT / "skills/in-progress/.claude-plugin/plugin.json"
 MAX_LINES = 100
 MAX_WORDS = 25
 MAX_STEP_WORDS = 20
@@ -73,7 +76,18 @@ def banned(lines):
     return found
 
 
-def check(folder, headings, bucket):
+def lab_skills():
+    return {pathlib.PurePosixPath(s).name for s in json.loads(LAB_MANIFEST.read_text())["skills"]}
+
+
+def status_line(name, bucket, lab):
+    """The status line a README needs under its title, or None."""
+    if bucket == "in-progress" and name in lab:
+        return LAB_STATUS
+    return STATUS.get(bucket)
+
+
+def check(folder, headings, bucket, lab):
     rel = folder.relative_to(ROOT)
     readme = folder / "README.md"
     if not readme.is_file():
@@ -83,8 +97,9 @@ def check(folder, headings, bucket):
     errors = []
     if not lines or lines[0] != f"# {folder.name}":
         errors.append(f"{path}:1: first line must be '# {folder.name}'")
-    if bucket in STATUS and STATUS[bucket] not in lines[:6]:
-        errors.append(f"{path}: needs the status line '{STATUS[bucket]}' under the title")
+    status = status_line(folder.name, bucket, lab)
+    if status and status not in lines[:6]:
+        errors.append(f"{path}: needs the status line '{status}' under the title")
     found = [line[3:].strip() for line in lines if line.startswith("## ")]
     if found != headings:
         errors.append(f"{path}: ## headings are {found}, expected {headings}")
@@ -100,7 +115,8 @@ def check(folder, headings, bucket):
 
 
 def main():
-    errors = [e for args in folders() for e in check(*args)]
+    lab = lab_skills()
+    errors = [e for args in folders() for e in check(*args, lab)]
     print("\n".join(errors) if errors else "readmes ok")
     return 1 if errors else 0
 

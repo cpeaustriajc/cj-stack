@@ -2,7 +2,7 @@
 
 A typed `/architect` command that sketches two whole designs for a task before any code exists. You see both side by side and pick one.
 
-> In progress: not shipped in any plugin.
+> In progress: only in the opt-in `cj-lab` plugin.
 
 ## When to use it
 
