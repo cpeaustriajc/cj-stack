@@ -12,11 +12,6 @@ this folder, so this folder is the only source for them:
 
 1. Clone this repo to `~/Projects/cj-stack`. The templates include files from that path.
 2. Run `chezmoi diff`, then `chezmoi apply`.
-3. Install the playwright-cli skill, which neither repo manages:
-
-   ```bash
-   playwright-cli install --skills -g
-   ```
 
 To change a file, edit it here, then run step 2. `chezmoi re-add` does not work for these
 templates. To keep a `settings.json` change made in the app, run `.settings-capture.sh` in the
