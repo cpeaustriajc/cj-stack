@@ -29,8 +29,9 @@ not make a claim true, and a source that was right before can be wrong now.
 
 - Weigh each claim by what it shows, not by who wrote it: code you can read or run, a measured
   result, a failure it names. A claim with no evidence is only a lead.
-- Adopt an idea only when the skill eval shows a gain over a run without the plugin. Until
-  then, mark it untested.
+- Adopt an idea or another stack's skill only when the skill eval shows a gain over what it
+  replaces: our skill, or a run without the plugin. A tie keeps ours. Until then, mark it
+  untested.
 - In the skill's or mod's README, name the source and the evidence you used, so an audit can
   remove the idea when that evidence no longer holds.
 
