@@ -54,7 +54,7 @@ count limit (a limit makes miners pad and miss), each with the session id and on
 - **Missed trigger**: my request matched a skill's description and the skill did not load.
 
 When the file is small enough to read yourself, still apply every lens. Lens findings pass step 2
-like corrections. Model and effort per chunk: `references/<tool>.md`.
+like corrections. Model per chunk: `references/<tool>.md`.
 
 ## 2. Keep only what recurs
 
