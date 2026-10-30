@@ -5,11 +5,14 @@ Mechanics checked against `claude --help` in October 2026; check again when a de
 ## One session per item
 
 A session is a full Claude Code session, not a subagent. Start each one fresh, in its own
-worktree, on Opus at medium effort.
+worktree, at medium effort. Pick the model by the item: the cheapest model for a mechanical,
+fully specified item; one step cheaper than the coordinator's for an item that needs design
+calls. A fresh session for an item that failed a drain starts one model up, at most on the
+coordinator's model.
 
 - **Desktop app:** start a session with a fresh context and its own worktree, based on the
   integration branch. Its reports come back as notes; never poll them.
-- **CLI:** `claude --bg -w <item-id> --model opus --effort medium "<brief>"`. `claude agents`
+- **CLI:** `claude --bg -w <item-id> --model <model> --effort medium "<brief>"`. `claude agents`
   lists the sessions; `claude logs <id>` reads one. `-w` does not take a base branch, so the
   brief tells the session to reset onto the integration branch.
 

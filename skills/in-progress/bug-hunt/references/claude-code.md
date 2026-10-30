@@ -1,7 +1,10 @@
 # Claude Code adapter
 
-- Hunters are `Agent` calls with `model: "opus"` and `effort: "high"`, unless I name another
+- Hunters are `Agent` calls with `model` one step cheaper than the session's and
+  `effort: "high"`, unless I name another model: a fix needs design calls, so not the cheapest
   model. Send all three `Agent` calls in one message.
+- "One model tier up" stops at the session's own model. A subagent never runs on a model above
+  the session's.
 - Do not use `/code-review` as the hunter. Its `--fix` applies the findings after the review,
   with no failing test first, to any file, not only the hunter's shard. A second `/code-review`
   started while one runs goes to the foreground, so three cannot run in parallel. Source:
