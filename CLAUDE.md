@@ -102,6 +102,6 @@ them, and the private parts.
 - For `settings.json`, run `dot_claude/.settings-capture.sh` in dotfiles: public part here,
   private permissions to `.settings-private.json` there; commit both. `.settings-deny.json` stays
   on this machine.
-- This repo is public: no client names, hosts, third-party domains or key file names.
+- This repo is public: no sensitive information.
 - A new shared file goes here, plus a dotfiles template that includes it. Never share machine
   state: transcripts, `projects/`, `plugins/`, `.claude.json`, caches, backups.
