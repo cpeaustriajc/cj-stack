@@ -29,8 +29,9 @@ not make a claim true, and a source that was right before can be wrong now.
 
 - Weigh each claim by what it shows, not by who wrote it: code you can read or run, a measured
   result, a failure it names. A claim with no evidence is only a lead.
-- Adopt an idea only when the skill eval shows a gain over a run without the plugin. Until
-  then, mark it untested.
+- Adopt an idea or another stack's skill only when the skill eval shows a gain over what it
+  replaces: our skill, or a run without the plugin. A tie keeps ours. Until then, mark it
+  untested.
 - In the skill's or mod's README, name the source and the evidence you used, so an audit can
   remove the idea when that evidence no longer holds.
 
@@ -62,7 +63,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - `skills/craft/`: shipped in the opt-in `cj-paint` plugin.
 - `skills/in-progress/`: not shipped in `cj-stack`. A skill starts here; the opt-in `cj-lab` plugin may list one to try it.
 - `skills/archived/`: shipped only in the opt-in `cj-jira` plugin, or not at all. Never delete a skill; archive it.
-- Every skill and mod folder has a `README.md` for people: `.claude/rules/readme.md` says how to
+- Every skill and mod folder has a `README.md` for people: `.claude/rules/wiki.md` says how to
   write it, and `python3 -I scripts/check_readmes.py` checks it.
 
 ## Moving a skill

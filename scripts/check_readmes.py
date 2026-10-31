@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks that each skill and mod folder has a README.md that follows .claude/rules/readme.md."""
+"""Checks that each skill and mod folder has a README.md that follows .claude/rules/wiki.md."""
 import json
 import pathlib
 import re
@@ -62,7 +62,7 @@ def prose(lines):
 
 
 def banned(lines):
-    """Returns (line number, match) for each word or sign that .claude/rules/readme.md forbids."""
+    """Returns (line number, match) for each word or sign that .claude/rules/wiki.md forbids."""
     fenced = False
     found = []
     for n, line in enumerate(lines, 1):
@@ -91,7 +91,7 @@ def check(folder, headings, bucket, lab):
     rel = folder.relative_to(ROOT)
     readme = folder / "README.md"
     if not readme.is_file():
-        return [f"{rel}: no README.md (see .claude/rules/readme.md)"]
+        return [f"{rel}: no README.md (see .claude/rules/wiki.md)"]
     lines = readme.read_text().splitlines()
     path = readme.relative_to(ROOT)
     errors = []
@@ -110,7 +110,7 @@ def check(folder, headings, bucket, lab):
             if words(s) > limit:
                 errors.append(f"{path}:{n}: {words(s)} words, at most {limit}: {s[:60]}...")
     for n, match in banned(lines):
-        errors.append(f"{path}:{n}: banned \"{match}\" (see .claude/rules/readme.md)")
+        errors.append(f"{path}:{n}: banned \"{match}\" (see .claude/rules/wiki.md)")
     return errors
 
 
