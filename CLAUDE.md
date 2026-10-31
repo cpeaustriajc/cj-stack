@@ -58,21 +58,29 @@ not make a claim true, and a source that was right before can be wrong now.
 
 ## Buckets
 
-- `skills/planning/`, `skills/knowledge/`, `skills/quality/`, `skills/shipping/`: shipped in the `cj-stack` plugin.
-- `skills/craft/`: shipped in the opt-in `cj-paint` plugin.
-- `skills/in-progress/`: not shipped in `cj-stack`. A skill starts here; the opt-in `cj-lab` plugin may list one to try it.
-- `skills/archived/`: shipped only in the opt-in `cj-jira` plugin, or not at all. Never delete a skill; archive it.
+- `.claude-plugin/marketplace.json` is the only manifest. Each plugin has one entry there with its
+  version, description and author.
+- A mod keeps a `.claude-plugin/plugin.json` only for its `userConfig`, because `claude plugin test`
+  reads the `userConfig` defaults only from there. Without it, linear-gate fails 86 of 105 tests.
+- `plugins/<plugin>/skills/<skill>/`: the shipped skill plugins `design`, `engineering`,
+  `planning` and `knowledge`. A plugin's own evals go in `plugins/<plugin>/evals/`.
+- `mods/<mod>/`: one plugin for each mod.
+- `lab/<skill>/`: in-progress skills, in no plugin. A skill starts here. The README "Lab" section
+  says how to try one with `claude --plugin-dir`.
+- To retire a skill or a mod, delete its folder in one commit. Write its name in the commit
+  message, so that `git log --diff-filter=D` finds it.
+- `evals/routing/` and `evals/behaviour/`: eval cases across all shipped skills.
 - Every skill and mod folder has a `README.md` for people: `.claude/rules/readme.md` says how to
   write it, and `python3 -I scripts/check_readmes.py` checks it.
 
 ## Moving a skill
 
-A skill changes bucket in one commit that also updates:
+Move a skill to a different plugin, or between `lab/` and a plugin, in one commit:
 
-1. its path in the `skills` array of the right plugin's `plugin.json`: `skills/.claude-plugin/` for
-   cj-stack, `skills/<bucket>/.claude-plugin/` for the opt-in plugins
-2. its row in the README Skills table
-3. the `version` in that `plugin.json` (minor for an added or moved skill, patch for an edit)
+1. Move the folder with `git mv`.
+2. Update its row in the README Skills table, and its install lines in its own README.
+3. In `marketplace.json`, increase the `version` of each plugin that gets or loses the skill
+   (minor for an added or moved skill, patch for an edit).
 
 Then validate the manifests.
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Checks that each skill and mod folder has a README.md that follows .claude/rules/readme.md."""
-import json
 import pathlib
 import re
 import sys
@@ -8,9 +7,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_HEADINGS = ["When to use it", "Example", "Install", "What it does", "Limits", "More"]
 MOD_HEADINGS = ["Why", "Install", "Example", "What it does", "Settings", "Limits", "More"]
-STATUS = {"archived": "> Archived: not maintained.", "in-progress": "> In progress: not shipped in any plugin."}
-LAB_STATUS = "> In progress: only in the opt-in `cj-lab` plugin."
-LAB_MANIFEST = ROOT / "skills/in-progress/.claude-plugin/plugin.json"
+STATUS = {"in-progress": "> In progress: not shipped in any plugin."}
 MAX_LINES = 100
 MAX_WORDS = 25
 MAX_STEP_WORDS = 20
@@ -18,15 +15,13 @@ BANNED = re.compile(r"\b(?:simply|just|powerful|seamless)\b|\b(?:e\.g|i\.e)\.|[\
 
 
 def folders():
-    for d in sorted(ROOT.glob("skills/*/*/")):
-        if d.name.startswith(".") or "evals" in (d.name, d.parent.name):
-            continue
-        yield d, SKILL_HEADINGS, d.parent.name
+    for d in sorted(ROOT.glob("plugins/*/skills/*/")):
+        yield d, SKILL_HEADINGS, None
+    for d in sorted(ROOT.glob("lab/*/")):
+        if d.name != "evals":
+            yield d, SKILL_HEADINGS, "in-progress"
     for d in sorted(ROOT.glob("mods/*/")):
-        if d.name != "archived":
-            yield d, MOD_HEADINGS, None
-    for d in sorted(ROOT.glob("mods/archived/*/")):
-        yield d, MOD_HEADINGS, "archived"
+        yield d, MOD_HEADINGS, None
 
 
 def words(text):
@@ -76,18 +71,12 @@ def banned(lines):
     return found
 
 
-def lab_skills():
-    return {pathlib.PurePosixPath(s).name for s in json.loads(LAB_MANIFEST.read_text())["skills"]}
-
-
-def status_line(name, bucket, lab):
+def status_line(bucket):
     """The status line a README needs under its title, or None."""
-    if bucket == "in-progress" and name in lab:
-        return LAB_STATUS
     return STATUS.get(bucket)
 
 
-def check(folder, headings, bucket, lab):
+def check(folder, headings, bucket):
     rel = folder.relative_to(ROOT)
     readme = folder / "README.md"
     if not readme.is_file():
@@ -97,7 +86,7 @@ def check(folder, headings, bucket, lab):
     errors = []
     if not lines or lines[0] != f"# {folder.name}":
         errors.append(f"{path}:1: first line must be '# {folder.name}'")
-    status = status_line(folder.name, bucket, lab)
+    status = status_line(bucket)
     if status and status not in lines[:6]:
         errors.append(f"{path}: needs the status line '{status}' under the title")
     found = [line[3:].strip() for line in lines if line.startswith("## ")]
@@ -115,8 +104,7 @@ def check(folder, headings, bucket, lab):
 
 
 def main():
-    lab = lab_skills()
-    errors = [e for args in folders() for e in check(*args, lab)]
+    errors = [e for args in folders() for e in check(*args)]
     print("\n".join(errors) if errors else "readmes ok")
     return 1 if errors else 0
 

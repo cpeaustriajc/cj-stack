@@ -3,10 +3,9 @@
 CJ's skills and mods for Claude Code.
 
 - [Install](#install)
-- [Skills](#skills): maintained skills, shipped in `cj-stack` and `cj-paint`
-- [Archived skills](#archived-skills): kept for reference, not maintained
+- [Skills](#skills): maintained skills, shipped in four plugins: Design, Engineering, Planning and Knowledge
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
-- [Other plugins](#other-plugins): opt-in skill sets
+- [Lab](#lab): in-progress skills, not shipped, to try from a clone
 - [Models](models/README.md): which model does what, and why cross-vendor review stays
 - [Scope](SCOPE.md): what cj-stack is, and the ideas it rejects with the reason for each
 - [painting-craft: before and after](#painting-craft-before-and-after)
@@ -15,11 +14,24 @@ CJ's skills and mods for Claude Code.
 
 ```
 /plugin marketplace add cpeaustriajc/cj-stack
-/plugin install cj-stack@cj-stack
+/plugin install planning@cj-stack
+/plugin install engineering@cj-stack
+/plugin install design@cj-stack
+/plugin install knowledge@cj-stack
 /plugin install linear-gate@cj-stack
 ```
 
-Add any mod or other plugin the same way: `/plugin install <name>@cj-stack`.
+Install only the plugins you need. Add any mod the same way: `/plugin install <name>@cj-stack`.
+
+| Plugin | What it is for | Skills |
+|---|---|---|
+| `design` | Sign off UI work — check spacing, type, colour and motion against the design, and paint scenes in code. | ui-polish, painting-craft |
+| `engineering` | Prove the work in the real app — playbooks for bugs and features, careless-user QA, diff review and PRs. | playbooks, break-it, feature-files, interrogate, commit, create-pr |
+| `planning` | Turn an idea into tickets — test if it is worth building, write the spec, cut thin slices in any tracker. | vision, shape, tickets, grill |
+| `knowledge` | Keep what the team learns — a decision log, research pages, and lessons from your past sessions. | project-knowledge, hone |
+
+If you installed `cj-stack@cj-stack` or `cj-lab@cj-stack` before, those plugins no longer exist.
+Uninstall them, then install the plugins above.
 
 - While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
   a directory marketplace hot-reloads.
@@ -30,38 +42,25 @@ Add any mod or other plugin the same way: `/plugin install <name>@cj-stack`.
 All skills are model-invoked (Claude picks them from their description), except `commit`, which
 runs only when typed.
 
-| Skill | Bucket | What it is for |
+| Skill | Plugin | What it is for |
 |---|---|---|
-| [vision](skills/planning/vision/README.md) | planning | grilling me on a vague product idea, breadth first and starting with whether it is worth building, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
-| [shape](skills/planning/shape/README.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
-| [tickets](skills/planning/tickets/README.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
-| [grill](skills/planning/grill/README.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
-| [project-knowledge](skills/knowledge/project-knowledge/README.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
-| [hone](skills/knowledge/hone/README.md) | knowledge | mining past transcripts for my repeated corrections and the failures nobody corrected, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
-| [playbooks](skills/quality/playbooks/README.md) | quality | bug, refactor, performance, feature, prototype and design playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline, two compared sketches) |
-| [break-it](skills/quality/break-it/README.md) | quality | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
-| [ui-polish](skills/quality/ui-polish/README.md) | quality | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
-| [feature-files](skills/quality/feature-files/README.md) | quality | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
-| [interrogate](skills/quality/interrogate/README.md) | quality | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
-| [commit](skills/shipping/commit/README.md) | shipping | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
-| [create-pr](skills/shipping/create-pr/README.md) | shipping | `/create-pr [draft]` or "open the PR": commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
-| [painting-craft](skills/craft/painting-craft/README.md) | craft | drawing and painting in code to a gallery standard, with a screenshot review loop |
+| [vision](plugins/planning/skills/vision/README.md) | planning | grilling me on a vague product idea, breadth first and starting with whether it is worth building, then writing it as the top of the plan: destination, features that become projects, not yet specified, out of scope, risk-first order |
+| [shape](plugins/planning/skills/shape/README.md) | planning | one project in any tracker (Linear, Jira, GitHub, others): a spec with numbered requirements, milestones, project descriptions and updates; owns the tracker adapters and the plan-tree check |
+| [tickets](plugins/planning/skills/tickets/README.md) | planning | cutting a confirmed spec into thin, demoable work items that each cite the requirements they meet |
+| [grill](plugins/planning/skills/grill/README.md) | planning | sizing an idea or change, then interviewing me in short rounds of questions, each with a recommended answer, until a plan or idea has no open decisions |
+| [project-knowledge](plugins/knowledge/skills/project-knowledge/README.md) | knowledge | a decision log and research pages in the team's wiki, Notion, Linear, Obsidian or Confluence |
+| [hone](plugins/knowledge/skills/hone/README.md) | knowledge | mining past transcripts for my repeated corrections and the failures nobody corrected, or one skill's with `/hone <skill>`, and proposing where each lesson should live or what to prune: code, lint, hook, test, skill or instruction file |
+| [playbooks](plugins/engineering/skills/playbooks/README.md) | engineering | bug, refactor, performance, feature, prototype and design playbooks that each carry their own proof (a reproduced bug, pinned behaviour, a baseline, two compared sketches) |
+| [break-it](plugins/engineering/skills/break-it/README.md) | engineering | driving the app as careless, impatient or confused users and worst-case data, then reporting ranked bugs with video and repro steps |
+| [ui-polish](plugins/design/skills/ui-polish/README.md) | design | reviewing a UI and its motion against the design and a list of common mistakes, as a Before/After/Why table |
+| [feature-files](plugins/engineering/skills/feature-files/README.md) | engineering | one short file per feature saying how to reach, drive and check it, so E2E checks read only what they need |
+| [interrogate](plugins/engineering/skills/interrogate/README.md) | engineering | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
+| [commit](plugins/engineering/skills/commit/README.md) | engineering | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
+| [create-pr](plugins/engineering/skills/create-pr/README.md) | engineering | `/create-pr [draft]` or "open the PR": commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
+| [painting-craft](plugins/design/skills/painting-craft/README.md) | design | drawing and painting in code to a gallery standard, with a screenshot review loop |
 
-`craft` skills ship in `cj-paint` (see [Other plugins](#other-plugins)). Shipped skills stay tool-neutral:
+Shipped skills stay tool-neutral:
 tool specifics go in a skill's adapters, and a project's own facts stay in that project.
-
-## Archived skills
-
-Written for one project and still naming its files. Some ship in `cj-jira`; none are maintained.
-
-| Skill | What it was for |
-|---|---|
-| [jira-ticket](skills/archived/jira-ticket/README.md) | Jira tickets and acceptance criteria |
-| [draft-ticket](skills/archived/draft-ticket/README.md) | end-to-end Jira ticket drafting |
-| [github-issue](skills/archived/github-issue/README.md) | GitHub issues holding a Jira ticket's engineering detail |
-| [linear-planning](skills/archived/linear-planning/README.md) | Linear-only predecessor of shape (not shipped) |
-| [linear-project](skills/archived/linear-project/README.md) | Linear-only predecessor of shape (not shipped) |
-| [project-wiki](skills/archived/project-wiki/README.md) | GitHub-wiki-only predecessor of project-knowledge |
 
 ## Mods
 
@@ -77,13 +76,17 @@ Written for one project and still naming its files. Some ship in `cj-jira`; none
 | [git-guard](mods/git-guard/README.md) | denies `git branch -D`, a force push to main or master, and `git checkout -- .` or `git restore .` on a dirty tree; names the safe alternative | optional |
 | [test-guard](mods/test-guard/README.md) | denies an Edit or Write that changes or removes a line a test file has at `HEAD`; additions pass, `/test-guard allow <path>` lets one file change | optional |
 
-## Other plugins
+## Lab
 
-| Plugin | Contents | Install |
-|---|---|---|
-| `cj-paint` | painting-craft | where you paint in code |
-| `cj-jira` | archived Jira-era skills | only for a Jira team |
-| `cj-lab` | in-progress skills: [bug-hunt](skills/in-progress/bug-hunt/README.md), [self-verify](skills/in-progress/self-verify/README.md), [recall](skills/in-progress/recall/README.md), [triage](skills/in-progress/triage/README.md), [why](skills/in-progress/why/README.md), [principles](skills/in-progress/principles/README.md), [principle-attack-the-premise](skills/in-progress/principle-attack-the-premise/README.md), [principle-boundary-discipline](skills/in-progress/principle-boundary-discipline/README.md), [principle-build-the-lever](skills/in-progress/principle-build-the-lever/README.md), [principle-exhaust-the-design-space](skills/in-progress/principle-exhaust-the-design-space/README.md), [principle-experience-first](skills/in-progress/principle-experience-first/README.md), [principle-explain-the-number](skills/in-progress/principle-explain-the-number/README.md), [principle-fix-root-causes](skills/in-progress/principle-fix-root-causes/README.md), [principle-foundational-thinking](skills/in-progress/principle-foundational-thinking/README.md), [principle-laziness-protocol](skills/in-progress/principle-laziness-protocol/README.md), [principle-make-operations-idempotent](skills/in-progress/principle-make-operations-idempotent/README.md), [principle-minimize-reader-load](skills/in-progress/principle-minimize-reader-load/README.md), [principle-model-the-domain](skills/in-progress/principle-model-the-domain/README.md), [principle-outcome-oriented-execution](skills/in-progress/principle-outcome-oriented-execution/README.md), [principle-prove-it-works](skills/in-progress/principle-prove-it-works/README.md), [principle-redesign-from-first-principles](skills/in-progress/principle-redesign-from-first-principles/README.md), [principle-separate-before-serializing-shared-state](skills/in-progress/principle-separate-before-serializing-shared-state/README.md), [principle-sequence-verifiable-units](skills/in-progress/principle-sequence-verifiable-units/README.md), [principle-subtract-before-you-add](skills/in-progress/principle-subtract-before-you-add/README.md), [principle-test-behavior-not-implementation](skills/in-progress/principle-test-behavior-not-implementation/README.md), [principle-type-system-discipline](skills/in-progress/principle-type-system-discipline/README.md), [how](skills/in-progress/how/README.md), [architect](skills/in-progress/architect/README.md), [implement](skills/in-progress/implement/README.md), [blast-radius](skills/in-progress/blast-radius/README.md), [unslop](skills/in-progress/unslop/README.md), [ketchup](skills/in-progress/ketchup/README.md), [teach](skills/in-progress/teach/README.md), [no-comments](skills/in-progress/no-comments/README.md), [bro](skills/in-progress/bro/README.md), [microinteraction](skills/in-progress/microinteraction/README.md), [cleanup](skills/in-progress/cleanup/README.md), [technical-writing](skills/in-progress/technical-writing/README.md) | to try them before they ship |
+In-progress skills live in `lab/`. No plugin ships them, and they can change at any time. To try
+one for a session, link it into a local plugin folder and load that folder with `--plugin-dir`:
+
+```
+mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/why" /tmp/lab/skills/why
+claude --plugin-dir /tmp/lab
+```
+
+The skill loads as `/lab:why`. Lab skills: [architect](lab/architect/README.md), [blast-radius](lab/blast-radius/README.md), [bro](lab/bro/README.md), [bug-hunt](lab/bug-hunt/README.md), [cleanup](lab/cleanup/README.md), [drive](lab/drive/README.md), [how](lab/how/README.md), [implement](lab/implement/README.md), [ketchup](lab/ketchup/README.md), [launch-video](lab/launch-video/README.md), [microinteraction](lab/microinteraction/README.md), [no-comments](lab/no-comments/README.md), [principle-attack-the-premise](lab/principle-attack-the-premise/README.md), [principle-boundary-discipline](lab/principle-boundary-discipline/README.md), [principle-build-the-lever](lab/principle-build-the-lever/README.md), [principle-exhaust-the-design-space](lab/principle-exhaust-the-design-space/README.md), [principle-experience-first](lab/principle-experience-first/README.md), [principle-explain-the-number](lab/principle-explain-the-number/README.md), [principle-fix-root-causes](lab/principle-fix-root-causes/README.md), [principle-foundational-thinking](lab/principle-foundational-thinking/README.md), [principle-laziness-protocol](lab/principle-laziness-protocol/README.md), [principle-make-operations-idempotent](lab/principle-make-operations-idempotent/README.md), [principle-minimize-reader-load](lab/principle-minimize-reader-load/README.md), [principle-model-the-domain](lab/principle-model-the-domain/README.md), [principle-outcome-oriented-execution](lab/principle-outcome-oriented-execution/README.md), [principle-prove-it-works](lab/principle-prove-it-works/README.md), [principle-redesign-from-first-principles](lab/principle-redesign-from-first-principles/README.md), [principle-separate-before-serializing-shared-state](lab/principle-separate-before-serializing-shared-state/README.md), [principle-sequence-verifiable-units](lab/principle-sequence-verifiable-units/README.md), [principle-subtract-before-you-add](lab/principle-subtract-before-you-add/README.md), [principle-test-behavior-not-implementation](lab/principle-test-behavior-not-implementation/README.md), [principle-type-system-discipline](lab/principle-type-system-discipline/README.md), [principles](lab/principles/README.md), [recall](lab/recall/README.md), [scout](lab/scout/README.md), [self-verify](lab/self-verify/README.md), [teach](lab/teach/README.md), [technical-writing](lab/technical-writing/README.md), [triage](lab/triage/README.md), [unslop](lab/unslop/README.md), [why](lab/why/README.md).
 
 ## painting-craft: before and after
 

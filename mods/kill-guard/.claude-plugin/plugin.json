@@ -1,6 +1,0 @@
-{
-  "name": "kill-guard",
-  "version": "0.1.0",
-  "description": "Denies a Bash command that stops processes by name or by port, because it can also stop another checkout's dev server; a kill of a named PID passes",
-  "author": { "name": "CJ" }
-}

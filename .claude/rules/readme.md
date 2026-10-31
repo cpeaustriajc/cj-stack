@@ -1,8 +1,8 @@
 ---
 paths:
-  - "skills/**/README.md"
+  - "plugins/*/skills/*/README.md"
+  - "lab/*/README.md"
   - "mods/*/README.md"
-  - "mods/archived/*/README.md"
 ---
 
 # README files for skills and mods
@@ -28,11 +28,8 @@ to learn what the thing is, whether they need it, and how to turn it on.
 ## Structure
 
 Line 1 is `# <folder name>`. Then one or two sentences: what it is and what it does for the
-reader. An archived or in-progress folder adds a status line next:
-- archived: `> Archived: not maintained.`
-- in progress, listed in `skills/in-progress/.claude-plugin/plugin.json` (cj-lab):
-  ``> In progress: only in the opt-in `cj-lab` plugin.``
-- in progress, listed in no plugin: `> In progress: not shipped in any plugin.`
+reader. An in-progress skill (in `lab/`) adds this status line next:
+`> In progress: not shipped in any plugin.`
 
 Then these `##` headings, in this order, with no other `##` headings:
 
@@ -64,7 +61,7 @@ Keep the README under 100 lines. Use `###` headings inside a section only when i
 
 ## Check
 
-`skills/quality/playbooks/README.md` and `mods/git-guard/README.md` show the expected result.
+`plugins/engineering/skills/playbooks/README.md` and `mods/git-guard/README.md` show the expected result.
 
 Run `python3 -I scripts/check_readmes.py`. Then read the README as the reader above: can you say
 in one sentence what it does, when you would use it, and how to turn it on?

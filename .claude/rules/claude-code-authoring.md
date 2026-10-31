@@ -1,6 +1,8 @@
 ---
 paths:
-  - "skills/**"
+  - "plugins/**"
+  - "lab/**"
+  - "evals/**"
   - "mods/**"
   - "**/.claude-plugin/*.json"
   - "CLAUDE.md"
@@ -18,9 +20,9 @@ for it. Use what Claude Code ships before writing your own checks.
 ## Prove a skill fires and helps
 
 - `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
-  baseline. It reads cases from `evals/` at the plugin root (`skills/` for cj-stack,
-  `skills/<bucket>/` for the opt-in plugins); a skill's own `evals/evals.json` is skill-creator's
-  format, which it doesn't read.
+  baseline. It reads cases from `evals/` at the plugin root (`plugins/<plugin>/`), or from the
+  folder that `--eval-dir` names (`evals/routing/`, `evals/behaviour/`, `lab/evals/`). A skill's
+  own `evals/evals.json` is skill-creator's format, which it doesn't read.
   - While you iterate, run one case with `--case <name> --runs 1 --max-cost-usd 3`. Run the
     full suite at the default runs once, at the end.
   - After a grader fix, rerun only the cases that grader scores (`--case`).

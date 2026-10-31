@@ -3,7 +3,7 @@ name: run-cj-stack
 description: >
   This skill should be used to run, test, validate or inspect the cj-stack marketplace as Claude
   Code loads it: plugin validation, every mod's tests, the skill script tests, plugin token costs,
-  /skill-doctor with the plugin installed, and the trigger and routing evals. Use it before
+  /skill-doctor with the skill plugins installed, and the trigger and routing evals. Use it before
   committing a change to a skill, mod or manifest, or to see what a skill costs per turn.
 ---
 
@@ -11,7 +11,7 @@ description: >
 
 cj-stack has no app to launch: the "running" product is the marketplace as Claude Code installs
 it. The driver is `.claude/skills/run-cj-stack/smoke.sh`, which validates it, runs every test
-suite, installs the plugin into a throwaway config directory and asks Claude Code what it loaded.
+suite, installs the four skill plugins into a throwaway config directory and asks Claude Code what it loaded.
 Paths here are relative to the repo root.
 
 ## Prerequisites
@@ -25,13 +25,13 @@ Paths here are relative to the repo root.
 .claude/skills/run-cj-stack/smoke.sh validate  # claude plugin validate .
 .claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
 .claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
-.claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with cj-stack installed
-.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on skills/evals, about $2; RUNS=1 halves it
+.claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with the four skill plugins installed
+.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
 ```
 
 `routing` checks that each request loads its own skill and not its nearest neighbour, with every
-shipped skill installed together, plus `drive`, `scout` and `triage` from `in-progress` (copied
-into the eval plugin only), that the typed-only `commit` never loads on its own, and that `create-pr` loads on "open the PR". Each case in `skills/evals/<case>/` is a `prompt.md` plus
+shipped skill installed together, plus `drive`, `scout` and `triage` from `lab/` (copied
+into the eval plugin only), that the typed-only `commit` never loads on its own, and that `create-pr` loads on "open the PR". Each case in `evals/routing/<case>/` is a `prompt.md` plus
 `tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
 an old one's.
 
@@ -43,15 +43,15 @@ One mod or script at a time:
 
 ```bash
 claude plugin test mods/session-modes
-python3 -I skills/planning/shape/scripts/test_check_tree.py
-bash skills/knowledge/hone/scripts/test_corrections.sh
+python3 -I plugins/planning/skills/shape/scripts/test_check_tree.py
+bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
 ```
 
 ## Gotchas
 
 - **`/skill-doctor` runs headless**: `claude -p "/skill-doctor"` prints its table and exits.
 - **`--plugin-dir .` loads none of cj-stack's skills.** The repo root is a marketplace
-  (`.claude-plugin/marketplace.json`, one source per plugin such as `./skills`), not a plugin,
+  (`.claude-plugin/marketplace.json`, one source per plugin such as `./plugins/planning`), not a plugin,
   so skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
   as the driver does.
 - **A fresh `CLAUDE_CONFIG_DIR` is signed out on macOS** (the sign-in is in the keychain under the
@@ -61,13 +61,14 @@ bash skills/knowledge/hone/scripts/test_corrections.sh
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.
-- **Skills in `skills/in-progress/` never appear**: they ship only in the opt-in cj-lab plugin,
-  and the driver installs only `cj-stack@cj-stack`.
+- **Skills in `lab/` never appear**: no plugin ships them, and the driver installs only the
+  four skill plugins in `plugins/`.
 - **`claude plugin eval .` resolves no plugin** ("none resolved — cases run against baseline"):
-  the repo root has no `plugin.json`. The driver builds a throwaway plugin of symlinks instead.
+  the repo root has no `plugin.json`, and no plugin folder has one: `marketplace.json` is the only
+  manifest. The driver builds a throwaway plugin of symlinks instead.
   The routing cases cap `max_turns` at 3, so "Reached maximum number of turns" in the notes is
   expected; the Skill call comes on turn 1.
-- **`claude plugin validate skills/<bucket>/<skill>` always fails** with "No manifest found": a
+- **`claude plugin validate plugins/<plugin>/skills/<skill>` always fails** with "No manifest found": a
   skill folder is not a plugin. Validate the repo root.
 - **Python scripts leave `__pycache__`** in the skill folder; the driver deletes it, and
   `.gitignore` covers it.

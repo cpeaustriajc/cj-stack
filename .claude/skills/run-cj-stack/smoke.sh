@@ -7,13 +7,15 @@ root="$(cd "$(dirname "$0")/../../.." && pwd)"; cd "$root"
 step="${1:-all}"; failed=0; blocked=0
 say() { printf '\n== %s\n' "$*"; }
 run() { "$@" || { failed=1; echo "FAILED: $*"; }; }
+# The skill plugins: one folder each under plugins/, with its skills in plugins/<plugin>/skills/.
+plugins=(); for d in plugins/*/; do plugins+=("$(basename "$d")"); done
 
 # A throwaway config dir with the local marketplace installed, so the real ~/.claude is untouched.
 installed() {
   [[ -n "${cfg:-}" ]] && return
   cfg="$(mktemp -d)"; trap 'rm -rf "$cfg"' EXIT
   CLAUDE_CONFIG_DIR="$cfg" claude plugin marketplace add "$root" >/dev/null
-  CLAUDE_CONFIG_DIR="$cfg" claude plugin install cj-stack@cj-stack >/dev/null
+  for p in "${plugins[@]}"; do CLAUDE_CONFIG_DIR="$cfg" claude plugin install "$p@cj-stack" >/dev/null; done
 }
 
 validate() { say "validate"; run claude plugin validate .; }
@@ -34,9 +36,7 @@ tests() {
   run "${py[@]}" <<'PY'
 import glob, sys, yaml
 bad = 0
-for f in sorted(glob.glob("skills/*/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
-    if "/archived/" in f:
-        continue
+for f in sorted(glob.glob("plugins/*/skills/*/SKILL.md") + glob.glob("lab/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
     try:
         d = str(yaml.safe_load(open(f).read().split("\n---\n")[0][4:])["description"]).strip()
     except Exception as e:
@@ -47,13 +47,13 @@ print("descriptions ok" if not bad else "descriptions FAILED")
 sys.exit(bad)
 PY
   say "script tests"
-  run python3 -I skills/planning/shape/scripts/test_check_tree.py
-  run bash skills/knowledge/hone/scripts/test_corrections.sh
-  run python3 -I skills/in-progress/architect/scripts/test_moves_only.py
+  run python3 -I plugins/planning/skills/shape/scripts/test_check_tree.py
+  run bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
+  run python3 -I lab/architect/scripts/test_moves_only.py
 }
 
 doctor() {
-  say "/skill-doctor with cj-stack installed"; installed
+  say "/skill-doctor with the skill plugins installed"; installed
   local ref='op://Personal/Claude Code OAuth token/credential' token="${CLAUDE_CODE_OAUTH_TOKEN:-}"
   if [[ -z "$token" ]] && ! token="$(op read "$ref" 2>&1)"; then
     echo "BLOCKED: CLAUDE_CODE_OAUTH_TOKEN is not set and \`op read '$ref'\` failed: $token"; blocked=1; return
@@ -63,21 +63,20 @@ doctor() {
   grep -v anthropic-skills <<<"$out"; [[ $st -eq 0 ]] || { failed=1; echo "FAILED: /skill-doctor exit $st"; }
 }
 
-details() { say "plugin details"; installed; run env CLAUDE_CONFIG_DIR="$cfg" claude plugin details cj-stack; }
+details() { say "plugin details"; installed; for p in "${plugins[@]}"; do run env CLAUDE_CONFIG_DIR="$cfg" claude plugin details "$p@cj-stack"; done; }
 
 # The marketplace entry has no plugin.json, so `claude plugin eval .` resolves no plugin. Build a
 # throwaway plugin of symlinks to the shipped skills, named cj-stack, and evaluate that.
 routing() {
   say "routing evals: each request loads its own skill and no neighbour"
   local p; p="$(mktemp -d)"; mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
-  local list; list="$(python3 -c "import json;print('\n'.join(json.load(open('skills/.claude-plugin/plugin.json'))['skills']))")" || { failed=1; echo "FAILED: read skills/.claude-plugin/plugin.json"; return; }
-  while read -r s; do ln -s "$root/skills/${s#./}" "$p/skills/$(basename "$s")"; done <<<"$list"
+  for d in "$root"/plugins/*/skills/*/; do ln -s "${d%/}" "$p/skills/$(basename "$d")"; done
   [[ -n "$(ls "$p/skills")" ]] || { failed=1; echo "FAILED: no skills linked into the eval plugin"; return; }
   # In-progress skills with routing cases join the eval plugin only; they still don't ship.
   # Copied, not linked: eval finds cases anywhere in the plugin, and the filter below deletes some.
-  for s in drive scout triage; do cp -R "$root/skills/in-progress/$s" "$p/skills/$s"; done
+  for s in drive scout triage; do cp -R "$root/lab/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
-  cp -r skills/evals/. "$p/evals/"
+  cp -r evals/routing/. "$p/evals/"
   # Cases with a scaffold_script test behaviour, not routing, and fail without --scaffold.
   grep -rl --include=case.yaml scaffold_script "$p"/evals "$p"/skills/{drive,scout,triage} 2>/dev/null |
     while read -r c; do rm -rf "$(dirname "$c")"; done
@@ -91,7 +90,7 @@ case "$step" in
   all) validate; tests; details; doctor ;;
   *) echo "usage: $0 [validate|tests|doctor|details|routing|all]" >&2; exit 64 ;;
 esac
-find skills -name __pycache__ -prune -exec rm -rf {} +
+find plugins lab -name __pycache__ -prune -exec rm -rf {} +
 (( failed )) && exit 1
 (( blocked )) && exit 2
 exit 0

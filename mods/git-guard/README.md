@@ -60,5 +60,5 @@ To turn the mod off, run `claude plugin disable git-guard@cj-stack`.
 
 - [hooks/register.ts](hooks/register.ts): the hook source.
 - [hooks/register.test.ts](hooks/register.test.ts): the tests.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.
 - [mattpocock/skills git-guardrails-claude-code](https://github.com/mattpocock/skills/tree/main/skills/misc/git-guardrails-claude-code): the prior art. It blocks every `git push` by text match; git-guard blocks only the force push to `main`.

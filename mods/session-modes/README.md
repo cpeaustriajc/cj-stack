@@ -97,4 +97,4 @@ No settings. To turn the mod off, run `claude plugin disable session-modes@cj-st
 - [hooks/modes.ts](hooks/modes.ts): the modes, the prompt text and the block rules.
 - [hooks/register.tsx](hooks/register.tsx): the hook source, the band and the state file.
 - [hooks/suggest.ts](hooks/suggest.ts): the prompt suggestions, tested in [hooks/suggest.test.ts](hooks/suggest.test.ts); [hooks/register.test.ts](hooks/register.test.ts): the other tests.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.

@@ -65,4 +65,5 @@ To turn the mod off, run `claude plugin disable memory-lint@cj-stack`.
 
 - [hooks/register.ts](hooks/register.ts): the hook source and the checks.
 - [hooks/register.test.ts](hooks/register.test.ts): the tests.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest and the option default.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.
+- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the option and its default (`userConfig`).
