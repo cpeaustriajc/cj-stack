@@ -1,5 +1,5 @@
 ---
-name: asd-ste100
+name: ASD-STE100
 description: ASD-STE100 Simplified Technical English, no first person
 keep-coding-instructions: true
 force-for-plugin: false
