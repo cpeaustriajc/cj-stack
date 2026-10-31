@@ -9,7 +9,7 @@ A typed `/unslop` command that rewrites your text without the common tells of AI
 Use it on a draft before other people read it: a README, a PR body, a ticket or a message. AI drafts often carry words like "delve" and "pivotal", em dashes, groups of three and filler phrases.
 
 - For comments in code, use `no-comments`.
-- For a README in this repo, also follow `.claude/rules/readme.md`.
+- For a README in this repo, also follow `.claude/rules/wiki.md`.
 
 ## Example
 

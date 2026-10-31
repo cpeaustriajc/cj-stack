@@ -63,7 +63,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - `skills/craft/`: shipped in the opt-in `cj-paint` plugin.
 - `skills/in-progress/`: not shipped in `cj-stack`. A skill starts here; the opt-in `cj-lab` plugin may list one to try it.
 - `skills/archived/`: shipped only in the opt-in `cj-jira` plugin, or not at all. Never delete a skill; archive it.
-- Every skill and mod folder has a `README.md` for people: `.claude/rules/readme.md` says how to
+- Every skill and mod folder has a `README.md` for people: `.claude/rules/wiki.md` says how to
   write it, and `python3 -I scripts/check_readmes.py` checks it.
 
 ## Moving a skill
