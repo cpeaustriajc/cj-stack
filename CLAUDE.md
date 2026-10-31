@@ -29,8 +29,9 @@ not make a claim true, and a source that was right before can be wrong now.
 
 - Weigh each claim by what it shows, not by who wrote it: code you can read or run, a measured
   result, a failure it names. A claim with no evidence is only a lead.
-- Adopt an idea only when the skill eval shows a gain over a run without the plugin. Until
-  then, mark it untested.
+- Adopt an idea or another stack's skill only when the skill eval shows a gain over what it
+  replaces: our skill, or a run without the plugin. A tie keeps ours. Until then, mark it
+  untested.
 - In the skill's or mod's README, name the source and the evidence you used, so an audit can
   remove the idea when that evidence no longer holds.
 
@@ -70,7 +71,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - To retire a skill or a mod, delete its folder in one commit. Write its name in the commit
   message, so that `git log --diff-filter=D` finds it.
 - `evals/routing/` and `evals/behaviour/`: eval cases across all shipped skills.
-- Every skill and mod folder has a `README.md` for people: `.claude/rules/readme.md` says how to
+- Every skill and mod folder has a `README.md` for people: `.claude/rules/wiki.md` says how to
   write it, and `python3 -I scripts/check_readmes.py` checks it.
 
 ## Moving a skill
