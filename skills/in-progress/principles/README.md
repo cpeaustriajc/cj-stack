@@ -38,7 +38,8 @@ To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off
 ## What it does
 
 - The index in `SKILL.md` lists each principle with when it applies and its rule in one line.
-- Each principle has one file: when it applies, the rule, the sign that Claude skipped it, and the neighbour principle it is not.
+- Each principle is a skill of its own, such as `principle-prove-it-works`. You can type one by name: `/cj-lab:principle-prove-it-works`.
+- Each principle's file says when it applies, the rule, the sign that Claude skipped it, and the neighbour principle it is not.
 - Claude reads the file before it applies the principle.
 - Claude cites a principle only with the decision that it changed. A name with no decision is left out.
 
@@ -51,6 +52,6 @@ To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off
 ## More
 
 - [SKILL.md](SKILL.md): the index and the citation rule.
-- [references/](references/): one file per principle.
+- [principle-prove-it-works](../principle-prove-it-works/README.md) and the 19 other `principle-*` folders: one skill per principle.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
 - The principles are adapted from [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan, under the MIT license.
