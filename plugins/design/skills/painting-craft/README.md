@@ -30,7 +30,7 @@ You get the picture at twice its display size, plus the before and after shots a
 The `design` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install design@cj-stack
 ```
 

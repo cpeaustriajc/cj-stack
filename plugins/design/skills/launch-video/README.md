@@ -23,7 +23,7 @@ You get MP4 files in 9:16, 1:1 and 16:9, covers and thumbnails, and post text pe
 The `design` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install design@cj-stack
 ```
 

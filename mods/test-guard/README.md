@@ -11,7 +11,7 @@ test-guard denies that edit and tells Claude to add a test or to explain the cha
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install test-guard@cj-stack
 ```
 

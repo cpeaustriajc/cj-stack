@@ -24,7 +24,7 @@ You get a table of proposals, a list of rejected places with reasons, and Pick a
 The `design` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install design@cj-stack
 ```
 

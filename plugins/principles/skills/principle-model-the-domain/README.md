@@ -15,7 +15,7 @@ You type `/principles:principle-model-the-domain` and name the work. Claude read
 The `principles` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install principles@cj-stack
 ```
 

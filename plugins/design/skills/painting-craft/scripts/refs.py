@@ -16,7 +16,7 @@ ap.add_argument('--width', type=int, default=1200)
 a = ap.parse_args()
 os.makedirs(a.outdir, exist_ok=True)
 # Wikimedia rate-limits anonymous clients that don't identify themselves with a contact URL
-UA = {'User-Agent': 'painting-craft-refs/1.1 (https://github.com/cpeaustriajc/cj-stack; reference lookup)'}
+UA = {'User-Agent': 'painting-craft-refs/1.1 (https://github.com/cpeaustriajc/dotfiles; reference lookup)'}
 
 
 def get(url, raw=False):

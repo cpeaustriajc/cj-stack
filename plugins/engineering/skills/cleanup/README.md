@@ -25,7 +25,7 @@ You get three lists in the chat: Removed, Kept with a reason, and commands to ru
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

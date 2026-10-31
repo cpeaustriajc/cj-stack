@@ -25,7 +25,7 @@ You get full sentences that say what a hold is, why it lapsed, and what the fix 
 The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install writing@cj-stack
 ```
 

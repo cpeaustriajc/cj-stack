@@ -11,7 +11,7 @@ Each mode also adds one sentence to the system prompt (the instructions Claude r
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install session-modes@cj-stack
 ```
 

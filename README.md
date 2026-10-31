@@ -12,7 +12,7 @@ CJ's skills and mods for Claude Code.
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install planning@cj-stack
 /plugin install engineering@cj-stack
 /plugin install design@cj-stack

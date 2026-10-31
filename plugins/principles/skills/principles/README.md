@@ -27,7 +27,7 @@ You get the changed tests and one line such as "Test Behavior, Not Implementatio
 The `principles` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install principles@cj-stack
 ```
 

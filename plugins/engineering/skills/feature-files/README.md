@@ -26,7 +26,7 @@ You get a file under about 40 lines. Its fields are What exists, How a user gets
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

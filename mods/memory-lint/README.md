@@ -11,7 +11,7 @@ memory-lint checks each memory write. If the note holds one of these, the mod de
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install memory-lint@cj-stack
 ```
 

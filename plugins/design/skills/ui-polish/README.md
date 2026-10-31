@@ -25,7 +25,7 @@ You get one row per issue, most visible first. Each row has Where, Before, After
 The `design` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install design@cj-stack
 ```
 

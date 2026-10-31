@@ -28,7 +28,7 @@ You get work items that each hold Context, Outcome, Done When and, if needed, Ou
 The `planning` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install planning@cj-stack
 ```
 

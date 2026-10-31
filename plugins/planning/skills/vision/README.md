@@ -29,7 +29,7 @@ You get a product page with a destination, a verdict, features and a build order
 The `planning` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install planning@cj-stack
 ```
 

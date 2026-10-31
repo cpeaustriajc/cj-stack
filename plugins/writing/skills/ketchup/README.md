@@ -25,7 +25,7 @@ You get one sentence that says one thing needs you, then a small diagram and one
 The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install writing@cj-stack
 ```
 

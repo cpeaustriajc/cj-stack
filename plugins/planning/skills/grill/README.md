@@ -28,7 +28,7 @@ You get a list of every decision with a one-line reason. Claude then offers a ne
 The `planning` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install planning@cj-stack
 ```
 

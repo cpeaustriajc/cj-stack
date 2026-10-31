@@ -33,7 +33,7 @@ You get the new `verify` skill and one result line per feature: `VERIFIED`, `NOT
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

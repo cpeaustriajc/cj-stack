@@ -30,7 +30,7 @@ Each candidate shows the caller's usage first, then the public surface, the inte
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

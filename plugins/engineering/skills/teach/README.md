@@ -25,7 +25,7 @@ A claim from `why` keeps its evidence label, such as "Inferred" or "appears to".
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

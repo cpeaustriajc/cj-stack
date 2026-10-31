@@ -28,7 +28,7 @@ You get four groups: Act on, Consider, Noted and Dismissed. Each finding lists i
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

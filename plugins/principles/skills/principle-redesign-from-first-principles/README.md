@@ -15,7 +15,7 @@ You type `/principles:principle-redesign-from-first-principles` and name the wor
 The `principles` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install principles@cj-stack
 ```
 

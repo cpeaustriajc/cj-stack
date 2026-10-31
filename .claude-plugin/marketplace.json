@@ -12,7 +12,7 @@
       "name": "design",
       "displayName": "Design",
       "description": "Sign off UI work and motion — check it against the design, add missing microinteractions, paint scenes in code, make launch videos.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "John Carlo Austria"
       },

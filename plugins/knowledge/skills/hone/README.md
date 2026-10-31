@@ -29,7 +29,7 @@ You get three groups: Accept?, Backlog and Rejected. Claude asks which proposals
 The `knowledge` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install knowledge@cj-stack
 ```
 

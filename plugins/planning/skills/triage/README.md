@@ -28,7 +28,7 @@ You get one label set and one comment with the brief and the items a person must
 The `planning` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install planning@cj-stack
 ```
 

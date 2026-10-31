@@ -11,7 +11,7 @@ hone-nudge reads the session transcript when a turn ends. If you corrected Claud
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install hone-nudge@cj-stack
 ```
 

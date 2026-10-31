@@ -11,7 +11,7 @@ work-folder denies the write and tells Claude to use `.claude/work/<topic>/` ins
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install work-folder@cj-stack
 ```
 

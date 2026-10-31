@@ -28,7 +28,7 @@ You get three groups: Broken, Ugly and Fragile. Each bug has a title, repro step
 The `engineering` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install engineering@cj-stack
 ```
 

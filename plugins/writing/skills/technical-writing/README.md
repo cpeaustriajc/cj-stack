@@ -23,7 +23,7 @@ You get a shorter paragraph that says the same facts, with the condition before 
 The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install writing@cj-stack
 ```
 

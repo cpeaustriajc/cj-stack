@@ -88,7 +88,7 @@ To fix the error, give cj-stack the same source in both files. Use the GitHub so
 ```json
 "extraKnownMarketplaces": {
   "cj-stack": {
-    "source": { "source": "github", "repo": "cpeaustriajc/cj-stack" }
+    "source": { "source": "github", "repo": "cpeaustriajc/dotfiles" }
   }
 }
 ```

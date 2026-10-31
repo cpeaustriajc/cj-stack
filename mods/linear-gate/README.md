@@ -11,7 +11,7 @@ On shift, a dialog for every write costs you many clicks. Auto mode can decide m
 ## Install
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install linear-gate@cj-stack
 ```
 

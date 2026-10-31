@@ -24,7 +24,7 @@ You get up to 5 bullets of context, each thread tagged such as `[open PR #12]`, 
 The `knowledge` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-/plugin marketplace add cpeaustriajc/cj-stack
+/plugin marketplace add cpeaustriajc/dotfiles
 /plugin install knowledge@cj-stack
 ```
 
