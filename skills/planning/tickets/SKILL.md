@@ -1,11 +1,9 @@
 ---
 name: tickets
 description: >
-  This skill should be used when the user says "ticket", "break this into tickets", "cut the next
-  slice", "write the issue", "file these bugs as issues", "review ABC-123" or "rewrite this
-  ticket", after shape confirms a spec, and when a ticket is too long or does two things. It cuts
-  thin, demoable slices that cite the requirements they meet, with blocked-by links, or writes one
-  work item, bug or chore.
+  This skill should be used when the user says "break this into tickets", "cut the next slice",
+  "write the issue", "file these bugs as issues" or "rewrite this ticket", or a ticket is too
+  long. It writes slices, or one bug or chore.
 ---
 
 # Tickets
@@ -38,20 +36,12 @@ moves and thrown away when direction changes.
 - **Prefactor first.** A change that makes the slice easy goes in its own item, before it.
 - **Order by what blocks.** Give each item the items that must finish before it starts; an item
   with none can start now. The riskiest unknown goes first.
-- **Stack an Implementation slice.** When the slice sits under a project-sized container (the
-  adapter's Project row: a Linear project, a Jira epic, a GitHub parent issue), is in the
-  Implementation phase, and has two or more items that ship code, plan it as one stacked-PR
-  chain: one bottom-to-top order that keeps every blocker below the items it blocks. The bottom
-  item branches off the trunk; each later item branches off the item directly below it. One stack
-  per slice: the next slice starts a new stack on the trunk once this one lands. Never plan them
-  as parallel branches off the trunk: restacking them later rebases every PR, voids each PR's
-  verify verdict, and costs more than the build. Everything else branches off the trunk: a lone
-  work item with no project, a small fix, Demo prototypes, Launch items and Post Launch bugs.
-  Name each branch from the item's id and title, or take the name the tracker suggests.
-  `references/stacking.md` has the commands for each stack tool.
+- **Stack an Implementation slice.** When the slice sits under a project-sized container, is in
+  the Implementation phase, and has two or more items that ship code, it is one stacked-PR chain:
+  read `references/stacking.md` before you list the slice. A lone work item with no project, a
+  small fix, Demo prototypes, Launch items and Post Launch bugs branch off the trunk.
 - **A wide mechanical change** (a rename whose call sites span the codebase) is the one exception
-  to vertical slicing: add the new form beside the old, migrate callers in batches, then remove
-  the old form, each its own item.
+  to vertical slicing: see `references/item-kinds.md`.
 
 Show me the slice as a list before writing anything: each item's title, the requirements it
 cites, what I would see when it is done, what blocks it, and for a stack its position and the
@@ -80,10 +70,6 @@ being settled inside a ticket, where nobody would find it again.
 ## Out of Scope
 
 - <Only the boundaries that prevent a likely misunderstanding. Omit the section if none.>
-
-## Stack
-
-Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the item below, or the trunk for slice 1>`.
 ```
 
 - **Context:** 2–4 sentences plus links. Probe data and architecture go in the pull request or
@@ -115,8 +101,8 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
   on more than one page, one check names those pages and says each shows the same value for the
   same input: "the same name shows the same price on the shortlist, in the cart and at checkout".
 - **Out of Scope:** 0–3 bullets.
-- **Stack:** one line, only on an item in a stack. It tells the thread that builds the item which
-  branch to start from and to open its PR against. Omit it on an item that branches off the trunk.
+- **Stack:** an item in a stack ends with a `## Stack` section that names its branch and its base;
+  `references/stacking.md` has its form. Omit it on an item that branches off the trunk.
 - **Whole body:** under about 1,500 characters. Longer means split it. Quoted requirement lines do
   not count; the tree check subtracts them, computed from the cited requirements.
 - **No file paths or code**: they go stale. A prototype's snippet that pins a decision may be
@@ -126,34 +112,13 @@ Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the 
 - **No "As a … I want … so that" line** unless the product owner asks for it. That sentence is
   where mechanism and timing tend to sneak in.
 
-A **Bug** adds what was expected and what happened, with the steps that reproduce it, under
-Context, and cites the requirement it breaks. The steps start from the reachable state, with its
-trigger named, as a Done When check does.
+A **Bug** adds what was expected, what happened and the steps to reproduce it: see
+`references/item-kinds.md`.
 
 ## 4. Work types and rules
 
-- **Work types.** `Task` for anything a user can see, `Bug` for a defect, and `Chore` for work with
-  no visible change: docs, tooling, dependencies, or a refactor that automated tests prove changes
-  no behaviour. A Chore cites no requirement and skips the verifier, so it can't touch the areas
-  the project lists as risky (sign-in and payment, typically). When unsure, it is a Task.
-- **A Chore's body adds a check** that it really can skip the verifier. If any line is false, it
-  is a Task:
-
-  ```markdown
-  ## No-QA check
-
-  - [ ] It touches none of the areas the project lists as risky.
-  - [ ] It renames or removes no route and no test selector.
-  - [ ] Nothing a user or tester could notice changes.
-  - [ ] Every user path it changes is covered by an automated test.
-  ```
-
-  Its Done When holds checks an engineer can confirm alone: a command that passes, a file state, a
-  search that finds nothing, or the end-to-end command and where its trace is.
-- **Labels, not separate items, split frontend from backend**, unless the halves ship separately.
-  Sub-items hold the tasks under an item that is longer than one cycle.
-- **A bug found after Done is a new item**, labelled Bug and related to the original. Reopening
-  hides the history.
+Before you give an item its work type (`Task`, `Bug` or `Chore`), read `references/item-kinds.md`:
+a Chore adds a No-QA check, and a bug found after Done is a new item. When unsure, it is a Task.
 
 ## 5. Write and check
 

@@ -61,49 +61,22 @@ Add one line under each that names the model that wrote it. Recommend one, with 
 
 For a logic re-architecture, where the task reshapes code that exists today, show **Today** above the two candidates: today's public surface as excerpts with file and line, and each flag from `references/design-red-flags.md` it trips, marked at the line that trips it, or "none". A new design with no code to replace skips Today.
 
-For a layout re-architecture, where the task moves code between files and folders and changes no behaviour, show **Today** as today's file tree for the folders the task names, with the line count of each file, and mark each file the candidates move. Each candidate then has these sections instead of Usage, Public surface and Internals:
-
-1. **Tree after**: the file tree after the moves, for the folders that change.
-2. **Moves**: one line per move, `from → to`. A file move names two paths. A declaration move names `file:Name → file`.
-3. **Rule after**: one line that says where each kind of code lives, then the check that keeps it true, in the target repo's own mechanism (its lint rules, guards or tests).
-4. **Red flags** and 5. **Tradeoff**, as above.
-
-A move changes no line except import statements, export keywords and import paths. A candidate that needs any other edit to compile is not a layout candidate: name that edit under its Red flags.
+For a layout re-architecture, where the task moves code between files and folders and changes no
+behaviour, read `references/layout.md` before Phase C: it shows **Today** as a file tree with line
+counts, and each candidate as Tree after, Moves, Rule after, Red flags and Tradeoff.
 
 ### Pick
 
 The owner replies `Pick A` or `Pick B`.
 
-1. Write the picked sketch as real stub files: its types, signatures and module map, with `not implemented` bodies and `// TODO` pseudocode as shown. Change only what the sketch names.
-2. Fill the rationale's "Pick decision" section: the picked candidate and its model, why it was picked (the owner's words if they gave a reason, else your recommendation line, marked as yours), the candidate not picked with its tradeoff line, and what was taken from it.
-3. The rationale, with the picked shape, its tradeoffs accepted and the alternatives not picked, is the body of the pull request for this work. Open the pull request with it as the body, or put it in the body of the one already open.
+Read `references/pick.md`, then write the picked sketch as stub files and the rationale as the
+pull request body. A layout pick runs **Pick a layout** in `references/layout.md` instead.
 
-A layout pick runs **Pick a layout** below instead of these steps.
-
-The picked sketch can ship as its own commit, as the "scaffold first" mode of the **foundational-thinking** principle. Planned and scoped breakage during fill-in is fine, per the **outcome-oriented-execution** principle. For adversarial pressure on the design before implementing, run the **interrogate** skill on the picked sketch.
-
-### Pick a layout
-
-The owner replies `Pick A` or `Pick B` on layout candidates. Work on a branch, never the trunk. Save every output below to the project's work folder.
-
-Before step 1, run `git status --porcelain`. If it prints anything, stop and tell the owner to commit their own work first: step 3 stages everything and the undo restores tracked files to `HEAD`, so uncommitted edits would be lost.
-
-1. Before any move, run the repo's typecheck and tests. Save each exit code and the names of the failing checks.
-2. Do every move in the picked sketch: `git mv` for a file, a verbatim cut and paste for a declaration. Add only the import and export lines the moves force. Change no other line.
-3. Stage everything and run `python3 -I <base directory of this skill>/scripts/moves_only.py HEAD` from the repo root. It must print `moves only`.
-4. Run typecheck and tests again. They must give the same result as before: the same exit codes and the same failing checks.
-5. Commit the moves as one commit that holds moves only.
-6. Add the rule's check in a second commit, in the target repo's own mechanism. Read the repo's instructions first: its guards can be owner-protected. If the repo forbids a new guard, use the closest allowed check (a lint rule or a test) and say so. Show that the check passes on the moved tree and fails on a change that breaks the rule, then drop that change.
-7. Fill the rationale's "Pick decision" section and save the rationale as the pull request body to come.
-8. Stop. Report the two commits, the before and after results, the check's failing proof and the rationale path. Do not build other code and do not push: the owner reviews the moves first.
-
-If step 3 or step 4 fails, or typecheck passes only after an edit that step 2 does not allow (a changed route path, a renamed symbol, a body change, a broken import cycle), a move needs a logic edit. Undo every move: restore the tracked files to `HEAD` and delete the files the moves created. Commit nothing. Tell the owner which move needs which edit, then return to Phase B with that edit as a constraint for both runners, and stop again at Phase C.
 
 ### Push back
 
-The owner replies `Push back on A: <reason>` or `Push back on B: <reason>`.
-
-If the human pushes back on the shape (at the pick or after the fact), treat that as Phase A evidence. Re-ground and re-run Phase B before writing more code. The reason becomes a constraint in both runners' prompts, with the candidate it rejects named as the shape not to repeat. A push back after the pick first removes what the rejected sketch wrote (revert its commits), so a rejected shape leaves no code behind. Write no file in between. Show two new candidates in Phase C and stop again.
+The owner replies `Push back on A: <reason>` or `Push back on B: <reason>`. Read
+`references/push-back-and-scrap.md` before you write anything more.
 
 ## Phase D: Implement against the sketch
 
@@ -113,27 +86,9 @@ Replace `not implemented` bodies with code, pseudocode with logic. The picked sk
 
 ## Phase E: Scrap when the architecture is wrong
 
-If implementation keeps producing friction the sketch can't absorb, throw the sketch out once the owner agrees. Don't bolt fixes onto a wrong design, per the **redesign-from-first-principles** and **fix-root-causes** principles.
-
-The signal is a *pattern*, not single instances. Tells:
-
-- The same shape of workaround appearing repeatedly across unrelated code.
-- Multiple unrelated edge cases that all need special-case branches.
-- Types that need escape hatches (`any`, casts, optional fields always set in practice) to compile.
-- The "we need a lock" reflex when the sketch said the state wasn't shared.
-- Callers having to know the abstraction's internal rules to use it.
-- Two or more independent Phase D deviations of the same shape across the implementation.
-
-Use judgment. A few edge cases don't condemn an architecture. Some problems are legitimately complex. Complexity in the data is not complexity in the design.
-
-Watch for the pattern from the first stub file of the pick on, not only in Phase D: a caller the sketch does not cover is a deviation too. When the pattern shows, stop building and tell the owner: the tell, each instance with file and line, and an offer of a smaller re-sketch. End with "Reply Re-sketch, or Keep going with a reason." and wait. Scrap only on Re-sketch.
-
-When you scrap:
-
-1. Re-run the **how** method over what's been built.
-2. Redesign as if the new constraints had been day-one assumptions, per redesign-from-first-principles.
-3. Subtract before adding, per the **subtract-before-you-add** principle. The new sketch should be smaller than the old one before it grows.
-4. Return to Phase B and re-run both runners.
+If implementation keeps producing friction the sketch can't absorb, from the first stub file of the
+pick on, read `references/push-back-and-scrap.md`: it lists the tells, and you scrap only when the
+owner replies Re-sketch.
 
 ## Outputs
 

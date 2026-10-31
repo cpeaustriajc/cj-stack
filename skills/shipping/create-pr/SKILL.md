@@ -3,8 +3,7 @@ name: create-pr
 description: >
   This skill should be used when the user asks to open a pull request: "open a PR", "make a PR for
   this branch", "create a draft PR" or "PR this against develop". It commits, runs the fast
-  checks, pushes and opens a PR that links the issue and the evidence ("draft" for a draft, or a
-  base branch). The terminal version of the desktop Create PR button.
+  checks, pushes and opens the PR.
 argument-hint: "[draft] [base-branch]"
 ---
 
@@ -56,32 +55,9 @@ means open it as a draft. Any other word is the base branch.
      a call tree or pseudocode, then a Mermaid diagram when a flow changes. A typo or
      one-line fix gets none. The visual replaces prose and is never added on top of it.
 
-     Evidence shows before and after of the same state. A visual change gets a screenshot
-     cropped to the change. A flow, a motion or a timing also gets a short video. Each video
-     and screenshot:
-     - shows where each click lands and which key was pressed, with no test code on screen.
-       Use the project's helper when it has one, else the recorder's own marks
-       (`references/<recorder>.md`).
-     - plays at a person's pace: the hero script pauses before each action, types at human
-       speed and holds where the viewer reads.
-       Failure: a 16-second clip of two whole flows that a reviewer could not follow.
-     - starts after sign-in and setup and ends before cleanup, so it shows only the user's
-       steps.
-     - comes from a hero script: a standalone script made only for the video, run outside the
-       test runner, that reuses the tests' setup helpers. Never film a test run with tracing on:
-       tracing claims the page capture first, and the video shows a small corner of the page at
-       about one frame a second.
-     - opens each step with a chapter card and reaches each page by the click a person would
-       make, never a URL jump. Without both, the video jumps from page to page and the viewer gets lost.
-     - closes on screen each tool it opens (a dev panel, a QA menu) before the user's next
-       step, so no state changes without a visible cause.
-
-     Before you attach a video, run `scripts/check-video.sh <file>` on the file you attach. It
-     fails a file over the upload limit or a frame padded with grey, and lists each still over
-     3 s: a chapter card is fine, a frozen step is not. Then read a contact sheet of its
-     frames for the marks. Upload each file to the code host and reference it in the body by
-     its relative path, as the host's adapter says (`references/github.md`). Put a video alone
-     in its paragraph. Otherwise name the test that failed before and passes after.
+     Evidence shows before and after of the same state. For a visual change, a flow, a motion
+     or a timing, read `references/evidence.md` before you capture or attach a screenshot or a
+     video. Otherwise name the test that failed before and passes after.
 
      Merge danger says whether the change is a one-way door (a migration, sent email, a
      charge, deleted data, a public API change) or a two-way door (a revert is clean), plus

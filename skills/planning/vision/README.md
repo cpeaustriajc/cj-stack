@@ -57,6 +57,8 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/personal-to-sellable.md](references/personal-to-sellable.md): the worth-it check for a tool you built for yourself.
+- [references/later.md](references/later.md): checks at each Launch, product updates and audits.
 - [../shape/references/top-down.md](../shape/references/top-down.md): the five planning rules and the tracker lookup.
 - [../grill/SKILL.md](../grill/SKILL.md): the interview method.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.

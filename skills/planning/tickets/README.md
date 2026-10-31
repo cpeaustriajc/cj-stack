@@ -61,6 +61,7 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/item-kinds.md](references/item-kinds.md): work types, the Chore's No-QA check, bugs and wide mechanical changes.
 - [references/stacking.md](references/stacking.md): commands for plain git, gh stack, Graphite and git-town.
 - [../shape/references/top-down.md](../shape/references/top-down.md): the five rules and the tracker lookup.
 - [../shape/references/tree-outline.md](../shape/references/tree-outline.md): the tree JSON that the check reads.

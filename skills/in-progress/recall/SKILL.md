@@ -2,10 +2,8 @@
 name: recall
 description: >
   This skill should be used when the user says "recall", "where was I", "catch me up", "what did
-  we do last week", "what's in flight" or "pick up where we left off", or at the start of a
-  session that resumes work. It writes a short brief of the recent work in this project from past
-  transcripts and the live git and pull request state. Corrections to learn from go to hone; a
-  recorded decision goes to project-knowledge.
+  we do last week", "what's in flight" or "pick up where we left off". It briefs recent work from
+  transcripts, git and PRs.
 ---
 
 # Recall

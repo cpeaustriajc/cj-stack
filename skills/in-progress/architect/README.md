@@ -62,6 +62,7 @@ It starts only when you type `/architect`. Claude does not pick it on its own.
 - [references/runner-prompt.md](references/runner-prompt.md): the brief each runner gets.
 - [references/design-red-flags.md](references/design-red-flags.md): the red flags each candidate is checked against.
 - [references/rationale-template.md](references/rationale-template.md): the rationale that ships with the picked sketch.
+- [references/pick.md](references/pick.md), [layout.md](references/layout.md) and [push-back-and-scrap.md](references/push-back-and-scrap.md): the steps after the pick, for a layout task, and after a push back.
 - [references/claude-code.md](references/claude-code.md): models, spawn calls and the side-by-side view.
 - [scripts/moves_only.py](scripts/moves_only.py): the check that a commit holds moves only, with its tests.
 - [../evals/architect-layout-moves](../evals/architect-layout-moves): the eval case for a layout task, from the sketches to the two commits.

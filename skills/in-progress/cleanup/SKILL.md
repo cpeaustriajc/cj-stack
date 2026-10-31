@@ -2,10 +2,8 @@
 name: cleanup
 description: >
   This skill should be used when the user says "cleanup", "clean up after yourself", "tear down
-  the dev server", "archive this session" or "clean up stale branches and worktrees". It removes
-  what a session left behind (servers, containers, branches, stashes, evidence) once each item is
-  proven safe, names what it keeps, then archives if asked. "/cleanup repo" sweeps the whole
-  repo. Tidying code is simplify, not this skill.
+  the dev server", "archive this session" or "clean up stale branches". It removes what a session
+  left once safe. Not code tidying.
 ---
 
 # Cleanup

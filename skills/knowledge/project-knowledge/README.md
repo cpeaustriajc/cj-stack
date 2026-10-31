@@ -61,6 +61,8 @@ A GitHub wiki needs the `gh` CLI signed in. Notion and Linear need their MCP ser
 
 - [SKILL.md](SKILL.md): the method Claude follows.
 - [references/github-wiki.md](references/github-wiki.md), [notion.md](references/notion.md), [linear.md](references/linear.md), [obsidian.md](references/obsidian.md) and [other-backends.md](references/other-backends.md): one adapter for each backend.
+- [references/operations.md](references/operations.md): supersede a decision, file research, move rationale out of a repo.
+- [references/plain-prose.md](references/plain-prose.md): the prose patterns to rewrite before a page is published.
 - [scripts/ghwiki.sh](scripts/ghwiki.sh): the GitHub wiki helper.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
 - [evals/evals.json](evals/evals.json): test cases in skill-creator format.

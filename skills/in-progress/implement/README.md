@@ -55,4 +55,5 @@ To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off
 ## More
 
 - [SKILL.md](SKILL.md): the method Claude follows.
+- [references/orchestrate.md](references/orchestrate.md): the coordinator steps for a spec or several tickets.
 - [references/claude-code.md](references/claude-code.md): sessions, worktrees and the traps.

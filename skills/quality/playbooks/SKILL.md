@@ -1,12 +1,9 @@
 ---
 name: playbooks
 description: >
-  This skill should be used when fixing a bug, refactoring, chasing a performance problem,
-  building a feature from a ticket, prototyping a design, or designing an API, module or data
-  shape before building it, at the start of any such task bigger than a one-line change.
-  It routes the work to its playbook and copies the steps into the task list, so each kind of work
-  carries its own proof: a reproduced bug, pinned behaviour, a measured baseline or a verified
-  slice.
+  This skill should be used at the start of a bug fix, refactor, performance problem, feature from
+  a ticket, design prototype, or API, module or data-shape design bigger than one line. It routes
+  the work to its playbook and proof.
 ---
 
 # Playbooks

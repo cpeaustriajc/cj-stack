@@ -63,6 +63,8 @@ To turn it off, run `claude plugin disable cj-lab@cj-stack`. This also turns off
 
 - [SKILL.md](SKILL.md): the method.
 - [references/claude-code.md](references/claude-code.md): the pre-commit run, the weekly audit, the agent models and the stronger gates.
+- [references/weekly-audit.md](references/weekly-audit.md): the steps of the weekly audit.
+- [references/pr-verdict.md](references/pr-verdict.md): how a fresh agent gives the verdict on a PR.
 - [references/verify-template.md](references/verify-template.md): the template for the project's `verify` skill.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not load the skill.
 - [../evals/self-verify-audit-drift](../evals/self-verify-audit-drift) and [../evals/self-verify-wrong-capture](../evals/self-verify-wrong-capture): `claude plugin eval` cases for the audit and the evidence review.

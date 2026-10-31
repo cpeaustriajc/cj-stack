@@ -1,11 +1,9 @@
 ---
 name: shape
 description: >
-  This skill should be used when a project, epic, spec or milestone is created, restructured or
-  audited in any tracker; when the user says "shape this", "put this in a doc", "write the spec"
-  or "set a milestone"; when a spec arrives pasted into one ticket; when direction changes after a
-  demo; and for a project status update. It writes a spec with numbered requirements, testing
-  seams and phases, under a product from vision.
+  This skill should be used when the user says "shape this", "write the spec", "put this in a doc"
+  or "set a milestone", when a spec sits in one ticket or direction changes after a demo, and for
+  a project audit or status update.
 ---
 
 # Shape

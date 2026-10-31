@@ -1,12 +1,9 @@
 ---
 name: triage
 description: >
-  This skill should be used when the user says "triage #42", "triage the issues", "what needs my
-  attention", "is this ready for an agent", "can an agent take this", "move #42 to
-  ready-for-agent" or "write an agent brief", and before an agent starts to build an issue or take
-  over a PR. It checks the issue or PR, gives it one state (ready-for-agent, ready-for-human,
-  needs-info, wontfix) and writes the brief. Open design questions go to grill; cutting a spec
-  into tickets goes to tickets.
+  This skill should be used when the user says "triage #42", "what needs my attention", "can an
+  agent take this", "move #42 to ready-for-agent" or "write an agent brief". It sets one state and
+  a brief. Design questions: grill.
 ---
 
 # Triage

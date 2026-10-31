@@ -2,10 +2,8 @@
 name: feature-files
 description: >
   This skill should be used when writing or updating a feature file, when an E2E check needs to
-  know how to reach and drive an area of the app, when verifying a change in the running app, when
-  break-it needs a starting point, and when a UI change makes a feature file wrong. It keeps one
-  short file per feature: what exists, how to reach it, how to drive and check it. Not for writing
-  the test code itself.
+  know how to reach and drive an area of the app, or when a UI change makes a feature file wrong.
+  Not for writing the test code.
 ---
 
 # Feature files

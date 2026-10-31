@@ -25,3 +25,30 @@ below it, the bottom PR targets the trunk. Land the chain bottom first.
 Sources: `github/gh-stack` README; graphite.com/docs/cheatsheet; git-town.com/stacked-changes
 and its command pages; the autopilot-stack playbook in `cursor/plugins` (pstack), which keeps one
 linear stack and records the parent only as the PR base.
+
+## When a slice is a stack
+
+- **Stack an Implementation slice.** When the slice sits under a project-sized container (the
+  adapter's Project row: a Linear project, a Jira epic, a GitHub parent issue), is in the
+  Implementation phase, and has two or more items that ship code, plan it as one stacked-PR
+  chain: one bottom-to-top order that keeps every blocker below the items it blocks. The bottom
+  item branches off the trunk; each later item branches off the item directly below it. One stack
+  per slice: the next slice starts a new stack on the trunk once this one lands. Never plan them
+  as parallel branches off the trunk: restacking them later rebases every PR, voids each PR's
+  verify verdict, and costs more than the build. Everything else branches off the trunk: a lone
+  work item with no project, a small fix, Demo prototypes, Launch items and Post Launch bugs.
+  Name each branch from the item's id and title, or take the name the tracker suggests.
+  `references/stacking.md` has the commands for each stack tool.
+
+## The Stack section of an item in a stack
+
+It goes last in the item body, after Out of Scope:
+
+```markdown
+## Stack
+
+Slice <n> of <total>. Branch: `<this item's branch>`. Base: `<the branch of the item below, or the trunk for slice 1>`.
+```
+
+- **Stack:** one line, only on an item in a stack. It tells the thread that builds the item which
+  branch to start from and to open its PR against. Omit it on an item that branches off the trunk.

@@ -1,27 +1,26 @@
 ---
 name: principles
 description: >
-  This skill should be used when the user names an engineering principle, such as "apply prove
-  it works", "subtract before you add" or "attack the premise", and before a design, test,
-  debugging or measurement decision. It indexes 20 principles; Claude reads the one it applies
-  and cites it with the decision it changed. Not for picking a work playbook (playbooks) or
-  reviewing a diff (interrogate).
+  This skill should be used when the user names an engineering principle, such as "prove it
+  works", "subtract before you add" or "attack the premise", and before a design, test, debug or
+  measurement decision. It indexes 20 rules.
 ---
 
 # Principles
 
-One shared vocabulary of engineering rules. Each name points at one rule in
-`references/<name-in-kebab-case>.md`. The user steers with a name; you cite a name for each
+One shared vocabulary of engineering rules. Each name points at one rule in its own
+skill, `../principle-<name-in-kebab-case>/SKILL.md`, which the user can also type as
+`/cj-lab:principle-<name-in-kebab-case>`. The user steers with a name; you cite a name for each
 decision it changed.
 
 ## Apply
 
 1. Pick each principle whose "when" fits the decision in front of you. A principle the user
    names always applies.
-2. Read the leaf in full before you apply it. The index line is not the rule.
+2. Read the principle's `SKILL.md` in full before you apply it. The index line is not the rule.
 3. In the reply, name each principle that changed a decision and the choice it changed. For
    example: "Attack the Premise: tested the cache-key premise before fix 3; it was false."
-4. Cite only a leaf that you read in this session. A citation with no changed decision behind
+4. Cite only a principle whose file you read in this session. A citation with no changed decision behind
    it is name-dropping: leave it out.
 
 ## Index
