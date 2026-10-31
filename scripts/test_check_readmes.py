@@ -77,7 +77,7 @@ class Banned(unittest.TestCase):
 
 class StatusLine(unittest.TestCase):
     def test_lab_skill(self):
-        self.assertEqual(status_line("in-progress"), "> In progress: not shipped in any plugin.")
+        self.assertEqual(status_line("in-progress"), "> In progress: shipped in the `lab` plugin, and can change at any time.")
 
     def test_shipped_skill_has_none(self):
         self.assertIsNone(status_line(None))

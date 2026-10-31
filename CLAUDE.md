@@ -66,8 +66,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - `plugins/<plugin>/skills/<skill>/`: the shipped skill plugins `design`, `engineering`,
   `planning`, `knowledge` and `writing`. A plugin's own evals go in `plugins/<plugin>/evals/`.
 - `mods/<mod>/`: one plugin for each mod.
-- `lab/<skill>/`: in-progress skills, in no plugin. A skill starts here. The README "Lab" section
-  says how to try one with `claude --plugin-dir`.
+- `lab/<skill>/`: in-progress skills, shipped together in the `lab` plugin. A skill starts here.
 - To retire a skill or a mod, delete its folder in one commit. Write its name in the commit
   message, so that `git log --diff-filter=D` finds it.
 - `evals/routing/` and `evals/behaviour/`: eval cases across all shipped skills.

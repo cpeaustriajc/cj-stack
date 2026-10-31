@@ -2,7 +2,7 @@
 
 A skill that makes a narrated launch video from a live site or a brief. It produces every social shape, with local voiceover and music, thumbnails and post copy for each platform.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -22,14 +22,14 @@ You get MP4 files in 9:16, 1:1 and 16:9, covers and thumbnails, and post text pe
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/launch-video" /tmp/lab/skills/launch-video
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:launch-video`.
+The skill then loads as `/lab:launch-video`.
 
 ## What it does
 

@@ -2,7 +2,7 @@
 
 A typed `/teach` command that explains a part of your codebase in plain words. It joins how the code works and why it has its shape into one answer.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -24,14 +24,14 @@ A claim from `why` keeps its evidence label, such as "Inferred" or "appears to".
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/teach" /tmp/lab/skills/teach
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:teach`.
+The skill then loads as `/lab:teach`.
 
 ## What it does
 

@@ -2,7 +2,7 @@
 
 A typed `/bro` command for a reply you did not understand. Claude says it again with the missing context first, in plain words and with one picture.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -24,14 +24,14 @@ You get full sentences that say what a hold is, why it lapsed, and what the fix 
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/bro" /tmp/lab/skills/bro
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:bro`.
+The skill then loads as `/lab:bro`.
 
 ## What it does
 

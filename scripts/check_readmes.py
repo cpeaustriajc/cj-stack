@@ -7,7 +7,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_HEADINGS = ["When to use it", "Example", "Install", "What it does", "Limits", "More"]
 MOD_HEADINGS = ["Why", "Install", "Example", "What it does", "Settings", "Limits", "More"]
-STATUS = {"in-progress": "> In progress: not shipped in any plugin."}
+STATUS = {"in-progress": "> In progress: shipped in the `lab` plugin, and can change at any time."}
 MAX_LINES = 100
 MAX_WORDS = 25
 MAX_STEP_WORDS = 20

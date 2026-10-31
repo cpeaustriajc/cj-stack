@@ -101,6 +101,21 @@
       ]
     },
     {
+      "name": "lab",
+      "displayName": "Lab",
+      "description": "Try in-progress skills early — they change without notice and have no eval proof yet.",
+      "version": "0.1.0",
+      "author": {
+        "name": "John Carlo Austria"
+      },
+      "source": "./lab",
+      "category": "productivity",
+      "strict": false,
+      "skills": [
+        "./"
+      ]
+    },
+    {
       "name": "linear-gate",
       "displayName": "Linear Gate",
       "description": "Stop Linear writes off shift — on shift, your permission mode decides; a delete or cancel asks you first.",

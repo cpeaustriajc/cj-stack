@@ -2,7 +2,7 @@
 
 A skill that holds one engineering principle, Outcome-Oriented Execution. You type its name, and Claude reads the rule and applies it.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -14,14 +14,14 @@ You type `/lab:principle-outcome-oriented-execution` and name the work. Claude r
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/principle-outcome-oriented-execution" /tmp/lab/skills/principle-outcome-oriented-execution
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:principle-outcome-oriented-execution`.
+The skill then loads as `/lab:principle-outcome-oriented-execution`.
 
 ## What it does
 

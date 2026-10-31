@@ -2,7 +2,7 @@
 
 A skill that writes a short brief of where your work stands: recent threads, their state and one next step.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -23,14 +23,14 @@ You get up to 5 bullets of context, each thread tagged such as `[open PR #12]`, 
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/recall" /tmp/lab/skills/recall
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:recall`.
+The skill then loads as `/lab:recall`.
 
 ## What it does
 

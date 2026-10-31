@@ -2,7 +2,7 @@
 
 A skill that helps you find what is still worth building. It looks for real demand, then filters each candidate for what a clone cannot take.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -29,14 +29,14 @@ You get a table with a verdict per candidate: pursue, test first or drop. Claude
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/scout" /tmp/lab/skills/scout
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:scout`.
+The skill then loads as `/lab:scout`.
 
 ## What it does
 

@@ -2,7 +2,7 @@
 
 A typed `/microinteraction` command that finds where a web page should animate, and where it should not. Each proposal plays inline, and you pick which ones you want.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -23,14 +23,14 @@ You get a table of proposals, a list of rejected places with reasons, and Pick a
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/microinteraction" /tmp/lab/skills/microinteraction
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:microinteraction`.
+The skill then loads as `/lab:microinteraction`.
 
 ## What it does
 

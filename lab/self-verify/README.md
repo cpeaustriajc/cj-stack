@@ -2,7 +2,7 @@
 
 A skill that sets up your project's own `verify` skill. An agent then proves its change works before commit. A fresh agent checks that proof before merge.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -32,14 +32,14 @@ You get the new `verify` skill and one result line per feature: `VERIFIED`, `NOT
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/self-verify" /tmp/lab/skills/self-verify
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:self-verify`.
+The skill then loads as `/lab:self-verify`.
 
 ## What it does
 

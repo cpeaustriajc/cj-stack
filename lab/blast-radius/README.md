@@ -2,7 +2,7 @@
 
 A typed `/blast-radius` command that finds what a change can break outside its diff. It proves the one fact the change is safe because of, or says that fact is unproven.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -26,14 +26,14 @@ The writeup has five parts: What it does, the one fact it's safe because of, Ris
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/blast-radius" /tmp/lab/skills/blast-radius
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:blast-radius`.
+The skill then loads as `/lab:blast-radius`.
 
 ## What it does
 

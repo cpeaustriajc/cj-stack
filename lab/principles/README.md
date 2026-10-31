@@ -2,7 +2,7 @@
 
 A skill that gives you and Claude one vocabulary of 20 engineering principles. You steer Claude with a principle's name, and Claude names each principle that changed one of its decisions.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -26,14 +26,14 @@ You get the changed tests and one line such as "Test Behavior, Not Implementatio
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/principles" /tmp/lab/skills/principles
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:principles`.
+The skill then loads as `/lab:principles`.
 
 ## What it does
 

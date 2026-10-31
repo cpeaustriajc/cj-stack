@@ -61,8 +61,8 @@ bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.
-- **Skills in `lab/` never appear**: no plugin ships them, and the driver installs only the
-  four skill plugins in `plugins/`.
+- **Skills in `lab/` never appear**: the driver installs only the skill plugins in `plugins/`,
+  not the `lab` plugin.
 - **`claude plugin eval .` resolves no plugin** ("none resolved — cases run against baseline"):
   the repo root has no `plugin.json`, and no plugin folder has one: `marketplace.json` is the only
   manifest. The driver builds a throwaway plugin of symlinks instead.

@@ -2,7 +2,7 @@
 
 A skill that answers "why is this code like this?" from git history, pull request reviews and the team's records. It labels each claim by its evidence.
 
-> In progress: not shipped in any plugin.
+> In progress: shipped in the `lab` plugin, and can change at any time.
 
 ## When to use it
 
@@ -23,14 +23,14 @@ You get the claims labelled Direct, Supported, Inferred, Speculative or Unknown,
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `lab` plugin ships this skill:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/why" /tmp/lab/skills/why
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install lab@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:why`.
+The skill then loads as `/lab:why`.
 
 ## What it does
 
