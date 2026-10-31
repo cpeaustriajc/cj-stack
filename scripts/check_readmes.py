@@ -7,7 +7,6 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_HEADINGS = ["When to use it", "Example", "Install", "What it does", "Limits", "More"]
 MOD_HEADINGS = ["Why", "Install", "Example", "What it does", "Settings", "Limits", "More"]
-STATUS = {"in-progress": "> In progress: shipped in the `lab` plugin, and can change at any time."}
 MAX_LINES = 100
 MAX_WORDS = 25
 MAX_STEP_WORDS = 20
@@ -16,12 +15,9 @@ BANNED = re.compile(r"\b(?:simply|just|powerful|seamless)\b|\b(?:e\.g|i\.e)\.|[\
 
 def folders():
     for d in sorted(ROOT.glob("plugins/*/skills/*/")):
-        yield d, SKILL_HEADINGS, None
-    for d in sorted(ROOT.glob("lab/*/")):
-        if d.name != "evals":
-            yield d, SKILL_HEADINGS, "in-progress"
+        yield d, SKILL_HEADINGS
     for d in sorted(ROOT.glob("mods/*/")):
-        yield d, MOD_HEADINGS, None
+        yield d, MOD_HEADINGS
 
 
 def words(text):
@@ -71,12 +67,7 @@ def banned(lines):
     return found
 
 
-def status_line(bucket):
-    """The status line a README needs under its title, or None."""
-    return STATUS.get(bucket)
-
-
-def check(folder, headings, bucket):
+def check(folder, headings):
     rel = folder.relative_to(ROOT)
     readme = folder / "README.md"
     if not readme.is_file():
@@ -86,9 +77,6 @@ def check(folder, headings, bucket):
     errors = []
     if not lines or lines[0] != f"# {folder.name}":
         errors.append(f"{path}:1: first line must be '# {folder.name}'")
-    status = status_line(bucket)
-    if status and status not in lines[:6]:
-        errors.append(f"{path}: needs the status line '{status}' under the title")
     found = [line[3:].strip() for line in lines if line.startswith("## ")]
     if found != headings:
         errors.append(f"{path}: ## headings are {found}, expected {headings}")

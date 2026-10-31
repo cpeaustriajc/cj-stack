@@ -11,7 +11,7 @@ description: >
 
 cj-stack has no app to launch: the "running" product is the marketplace as Claude Code installs
 it. The driver is `.claude/skills/run-cj-stack/smoke.sh`, which validates it, runs every test
-suite, installs the four skill plugins into a throwaway config directory and asks Claude Code what it loaded.
+suite, installs the skill plugins into a throwaway config directory and asks Claude Code what it loaded.
 Paths here are relative to the repo root.
 
 ## Prerequisites
@@ -25,13 +25,12 @@ Paths here are relative to the repo root.
 .claude/skills/run-cj-stack/smoke.sh validate  # claude plugin validate .
 .claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
 .claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
-.claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with the four skill plugins installed
+.claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with the skill plugins installed
 .claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
 ```
 
 `routing` checks that each request loads its own skill and not its nearest neighbour, with every
-shipped skill installed together, plus `drive`, `scout` and `triage` from `lab/` (copied
-into the eval plugin only), that the typed-only `commit` never loads on its own, and that `create-pr` loads on "open the PR". Each case in `evals/routing/<case>/` is a `prompt.md` plus
+shipped skill installed together, that the typed-only `commit` never loads on its own, and that `create-pr` loads on "open the PR". Each case in `evals/routing/<case>/` is a `prompt.md` plus
 `tool_used` graders on the Skill call. Add a case when a new skill's triggers could collide with
 an old one's.
 
@@ -61,8 +60,6 @@ bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
 - **The 7-day token and use columns are always empty** in the driver's throwaway config: they come
   from this machine's past sessions. For real usage, run `claude -p "/skill-doctor"` with your own
   config after installing the plugin there.
-- **Skills in `lab/` never appear**: the driver installs only the skill plugins in `plugins/`,
-  not the `lab` plugin.
 - **`claude plugin eval .` resolves no plugin** ("none resolved — cases run against baseline"):
   the repo root has no `plugin.json`, and no plugin folder has one: `marketplace.json` is the only
   manifest. The driver builds a throwaway plugin of symlinks instead.

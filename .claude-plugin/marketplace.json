@@ -11,8 +11,8 @@
     {
       "name": "design",
       "displayName": "Design",
-      "description": "Sign off UI work — check spacing, type, colour and motion against the design, and paint scenes in code.",
-      "version": "1.0.0",
+      "description": "Sign off UI work and motion — check it against the design, add missing microinteractions, paint scenes in code, make launch videos.",
+      "version": "1.1.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -24,14 +24,16 @@
         "polish",
         "svg",
         "canvas",
-        "illustration"
+        "illustration",
+        "microinteraction",
+        "launch-video"
       ]
     },
     {
       "name": "engineering",
       "displayName": "Engineering",
-      "description": "Prove the work in the real app — playbooks for bugs and features, careless-user QA, diff review and PRs.",
-      "version": "1.0.0",
+      "description": "Prove the work in the real app — playbooks, design-first builds, unattended loops, bug hunts, code history, review and PRs.",
+      "version": "1.1.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -42,14 +44,17 @@
         "testing",
         "code-review",
         "pull-request",
-        "debugging"
+        "debugging",
+        "architecture",
+        "bug-hunt",
+        "automation"
       ]
     },
     {
       "name": "planning",
       "displayName": "Planning",
-      "description": "Turn an idea into tickets — test if it is worth building, write the spec, cut thin slices in any tracker.",
-      "version": "1.0.0",
+      "description": "Turn an idea into tickets — find and test ideas, write the spec, cut thin slices and triage them in any tracker.",
+      "version": "1.1.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -61,14 +66,16 @@
         "tickets",
         "linear",
         "jira",
-        "github"
+        "github",
+        "ideas",
+        "triage"
       ]
     },
     {
       "name": "knowledge",
       "displayName": "Knowledge",
-      "description": "Keep what the team learns — a decision log, research pages, and lessons from your past sessions.",
-      "version": "1.0.0",
+      "description": "Keep what the team learns — a decision log, research pages, lessons from past sessions, and a recap of recent work.",
+      "version": "1.1.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -79,14 +86,15 @@
         "adr",
         "wiki",
         "research",
-        "transcripts"
+        "transcripts",
+        "recall"
       ]
     },
     {
       "name": "writing",
       "displayName": "Writing",
-      "description": "Write docs people can read — repo rules first, plain ASD-STE100 sentences, and AI tells cut from any draft.",
-      "version": "1.0.0",
+      "description": "Write so people can read — docs in plain ASD-STE100, AI tells cut, and plain re-pitches and catch-ups in chat.",
+      "version": "1.1.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -97,22 +105,26 @@
         "docs",
         "readme",
         "ste100",
-        "style"
+        "style",
+        "catch-up"
       ]
     },
     {
-      "name": "lab",
-      "displayName": "Lab",
-      "description": "Try in-progress skills early — they change without notice and have no eval proof yet.",
-      "version": "0.1.0",
+      "name": "principles",
+      "displayName": "Principles",
+      "description": "Apply engineering principles by name — prove it works, subtract before you add, attack the premise, and 17 more.",
+      "version": "1.0.0",
       "author": {
         "name": "John Carlo Austria"
       },
-      "source": "./lab",
-      "category": "productivity",
-      "strict": false,
-      "skills": [
-        "./"
+      "source": "./plugins/principles",
+      "category": "development",
+      "keywords": [
+        "principles",
+        "design",
+        "testing",
+        "debugging",
+        "refactoring"
       ]
     },
     {

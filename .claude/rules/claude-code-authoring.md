@@ -1,7 +1,6 @@
 ---
 paths:
   - "plugins/**"
-  - "lab/**"
   - "evals/**"
   - "mods/**"
   - "**/.claude-plugin/*.json"
@@ -21,7 +20,7 @@ for it. Use what Claude Code ships before writing your own checks.
 
 - `claude plugin eval <plugin>` to prove a skill fires and helps, scored against a no-plugin
   baseline. It reads cases from `evals/` at the plugin root (`plugins/<plugin>/`), or from the
-  folder that `--eval-dir` names (`evals/routing/`, `evals/behaviour/`, `lab/evals/`). A skill's
+  folder that `--eval-dir` names (`evals/routing/`, `evals/behaviour/`). A skill's
   own `evals/evals.json` is skill-creator's format, which it doesn't read.
   - While you iterate, run one case with `--case <name> --runs 1 --max-cost-usd 3`. Run the
     full suite at the default runs once, at the end.

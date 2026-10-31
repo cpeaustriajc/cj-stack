@@ -6,7 +6,7 @@ cd "$(git rev-parse --show-toplevel)"
 files="$(git diff --name-only "$base"...HEAD; git diff --name-only; git diff --name-only --cached)"
 files="$(printf '%s\n' "$files" | sort -u | sed '/^$/d')"
 [[ -z "$files" ]] && { echo "no changes against $base"; exit 0; }
-printf '%s\n' "$files" | grep -q -E '^(plugins|lab|evals)/|^\.claude/skills/' && printf 'skills\t.claude/skills/run-cj-stack/smoke.sh tests\n'
+printf '%s\n' "$files" | grep -q -E '^(plugins|evals)/|^\.claude/skills/' && printf 'skills\t.claude/skills/run-cj-stack/smoke.sh tests\n'
 for mod in $(printf '%s\n' "$files" | sed -n -E 's#^mods/([^/]+)/.*#\1#p' | sort -u); do
   [[ -d "mods/$mod/hooks" ]] && printf 'mod %s\tclaude plugin test mods/%s\n' "$mod" "$mod"
 done

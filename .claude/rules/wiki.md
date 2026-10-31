@@ -1,7 +1,6 @@
 ---
 paths:
   - "plugins/*/skills/*/README.md"
-  - "lab/*/README.md"
   - "mods/*/README.md"
 ---
 
@@ -28,8 +27,7 @@ to learn what the thing is, whether they need it, and how to turn it on.
 ## Structure
 
 Line 1 is `# <folder name>`. Then one or two sentences: what it is and what it does for the
-reader. An in-progress skill (in `lab/`) adds this status line next:
-`` > In progress: shipped in the `lab` plugin, and can change at any time. ``
+reader.
 
 Then these `##` headings, in this order, with no other `##` headings:
 

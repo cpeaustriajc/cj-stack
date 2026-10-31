@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Tests the banned-word and status-line checks in check_readmes.py."""
+"""Tests the banned-word check in check_readmes.py."""
 import pathlib
 import sys
 import unittest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from check_readmes import banned, status_line  # noqa: E402
+from check_readmes import banned  # noqa: E402
 
 
 def hits(text):
@@ -73,14 +73,6 @@ class Banned(unittest.TestCase):
 
     def test_emoji_presentation_selector(self):
         self.assertEqual(hits("Warn ⚠️ here."), [(1, "⚠️")])
-
-
-class StatusLine(unittest.TestCase):
-    def test_lab_skill(self):
-        self.assertEqual(status_line("in-progress"), "> In progress: shipped in the `lab` plugin, and can change at any time.")
-
-    def test_shipped_skill_has_none(self):
-        self.assertIsNone(status_line(None))
 
 
 if __name__ == "__main__":

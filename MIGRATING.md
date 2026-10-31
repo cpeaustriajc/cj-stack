@@ -16,7 +16,7 @@ This guide removes the old names and installs the new plugins. It also fixes the
 | Old plugin | Install now |
 |---|---|
 | `cj-stack@cj-stack` | The skill plugins that you use: `design`, `engineering`, `planning`, `knowledge`. The [README](README.md#install) lists the skills in each plugin. |
-| `cj-lab@cj-stack` | `writing`, if you use `technical-writing` or `unslop`. `lab`, for the other lab skills. |
+| `cj-lab@cj-stack` | The plugins that now hold the lab skills: `engineering`, `planning`, `knowledge`, `writing`, `design` and `principles`. The [README](README.md#install) lists the skills in each plugin. |
 | `usage-pace@cj-stack` | Nothing. The Claude desktop app shows its own weekly pace banner. |
 | `loop-brake@cj-stack` | Nothing. Claude Code ends a turn after 8 Stop-hook continuations in a row. |
 | `git-guard@cj-stack`, `kill-guard@cj-stack` | Nothing. The auto-mode classifier blocks destructive git commands and kills of processes that the session did not start. |

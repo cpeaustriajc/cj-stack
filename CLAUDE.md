@@ -64,9 +64,8 @@ not make a claim true, and a source that was right before can be wrong now.
 - A mod keeps a `.claude-plugin/plugin.json` only for its `userConfig`, because `claude plugin test`
   reads the `userConfig` defaults only from there. Without it, linear-gate fails 86 of 105 tests.
 - `plugins/<plugin>/skills/<skill>/`: the shipped skill plugins `design`, `engineering`,
-  `planning`, `knowledge` and `writing`. A plugin's own evals go in `plugins/<plugin>/evals/`.
+  `planning`, `knowledge`, `writing` and `principles`. A plugin's own evals go in `plugins/<plugin>/evals/`.
 - `mods/<mod>/`: one plugin for each mod.
-- `lab/<skill>/`: in-progress skills, shipped together in the `lab` plugin. A skill starts here.
 - To retire a skill or a mod, delete its folder in one commit. Write its name in the commit
   message, so that `git log --diff-filter=D` finds it.
 - `evals/routing/` and `evals/behaviour/`: eval cases across all shipped skills.
@@ -75,7 +74,7 @@ not make a claim true, and a source that was right before can be wrong now.
 
 ## Moving a skill
 
-Move a skill to a different plugin, or between `lab/` and a plugin, in one commit:
+Move a skill to a different plugin in one commit:
 
 1. Move the folder with `git mv`.
 2. Update its row in the README Skills table, and its install lines in its own README.

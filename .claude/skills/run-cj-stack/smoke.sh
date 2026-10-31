@@ -36,7 +36,7 @@ tests() {
   run "${py[@]}" <<'PY'
 import glob, sys, yaml
 bad = 0
-for f in sorted(glob.glob("plugins/*/skills/*/SKILL.md") + glob.glob("lab/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
+for f in sorted(glob.glob("plugins/*/skills/*/SKILL.md") + glob.glob(".claude/skills/*/SKILL.md")):
     try:
         d = str(yaml.safe_load(open(f).read().split("\n---\n")[0][4:])["description"]).strip()
     except Exception as e:
@@ -49,7 +49,7 @@ PY
   say "script tests"
   run python3 -I plugins/planning/skills/shape/scripts/test_check_tree.py
   run bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
-  run python3 -I lab/architect/scripts/test_moves_only.py
+  run python3 -I plugins/engineering/skills/architect/scripts/test_moves_only.py
 }
 
 doctor() {
@@ -70,15 +70,17 @@ details() { say "plugin details"; installed; for p in "${plugins[@]}"; do run en
 routing() {
   say "routing evals: each request loads its own skill and no neighbour"
   local p; p="$(mktemp -d)"; mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
-  for d in "$root"/plugins/*/skills/*/; do ln -s "${d%/}" "$p/skills/$(basename "$d")"; done
+  # A skill with its own cases is copied, not linked: eval finds cases anywhere in the plugin, and
+  # the filter below deletes some, which through a link would delete them from the repo.
+  for d in "$root"/plugins/*/skills/*/; do
+    if [[ -n "$(find "$d" -name case.yaml -print -quit)" ]]; then cp -R "${d%/}" "$p/skills/$(basename "$d")"
+    else ln -s "${d%/}" "$p/skills/$(basename "$d")"; fi
+  done
   [[ -n "$(ls "$p/skills")" ]] || { failed=1; echo "FAILED: no skills linked into the eval plugin"; return; }
-  # In-progress skills with routing cases join the eval plugin only; they still don't ship.
-  # Copied, not linked: eval finds cases anywhere in the plugin, and the filter below deletes some.
-  for s in drive scout triage; do cp -R "$root/lab/$s" "$p/skills/$s"; done
   echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
   cp -r evals/routing/. "$p/evals/"
   # Cases with a scaffold_script test behaviour, not routing, and fail without --scaffold.
-  grep -rl --include=case.yaml scaffold_script "$p"/evals "$p"/skills/{drive,scout,triage} 2>/dev/null |
+  grep -rl --include=case.yaml scaffold_script "$p"/evals "$p"/skills 2>/dev/null |
     while read -r c; do rm -rf "$(dirname "$c")"; done
   (cd "$p" && claude plugin eval . --eval-dir evals --runs "${RUNS:-2}" --ablation none \
     --trust-plugin --no-publish --max-cost-usd 10 -j 4) || { failed=1; echo "FAILED: routing evals"; }
@@ -90,7 +92,7 @@ case "$step" in
   all) validate; tests; details; doctor ;;
   *) echo "usage: $0 [validate|tests|doctor|details|routing|all]" >&2; exit 64 ;;
 esac
-find plugins lab -name __pycache__ -prune -exec rm -rf {} +
+find plugins -name __pycache__ -prune -exec rm -rf {} +
 (( failed )) && exit 1
 (( blocked )) && exit 2
 exit 0
