@@ -103,33 +103,10 @@ version of the whole product that works end to end and answers the riskiest unkn
    linked to the product and holding only the feature's line. Later features wait their turn.
 2. Hand the first project to `shape`. The next feature is shaped when the project before it
    reaches Launch, or sooner if I say so, so later features benefit from what the launch taught.
-3. **At each Launch, check Worth it again** against what the launch showed and the time it really
-   took; for personal software, whether I used it this week. Say in a line whether the verdict
-   holds; if not, recommend shrinking or stopping rather than carrying on by momentum.
-4. A change to a feature after its project exists returns that project's spec to Draft; say so
-   and what it touches.
+3. At each Launch, when a feature changes after its project exists, and for an update or an
+   audit, read `references/later.md`.
 
 ## 5. From personal to sellable
 
-When something I built for myself might sell, run "Is it worth building" again for others. Two things differ
-from a fresh idea:
-
-- **I am user one, which is evidence and bias at once.** My weekly use proves it works for one
-  person; my liking it proves nothing about anyone else. Ask for evidence from others: who has
-  asked for it or a copy, who I could show it to this week, how I would reach more of them.
-- **Selling costs what the personal version never paid.** Price it in weeks before the verdict:
-  accounts for more than one person, billing, onboarding that works without me, support, privacy
-  and security, reliability.
-
-The usual verdict is test first: put it in front of five people with the problem, or offer it
-before building the selling parts, and decide on what they do, not what they say. On build,
-write a new Draft product for others with product phases; the personal one stays as it is until
-the new one replaces it.
-
-## 6. Updates and audits
-
-- **A product update** is one line per project with its own health and phase, then the
-  product's health as my call, proposed if the facts don't settle it.
-- **An audit** checks Worth it against the latest launch, then the five rules: every feature has
-  a project or waits its turn, every project serves a feature, nothing is built under a Draft
-  level, and Not yet specified holds nothing that has since sharpened.
+When something I built for myself might sell, read `references/personal-to-sellable.md` before
+you run "Is it worth building" again for others.

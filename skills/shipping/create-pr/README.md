@@ -57,5 +57,6 @@ To turn the plugin off, run `claude plugin disable cj-stack@cj-stack`. This also
 
 - [SKILL.md](SKILL.md): the method Claude follows.
 - [references/claude-code.md](references/claude-code.md): how the comment reader runs in Claude Code.
+- [references/evidence.md](references/evidence.md): the rules for screenshots and videos in the Evidence line.
 - [references/github.md](references/github.md): how to upload screenshots and videos to a GitHub PR or issue.
 - [evals/triggers.json](evals/triggers.json): example requests that should and should not match the skill.

@@ -52,6 +52,7 @@ It starts only when you type `/no-comments`. Claude does not pick it on its own.
 
 - [SKILL.md](SKILL.md): the method.
 - [references/sweeper-prompt.md](references/sweeper-prompt.md): the brief the sweeper gets, with its keep list.
+- [references/constraints.md](references/constraints.md): how a constraint comment is checked, encoded or deleted.
 - [references/claude-code.md](references/claude-code.md): the spawn call and the commit rules.
 - [../evals/no-comments-folder-sweep](../evals/no-comments-folder-sweep): the folder-sweep eval case.
 - [LICENSE](LICENSE): adapted from pstack by Lauren Tan, under the MIT licence.
