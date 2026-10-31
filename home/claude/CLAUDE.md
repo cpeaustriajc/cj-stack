@@ -66,8 +66,10 @@ handler. These rules always apply:
   hit; if findings continue, question the design.
 
 ## Long commands
-- A command that can run longer than a few seconds shows progress and keeps its full log. When
-  it starts, tell me what runs, about how long it takes, and where the log is.
+- Run a command that can take longer than a few seconds in the background, and make it show
+  progress. When it starts, tell me what runs and about how long it takes.
+- When it ends, give me the result as a person reads it: the verdict first, then the details
+  in a short table or list. Never paste raw output.
 
 ## Delegation
 - The session I talk to plans, writes specs, starts threads and reviews their work. A thread
