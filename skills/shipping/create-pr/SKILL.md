@@ -3,8 +3,7 @@ name: create-pr
 description: >
   This skill should be used when the user asks to open a pull request: "open a PR", "make a PR for
   this branch", "create a draft PR" or "PR this against develop". It commits, runs the fast
-  checks, pushes and opens a PR that links the issue and the evidence ("draft" for a draft, or a
-  base branch). The terminal version of the desktop Create PR button.
+  checks, pushes and opens the PR.
 argument-hint: "[draft] [base-branch]"
 ---
 

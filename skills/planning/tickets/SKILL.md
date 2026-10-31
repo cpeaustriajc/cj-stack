@@ -1,11 +1,9 @@
 ---
 name: tickets
 description: >
-  This skill should be used when the user says "ticket", "break this into tickets", "cut the next
-  slice", "write the issue", "file these bugs as issues", "review ABC-123" or "rewrite this
-  ticket", after shape confirms a spec, and when a ticket is too long or does two things. It cuts
-  thin, demoable slices that cite the requirements they meet, with blocked-by links, or writes one
-  work item, bug or chore.
+  This skill should be used when the user says "break this into tickets", "cut the next slice",
+  "write the issue", "file these bugs as issues" or "rewrite this ticket", or a ticket is too
+  long. It writes slices, or one bug or chore.
 ---
 
 # Tickets

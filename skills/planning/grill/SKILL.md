@@ -1,11 +1,9 @@
 ---
 name: grill
 description: >
-  This skill should be used when the user says "grill me", "ask me questions
-  first", "stress-test this", "poke holes in this" or "plan and ask me" about a change, design,
-  feature or plan. It sizes the work, then interviews in short rounds of questions with a
-  recommended answer each until no decision is open. A whole product idea, or whether something is
-  worth building, goes to vision instead.
+  This skill should be used when the user says "grill me", "ask me questions first", "stress-test
+  this", "poke holes in this" or "plan and ask me" about a change. A product idea, or whether it
+  is worth building, goes to vision.
 ---
 
 ## Size it first

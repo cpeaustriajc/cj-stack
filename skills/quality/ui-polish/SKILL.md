@@ -2,9 +2,8 @@
 name: ui-polish
 description: >
   This skill should be used when the user asks to review a UI against its design, polish spacing,
-  type, colour or motion, or sign off a visual change, and before asking for visual sign-off. It
-  compares the screen with the design and a list of common mistakes, and reports a
-  Before/After/Why table with one verdict: ship, ship after the top fixes, or rework.
+  type, colour or motion, or sign off a visual change. It compares the screen with the design and
+  gives a Before/After/Why table.
 ---
 
 # UI polish

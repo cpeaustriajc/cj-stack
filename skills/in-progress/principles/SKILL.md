@@ -1,11 +1,9 @@
 ---
 name: principles
 description: >
-  This skill should be used when the user names an engineering principle, such as "apply prove
-  it works", "subtract before you add" or "attack the premise", and before a design, test,
-  debugging or measurement decision. It indexes 20 principles; Claude reads the one it applies
-  and cites it with the decision it changed. Not for picking a work playbook (playbooks) or
-  reviewing a diff (interrogate).
+  This skill should be used when the user names an engineering principle, such as "prove it
+  works", "subtract before you add" or "attack the premise", and before a design, test, debug or
+  measurement decision. It indexes 20 rules.
 ---
 
 # Principles

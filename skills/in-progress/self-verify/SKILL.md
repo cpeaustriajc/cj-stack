@@ -1,11 +1,9 @@
 ---
 name: self-verify
 description: >
-  This skill should be used when the user says "set up verification", "make agents verify their
-  work", "verify skill", "agents keep claiming done without proof", "we can't review every PR",
-  "set up PR verification" or "audit the verify skill". It sets up and maintains the project's own
-  verify skill and the per-PR verdict. One bug fix goes to playbooks; one feature file goes to
-  feature-files; a periodic sweep goes to bug-hunt.
+  This skill should be used when the user says "set up verification", "verify skill", "agents keep
+  claiming done without proof", "we can't review every PR" or "audit the verify skill". It keeps
+  the verify skill and per-PR verdict.
 ---
 
 # Self-verify

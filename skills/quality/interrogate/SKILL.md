@@ -2,10 +2,8 @@
 name: interrogate
 description: >
   This skill should be used when the user says "interrogate", "second opinion" or "cross-check
-  this", or before opening a PR on a risky change (auth, money, data migrations, concurrency). It
-  reviews a diff with fresh reviewers that each see a different slice of it, then verifies,
-  filters and ranks their findings into act on, consider, noted and dismissed, never auto-applying
-  anything. Not for a quick single-pass review.
+  this", or before a PR on a risky change (auth, money, migrations, concurrency). Fresh reviewers
+  each check one slice of the diff.
 ---
 
 # Interrogate

@@ -2,10 +2,8 @@
 name: project-knowledge
 description: >
   This skill should be used when the user says "note that down as a decision", "what did we decide
-  about X", "supersede that decision", asks to record research or a finding, or a decision is made
-  in conversation that others will need. It keeps a decision log and research pages for people in
-  the team's wiki, Notion, Linear, Obsidian or Confluence, read before deciding and never
-  rewritten. Agent instructions belong in CLAUDE.md instead.
+  about X" or "supersede that decision". It keeps decision and research pages in the team's wiki
+  or Notion. Agent rules: CLAUDE.md.
 ---
 
 # Project knowledge

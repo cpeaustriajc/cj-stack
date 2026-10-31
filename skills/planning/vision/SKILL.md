@@ -1,11 +1,9 @@
 ---
 name: vision
 description: >
-  This skill should be used when the user brings a product idea or vision, asks "is this worth
-  building", says "grill me on this idea", "plan the product", "set up the initiative" or "what
-  are the features", wants a plan from product down to tickets, wonders whether a personal tool
-  could sell, or asks for a product-level update. It grills the idea, worth-it first, then writes
-  the top level of the plan and hands each feature to shape.
+  This skill should be used when the user has a product idea, asks "is this worth building" or if
+  a tool can sell, says "grill me on this idea", "plan the product" or "set up the initiative" or
+  wants a product update. No ideation.
 ---
 
 # Vision

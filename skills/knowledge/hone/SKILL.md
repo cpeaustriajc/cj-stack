@@ -1,12 +1,9 @@
 ---
 name: hone
 description: >
-  This skill should be used when the user says "hone", "hone" followed by a skill name, "what do I
-  keep correcting", "reflect", "learn from my sessions" or "why does Claude keep doing X", or
-  after a session with several corrections. It mines past Claude Code transcripts for recurring
-  corrections and for failures nobody corrected, and proposes where each lesson should live
-  (code, lint, hook, test, skill or instruction file) and what to prune. Not for updating
-  CLAUDE.md from one session.
+  This skill should be used when the user says "hone", "what do I keep correcting", "reflect" or
+  "learn from my sessions", or asks why Claude keeps doing X. It mines transcripts for repeated
+  corrections. Not for one CLAUDE.md edit.
 ---
 
 # Hone

@@ -1,12 +1,9 @@
 ---
 name: why
 description: >
-  This skill should be used when the user asks "why is this code like this", "why was X set to
-  5", "where did this number come from", "can I delete this guard", "is this check still needed"
-  or "what's the history behind this", and before removing defensive code nobody explains. It
-  digs through git history, pull request reviews and the team's tracker and docs, and labels each
-  claim by its evidence. Not for a recorded decision (use project-knowledge) or recent work in
-  flight (use recall).
+  This skill should be used when the user asks "why is this code like this", "where did this
+  number come from", "can I delete this guard" or "what's the history behind this". It digs
+  through git, PRs and docs, and labels evidence.
 ---
 
 # Why
