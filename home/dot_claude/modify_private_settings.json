@@ -1,6 +1,11 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- /* The keys in dot_claude/.settings.json are synced; every other live key keeps its live text. */ -}}
+{{- /* Under "permissions" only the listed sub-keys are synced: allow and deny stay on the machine. */ -}}
 {{- $shared := include "dot_claude/.settings.json" | fromJson -}}
+{{- if and (trim .chezmoi.stdin) (hasKey $shared "permissions") -}}
+{{-   $livePerms := get (fromJson .chezmoi.stdin) "permissions" | default dict -}}
+{{-   $_ := set $shared "permissions" (mergeOverwrite (deepCopy $livePerms) (get $shared "permissions")) -}}
+{{- end -}}
 {{- if not (trim .chezmoi.stdin) -}}
 {{ toPrettyJson $shared }}
 {{ else -}}
