@@ -6,14 +6,14 @@ A writing standard for the docs, READMEs, specs, PR descriptions and commit mess
 
 ## When to use it
 
-Use it for text that engineers read: docs, READMEs, specs, PR bodies and commit messages. Claude picks it on its own when you ask for one of these.
+Use it for text that engineers read: docs, READMEs, specs, PR bodies and commit messages. Type `/technical-writing` with the text or the file.
 
 - For product UI copy, use the product's copy guidelines. This skill does not apply.
 - To remove AI tells from any text on demand, type `/unslop`. This skill applies `unslop` itself.
 
 ## Example
 
-You say: "Rewrite this README paragraph so it is clear." You paste a long paragraph with passive verbs and filler.
+You type: `/technical-writing rewrite the "Proto budget" paragraph in README.md`. The paragraph has passive verbs and filler.
 
 1. Claude reads the repo's writing rules, such as `CLAUDE.md` and `.claude/rules/`.
 2. Claude rewrites the paragraph: real file names, active verbs, one thought per sentence.
@@ -27,6 +27,8 @@ The opt-in `cj-lab` plugin ships it:
 ```
 /plugin install cj-lab@cj-stack
 ```
+
+It starts only when you type `/technical-writing`. Claude does not pick it on its own.
 
 ## What it does
 
@@ -53,8 +55,8 @@ The opt-in `cj-lab` plugin ships it:
 ### Sources and evidence
 
 - Source: pstack's `technical-writing` by Lauren Tan, from `cursor/plugins` at commit `4dd1d05`, under the MIT licence.
-- Changes: repo rules first, ASD-STE100 sentence limits, model-invocable, and pstack's own repo rules removed.
-- Status: tested on one case. In `technical-writing-readme-rewrite`, 2 of 2 runs pass with the plugin and 0 of 2 pass without it.
+- Changes: repo rules first, ASD-STE100 sentence limits, and pstack's own repo rules removed.
+- Status: tested on one case. In `technical-writing-readme-rewrite`, typed as `/technical-writing`, 2 of 2 runs pass with the plugin and 0 of 2 pass without it.
 - Without the plugin, Claude does not read `CONTRIBUTING.md` and keeps "ratchet" and the semicolon. A PR description case passed 2 of 2 in both arms, so it was dropped.
 - Eval command: `claude plugin eval ./skills/in-progress --eval-dir evals --case 'technical-writing-*' --scaffold`.
 - Native check: Claude Code has no writing standard. Output styles set the chat tone for a whole session and are not picked by task.

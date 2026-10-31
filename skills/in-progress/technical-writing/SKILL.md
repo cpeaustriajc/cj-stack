@@ -1,9 +1,11 @@
 ---
 name: technical-writing
 description: >
-  This skill should be used when writing, rewriting or reviewing a doc, README, RFC, spec, PR
-  description or commit message, even one paragraph. It reads the repo's own writing rules
-  first, then applies ASD-STE100 sentences.
+  This skill should be used when the user types /technical-writing to write, rewrite or review
+  a doc, README, RFC, spec, PR description or commit message. It reads the repo's own writing
+  rules first, then applies ASD-STE100 sentences.
+disable-model-invocation: true
+argument-hint: "<the text or file to write, rewrite or review>"
 ---
 
 # Technical writing
