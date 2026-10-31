@@ -16,8 +16,6 @@
 - Do what your tools can do. Ask me only for a sign-in, a secret, or a decision of taste or
   business. After my go, do every step I named without a new question.
 - My answer, picked or typed, is final. Never ask the same question again in new words.
-- A choice or an explanation of a layout, UI state, flow or account state has a rendered
-  picture: an artifact or a screenshot. ASCII art and a text table are not pictures.
 - A draft that I must read or approve goes in the chat, not in a file.
 
 ## Scope
@@ -68,8 +66,6 @@ handler. These rules always apply:
 - Run a command that can take longer than a few seconds in the background, with its progress in
   the harness output, never only in a file. If the tool prints no progress, say so once when it
   starts.
-- When it ends, give me the result as a person reads it: the verdict first, then the details
-  in a short table or list. Never paste raw output.
 
 ## Delegation
 - The session I talk to plans, writes specs, starts threads and reviews their work. A thread

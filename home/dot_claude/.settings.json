@@ -39,5 +39,5 @@
   "permissions": {
     "blockWritesOutsideWorkingDirectories": true
   },
-  "outputStyle": "ASD-STE100"
+  "outputStyle": "Procedural"
 }
