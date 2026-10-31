@@ -66,8 +66,8 @@ handler. These rules always apply:
   hit; if findings continue, question the design.
 
 ## Long commands
-- Run a command that can take longer than a few seconds in the background, and make it show
-  progress. When it starts, tell me what runs and about how long it takes.
+- Run a command that can take longer than a few seconds in the background, with its progress in
+  the harness output, never only in a file.
 - When it ends, give me the result as a person reads it: the verdict first, then the details
   in a short table or list. Never paste raw output.
 

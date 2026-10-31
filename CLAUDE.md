@@ -44,10 +44,8 @@ not make a claim true, and a source that was right before can be wrong now.
 - `SOURCES.md` lists where to look for new articles and leads; being on it is no reason to
   trust a claim.
 - Validate the manifests after any manifest, skill or frontmatter change.
-- Prove a skill fires and helps, scored against a run without the plugin. While you iterate,
-  run one case once at a capped cost; run the full suite once, at the end. After a grader fix,
-  rerun only the cases that grader scores. A case the no-plugin run already passes cannot show
-  a gain: make it harder or drop it.
+- Prove a skill fires and helps, scored against a run without the plugin
+  (`.claude/rules/claude-code-authoring.md`).
 - Check a plugin's components and projected token cost.
 - Run a mod's hook tests after you change the mod.
 - Audit the instruction files when a new frontier model ships, and audit a skill or rule after

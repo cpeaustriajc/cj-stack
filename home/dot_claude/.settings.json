@@ -5,7 +5,8 @@
     "CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE": "1",
     "CLAUDE_CODE_STOP_HOOK_BLOCK_CAP": "3",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
-    "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS": "25"
+    "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS": "5",
+    "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "1"
   },
   "attribution": {
     "commit": "",
@@ -34,5 +35,8 @@
     "claude-haiku-5-5": {
       "autoCompactWindow": 100000
     }
+  },
+  "permissions": {
+    "blockWritesOutsideWorkingDirectories": true
   }
 }
