@@ -85,8 +85,8 @@
     {
       "name": "linear-gate",
       "displayName": "Linear Gate",
-      "description": "Holds every Linear write until you allow it.",
-      "version": "0.2.1",
+      "description": "Stop Linear writes off shift — on shift, your permission mode decides; a delete or cancel asks you first.",
+      "version": "0.2.2",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -97,8 +97,8 @@
     {
       "name": "session-modes",
       "displayName": "Session Modes",
-      "description": "/mode readonly, research or edit, enforced for the rest of the session.",
-      "version": "0.14.3",
+      "description": "Keep a session in one working mode — /mode readonly, research, prototype or build blocks calls past it.",
+      "version": "0.14.4",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -109,8 +109,8 @@
     {
       "name": "hone-nudge",
       "displayName": "Hone Nudge",
-      "description": "Suggests /hone <skill> when you corrected Claude during a cj-stack skill run.",
-      "version": "0.1.3",
+      "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a cj-stack skill.",
+      "version": "0.1.4",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -120,8 +120,8 @@
     {
       "name": "memory-lint",
       "displayName": "Memory Lint",
-      "description": "Denies an auto-memory write that holds task state, one-off references or repo detail.",
-      "version": "0.1.0",
+      "description": "Keep memory worth relearning — denies a memory write with task state, one-off references or repo detail.",
+      "version": "0.1.1",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -131,8 +131,8 @@
     {
       "name": "work-folder",
       "displayName": "Work Folder",
-      "description": "Denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside .claude/work/, which is gitignored, with a per-repo allow list, and at session start removes .claude/work/ entries not changed for a day.",
-      "version": "0.2.0",
+      "description": "Keep agent files out of the repo — denies new plans or evidence outside .claude/work/ and clears old ones.",
+      "version": "0.2.1",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -142,8 +142,8 @@
     {
       "name": "kill-guard",
       "displayName": "Kill Guard",
-      "description": "Denies a Bash command that stops processes by name or by port, because it can also stop another checkout's dev server; a kill of a named PID passes.",
-      "version": "0.1.0",
+      "description": "Keep other checkouts' servers running — denies a kill by process name or port; a named PID passes.",
+      "version": "0.1.1",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -153,8 +153,8 @@
     {
       "name": "git-guard",
       "displayName": "Git Guard",
-      "description": "Denies a Bash git command that loses work: git branch -D, a force push to main or master, and git checkout -- . or git restore . on a dirty tree; each deny names the safe alternative.",
-      "version": "0.1.0",
+      "description": "Keep work that git can lose — denies git branch -D, a force push to main and a discard on a dirty tree.",
+      "version": "0.1.1",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -164,8 +164,8 @@
     {
       "name": "test-guard",
       "displayName": "Test Guard",
-      "description": "Denies an Edit, MultiEdit or Write that changes or removes a line a test file has at HEAD; additions pass, and only the user can allow one file with /test-guard allow <path>.",
-      "version": "0.1.1",
+      "description": "Stop tests changed to pass — denies an edit that changes or removes a test line at HEAD; additions pass.",
+      "version": "0.1.2",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -175,8 +175,8 @@
     {
       "name": "bash-trim",
       "displayName": "Bash Trim",
-      "description": "Cuts a long successful Bash output to its first 2,000 and last 3,000 characters with a cut count; read-like commands, failures and saved outputs pass whole.",
-      "version": "0.1.0",
+      "description": "Keep long sessions lean — cuts a long successful Bash output to its first 2,000 and last 3,000 characters.",
+      "version": "0.1.1",
       "author": {
         "name": "John Carlo Austria"
       },
