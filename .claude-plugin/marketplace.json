@@ -17,6 +17,7 @@
         "name": "John Carlo Austria"
       },
       "source": "./plugins/design",
+      "strict": false,
       "category": "design",
       "keywords": [
         "ui",
@@ -38,6 +39,7 @@
         "name": "John Carlo Austria"
       },
       "source": "./plugins/engineering",
+      "strict": false,
       "category": "development",
       "keywords": [
         "qa",
@@ -59,6 +61,7 @@
         "name": "John Carlo Austria"
       },
       "source": "./plugins/planning",
+      "strict": false,
       "category": "productivity",
       "keywords": [
         "planning",
@@ -80,6 +83,7 @@
         "name": "John Carlo Austria"
       },
       "source": "./plugins/knowledge",
+      "strict": false,
       "category": "productivity",
       "keywords": [
         "decisions",
@@ -99,6 +103,7 @@
         "name": "John Carlo Austria"
       },
       "source": "./plugins/writing",
+      "strict": false,
       "category": "productivity",
       "keywords": [
         "writing",
