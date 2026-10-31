@@ -1,26 +1,44 @@
 # home
 
-The user-level Claude Code config of this repo's author: the files that go in `~/.claude`. It
-came from the private chezmoi repo, without that repo's history. The folder is `claude/`, not
-`.claude/`, so that Claude Code does not load it as project config in this repo.
+The chezmoi source for the author's home folder: Claude Code config, zsh, nvim and tmux.
+`.chezmoiroot` at the repo root names this folder, so chezmoi reads only `home/` and never the
+marketplace folders. The Claude Code folder is `dot_claude/`, not `.claude/`, so that Claude Code
+does not load it as project config in this repo.
 
-## How the files are installed
+## Install on a new machine
 
-[chezmoi](https://www.chezmoi.io) installs them from the author's private chezmoi repo, on macOS
-and in Git Bash on Windows. Each managed file there is a template that includes its file from
-this folder, so this folder is the only source for them:
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply cpeaustriajc
+```
 
-1. Clone this repo to `~/Projects/dotfiles`. The templates include files from that path.
-2. Run `chezmoi diff`, then `chezmoi apply`.
+This installs [chezmoi](https://www.chezmoi.io), clones `cpeaustriajc/dotfiles` and applies the
+files to `~`. It works on macOS and Linux.
 
-To change a file, edit it here, then run step 2. `chezmoi re-add` does not work for these
-templates. `settings.json` syncs only the keys in `claude/settings.json`. To keep an app change
-to one of those keys, run `.settings-capture.sh` in the chezmoi repo: it copies their live values
-to `claude/settings.json`.
+## What is in this folder
+
+| Live file | Source |
+|-----------|--------|
+| `~/.claude/CLAUDE.md`, `statusline-command.sh`, `hooks/*`, `agents/*`, `skills/workflow-models/` | `dot_claude/` |
+| `~/.claude/settings.json` | only the keys in `dot_claude/.settings.json`, merged by `dot_claude/modify_private_settings.json`; every other live key keeps its live text |
+| `~/.config/nvim/` | `dot_config/nvim/` |
+| `~/.config/tmux/` | `dot_config/tmux/`; `tmux.conf.tmpl` renders per OS |
+| `~/.zshrc` | `private_dot_zshrc` (mode 0600) |
+
+tmux is deprecated: it is no longer maintained. Use `claude agents` for parallel sessions. The
+status bar uses Catppuccin Mocha (dark) or Latte (light), chosen from the system appearance when
+the config loads. After you change the appearance, press `prefix r` to reload.
+
+## Change a file
+
+- Edit the file here, then run `chezmoi diff` and `chezmoi apply`.
+- `settings.json` syncs only the keys in `dot_claude/.settings.json`. To keep an app change to
+  one of those keys, run `dot_claude/.settings-capture.sh`: it copies their live values here.
+- The `settings-drift.sh` hook reports at session start when the live files differ from this
+  folder.
 
 ## Not in this folder
 
 - Every other `settings.json` key: hooks, plugins, permissions, `autoMode` and the UI choices.
   Each machine sets them itself; run `/auto-mode-setup` to teach auto mode about the machine.
-- The playwright-cli skill: its own installer puts it in `~/.claude/skills/`.
+- The playwright-cli skill: `playwright-cli install --skills -g` installs it.
 - Machine state: transcripts, history, caches, backups.

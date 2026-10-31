@@ -1,0 +1,26 @@
+fpath=(~/.zsh/completions $fpath)
+
+
+alias vim="nvim"
+alias vi="nvim"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# bun completions
+[ -s "/Users/cj/.bun/_bun" ] && source "/Users/cj/.bun/_bun"
+
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH=/Users/Shared/DBngin/mysql/9.5.0_arm64/bin:$PATH
+export GOPATH=$HOME/.go
+
+autoload -Uz compinit
+compinit
+
+export HOMEBREW_CURLRC=1
+
+
+
+
+eval "$(~/.local/bin/mise activate)"
+

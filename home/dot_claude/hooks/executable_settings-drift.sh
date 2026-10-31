@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # SessionStart: one line per kind of drift from the sources (synced settings.json keys, other
-# ~/.claude files), silent otherwise. Source: this repo's home/claude/. Only the keys of
-# home/claude/settings.json are synced; other live keys belong to the machine.
+# ~/.claude files), silent otherwise. Source: ~/Projects/dotfiles/home/. Only the keys of
+# dot_claude/.settings.json are synced; other live keys belong to the machine.
 set -euo pipefail
 
-public=~/Projects/dotfiles/home/claude/settings.json
+public=~/Projects/dotfiles/home/dot_claude/.settings.json
 live=~/.claude/settings.json
 [ -s "$live" ] || live=/dev/null
 
@@ -18,4 +18,4 @@ keys="$(jq -rn --slurpfile l "$live" --slurpfile s "$public" '
 # Claude Code rewrites settings.json itself, so chezmoi always lists it; the key check above judges it.
 files="$(chezmoi status ~/.claude | awk '{ p = substr($0, 4) } p != ".claude/settings.json" { printf "%s%s", (n++ ? ", " : ""), p }')"
 
-[ -z "$files" ] || echo "chezmoi: $files differ from the source; copy a live edit into ~/Projects/dotfiles/home/claude/, or diff before apply"
+[ -z "$files" ] || echo "chezmoi: $files differ from the source; copy a live edit into ~/Projects/dotfiles/home/, or diff before apply"

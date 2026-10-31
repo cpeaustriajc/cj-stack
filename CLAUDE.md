@@ -102,13 +102,10 @@ This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or
 
 ## Claude config is shared through chezmoi
 
-`home/claude/` holds the shared `~/.claude` config; templates in `$(chezmoi source-path)` include
-it and add the private parts. Never share machine state (`projects/`, memory, transcripts,
-`.claude.json`).
+`home/` is the chezmoi source (`.chezmoiroot`); `home/dot_claude/` is the `~/.claude` config.
+Never share machine state (`projects/`, memory, transcripts, `.claude.json`).
 
-- Edit here, then `chezmoi diff` and `chezmoi apply`: an apply silently reverts what Claude Code
-  wrote to `settings.json`. `chezmoi re-add` does not work on the templates.
-- `settings.json` syncs only the keys in `home/claude/settings.json`; every other key stays on
-  the machine. To keep a live edit of a synced key, run `dot_claude/.settings-capture.sh` in the
-  chezmoi source.
+- Edit here, then `chezmoi diff` and `chezmoi apply`.
+- `settings.json` syncs only the keys in `home/dot_claude/.settings.json`; every other key stays
+  on the machine. To keep a live edit of a synced key, run `home/dot_claude/.settings-capture.sh`.
 - This repo is public: no sensitive information.

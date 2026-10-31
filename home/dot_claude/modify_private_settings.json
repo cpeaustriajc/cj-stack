@@ -1,0 +1,44 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- /* The keys in dot_claude/.settings.json are synced; every other live key keeps its live text. */ -}}
+{{- $shared := include "dot_claude/.settings.json" | fromJson -}}
+{{- if not (trim .chezmoi.stdin) -}}
+{{ toPrettyJson $shared }}
+{{ else -}}
+{{- $live := fromJson .chezmoi.stdin -}}
+{{- $order := list -}}
+{{- $chunks := dict -}}
+{{- $key := "" -}}
+{{- range $line := splitList "\n" .chezmoi.stdin -}}
+{{-   $m := regexFind "^  \"[^\"]+\":" $line -}}
+{{-   if $m -}}
+{{-     $key = $m | trimPrefix "  " | trimSuffix ":" | fromJson -}}
+{{-     $order = append $order $key -}}
+{{-     $_ := set $chunks $key $line -}}
+{{-   else if and $key (ne $line "}") (ne $line "") -}}
+{{-     $_ := set $chunks $key (printf "%s\n%s" (get $chunks $key) $line) -}}
+{{-   end -}}
+{{- end -}}
+{{- $out := list -}}
+{{- if eq (len $order) (len $live) -}}
+{{-   range $k := $order -}}
+{{-     $raw := get $chunks $k | trimSuffix "," -}}
+{{-     if and (hasKey $shared $k) (ne (toJson (get $live $k)) (toJson (get $shared $k))) -}}
+{{-       $out = append $out (printf "  %s: %s" (toJson $k) (toPrettyJson (get $shared $k) | trimSuffix "\n" | indent 2 | trimPrefix "  ")) -}}
+{{-     else -}}
+{{-       $out = append $out $raw -}}
+{{-     end -}}
+{{-   end -}}
+{{-   range $k := keys $shared | sortAlpha -}}
+{{-     if not (hasKey $live $k) -}}
+{{-       $out = append $out (printf "  %s: %s" (toJson $k) (toPrettyJson (get $shared $k) | trimSuffix "\n" | indent 2 | trimPrefix "  ")) -}}
+{{-     end -}}
+{{-   end -}}
+{{ printf "{\n%s\n}" (join ",\n" $out) }}
+{{ else -}}
+{{-   $merged := deepCopy $live -}}
+{{-   range $k, $v := $shared -}}
+{{-     $_ := set $merged $k $v -}}
+{{-   end -}}
+{{ toPrettyJson $merged }}
+{{ end -}}
+{{- end -}}
