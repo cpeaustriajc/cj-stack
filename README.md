@@ -31,7 +31,7 @@ Install only the plugins you need. Add any mod the same way: `/plugin install <n
 | `knowledge` | Keep what the team learns — a decision log, research pages, and lessons from your past sessions. | project-knowledge, hone |
 
 If you installed `cj-stack@cj-stack` or `cj-lab@cj-stack` before, those plugins no longer exist.
-Uninstall them, then install the plugins above.
+To remove them and install the plugins above, follow [Migrate from the cj-stack and cj-lab plugins](MIGRATING.md).
 
 - While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
   a directory marketplace hot-reloads.
