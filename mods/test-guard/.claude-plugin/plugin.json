@@ -1,0 +1,4 @@
+{
+  "name": "test-guard",
+  "types": "./types/index.d.ts"
+}

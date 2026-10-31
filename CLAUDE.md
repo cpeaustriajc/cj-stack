@@ -61,8 +61,11 @@ not make a claim true, and a source that was right before can be wrong now.
 
 - `.claude-plugin/marketplace.json` is the only manifest. Each plugin has one entry there with its
   version, description and author.
-- A mod keeps a `.claude-plugin/plugin.json` only for its `userConfig`, because `claude plugin test`
-  reads the `userConfig` defaults only from there. Without it, linear-gate fails 86 of 105 tests.
+- Each mod has a `.claude-plugin/plugin.json` with only its `name`, `types` and `userConfig`;
+  display fields and `version` stay in the marketplace entry. Without it, `claude plugin validate`
+  finds no manifest in the mod's folder and does not check its `$.state` keys against `types`, and
+  `claude plugin test` reads no `userConfig` defaults (linear-gate failed 86 of 105 tests). With it,
+  the entry's `userConfig` does not apply.
 - `plugins/<plugin>/skills/<skill>/`: the shipped skill plugins `design`, `engineering`,
   `planning`, `knowledge`, `writing` and `principles`. A plugin's own evals go in `plugins/<plugin>/evals/`.
 - `mods/<mod>/`: one plugin for each mod.

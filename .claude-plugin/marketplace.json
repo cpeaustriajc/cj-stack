@@ -131,31 +131,29 @@
       "name": "linear-gate",
       "displayName": "Linear Gate",
       "description": "Stop Linear writes off shift — on shift, your permission mode decides; a delete or cancel asks you first.",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "author": {
         "name": "John Carlo Austria"
       },
       "source": "./mods/linear-gate",
-      "category": "productivity",
-      "types": "./types/index.d.ts"
+      "category": "productivity"
     },
     {
       "name": "session-modes",
       "displayName": "Session Modes",
       "description": "Keep a session in one working mode — /mode readonly, research, prototype or build blocks calls past it.",
-      "version": "0.14.4",
+      "version": "0.14.5",
       "author": {
         "name": "John Carlo Austria"
       },
       "source": "./mods/session-modes",
-      "category": "productivity",
-      "types": "./types/index.d.ts"
+      "category": "productivity"
     },
     {
       "name": "hone-nudge",
       "displayName": "Hone Nudge",
       "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a cj-stack skill.",
-      "version": "0.1.5",
+      "version": "0.1.6",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -166,7 +164,7 @@
       "name": "memory-lint",
       "displayName": "Memory Lint",
       "description": "Keep memory worth relearning — denies a memory write with task state, one-off references or repo detail.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -177,7 +175,7 @@
       "name": "work-folder",
       "displayName": "Work Folder",
       "description": "Keep agent files out of the repo — denies new plans or evidence outside .claude/work/ and clears old ones.",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -188,7 +186,7 @@
       "name": "test-guard",
       "displayName": "Test Guard",
       "description": "Stop tests changed to pass — denies an edit that changes or removes a test line at HEAD; additions pass.",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "author": {
         "name": "John Carlo Austria"
       },
