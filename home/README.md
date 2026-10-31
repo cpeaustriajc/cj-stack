@@ -14,16 +14,13 @@ this folder, so this folder is the only source for them:
 2. Run `chezmoi diff`, then `chezmoi apply`.
 
 To change a file, edit it here, then run step 2. `chezmoi re-add` does not work for these
-templates. To keep a `settings.json` change made in the app, run `.settings-capture.sh` in the
-chezmoi repo: it writes the public part to `claude/settings.json` and the private part to the
-chezmoi repo.
+templates. `settings.json` syncs only the keys in `claude/settings.json`. To keep an app change
+to one of those keys, run `.settings-capture.sh` in the chezmoi repo: it copies their live values
+to `claude/settings.json`.
 
 ## Not in this folder
 
-- `settings.json` entries that name third-party domains, a client's MCP server or private key
-  files. They stay in the chezmoi repo, and chezmoi appends them to the permission lists of
-  `claude/settings.json`.
-- The `autoMode` and `feedbackDrafts` settings keys. They name hosts and clients and stay on the
-  machine.
+- Every other `settings.json` key: hooks, plugins, permissions, `autoMode` and the UI choices.
+  Each machine sets them itself; run `/auto-mode-setup` to teach auto mode about the machine.
 - The playwright-cli skill: its own installer puts it in `~/.claude/skills/`.
 - Machine state: transcripts, history, caches, backups.

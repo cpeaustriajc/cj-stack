@@ -108,7 +108,7 @@ it and add the private parts. Never share machine state (`projects/`, memory, tr
 
 - Edit here, then `chezmoi diff` and `chezmoi apply`: an apply silently reverts what Claude Code
   wrote to `settings.json`. `chezmoi re-add` does not work on the templates.
-- For `settings.json`, run `dot_claude/.settings-capture.sh` in the chezmoi source: public part here,
-  private permissions to `.settings-private.json` there; commit both. `.settings-deny.json` stays
-  on this machine.
+- `settings.json` syncs only the keys in `home/claude/settings.json`; every other key stays on
+  the machine. To keep a live edit of a synced key, run `dot_claude/.settings-capture.sh` in the
+  chezmoi source.
 - This repo is public: no sensitive information.
