@@ -1,6 +1,0 @@
-__pycache__/
-tests/last-run.log
-scratchpad/
-.harvest-cache.json
-redteam/last-run.log
-redteam/results-*.json

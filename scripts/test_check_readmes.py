@@ -76,17 +76,11 @@ class Banned(unittest.TestCase):
 
 
 class StatusLine(unittest.TestCase):
-    def test_in_progress_skill_that_cj_lab_lists(self):
-        self.assertEqual(status_line("why", "in-progress", {"why"}), "> In progress: only in the opt-in `cj-lab` plugin.")
-
-    def test_in_progress_skill_that_no_plugin_lists(self):
-        self.assertEqual(status_line("scout", "in-progress", {"why"}), "> In progress: not shipped in any plugin.")
-
-    def test_archived_skill(self):
-        self.assertEqual(status_line("old", "archived", {"old"}), "> Archived: not maintained.")
+    def test_lab_skill(self):
+        self.assertEqual(status_line("in-progress"), "> In progress: not shipped in any plugin.")
 
     def test_shipped_skill_has_none(self):
-        self.assertIsNone(status_line("hone", "knowledge", {"hone"}))
+        self.assertIsNone(status_line(None))
 
 
 if __name__ == "__main__":

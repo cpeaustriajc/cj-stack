@@ -78,4 +78,5 @@ To turn the mod off, run `claude plugin disable linear-gate@cj-stack`.
 - [hooks/dialog.test.ts](hooks/dialog.test.ts): the tests for the dialog colors.
 - [hooks/headless.test.ts](hooks/headless.test.ts): the tests for sessions with no surface.
 - [hooks/shift.test.ts](hooks/shift.test.ts): the tests for the shift hours and the `onShift` option.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.
+- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the options and their defaults (`userConfig`).

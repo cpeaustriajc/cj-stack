@@ -136,7 +136,7 @@ DECOYS = {
 
 def check(mods_dir, log):
     mods = sorted(p for p in mods_dir.iterdir()
-                  if p.name != "archived" and (p / ".claude-plugin" / "plugin.json").is_file())
+                  if (p / "hooks").is_dir())
     tmp = tempfile.mkdtemp(prefix="claude-owned-")
     home, project = str(Path(tmp, "home")), str(Path(tmp, "project"))
     os.makedirs(home)

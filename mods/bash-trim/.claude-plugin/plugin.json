@@ -1,6 +1,0 @@
-{
-  "name": "bash-trim",
-  "version": "0.1.0",
-  "description": "Cuts a long successful Bash output to its first 2,000 and last 3,000 characters with a count of the cut lines; read-like commands, failures and saved outputs pass whole",
-  "author": { "name": "CJ" }
-}

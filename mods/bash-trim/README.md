@@ -52,4 +52,4 @@ To turn the mod off, run `claude plugin disable bash-trim@cj-stack`.
 
 - [hooks/register.ts](hooks/register.ts): the hook source.
 - [hooks/register.test.ts](hooks/register.test.ts): the tests.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.
