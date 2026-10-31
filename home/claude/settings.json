@@ -162,6 +162,7 @@
     "engineering@cj-stack": true,
     "planning@cj-stack": true,
     "knowledge@cj-stack": true,
+    "writing@cj-stack": true,
     "hyperframes@hyperframes": false,
     "linear-gate@cj-stack": true,
     "frontend-design@anthropic-plugin-directory": true,
