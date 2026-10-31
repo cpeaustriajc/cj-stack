@@ -93,8 +93,9 @@ This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or
 
 ## Claude config is shared through chezmoi
 
-`home/claude/` holds the shared `~/.claude` files; templates in `$(chezmoi source-path)` include
-them and add the private parts. Paths start with `~` (Windows uses Git Bash).
+`home/claude/` holds the shared `~/.claude` config; templates in `$(chezmoi source-path)` include
+it and add the private parts. Never share machine state (`projects/`, memory, transcripts,
+`.claude.json`). Paths start with `~` (Windows uses Git Bash).
 
 - Edit here, then `chezmoi diff` and `chezmoi apply`: an apply silently reverts what Claude Code
   wrote to `settings.json`. `chezmoi re-add` does not work on the templates.
