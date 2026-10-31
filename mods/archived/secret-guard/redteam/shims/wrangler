@@ -1,6 +1,0 @@
-#!/bin/bash
-case "$*" in
-  *"secret list"*) cat "$RT_DATA/wrangler_secrets.json";;
-  *whoami*) cat "$RT_DATA/wrangler_whoami.txt";;
-  *) cat "$RT_DATA/wrangler_whoami.txt";;
-esac
