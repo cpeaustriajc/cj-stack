@@ -1,4 +1,4 @@
-# cj-stack
+# dotfiles
 
 CJ's skills and mods for Claude Code.
 
@@ -6,23 +6,23 @@ CJ's skills and mods for Claude Code.
 - [Skills](#skills): skills shipped in six plugins: Design, Engineering, Planning, Knowledge, Writing and Principles
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
 - [Models](models/README.md): which model does what, and why cross-vendor review stays
-- [Scope](SCOPE.md): what cj-stack is, and the ideas it rejects with the reason for each
+- [Scope](SCOPE.md): what dotfiles is, and the ideas it rejects with the reason for each
 - [painting-craft: before and after](#painting-craft-before-and-after)
 
 ## Install
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install planning@cj-stack
-/plugin install engineering@cj-stack
-/plugin install design@cj-stack
-/plugin install knowledge@cj-stack
-/plugin install writing@cj-stack
-/plugin install principles@cj-stack
-/plugin install linear-gate@cj-stack
+/plugin install planning@dotfiles
+/plugin install engineering@dotfiles
+/plugin install design@dotfiles
+/plugin install knowledge@dotfiles
+/plugin install writing@dotfiles
+/plugin install principles@dotfiles
+/plugin install linear-gate@dotfiles
 ```
 
-Install only the plugins you need. Add any mod the same way: `/plugin install <name>@cj-stack`.
+Install only the plugins you need. Add any mod the same way: `/plugin install <name>@dotfiles`.
 
 | Plugin | What it is for | Skills |
 |---|---|---|
@@ -33,10 +33,10 @@ Install only the plugins you need. Add any mod the same way: `/plugin install <n
 | `writing` | Write so people can read — docs in plain ASD-STE100, AI tells cut, and plain re-pitches and catch-ups in chat. | technical-writing, unslop, bro, ketchup |
 | `principles` | Apply engineering principles by name — prove it works, subtract before you add, attack the premise, and 17 more. | principles, and the 20 `principle-*` skills it indexes |
 
-If you installed `cj-stack@cj-stack` or `cj-lab@cj-stack` before, those plugins no longer exist.
-To remove them and install the plugins above, follow [Migrate from the cj-stack and cj-lab plugins](MIGRATING.md).
+If you installed `dotfiles@dotfiles` or `cj-lab@dotfiles` before, those plugins no longer exist.
+To remove them and install the plugins above, follow [Migrate from the dotfiles and cj-lab plugins](MIGRATING.md).
 
-- While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/cj-stack`):
+- While editing a mod, add the local clone instead (`/plugin marketplace add ~/Projects/dotfiles`):
   a directory marketplace hot-reloads.
 - Other agents (Codex and anything that reads `~/.agents/skills`): `scripts/link-skills.sh`.
 
@@ -92,7 +92,7 @@ tool specifics go in a skill's adapters, and a project's own facts stay in that 
 |---|---|---|
 | [linear-gate](mods/linear-gate/README.md) | blocks Linear writes off shift; on shift, asks only before a delete or cancel | by default |
 | [session-modes](mods/session-modes/README.md) | `/mode readonly`, `research`, `prototype`, `build` or `off`, enforced for the session | optional |
-| [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a cj-stack skill run | optional |
+| [hone-nudge](mods/hone-nudge/README.md) | suggests `/hone <skill>` when you corrected Claude during a dotfiles skill run | optional |
 | [memory-lint](mods/memory-lint/README.md) | denies an auto-memory write holding task state or anything short-lived (dates, branches, plan or /tmp paths), PR or commit references, file:line pointers or code, or an oversized entry; pruning always passes | optional |
 | [work-folder](mods/work-folder/README.md) | denies a new agent working file (plan, evidence, prototype, scratch, report, probe test) outside `.claude/work/`, with a per-repo allow list, and removes `.claude/work/` entries not changed for a day | optional |
 | [test-guard](mods/test-guard/README.md) | denies an Edit or Write that changes or removes a line a test file has at `HEAD`; additions pass, `/test-guard allow <path>` lets one file change | optional |

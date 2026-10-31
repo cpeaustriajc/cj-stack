@@ -1,14 +1,14 @@
 [
  {
-  "query": "run the cj-stack checks before I commit this skill change",
+  "query": "run the dotfiles checks before I commit this skill change",
   "should_trigger": true
  },
  {
-  "query": "run skill-doctor on cj-stack",
+  "query": "run skill-doctor on dotfiles",
   "should_trigger": true
  },
  {
-  "query": "how many tokens does each cj-stack skill cost per turn",
+  "query": "how many tokens does each dotfiles skill cost per turn",
   "should_trigger": true
  },
  {
@@ -28,7 +28,7 @@
   "should_trigger": false
  },
  {
-  "query": "install the cj-stack plugin",
+  "query": "install the dotfiles plugin",
   "should_trigger": false
  },
  {

@@ -24,10 +24,10 @@ The `writing` plugin ships this skill. Add the marketplace, then install the plu
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install writing@cj-stack
+/plugin install writing@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable writing@cj-stack`. This also turns off every other skill in `writing`.
+To turn the plugin off, run `claude plugin disable writing@dotfiles`. This also turns off every other skill in `writing`.
 
 ## What it does
 

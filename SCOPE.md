@@ -1,6 +1,6 @@
 # Scope
 
-cj-stack is a skill stack for one developer. Its skills hold methods that work on any tool. A
+dotfiles is a skill stack for one developer. Its skills hold methods that work on any tool. A
 fan-out runs each agent on the cheapest model that can do its job: see
 [models/README.md](models/README.md).
 

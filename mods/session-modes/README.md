@@ -12,10 +12,10 @@ Each mode also adds one sentence to the system prompt (the instructions Claude r
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install session-modes@cj-stack
+/plugin install session-modes@dotfiles
 ```
 
-To see that it is on, run `claude plugin list` and look for `session-modes`. The mod is optional: `cj-stack` does not install it.
+To see that it is on, run `claude plugin list` and look for `session-modes`. The mod is optional: `dotfiles` does not install it.
 
 ## Example
 
@@ -81,7 +81,7 @@ The mod writes `{ "v": 1, "mode": "readonly" }` to `~/.claude/mod-state/<session
 
 ## Settings
 
-No settings. To turn the mod off, run `claude plugin disable session-modes@cj-stack`.
+No settings. To turn the mod off, run `claude plugin disable session-modes@dotfiles`.
 
 ## Limits
 

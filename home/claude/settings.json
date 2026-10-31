@@ -158,17 +158,17 @@
     "chrome-devtools-mcp@chrome-devtools-plugins": false,
     "cloudflare@cloudflare": false,
     "swift-lsp@claude-plugins-official": true,
-    "design@cj-stack": true,
-    "engineering@cj-stack": true,
-    "planning@cj-stack": true,
-    "knowledge@cj-stack": true,
-    "writing@cj-stack": true,
+    "design@dotfiles": true,
+    "engineering@dotfiles": true,
+    "planning@dotfiles": true,
+    "knowledge@dotfiles": true,
+    "writing@dotfiles": true,
     "hyperframes@hyperframes": false,
-    "linear-gate@cj-stack": true,
+    "linear-gate@dotfiles": true,
     "frontend-design@anthropic-plugin-directory": true,
-    "hone-nudge@cj-stack": true,
-    "work-folder@cj-stack": true,
-    "session-modes@cj-stack": true
+    "hone-nudge@dotfiles": true,
+    "work-folder@dotfiles": true,
+    "session-modes@dotfiles": true
   },
   "extraKnownMarketplaces": {
     "chrome-devtools-plugins": {
@@ -189,10 +189,10 @@
         "repo": "cloudflare/skills"
       }
     },
-    "cj-stack": {
+    "dotfiles": {
       "source": {
         "source": "directory",
-        "path": "~/Projects/cj-stack"
+        "path": "~/Projects/dotfiles"
       }
     },
     "hyperframes": {

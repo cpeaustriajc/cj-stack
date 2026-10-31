@@ -12,10 +12,10 @@ memory-lint checks each memory write. If the note holds one of these, the mod de
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install memory-lint@cj-stack
+/plugin install memory-lint@dotfiles
 ```
 
-To see that it is on, run `claude plugin list` and look for `memory-lint`. The mod is optional: `cj-stack` does not install it.
+To see that it is on, run `claude plugin list` and look for `memory-lint`. The mod is optional: `dotfiles` does not install it.
 
 ## Example
 
@@ -51,9 +51,9 @@ The default memory directory is `~/.claude/projects/<project>/memory`. A file ou
 |---|---|---|
 | `memoryDir` | empty | Your `autoMemoryDirectory` setting, if you moved memory out of the default directory. |
 
-With the default, the mod checks only the default directory. Run `claude plugin configure memory-lint@cj-stack` to show the options and which are unset.
+With the default, the mod checks only the default directory. Run `claude plugin configure memory-lint@dotfiles` to show the options and which are unset.
 
-To turn the mod off, run `claude plugin disable memory-lint@cj-stack`.
+To turn the mod off, run `claude plugin disable memory-lint@dotfiles`.
 
 ## Limits
 

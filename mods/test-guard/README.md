@@ -12,10 +12,10 @@ test-guard denies that edit and tells Claude to add a test or to explain the cha
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install test-guard@cj-stack
+/plugin install test-guard@dotfiles
 ```
 
-To see that it is on, run `claude plugin list` and look for `test-guard`. The mod is optional: `cj-stack` does not install it.
+To see that it is on, run `claude plugin list` and look for `test-guard`. The mod is optional: `dotfiles` does not install it.
 
 ## Example
 
@@ -47,7 +47,7 @@ A line that Claude added in this session is not in `HEAD`, so Claude can change 
 
 No settings and no allow list file.
 
-To turn the mod off, run `claude plugin disable test-guard@cj-stack`.
+To turn the mod off, run `claude plugin disable test-guard@dotfiles`.
 
 ## Limits
 

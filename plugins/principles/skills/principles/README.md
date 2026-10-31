@@ -28,7 +28,7 @@ The `principles` plugin ships this skill. Add the marketplace, then install the 
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install principles@cj-stack
+/plugin install principles@dotfiles
 ```
 
 The skill then loads as `/principles:principles`.
@@ -45,7 +45,7 @@ The skill then loads as `/principles:principles`.
 
 - It does not change files on its own. It changes how Claude decides while it works.
 - It holds no project rules. Your repo's own rules win where they conflict.
-- It leaves out two pstack principles that the cj-stack setup covers already: Guard the Context Window and Never Block on the Human.
+- It leaves out two pstack principles that the dotfiles setup covers already: Guard the Context Window and Never Block on the Human.
 
 ## More
 

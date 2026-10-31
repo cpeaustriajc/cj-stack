@@ -29,7 +29,7 @@ The `planning` plugin ships this skill. Add the marketplace, then install the pl
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install planning@cj-stack
+/plugin install planning@dotfiles
 ```
 
 The skill then loads as `/planning:triage`.

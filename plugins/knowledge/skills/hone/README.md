@@ -12,7 +12,7 @@ Use it when you tell Claude the same thing in many sessions and want a fix that 
 
 Do not use it to update `CLAUDE.md` from one session. A correction from a single run does not qualify. Do not use it to review a diff: use `interrogate`. For a general report on how you use Claude Code, run the built-in `/insights` command.
 
-The optional [hone-nudge](../../../../mods/hone-nudge/) mod suggests `/hone <skill>` after you correct Claude during a cj-stack skill run.
+The optional [hone-nudge](../../../../mods/hone-nudge/) mod suggests `/hone <skill>` after you correct Claude during a dotfiles skill run.
 
 ## Example
 
@@ -30,10 +30,10 @@ The `knowledge` plugin ships this skill. Add the marketplace, then install the p
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install knowledge@cj-stack
+/plugin install knowledge@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable knowledge@cj-stack`. This also turns off every other skill in `knowledge`.
+To turn the plugin off, run `claude plugin disable knowledge@dotfiles`. This also turns off every other skill in `knowledge`.
 
 ## What it does
 

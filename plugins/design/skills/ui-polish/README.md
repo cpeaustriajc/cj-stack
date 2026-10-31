@@ -26,10 +26,10 @@ The `design` plugin ships this skill. Add the marketplace, then install the plug
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install design@cj-stack
+/plugin install design@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable design@cj-stack`. This also turns off every other skill in `design`.
+To turn the plugin off, run `claude plugin disable design@dotfiles`. This also turns off every other skill in `design`.
 
 Requirement: a browser that Claude can drive, so it sees the real screen.
 

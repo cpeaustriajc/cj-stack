@@ -31,10 +31,10 @@ The `engineering` plugin ships this skill. Add the marketplace, then install the
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install engineering@cj-stack
+/plugin install engineering@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable engineering@cj-stack`. This also turns off every other skill in `engineering`.
+To turn the plugin off, run `claude plugin disable engineering@dotfiles`. This also turns off every other skill in `engineering`.
 
 ## What it does
 

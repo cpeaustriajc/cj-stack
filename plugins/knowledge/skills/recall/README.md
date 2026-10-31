@@ -25,7 +25,7 @@ The `knowledge` plugin ships this skill. Add the marketplace, then install the p
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install knowledge@cj-stack
+/plugin install knowledge@dotfiles
 ```
 
 The skill then loads as `/knowledge:recall`.

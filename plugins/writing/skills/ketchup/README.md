@@ -26,7 +26,7 @@ The `writing` plugin ships this skill. Add the marketplace, then install the plu
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install writing@cj-stack
+/plugin install writing@dotfiles
 ```
 
 The skill then loads as `/writing:ketchup`.

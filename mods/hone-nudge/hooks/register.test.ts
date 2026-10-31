@@ -84,7 +84,7 @@ test('a correction after another skill took over is credited to that skill', asy
   expect(w.logs).toEqual(['1 correction during break-it. Run /hone break-it?'])
 })
 
-test('skills outside cj-stack are ignored, including a foreign prefix', async ($, on) => {
+test('skills outside dotfiles are ignored, including a foreign prefix', async ($, on) => {
   const w = world(on, lines(skillUse('other:ui-polish'), claude, said('no'), skillUse('deploy'), claude, said('no')))
   await stop($)
   expect(w.logs).toEqual([])

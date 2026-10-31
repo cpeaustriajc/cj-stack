@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Drives the cj-stack marketplace the way a user's Claude Code sees it.
-# Usage (from the repo root): .claude/skills/run-cj-stack/smoke.sh [validate|tests|doctor|details|routing|all]
+# Drives the dotfiles marketplace the way a user's Claude Code sees it.
+# Usage (from the repo root): .claude/skills/run-dotfiles/smoke.sh [validate|tests|doctor|details|routing|all]
 # `all` skips routing: it costs about $2 of model calls per run.
 set -uo pipefail
 root="$(cd "$(dirname "$0")/../../.." && pwd)"; cd "$root"
@@ -15,7 +15,7 @@ installed() {
   [[ -n "${cfg:-}" ]] && return
   cfg="$(mktemp -d)"; trap 'rm -rf "$cfg"' EXIT
   CLAUDE_CONFIG_DIR="$cfg" claude plugin marketplace add "$root" >/dev/null
-  for p in "${plugins[@]}"; do CLAUDE_CONFIG_DIR="$cfg" claude plugin install "$p@cj-stack" >/dev/null; done
+  for p in "${plugins[@]}"; do CLAUDE_CONFIG_DIR="$cfg" claude plugin install "$p@dotfiles" >/dev/null; done
 }
 
 validate() { say "validate"; run claude plugin validate .; }
@@ -63,10 +63,10 @@ doctor() {
   grep -v anthropic-skills <<<"$out"; [[ $st -eq 0 ]] || { failed=1; echo "FAILED: /skill-doctor exit $st"; }
 }
 
-details() { say "plugin details"; installed; for p in "${plugins[@]}"; do run env CLAUDE_CONFIG_DIR="$cfg" claude plugin details "$p@cj-stack"; done; }
+details() { say "plugin details"; installed; for p in "${plugins[@]}"; do run env CLAUDE_CONFIG_DIR="$cfg" claude plugin details "$p@dotfiles"; done; }
 
 # The marketplace entry has no plugin.json, so `claude plugin eval .` resolves no plugin. Build a
-# throwaway plugin of symlinks to the shipped skills, named cj-stack, and evaluate that.
+# throwaway plugin of symlinks to the shipped skills, named dotfiles, and evaluate that.
 routing() {
   say "routing evals: each request loads its own skill and no neighbour"
   local p; p="$(mktemp -d)"; mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
@@ -77,7 +77,7 @@ routing() {
     else ln -s "${d%/}" "$p/skills/$(basename "$d")"; fi
   done
   [[ -n "$(ls "$p/skills")" ]] || { failed=1; echo "FAILED: no skills linked into the eval plugin"; return; }
-  echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
+  echo '{"name":"dotfiles","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
   cp -r evals/routing/. "$p/evals/"
   # Cases with a scaffold_script test behaviour, not routing, and fail without --scaffold.
   grep -rl --include=case.yaml scaffold_script "$p"/evals "$p"/skills 2>/dev/null |

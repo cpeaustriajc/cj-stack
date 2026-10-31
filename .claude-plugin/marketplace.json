@@ -1,5 +1,5 @@
 {
-  "name": "cj-stack",
+  "name": "dotfiles",
   "owner": {
     "name": "John Carlo Austria",
     "url": "https://github.com/cpeaustriajc"
@@ -12,7 +12,7 @@
       "name": "design",
       "displayName": "Design",
       "description": "Sign off UI work and motion — check it against the design, add missing microinteractions, paint scenes in code, make launch videos.",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -33,7 +33,7 @@
       "name": "engineering",
       "displayName": "Engineering",
       "description": "Prove the work in the real app — playbooks, design-first builds, unattended loops, bug hunts, code history, review and PRs.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -152,7 +152,7 @@
     {
       "name": "hone-nudge",
       "displayName": "Hone Nudge",
-      "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a cj-stack skill.",
+      "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a dotfiles skill.",
       "version": "0.1.6",
       "author": {
         "name": "John Carlo Austria"

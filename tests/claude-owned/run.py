@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Proves no cj-stack mod denies or approves an action Claude Code owns (CLAUDE.md, Tool-neutral).
+"""Proves no dotfiles mod denies or approves an action Claude Code owns (CLAUDE.md, Tool-neutral).
 
 Usage: python3 tests/claude-owned/run.py [--mods DIR] [--self-test]
 

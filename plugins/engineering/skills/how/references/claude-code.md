@@ -9,7 +9,7 @@
 
 - Both agent types have only read tools, so no spawn can change a file. Never use
   `general-purpose` here: it can edit.
-- Never `model: "opus"`: the main session presents. Models follow cj-stack's `models/README.md`.
+- Never `model: "opus"`: the main session presents. Models follow dotfiles's `models/README.md`.
 - Send every explorer `Agent` call in one message, so they run in parallel.
 
 ## Stepper

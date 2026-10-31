@@ -1,17 +1,17 @@
 ---
-name: run-cj-stack
+name: run-dotfiles
 description: >
-  This skill should be used to run, test, validate or inspect the cj-stack marketplace as Claude
+  This skill should be used to run, test, validate or inspect the dotfiles marketplace as Claude
   Code loads it: plugin validation, every mod's tests, the skill script tests, plugin token costs,
   /skill-doctor with the skill plugins installed, and the trigger and routing evals. Use it before
   committing a change to a skill, mod or manifest, or to see what a skill costs per turn.
 user-invocable: false
 ---
 
-# Run cj-stack
+# Run dotfiles
 
-cj-stack has no app to launch: the "running" product is the marketplace as Claude Code installs
-it. The driver is `.claude/skills/run-cj-stack/smoke.sh`, which validates it, runs every test
+dotfiles has no app to launch: the "running" product is the marketplace as Claude Code installs
+it. The driver is `.claude/skills/run-dotfiles/smoke.sh`, which validates it, runs every test
 suite, installs the skill plugins into a throwaway config directory and asks Claude Code what it loaded.
 Paths here are relative to the repo root.
 
@@ -22,12 +22,12 @@ Paths here are relative to the repo root.
 ## Run (agent path)
 
 ```bash
-.claude/skills/run-cj-stack/smoke.sh all       # everything, about 20 s; exit 0 pass, 1 fail, 2 blocked
-.claude/skills/run-cj-stack/smoke.sh validate  # claude plugin validate .
-.claude/skills/run-cj-stack/smoke.sh tests     # each mod's hook tests + skill script tests
-.claude/skills/run-cj-stack/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
-.claude/skills/run-cj-stack/smoke.sh doctor    # /skill-doctor with the skill plugins installed
-.claude/skills/run-cj-stack/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
+.claude/skills/run-dotfiles/smoke.sh all       # everything, about 20 s; exit 0 pass, 1 fail, 2 blocked
+.claude/skills/run-dotfiles/smoke.sh validate  # claude plugin validate .
+.claude/skills/run-dotfiles/smoke.sh tests     # each mod's hook tests + skill script tests
+.claude/skills/run-dotfiles/smoke.sh details   # skills and per-skill token cost, always-on and on-invoke
+.claude/skills/run-dotfiles/smoke.sh doctor    # /skill-doctor with the skill plugins installed
+.claude/skills/run-dotfiles/smoke.sh routing   # claude plugin eval on evals/routing, about $2; RUNS=1 halves it
 ```
 
 `routing` checks that each request loads its own skill and not its nearest neighbour, with every
@@ -50,7 +50,7 @@ bash plugins/knowledge/skills/hone/scripts/test_corrections.sh
 ## Gotchas
 
 - **`/skill-doctor` runs headless**: `claude -p "/skill-doctor"` prints its table and exits.
-- **`--plugin-dir .` loads none of cj-stack's skills.** The repo root is a marketplace
+- **`--plugin-dir .` loads none of dotfiles's skills.** The repo root is a marketplace
   (`.claude-plugin/marketplace.json`, one source per plugin such as `./plugins/planning`), not a plugin,
   so skill-doctor shows only claude.ai and user skills. Install from the local marketplace instead,
   as the driver does.

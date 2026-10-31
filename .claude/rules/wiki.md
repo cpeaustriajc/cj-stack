@@ -12,7 +12,7 @@ the structure, the sentence lengths and the banned words in Sentences.
 
 ## Reader
 
-A developer who uses Claude Code but has never seen cj-stack. They give the README 30 seconds
+A developer who uses Claude Code but has never seen dotfiles. They give the README 30 seconds
 to learn what the thing is, whether they need it, and how to turn it on.
 
 ## Write from the source
@@ -50,7 +50,7 @@ Keep the README under 100 lines. Use `###` headings inside a section only when i
   sentences, about one topic.
 - Active voice, present tense, "you" for the reader. Keep the articles ("the", "a").
 - Put a condition before the instruction: "If the hook denies a write, read the toast."
-- Use common words. Define a cj-stack or Claude Code term at its first use, or link it.
+- Use common words. Define a dotfiles or Claude Code term at its first use, or link it.
 - One word keeps one meaning in the whole README: do not change between "mod", "plugin" and
   "hook" for the same thing. No noun cluster longer than three words.
 - No abbreviations such as "e.g." or "i.e.". No filler ("simply", "just", "powerful",

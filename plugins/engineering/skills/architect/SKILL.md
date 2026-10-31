@@ -37,7 +37,7 @@ Two runners on two different models each write one candidate from `references/ru
 2. Write your own candidate in this session. Do not read the Sonnet runner's result until your candidate is complete.
 3. Then read the Sonnet candidate.
 
-Models follow cj-stack's `models/README.md`.
+Models follow dotfiles's `models/README.md`.
 
 Design it twice. Require at least two structurally distinct candidates, even when the first looks sufficient. This is the **exhaust-the-design-space** principle (the **principles** skill in the `principles` plugin) made concrete. Whole-shape alternatives, not point fixes inside one shape. If both runners return the same shape, show both anyway and say they converged; never rewrite your candidate after reading the other.
 

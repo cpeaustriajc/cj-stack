@@ -1,4 +1,4 @@
-# cj-stack
+# dotfiles
 
 Write every rule, skill line and mod on the assumption that a later model makes it obsolete:
 name the failure it prevents, so a run without it can show when that failure stops. When a
@@ -108,7 +108,7 @@ it and add the private parts. Never share machine state (`projects/`, memory, tr
 
 - Edit here, then `chezmoi diff` and `chezmoi apply`: an apply silently reverts what Claude Code
   wrote to `settings.json`. `chezmoi re-add` does not work on the templates.
-- For `settings.json`, run `dot_claude/.settings-capture.sh` in dotfiles: public part here,
+- For `settings.json`, run `dot_claude/.settings-capture.sh` in the chezmoi source: public part here,
   private permissions to `.settings-private.json` there; commit both. `.settings-deny.json` stays
   on this machine.
 - This repo is public: no sensitive information.

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # SessionStart: one line per kind of drift from the sources (settings.json keys, other ~/.claude
-# files), silent otherwise. Sources: cj-stack home/claude/ and, for private permission entries, the
-# dotfiles repo's dot_claude/.settings-private.json.
+# files), silent otherwise. Sources: this repo's home/claude/ and, for private permission entries, the
+# private chezmoi repo's dot_claude/.settings-private.json.
 set -euo pipefail
 
 src="$(chezmoi source-path)/dot_claude"
-public=~/Projects/cj-stack/home/claude/settings.json
+public=~/Projects/dotfiles/home/claude/settings.json
 live=~/.claude/settings.json
 [ -s "$live" ] || live=/dev/null
 
@@ -28,4 +28,4 @@ keys="$(jq -rn \
 # Claude Code rewrites settings.json itself, so chezmoi always lists it; the key check above judges it.
 files="$(chezmoi status ~/.claude | awk '{ p = substr($0, 4) } p != ".claude/settings.json" { printf "%s%s", (n++ ? ", " : ""), p }')"
 
-[ -z "$files" ] || echo "chezmoi: $files differ from the source; copy a live edit into cj-stack home/claude/, or diff before apply"
+[ -z "$files" ] || echo "chezmoi: $files differ from the source; copy a live edit into ~/Projects/dotfiles/home/claude/, or diff before apply"

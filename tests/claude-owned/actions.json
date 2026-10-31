@@ -1,6 +1,6 @@
 {
   "seed": {
-    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"defaultMode\": \"default\",\n    \"allow\": [\"Read\"]\n  },\n  \"apiKeyHelper\": \"~/.claude/key.sh\",\n  \"enabledPlugins\": {\n    \"secret-guard@cj-stack\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/fmt.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+    "~/.claude/settings.json": "{\n  \"env\": {\n    \"CLAUDE_CODE_SUBPROCESS_ENV_SCRUB\": \"1\"\n  },\n  \"permissions\": {\n    \"defaultMode\": \"default\",\n    \"allow\": [\"Read\"]\n  },\n  \"apiKeyHelper\": \"~/.claude/key.sh\",\n  \"enabledPlugins\": {\n    \"secret-guard@dotfiles\": true\n  },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Edit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"~/.claude/hooks/fmt.sh\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
     "<project>/.claude/hooks/fmt.sh": "#!/bin/sh\nnpx prettier --write \"$1\"\n",
     "<project>/.claude/skills/x/SKILL.md": "---\nname: x\ndescription: Demo skill.\n---\n# Demo\nSay hello.\n"
   },

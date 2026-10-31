@@ -11,7 +11,7 @@
   own candidate.
 - Both runner agent types have only read tools. Never use `general-purpose` for the runner: it can
   edit, and no file changes before the pick.
-- Never `model: "opus"` on a subagent; the session is the Opus runner. Models follow cj-stack's
+- Never `model: "opus"` on a subagent; the session is the Opus runner. Models follow dotfiles's
   `models/README.md`.
 - In the Phase A grounding, the how method's explorers and explainer use the spawns in
   `../how/references/claude-code.md`.
@@ -37,6 +37,6 @@
 
 ## Pull request
 
-- After the pick, open the pull request with cj-stack's `create-pr` skill, with the rationale as
+- After the pick, open the pull request with dotfiles's `create-pr` skill, with the rationale as
   its body. Without that skill, use `gh pr create --body-file <rationale file>`.
 - If a pull request is already open for the branch, `gh pr edit --body-file` replaces its body.

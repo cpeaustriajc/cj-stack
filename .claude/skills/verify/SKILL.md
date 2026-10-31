@@ -1,7 +1,7 @@
 ---
 name: verify
 description: >
-  This skill should be used before a commit or a push in cj-stack, and when the user says "verify
+  This skill should be used before a commit or a push in dotfiles, and when the user says "verify
   this" or "prove it works". It maps the diff to features, runs each feature's checks with their
   real exit codes, saves the logs and prints one result line per feature: VERIFIED, NOT VERIFIED
   or BLOCKED.
@@ -12,8 +12,8 @@ user-invocable: false
 
 ## Launch
 
-cj-stack has no app to launch. The project's run skill is `run-cj-stack`; its driver
-`.claude/skills/run-cj-stack/smoke.sh` is the only launch interface. Do not copy its steps here.
+dotfiles has no app to launch. The project's run skill is `run-dotfiles`; its driver
+`.claude/skills/run-dotfiles/smoke.sh` is the only launch interface. Do not copy its steps here.
 
 ## Doctor
 
@@ -53,7 +53,7 @@ Logs go to `.claude/work/verify/<short sha>/`, which git ignores. Print that pat
 
 ## Full suite
 
-`.claude/skills/run-cj-stack/smoke.sh all` (about 20 s) before every push to `main`; `routing`
+`.claude/skills/run-dotfiles/smoke.sh all` (about 20 s) before every push to `main`; `routing`
 only when the Routing feature is selected. Exit 2 is BLOCKED (the line says what is missing), not a pass.
 
 ## Result line format

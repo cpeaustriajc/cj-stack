@@ -58,6 +58,6 @@ A pass that waits on CI, a deploy or a long job uses `/loop` without an interval
 itself with `ScheduleWakeup`, rather than a goal that polls. Self-paced loops end after one missed
 wakeup and are not restored on resume.
 
-## With cj-stack mods
+## With dotfiles mods
 
 - **`session-modes`**: `/mode no-pr` suits a loop whose work I review before a pull request.

@@ -25,7 +25,7 @@ The `design` plugin ships this skill. Add the marketplace, then install the plug
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install design@cj-stack
+/plugin install design@dotfiles
 ```
 
 The skill then loads as `/design:microinteraction`.

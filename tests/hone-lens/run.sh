@@ -14,7 +14,7 @@ if [[ -n "${1:-}" ]]; then
   git -C "$root" archive "$1" "$src" | tar -x -C "$p/old"
   mv "$p/old/$src" "$p/skills/hone"
 fi
-echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
+echo '{"name":"dotfiles","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
 cp -R "$root/tests/hone-lens/cases/." "$p/evals/"
 out="$root/.claude/work/hone-lens"; label="$(tr '/' '-' <<<"${1:-current}")"; mkdir -p "$out"
 (cd "$p" && claude plugin eval . --eval-dir evals --runs "${RUNS:-2}" --scaffold --allow-tools Bash \

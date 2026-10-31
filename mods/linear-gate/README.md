@@ -12,7 +12,7 @@ On shift, a dialog for every write costs you many clicks. Auto mode can decide m
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install linear-gate@cj-stack
+/plugin install linear-gate@dotfiles
 ```
 
 To see that it is on, run `claude plugin list` and look for `linear-gate`. The install steps in the root README include this mod.
@@ -59,9 +59,9 @@ The mod treats a tool as a write if its name is in the list in `hooks/register.t
 | `timeZone` | empty | An IANA zone such as `Asia/Manila`. Empty uses the zone of your machine. |
 | `onShift` | `drastic` | `host`: your permission mode decides every write. `drastic`: ask before a delete, retire or cancel. `ask`: ask before every write. |
 
-An hour that is not `HH:MM` makes both hours fall back to 09:00 and 18:00. Run `claude plugin configure linear-gate@cj-stack` to set them on your machine.
+An hour that is not `HH:MM` makes both hours fall back to 09:00 and 18:00. Run `claude plugin configure linear-gate@dotfiles` to set them on your machine.
 
-To turn the mod off, run `claude plugin disable linear-gate@cj-stack`.
+To turn the mod off, run `claude plugin disable linear-gate@dotfiles`.
 
 ## Limits
 

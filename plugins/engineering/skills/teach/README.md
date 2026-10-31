@@ -26,7 +26,7 @@ The `engineering` plugin ships this skill. Add the marketplace, then install the
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install engineering@cj-stack
+/plugin install engineering@dotfiles
 ```
 
 The skill then loads as `/engineering:teach`.

@@ -29,10 +29,10 @@ The `knowledge` plugin ships this skill. Add the marketplace, then install the p
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install knowledge@cj-stack
+/plugin install knowledge@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable knowledge@cj-stack`. This also turns off every other skill in `knowledge`.
+To turn the plugin off, run `claude plugin disable knowledge@dotfiles`. This also turns off every other skill in `knowledge`.
 
 A GitHub wiki needs the `gh` CLI signed in. Notion and Linear need their MCP server connected.
 

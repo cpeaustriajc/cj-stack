@@ -1,5 +1,21 @@
 # Migrate from the cj-stack and cj-lab plugins
 
+## The cj-stack marketplace is now dotfiles
+
+On 2026-10-31 the marketplace `cj-stack` got the name `dotfiles`, and the repo moved to
+`cpeaustriajc/dotfiles`. A plugin that you installed as `design@cj-stack` is now
+`design@dotfiles`. To move your installs:
+
+1. Remove the old marketplace: `claude plugin marketplace remove cj-stack`.
+2. Add the new one: `claude plugin marketplace add cpeaustriajc/dotfiles`.
+3. Install each plugin again with the new name, for example `claude plugin install design@dotfiles`.
+4. In your settings files, change each `<plugin>@cj-stack` key in `enabledPlugins` and the
+   `cj-stack` key in `extraKnownMarketplaces` to `dotfiles`.
+
+The rest of this guide is for older installs. It uses the old name `cj-stack`.
+
+## The split into skill plugins
+
 On 2026-10-31 the cj-stack marketplace split its skills into four plugins: `design`,
 `engineering`, `planning` and `knowledge`. The old plugin names no longer exist. A settings file
 that still enables an old name shows this error in the `/plugin` **Errors** tab:
@@ -95,7 +111,7 @@ To fix the error, give cj-stack the same source in both files. Use the GitHub so
 
 With the GitHub source, a project runs your change to a mod only after you push it and run
 `claude plugin marketplace update cj-stack`. To try a change before you push it, start a session
-with the mod folder: `claude --plugin-dir ~/Projects/cj-stack/mods/<mod>`.
+with the mod folder: `claude --plugin-dir ~/Projects/dotfiles/mods/<mod>`.
 
 ## Check the result
 

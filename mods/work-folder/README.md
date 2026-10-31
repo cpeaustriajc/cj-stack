@@ -12,10 +12,10 @@ work-folder denies the write and tells Claude to use `.claude/work/<topic>/` ins
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install work-folder@cj-stack
+/plugin install work-folder@dotfiles
 ```
 
-To see that it is on, run `claude plugin list` and look for `work-folder`. The mod is optional: `cj-stack` does not install it.
+To see that it is on, run `claude plugin list` and look for `work-folder`. The mod is optional: `dotfiles` does not install it.
 
 ## Example
 
@@ -80,7 +80,7 @@ An entry that ends with `/` is a path prefix. Any other entry is a glob.
 
 `keepDays` in `.claude/work-folder.json`: the days without a change before the cleanup removes an entry. The default is `1`; `0` turns the cleanup off. Example: `{ "allow": [], "keepDays": 7 }` keeps evidence for a week of review.
 
-To turn the mod off, run `claude plugin disable work-folder@cj-stack`.
+To turn the mod off, run `claude plugin disable work-folder@dotfiles`.
 
 ## Limits
 

@@ -40,14 +40,14 @@ python3 -I "$dir/corrections.py" --root "$tmp/root" --out "$tmp/out.md" >/dev/nu
 [[ "$(head -1 "$tmp/out.md")" == "### REPLY s=abcdef12 -proj" ]] \
   && { pass=$((pass+1)); echo "ok   header carries s= and 8 chars of the session id"; } || { fail=$((fail+1)); echo "FAIL header carries s= and 8 chars of the session id: $(head -1 "$tmp/out.md")"; }
 
-for form in "cj-stack:ui-polish" "ui-polish"; do
+for form in "dotfiles:ui-polish" "ui-polish"; do
   run "tool $form" "$(SK "$form")${NL}$A${NL}$(U 'no, wrong easing')" --skill ui-polish
   check "tool_use $form matches ui-polish" 1 "wrong easing"
 done
-run "flag prefixed" "$(SK ui-polish)${NL}$A${NL}$(U 'no, wrong easing')" --skill cj-stack:ui-polish
+run "flag prefixed" "$(SK ui-polish)${NL}$A${NL}$(U 'no, wrong easing')" --skill dotfiles:ui-polish
 check "prefixed --skill value matches" 1 "wrong easing"
 
-for form in "/ui-polish" "/cj-stack:ui-polish"; do
+for form in "/ui-polish" "/dotfiles:ui-polish"; do
   run "cmd $form" "$(CMD "$form")${NL}$A${NL}$(U 'no, wrong easing')" --skill ui-polish
   check "slash command $form starts the skill" 1 "wrong easing"
 done
@@ -55,7 +55,7 @@ done
 run before "$A${NL}$(U 'no, before the skill')${NL}$(SK ui-polish)" --skill ui-polish
 check "correction before the skill started is excluded" 0
 
-run switched "$(SK ui-polish)${NL}$A${NL}$(U 'no, mid skill')${NL}$(SK cj-stack:break-it)${NL}$A${NL}$(U 'no, after the switch')" --skill ui-polish
+run switched "$(SK ui-polish)${NL}$A${NL}$(U 'no, mid skill')${NL}$(SK dotfiles:break-it)${NL}$A${NL}$(U 'no, after the switch')" --skill ui-polish
 check "only the span before another skill took over" 1 "mid skill"
 [[ "$out" != *"after the switch"* ]] || { fail=$((fail+1)); echo "FAIL switched leaked"; }
 

@@ -29,10 +29,10 @@ The `planning` plugin ships this skill. Add the marketplace, then install the pl
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install planning@cj-stack
+/plugin install planning@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable planning@cj-stack`. This also turns off every other skill in `planning`. For other agents such as Codex, run `scripts/link-skills.sh` in the repo.
+To turn the plugin off, run `claude plugin disable planning@dotfiles`. This also turns off every other skill in `planning`. For other agents such as Codex, run `scripts/link-skills.sh` in the repo.
 
 ## What it does
 

@@ -9,7 +9,7 @@
 - The prompt holds `sweeper-prompt.md` with `<scope>` replaced by the folder path or file list.
 - Both agent types have only read tools, so the sweeper cannot change a file. The session deletes
   what it lists. Never use `general-purpose`: it can edit.
-- Never `model: "opus"`: the session judges and applies. Models follow cj-stack's
+- Never `model: "opus"`: the session judges and applies. Models follow dotfiles's
   `models/README.md`.
 - A folder with more than 40 source files: split it by subfolder into two to four scopes and send
   every sweeper `Agent` call in one message, so they run in parallel. Add up their counts.

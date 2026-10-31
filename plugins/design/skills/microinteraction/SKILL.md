@@ -14,7 +14,7 @@ argument-hint: "<area: a page, view, component or path>"
 The area is `$ARGUMENTS`. If it is empty, ask which area to sweep and say nothing else.
 
 Adapted from Emil Kowalski's find-animation-opportunities skill (MIT, see `LICENSE`). His words
-are kept. cj-stack changed these: it asks for the area instead of greeting, each proposal plays
+are kept. dotfiles changed these: it asks for the area instead of greeting, each proposal plays
 inline with Pick and Skip, the run stops at the pick, reviews point at `ui-polish`, and it starts
 only when typed. Tool mechanics (the inline view, the pick) are in
 `references/claude-code.md`.
