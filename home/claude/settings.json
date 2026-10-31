@@ -168,8 +168,7 @@
     "hone-nudge@cj-stack": true,
     "work-folder@cj-stack": true,
     "cj-lab@cj-stack": true,
-    "session-modes@cj-stack": true,
-    "git-guard@cj-stack": true
+    "session-modes@cj-stack": true
   },
   "extraKnownMarketplaces": {
     "chrome-devtools-plugins": {
@@ -254,5 +253,5 @@
   "disableDeepLinkRegistration": "disable",
   "voiceEnabled": true,
   "autoUpdaterChannel": "latest",
-  "planDirectory": "./plans"
+  "plansDirectory": ".claude/work/plans"
 }
