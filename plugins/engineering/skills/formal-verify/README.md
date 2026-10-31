@@ -48,7 +48,8 @@ The skill then loads as `/engineering:formal-verify`.
 
 ## Limits
 
-- It does not change product code unless you ask.
+- Known defect: in the 2026-11-01 `formal-verify-lease-race` run, the plugin run failed the `product-untouched` grader. Its clean product code is unproven.
+- The skill edits product code for a scratch break, then reverts it. The 2026-11-01 run did not show the revert with `git status`.
 - A pass covers the model and its bounds, not the whole system.
 - It does not install a model checker for you outside the run. The project skill names the command.
 - It has no settings.
