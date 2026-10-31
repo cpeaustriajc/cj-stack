@@ -52,11 +52,13 @@ The skill then loads as `/engineering:formal-verify`.
 - A pass covers the model and its bounds, not the whole system.
 - It does not install a model checker for you outside the run. The project skill names the command.
 - It has no settings.
-- It is untested: the eval below has no score that shows a gain over a run without the plugin yet.
+- It is untested. On 2026-11-01 the lease-race case scored 0.67 with the plugin and 0.67 without it, in one run each.
+- Only the run with the plugin wrote a project verify skill with a sync commit. Both runs found the race.
 
 ## More
 
 - [SKILL.md](SKILL.md): the create mode.
 - [references/maintain.md](references/maintain.md): the maintain pass.
 - [../../evals/formal-verify-lease-race](../../evals/formal-verify-lease-race): a `claude plugin eval` case with a lease race that the tests miss.
-- Source: Lauren Tan's `create-formal-verification-skill` and `maintain-formal-verification-skill` in [cursor/plugins](https://github.com/cursor/plugins/tree/519d36aa98955bf680db01bcde5fdfba686dc901/pstack/skills), commit `519d36a`, MIT. Evidence: none measured yet; this README gets the eval scores.
+- Source: Lauren Tan's `create-formal-verification-skill` and `maintain-formal-verification-skill` in [cursor/plugins](https://github.com/cursor/plugins/tree/519d36aa98955bf680db01bcde5fdfba686dc901/pstack/skills), commit `519d36a`, MIT. Evidence: the eval scores in Limits, a tie so far.
+- Not adopted: Lauren Tan's `statechart` skill. A run without the plugin passed its checkout case (score 1.0), so it showed no gain.
