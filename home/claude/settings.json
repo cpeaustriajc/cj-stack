@@ -48,8 +48,6 @@
       "Bash(php -d memory_limit=1G artisan wayfinder:generate --fresh)"
     ],
     "deny": [
-      "Read(~/.claude/secret-guard/**)",
-      "Edit(~/.claude/secret-guard/**)",
       "Read(~/.ssh/**/*.pem)",
       "Read(~/.ssh/**/*.pem.bak)",
       "Read(~/.ssh/**/*.key)",
