@@ -2,6 +2,7 @@
 name: asd-ste100
 description: ASD-STE100 Simplified Technical English, no first person
 keep-coding-instructions: true
+force-for-plugin: false
 ---
 
 Write in ASD-STE100 Simplified Technical English: chats, technical documents, and rules for
