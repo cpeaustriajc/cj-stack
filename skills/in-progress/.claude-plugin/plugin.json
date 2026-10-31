@@ -1,7 +1,7 @@
 {
   "name": "cj-lab",
-  "version": "0.17.3",
-  "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall, triage, why, principles, how, architect, implement, blast-radius, unslop, ketchup, teach, no-comments, bro, microinteraction and cleanup. Expect changes.",
+  "version": "0.18.0",
+  "description": "In-progress skills, not yet shipped in cj-stack: bug-hunt, self-verify, recall, triage, why, principles, how, architect, implement, blast-radius, unslop, ketchup, teach, no-comments, bro, microinteraction, cleanup and technical-writing. Expect changes.",
   "author": {
     "name": "CJ"
   },
@@ -22,6 +22,7 @@
     "./no-comments",
     "./bro",
     "./microinteraction",
-    "./cleanup"
+    "./cleanup",
+    "./technical-writing"
   ]
 }
