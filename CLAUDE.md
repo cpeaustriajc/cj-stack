@@ -90,3 +90,24 @@ its settings and hooks, the auto-mode classifier. It adds only what the harness 
 
 This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or a project's
 `.agents/skills`: a copy drifts, and a skill installed both ways is listed twice in every session.
+
+## Claude config is shared through chezmoi
+
+`~/.claude` is shared with a Windows machine. The shared files come from
+`~/Projects/cj-stack/home/claude/`; the dotfiles repo (`$(chezmoi source-path)`) installs them and
+holds only the private parts.
+- To change a shared file, edit it in `~/Projects/cj-stack/home/claude/`, then run `chezmoi apply`,
+  and commit in cj-stack. `chezmoi re-add` does not work: the dotfiles files are templates that
+  include the cj-stack file. Push only when I ask.
+- For `settings.json`, run `.settings-capture.sh` in `$(chezmoi source-path)/dot_claude`. It
+  writes the public part to cj-stack and the private permission entries to
+  `.settings-private.json` in dotfiles. Commit in both repos. Keys in `.settings-deny.json` stay
+  on this machine.
+- Before a commit in cj-stack, make sure that no private entry is in it: third-party domains,
+  client names, hosts, key file names.
+- Share a new config file: put it in cj-stack `home/claude/`, then add a template in dotfiles
+  that includes it. Never share machine state: transcripts, `projects/`, `plugins/`,
+  `.claude.json`, caches, backups.
+- Shared files work on macOS and in Git Bash on Windows; paths start with `~`.
+- Run `chezmoi diff` before `chezmoi apply`: Claude Code rewrites `settings.json` itself, and
+  an apply reverts that without a warning.
