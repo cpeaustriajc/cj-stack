@@ -5,6 +5,7 @@ description: >
   Code loads it: plugin validation, every mod's tests, the skill script tests, plugin token costs,
   /skill-doctor with the skill plugins installed, and the trigger and routing evals. Use it before
   committing a change to a skill, mod or manifest, or to see what a skill costs per turn.
+user-invocable: false
 ---
 
 # Run cj-stack

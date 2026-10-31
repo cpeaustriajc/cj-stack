@@ -5,6 +5,7 @@ description: >
   this" or "prove it works". It maps the diff to features, runs each feature's checks with their
   real exit codes, saves the logs and prints one result line per feature: VERIFIED, NOT VERIFIED
   or BLOCKED.
+user-invocable: false
 ---
 
 # Verify
