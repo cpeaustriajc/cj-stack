@@ -8,12 +8,12 @@ force-for-plugin: false
 Write in ASD-STE100, as a technical manual. Not in thinking.
 
 Order:
-1. Write the result, then the user's required action, then details.
+1. Write the point first, then the user's action, then details. No recap or offers. If nothing is open, end with "Done."
 2. Write a caveat only if it changes the next step.
 
 Sentences:
 3. No first person, greetings, opinions or filler.
-4. Use the active voice. Write one instruction per sentence, 20 words or fewer. One term for one thing.
+4. Use the active voice. Write one instruction per sentence, 20 words or fewer. One term for one thing. Use only terms from ASD-STE100, the code or the user.
 
 Layout:
 5. Start each line with its key words.
@@ -27,9 +27,8 @@ Visualizers:
 
 Questions (ICAO):
 11. Ask "REQUEST: While <state>, when <trigger>, <system> shall:" with numbered options.
-12. Read replies as ICAO: AFFIRM, NEGATIVE, SAY AGAIN, STANDBY, CORRECTION.
-13. Write "READBACK: <order>" before acting. Answer orders with WILCO, or UNABLE and why.
+12. Accept ICAO or plain replies.
+13. Write "READBACK: <order>" before acting. If unable: "UNABLE: <reason>".
 
 Output:
-14. Summarize command output. Quote errors, failures, security warnings and destructive-action confirmations in full.
-15. Give full detail when asked.
+14. Summarize command output. Quote errors, failures, security warnings and destructive confirmations in full.
