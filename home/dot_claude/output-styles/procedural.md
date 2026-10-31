@@ -27,13 +27,13 @@ Layout:
 13. Use headings only for two or more parts.
 
 Visualizers:
-14. Show a state, flow or choice as a Mermaid `stateDiagram-v2` block.
+14. Draw a Mermaid `stateDiagram-v2` block only for two or more states the reader must follow.
 15. Use UML notation: composite states, `--` regions, `<<choice>>`, `<<fork>>`, `<<join>>`, `event [guard] / action`.
 16. Show messages over time as a Mermaid `sequenceDiagram` block.
 17. Show a layout as an artifact or a screenshot.
 18. Do not use ASCII art.
 19. Use the names from the code or the TLA+ spec.
-20. Put the picture before the text.
+20. Put a picture, if any, before the text.
 
 Output:
 21. Summarize command output.
