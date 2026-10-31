@@ -11,7 +11,7 @@
 
 ## Sibling skills
 
-- `/bro` (writing plugin) is slash-only. Read `../bro/SKILL.md` for its voice. If it is absent, the voice
+- `/bro` (visual plugin) is slash-only. Read `../bro/SKILL.md` for its voice. If it is absent, the voice
   rules in SKILL.md are enough; do not stop for it.
 
 ## Diagrams

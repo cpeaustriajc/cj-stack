@@ -18,6 +18,7 @@ CJ's skills and mods for Claude Code.
 /plugin install design@dotfiles
 /plugin install knowledge@dotfiles
 /plugin install writing@dotfiles
+/plugin install visual@dotfiles
 /plugin install principles@dotfiles
 /plugin install linear-gate@dotfiles
 ```
@@ -26,11 +27,12 @@ Install only the plugins you need. Add any mod the same way: `/plugin install <n
 
 | Plugin | What it is for | Skills |
 |---|---|---|
-| `design` | Sign off UI work and motion — check it against the design, add missing microinteractions, paint scenes in code, make launch videos. | ui-polish, painting-craft, microinteraction, launch-video |
+| `design` | Sign off UI work and motion — check it against the design, add missing microinteractions, make launch videos. | ui-polish, microinteraction, launch-video |
 | `engineering` | Prove the work in the real app — playbooks, design-first builds, unattended loops, bug hunts, code history, review and PRs. | playbooks, break-it, feature-files, interrogate, commit, create-pr, architect, implement, drive, bug-hunt, blast-radius, self-verify, no-comments, cleanup, how, why, teach |
 | `planning` | Turn an idea into tickets — find and test ideas, write the spec, cut thin slices and triage them in any tracker. | vision, shape, tickets, grill, scout, triage |
 | `knowledge` | Keep what the team learns — a decision log, research pages, lessons from past sessions, and a recap of recent work. | project-knowledge, hone, recall |
-| `writing` | Write so people can read — docs in plain ASD-STE100, AI tells cut, and plain re-pitches and catch-ups in chat. | technical-writing, unslop, bro, ketchup |
+| `writing` | Write so people can read — docs in plain ASD-STE100 and AI tells cut. | technical-writing, unslop |
+| `visual` | Show it as a picture — paint scenes in code to a gallery standard, and re-pitch or catch up a chat in plain words with a picture. | painting-craft, bro, ketchup |
 | `principles` | Apply engineering principles by name — prove it works, subtract before you add, attack the premise, and 17 more. | principles, and the 20 `principle-*` skills it indexes |
 
 If you installed `dotfiles@dotfiles` or `cj-lab@dotfiles` before, those plugins no longer exist.
@@ -60,7 +62,7 @@ Most skills are model-invoked: Claude picks them from their description. A skill
 | [interrogate](plugins/engineering/skills/interrogate/README.md) | engineering | reviewing a diff with fresh Claude reviewers that each see a different slice of it, then filtering into act on, consider, noted and dismissed |
 | [commit](plugins/engineering/skills/commit/README.md) | engineering | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](plugins/engineering/skills/create-pr/README.md) | engineering | `/create-pr [draft]` or "open the PR": commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
-| [painting-craft](plugins/design/skills/painting-craft/README.md) | design | drawing and painting in code to a gallery standard, with a screenshot review loop |
+| [painting-craft](plugins/visual/skills/painting-craft/README.md) | visual | drawing and painting in code to a gallery standard, with a screenshot review loop |
 | [technical-writing](plugins/writing/skills/technical-writing/README.md) | writing | typed `/technical-writing`: a doc, README, spec, PR body or commit message written or reviewed by the repo's own rules first, then ASD-STE100 sentences |
 | [unslop](plugins/writing/skills/unslop/README.md) | writing | typed `/unslop` with text: the same text back without the common tells of AI-written prose |
 | [scout](plugins/planning/skills/scout/README.md) | planning | finding an idea worth building, or checking a niche, when apps are cheap to copy |
@@ -79,8 +81,8 @@ Most skills are model-invoked: Claude picks them from their description. A skill
 | [teach](plugins/engineering/skills/teach/README.md) | engineering | typed `/teach`: one plain explanation of a body of work, from `how` and `why` |
 | [microinteraction](plugins/design/skills/microinteraction/README.md) | design | typed `/microinteraction` with a UI area: find the places that should animate and play each proposal before you pick |
 | [launch-video](plugins/design/skills/launch-video/README.md) | design | a trailer, promo, short, voiceover, thumbnails or captions for a launch |
-| [bro](plugins/writing/skills/bro/README.md) | writing | typed `/bro`: re-pitch the last message in plain words, with the missing context first and one picture |
-| [ketchup](plugins/writing/skills/ketchup/README.md) | writing | typed `/ketchup`: what changed in this chat since your last message, with the calls you need to make |
+| [bro](plugins/visual/skills/bro/README.md) | visual | typed `/bro`: re-pitch the last message in plain words, with the missing context first and one picture |
+| [ketchup](plugins/visual/skills/ketchup/README.md) | visual | typed `/ketchup`: what changed in this chat since your last message, with the calls you need to make |
 | [principles](plugins/principles/skills/principles/README.md) | principles | naming an engineering principle, or a design, test, debug or measurement decision: picks the rule that applies from the 20 `principle-*` skills |
 
 Shipped skills stay tool-neutral:

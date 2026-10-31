@@ -11,8 +11,8 @@
     {
       "name": "design",
       "displayName": "Design",
-      "description": "Sign off UI work and motion — check it against the design, add missing microinteractions, paint scenes in code, make launch videos.",
-      "version": "1.1.2",
+      "description": "Sign off UI work and motion — check it against the design, add missing microinteractions, make launch videos.",
+      "version": "1.2.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -23,9 +23,6 @@
         "ui",
         "design-review",
         "polish",
-        "svg",
-        "canvas",
-        "illustration",
         "microinteraction",
         "launch-video"
       ]
@@ -97,8 +94,8 @@
     {
       "name": "writing",
       "displayName": "Writing",
-      "description": "Write so people can read — docs in plain ASD-STE100, AI tells cut, and plain re-pitches and catch-ups in chat.",
-      "version": "1.1.0",
+      "description": "Write so people can read — docs in plain ASD-STE100 and AI tells cut.",
+      "version": "1.2.0",
       "author": {
         "name": "John Carlo Austria"
       },
@@ -110,7 +107,26 @@
         "docs",
         "readme",
         "ste100",
-        "style",
+        "style"
+      ]
+    },
+    {
+      "name": "visual",
+      "displayName": "Visual",
+      "description": "Show it as a picture — paint scenes in code to a gallery standard, and re-pitch or catch up a chat in plain words with a picture.",
+      "version": "1.0.0",
+      "author": {
+        "name": "John Carlo Austria"
+      },
+      "source": "./plugins/visual",
+      "strict": false,
+      "category": "design",
+      "keywords": [
+        "svg",
+        "canvas",
+        "illustration",
+        "painting",
+        "re-pitch",
         "catch-up"
       ]
     },
@@ -158,7 +174,7 @@
       "name": "hone-nudge",
       "displayName": "Hone Nudge",
       "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a dotfiles skill.",
-      "version": "0.1.6",
+      "version": "0.1.7",
       "author": {
         "name": "John Carlo Austria"
       },

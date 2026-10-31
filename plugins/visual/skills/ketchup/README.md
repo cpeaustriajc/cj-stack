@@ -22,14 +22,14 @@ You get one sentence that says one thing needs you, then a small diagram and one
 
 ## Install
 
-The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
+The `visual` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install writing@dotfiles
+/plugin install visual@dotfiles
 ```
 
-The skill then loads as `/writing:ketchup`.
+The skill then loads as `/visual:ketchup`.
 
 ## What it does
 

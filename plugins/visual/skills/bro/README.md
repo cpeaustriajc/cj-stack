@@ -22,14 +22,14 @@ You get full sentences that say what a hold is, why it lapsed, and what the fix 
 
 ## Install
 
-The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
+The `visual` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install writing@dotfiles
+/plugin install visual@dotfiles
 ```
 
-The skill then loads as `/writing:bro`.
+The skill then loads as `/visual:bro`.
 
 ## What it does
 
