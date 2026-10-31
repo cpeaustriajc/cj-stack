@@ -28,7 +28,7 @@ Install only the plugins you need. Add any mod the same way: `/plugin install <n
 | Plugin | What it is for | Skills |
 |---|---|---|
 | `design` | Sign off UI work and motion — check it against the design, add missing microinteractions, make launch videos. | ui-polish, microinteraction, launch-video |
-| `engineering` | Prove the work in the real app — playbooks, design-first builds, unattended loops, bug hunts, code history, review and PRs. | playbooks, break-it, feature-files, interrogate, commit, create-pr, architect, implement, drive, bug-hunt, blast-radius, self-verify, no-comments, cleanup, how, why, teach |
+| `engineering` | Prove the work in the real app — playbooks, design-first builds, unattended loops, bug hunts, code history, review and PRs. | playbooks, break-it, feature-files, interrogate, commit, create-pr, architect, implement, drive, bug-hunt, blast-radius, self-verify, formal-verify, no-comments, cleanup, how, why, teach |
 | `planning` | Turn an idea into tickets — find and test ideas, write the spec, cut thin slices and triage them in any tracker. | vision, shape, tickets, grill, scout, triage |
 | `knowledge` | Keep what the team learns — a decision log, research pages, lessons from past sessions, and a recap of recent work. | project-knowledge, hone, recall |
 | `writing` | Write so people can read — docs in plain ASD-STE100 and AI tells cut. | technical-writing, unslop |
@@ -74,6 +74,7 @@ Most skills are model-invoked: Claude picks them from their description. A skill
 | [bug-hunt](plugins/engineering/skills/bug-hunt/README.md) | engineering | hunting bugs across a codebase in rounds, each fixed test-first, until a round comes back clean |
 | [blast-radius](plugins/engineering/skills/blast-radius/README.md) | engineering | typed `/blast-radius`: find what a change could break outside its diff, and prove the fact that makes it safe |
 | [self-verify](plugins/engineering/skills/self-verify/README.md) | engineering | setting up and auditing a repo's verify skill, so agents prove "done" with a verdict per PR |
+| [formal-verify](plugins/engineering/skills/formal-verify/README.md) | engineering | model-checking a race, retry, lease or state machine that tests miss, then keeping a project check in sync with the code |
 | [no-comments](plugins/engineering/skills/no-comments/README.md) | engineering | typed `/no-comments` with a folder: remove stale comments and suppressions as separate commits with the same test results |
 | [cleanup](plugins/engineering/skills/cleanup/README.md) | engineering | removing what a session left behind (dev servers, stale branches, the session) once it is safe; not code tidying |
 | [how](plugins/engineering/skills/how/README.md) | engineering | typed `/how`: how a part of the code works, and where a new piece should live |

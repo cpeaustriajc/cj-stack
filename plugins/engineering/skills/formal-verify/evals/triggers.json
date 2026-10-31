@@ -1,0 +1,9 @@
+[
+  {"query": "model-check the retry logic in the payment worker, I think two retries can overlap", "should_trigger": true},
+  {"query": "prove that no two workers can ever hold the same job lease", "should_trigger": true},
+  {"query": "write a TLA+ spec for our upload state machine and keep it in sync with the code", "should_trigger": true},
+  {"query": "is the TLA+ model in this repo still true to the code after last week's merges?", "should_trigger": true},
+  {"query": "set up a verify skill that drives the app before each commit", "should_trigger": false},
+  {"query": "fix the bug where the cart empties after login, reproduce it first", "should_trigger": false},
+  {"query": "run a bug hunt across the repo until a round comes back clean", "should_trigger": false}
+]
