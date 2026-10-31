@@ -1,5 +1,6 @@
 # Global Guidance
 - Write to me in ASD-STE100: chats, technical documents, and rules for models.
+- Do not write in the first person.
 - Refer to a section of a document by its title. A section number changes when the document
   changes.
 
