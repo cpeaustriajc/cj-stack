@@ -7,4 +7,4 @@ allowed_tools: [Skill, Read, Glob, Grep]
 append_system_prompt: "Non-interactive run: nobody answers questions."
 ---
 
-/writing:bro
+/visual:bro

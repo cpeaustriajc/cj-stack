@@ -27,14 +27,14 @@ You get the picture at twice its display size, plus the before and after shots a
 
 ## Install
 
-The `design` plugin ships this skill. Add the marketplace, then install the plugin:
+The `visual` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
 /plugin marketplace add cpeaustriajc/dotfiles
-/plugin install design@dotfiles
+/plugin install visual@dotfiles
 ```
 
-To turn the plugin off, run `claude plugin disable design@dotfiles`. This also turns off every other skill in `design`.
+To turn the plugin off, run `claude plugin disable visual@dotfiles`. This also turns off every other skill in `visual`.
 
 ## What it does
 

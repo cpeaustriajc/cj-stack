@@ -10,7 +10,7 @@ const SHIPPED = new Map([
   ['project-knowledge', 'knowledge'], ['hone', 'knowledge'],
   ['playbooks', 'engineering'], ['break-it', 'engineering'], ['feature-files', 'engineering'],
   ['interrogate', 'engineering'], ['commit', 'engineering'], ['create-pr', 'engineering'],
-  ['ui-polish', 'design'], ['painting-craft', 'design'],
+  ['ui-polish', 'design'], ['painting-craft', 'visual'],
   ['technical-writing', 'writing'], ['unslop', 'writing'],
 ])
 // Keep this detection in step with plugins/knowledge/skills/hone/scripts/corrections.py, which a separate plugin cannot import.
