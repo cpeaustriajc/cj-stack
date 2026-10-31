@@ -67,7 +67,8 @@ handler. These rules always apply:
 
 ## Long commands
 - Run a command that can take longer than a few seconds in the background, with its progress in
-  the harness output, never only in a file.
+  the harness output, never only in a file. If the tool prints no progress, say so once when it
+  starts.
 - When it ends, give me the result as a person reads it: the verdict first, then the details
   in a short table or list. Never paste raw output.
 
