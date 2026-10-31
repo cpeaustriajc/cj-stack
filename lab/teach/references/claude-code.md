@@ -13,10 +13,11 @@
 
 ## Sibling skills
 
-- `how`, `why` and `unslop` are lab skills. `/how` is slash-only, so read `../how/SKILL.md`,
-  `../why/SKILL.md` and `../unslop/SKILL.md` and follow them.
-- If `../unslop/SKILL.md` is missing, write plain English by the rules in SKILL.md and say so in
-  one line at the end of the reply, never before the short answer.
+- `how` and `why` are lab skills. `unslop` ships in the writing plugin. `/how` and `/unslop` are
+  slash-only, so read `../how/SKILL.md`, `../why/SKILL.md` and
+  `../../plugins/writing/skills/unslop/SKILL.md` and follow them.
+- If that `unslop/SKILL.md` is missing, write plain English by the rules in SKILL.md and say so
+  in one line at the end of the reply, never before the short answer.
 
 ## Diagram series
 

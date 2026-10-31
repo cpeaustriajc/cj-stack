@@ -11,7 +11,7 @@
 ## Sibling skills
 
 - `why` and `unslop` are slash-only, so the Skill tool cannot start them. Read
-  `../why/SKILL.md` and `../unslop/SKILL.md` and follow them.
+  `../why/SKILL.md` and `../../plugins/writing/skills/unslop/SKILL.md` and follow them.
 - `interrogate` ships in cj-stack and the Skill tool starts it.
 
 ## Risk map

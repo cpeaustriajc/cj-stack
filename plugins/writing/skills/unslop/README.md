@@ -2,8 +2,6 @@
 
 A typed `/unslop` command that rewrites your text without the common tells of AI-written prose. The rewrite keeps the meaning and the tone you want.
 
-> In progress: not shipped in any plugin.
-
 ## When to use it
 
 Use it on a draft before other people read it: a README, a PR body, a ticket or a message. AI drafts often carry words like "delve" and "pivotal", em dashes, groups of three and filler phrases.
@@ -22,14 +20,14 @@ You get plain text back, for example: "This update makes the app faster and more
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/unslop" /tmp/lab/skills/unslop
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install writing@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:unslop`.
+To turn the plugin off, run `claude plugin disable writing@cj-stack`. This also turns off every other skill in `writing`.
 
 ## What it does
 

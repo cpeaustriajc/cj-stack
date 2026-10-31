@@ -4,13 +4,14 @@ type Api = Parameters<Hook<'classic.Stop'>>[0]
 
 const MOD = 'hone-nudge'
 const WEEK = 7 * 86_400_000
-// Keep SHIPPED in step with the skills of the four skill plugins in plugins/<plugin>/skills/.
+// Keep SHIPPED in step with the skills of the skill plugins in plugins/<plugin>/skills/.
 const SHIPPED = new Map([
   ['vision', 'planning'], ['shape', 'planning'], ['tickets', 'planning'], ['grill', 'planning'],
   ['project-knowledge', 'knowledge'], ['hone', 'knowledge'],
   ['playbooks', 'engineering'], ['break-it', 'engineering'], ['feature-files', 'engineering'],
   ['interrogate', 'engineering'], ['commit', 'engineering'], ['create-pr', 'engineering'],
   ['ui-polish', 'design'], ['painting-craft', 'design'],
+  ['technical-writing', 'writing'], ['unslop', 'writing'],
 ])
 // Keep this detection in step with plugins/knowledge/skills/hone/scripts/corrections.py, which a separate plugin cannot import.
 const CORRECTION = /^\s*(no\b|nope|why\b|stop\b|don'?t\b|do not\b|i already|i said|i meant|that's not|wrong|huh|wait\b|actually\b|\?\?)/i

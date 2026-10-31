@@ -48,7 +48,7 @@ Step 4 is usually one small script that imports the same library the app ships a
 - **Cleared.** What you checked and why it's fine.
 - **Before you merge.** The cheapest test or repro that catches the real bug, including the script you wrote.
 
-Write it through `unslop` (read `../unslop/SKILL.md` and follow it), cite real code, and strip anything private before it goes anywhere public.
+Write it through `unslop` (read `../../plugins/writing/skills/unslop/SKILL.md` and follow it), cite real code, and strip anything private before it goes anywhere public.
 
 ## Risk map
 

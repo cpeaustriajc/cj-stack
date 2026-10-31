@@ -64,7 +64,7 @@ not make a claim true, and a source that was right before can be wrong now.
 - A mod keeps a `.claude-plugin/plugin.json` only for its `userConfig`, because `claude plugin test`
   reads the `userConfig` defaults only from there. Without it, linear-gate fails 86 of 105 tests.
 - `plugins/<plugin>/skills/<skill>/`: the shipped skill plugins `design`, `engineering`,
-  `planning` and `knowledge`. A plugin's own evals go in `plugins/<plugin>/evals/`.
+  `planning`, `knowledge` and `writing`. A plugin's own evals go in `plugins/<plugin>/evals/`.
 - `mods/<mod>/`: one plugin for each mod.
 - `lab/<skill>/`: in-progress skills, in no plugin. A skill starts here. The README "Lab" section
   says how to try one with `claude --plugin-dir`.

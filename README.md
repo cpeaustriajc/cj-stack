@@ -3,7 +3,7 @@
 CJ's skills and mods for Claude Code.
 
 - [Install](#install)
-- [Skills](#skills): maintained skills, shipped in four plugins: Design, Engineering, Planning and Knowledge
+- [Skills](#skills): maintained skills, shipped in five plugins: Design, Engineering, Planning, Knowledge and Writing
 - [Mods](#mods): hooks that change how a session behaves, one plugin each
 - [Lab](#lab): in-progress skills, not shipped, to try from a clone
 - [Models](models/README.md): which model does what, and why cross-vendor review stays
@@ -18,6 +18,7 @@ CJ's skills and mods for Claude Code.
 /plugin install engineering@cj-stack
 /plugin install design@cj-stack
 /plugin install knowledge@cj-stack
+/plugin install writing@cj-stack
 /plugin install linear-gate@cj-stack
 ```
 
@@ -29,6 +30,7 @@ Install only the plugins you need. Add any mod the same way: `/plugin install <n
 | `engineering` | Prove the work in the real app — playbooks for bugs and features, careless-user QA, diff review and PRs. | playbooks, break-it, feature-files, interrogate, commit, create-pr |
 | `planning` | Turn an idea into tickets — test if it is worth building, write the spec, cut thin slices in any tracker. | vision, shape, tickets, grill |
 | `knowledge` | Keep what the team learns — a decision log, research pages, and lessons from your past sessions. | project-knowledge, hone |
+| `writing` | Write docs people can read — repo rules first, plain ASD-STE100 sentences, and AI tells cut from any draft. | technical-writing, unslop |
 
 If you installed `cj-stack@cj-stack` or `cj-lab@cj-stack` before, those plugins no longer exist.
 To remove them and install the plugins above, follow [Migrate from the cj-stack and cj-lab plugins](MIGRATING.md).
@@ -39,8 +41,8 @@ To remove them and install the plugins above, follow [Migrate from the cj-stack 
 
 ## Skills
 
-All skills are model-invoked (Claude picks them from their description), except `commit`, which
-runs only when typed.
+All skills are model-invoked (Claude picks them from their description), except `commit`,
+`technical-writing` and `unslop`, which run only when typed.
 
 | Skill | Plugin | What it is for |
 |---|---|---|
@@ -58,6 +60,8 @@ runs only when typed.
 | [commit](plugins/engineering/skills/commit/README.md) | engineering | typed `/commit`: small commits in the repo's style, then push (the desktop Commit and push button) |
 | [create-pr](plugins/engineering/skills/create-pr/README.md) | engineering | `/create-pr [draft]` or "open the PR": commit, check, push and open a PR linking the issue and evidence (the desktop Create PR button) |
 | [painting-craft](plugins/design/skills/painting-craft/README.md) | design | drawing and painting in code to a gallery standard, with a screenshot review loop |
+| [technical-writing](plugins/writing/skills/technical-writing/README.md) | writing | typed `/technical-writing`: a doc, README, spec, PR body or commit message written or reviewed by the repo's own rules first, then ASD-STE100 sentences |
+| [unslop](plugins/writing/skills/unslop/README.md) | writing | typed `/unslop` with text: the same text back without the common tells of AI-written prose |
 
 Shipped skills stay tool-neutral:
 tool specifics go in a skill's adapters, and a project's own facts stay in that project.
@@ -83,7 +87,7 @@ mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/why" /tmp/lab/skills/why
 claude --plugin-dir /tmp/lab
 ```
 
-The skill loads as `/lab:why`. Lab skills: [architect](lab/architect/README.md), [blast-radius](lab/blast-radius/README.md), [bro](lab/bro/README.md), [bug-hunt](lab/bug-hunt/README.md), [cleanup](lab/cleanup/README.md), [drive](lab/drive/README.md), [how](lab/how/README.md), [implement](lab/implement/README.md), [ketchup](lab/ketchup/README.md), [launch-video](lab/launch-video/README.md), [microinteraction](lab/microinteraction/README.md), [no-comments](lab/no-comments/README.md), [principle-attack-the-premise](lab/principle-attack-the-premise/README.md), [principle-boundary-discipline](lab/principle-boundary-discipline/README.md), [principle-build-the-lever](lab/principle-build-the-lever/README.md), [principle-exhaust-the-design-space](lab/principle-exhaust-the-design-space/README.md), [principle-experience-first](lab/principle-experience-first/README.md), [principle-explain-the-number](lab/principle-explain-the-number/README.md), [principle-fix-root-causes](lab/principle-fix-root-causes/README.md), [principle-foundational-thinking](lab/principle-foundational-thinking/README.md), [principle-laziness-protocol](lab/principle-laziness-protocol/README.md), [principle-make-operations-idempotent](lab/principle-make-operations-idempotent/README.md), [principle-minimize-reader-load](lab/principle-minimize-reader-load/README.md), [principle-model-the-domain](lab/principle-model-the-domain/README.md), [principle-outcome-oriented-execution](lab/principle-outcome-oriented-execution/README.md), [principle-prove-it-works](lab/principle-prove-it-works/README.md), [principle-redesign-from-first-principles](lab/principle-redesign-from-first-principles/README.md), [principle-separate-before-serializing-shared-state](lab/principle-separate-before-serializing-shared-state/README.md), [principle-sequence-verifiable-units](lab/principle-sequence-verifiable-units/README.md), [principle-subtract-before-you-add](lab/principle-subtract-before-you-add/README.md), [principle-test-behavior-not-implementation](lab/principle-test-behavior-not-implementation/README.md), [principle-type-system-discipline](lab/principle-type-system-discipline/README.md), [principles](lab/principles/README.md), [recall](lab/recall/README.md), [scout](lab/scout/README.md), [self-verify](lab/self-verify/README.md), [teach](lab/teach/README.md), [technical-writing](lab/technical-writing/README.md), [triage](lab/triage/README.md), [unslop](lab/unslop/README.md), [why](lab/why/README.md).
+The skill loads as `/lab:why`. Lab skills: [architect](lab/architect/README.md), [blast-radius](lab/blast-radius/README.md), [bro](lab/bro/README.md), [bug-hunt](lab/bug-hunt/README.md), [cleanup](lab/cleanup/README.md), [drive](lab/drive/README.md), [how](lab/how/README.md), [implement](lab/implement/README.md), [ketchup](lab/ketchup/README.md), [launch-video](lab/launch-video/README.md), [microinteraction](lab/microinteraction/README.md), [no-comments](lab/no-comments/README.md), [principle-attack-the-premise](lab/principle-attack-the-premise/README.md), [principle-boundary-discipline](lab/principle-boundary-discipline/README.md), [principle-build-the-lever](lab/principle-build-the-lever/README.md), [principle-exhaust-the-design-space](lab/principle-exhaust-the-design-space/README.md), [principle-experience-first](lab/principle-experience-first/README.md), [principle-explain-the-number](lab/principle-explain-the-number/README.md), [principle-fix-root-causes](lab/principle-fix-root-causes/README.md), [principle-foundational-thinking](lab/principle-foundational-thinking/README.md), [principle-laziness-protocol](lab/principle-laziness-protocol/README.md), [principle-make-operations-idempotent](lab/principle-make-operations-idempotent/README.md), [principle-minimize-reader-load](lab/principle-minimize-reader-load/README.md), [principle-model-the-domain](lab/principle-model-the-domain/README.md), [principle-outcome-oriented-execution](lab/principle-outcome-oriented-execution/README.md), [principle-prove-it-works](lab/principle-prove-it-works/README.md), [principle-redesign-from-first-principles](lab/principle-redesign-from-first-principles/README.md), [principle-separate-before-serializing-shared-state](lab/principle-separate-before-serializing-shared-state/README.md), [principle-sequence-verifiable-units](lab/principle-sequence-verifiable-units/README.md), [principle-subtract-before-you-add](lab/principle-subtract-before-you-add/README.md), [principle-test-behavior-not-implementation](lab/principle-test-behavior-not-implementation/README.md), [principle-type-system-discipline](lab/principle-type-system-discipline/README.md), [principles](lab/principles/README.md), [recall](lab/recall/README.md), [scout](lab/scout/README.md), [self-verify](lab/self-verify/README.md), [teach](lab/teach/README.md), [triage](lab/triage/README.md), [why](lab/why/README.md).
 
 ## painting-craft: before and after
 

@@ -83,6 +83,24 @@
       ]
     },
     {
+      "name": "writing",
+      "displayName": "Writing",
+      "description": "Write docs people can read — repo rules first, plain ASD-STE100 sentences, and AI tells cut from any draft.",
+      "version": "1.0.0",
+      "author": {
+        "name": "John Carlo Austria"
+      },
+      "source": "./plugins/writing",
+      "category": "productivity",
+      "keywords": [
+        "writing",
+        "docs",
+        "readme",
+        "ste100",
+        "style"
+      ]
+    },
+    {
       "name": "linear-gate",
       "displayName": "Linear Gate",
       "description": "Stop Linear writes off shift — on shift, your permission mode decides; a delete or cancel asks you first.",
@@ -110,7 +128,7 @@
       "name": "hone-nudge",
       "displayName": "Hone Nudge",
       "description": "Turn corrections into fixes — suggests /hone <skill> after you correct Claude during a cj-stack skill.",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "author": {
         "name": "John Carlo Austria"
       },

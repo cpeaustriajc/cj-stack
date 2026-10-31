@@ -2,8 +2,6 @@
 
 A writing standard for the docs, READMEs, specs, PR descriptions and commit messages that Claude writes or reviews. Your text gets a clear structure and short, plain sentences.
 
-> In progress: not shipped in any plugin.
-
 ## When to use it
 
 Use it for text that engineers read: docs, READMEs, specs, PR bodies and commit messages. Type `/technical-writing` with the text or the file.
@@ -22,14 +20,14 @@ You get a shorter paragraph that says the same facts, with the condition before 
 
 ## Install
 
-No plugin ships this skill yet. To try it for one session, link it into a local plugin folder named `lab` from a clone of this repository:
+The `writing` plugin ships this skill. Add the marketplace, then install the plugin:
 
 ```
-mkdir -p /tmp/lab/skills && ln -sfn "$PWD/lab/technical-writing" /tmp/lab/skills/technical-writing
-claude --plugin-dir /tmp/lab
+/plugin marketplace add cpeaustriajc/cj-stack
+/plugin install writing@cj-stack
 ```
 
-Link more lab skills into `/tmp/lab/skills/` to try them together. The skill then loads as `/lab:technical-writing`.
+To turn the plugin off, run `claude plugin disable writing@cj-stack`. This also turns off every other skill in `writing`.
 
 ## What it does
 
@@ -50,7 +48,7 @@ Link more lab skills into `/tmp/lab/skills/` to try them together. The skill the
 - [SKILL.md](SKILL.md): the method and the sentence rules.
 - [references/diataxis.md](references/diataxis.md): the rules for each of the four modes.
 - [references/worked-example.md](references/worked-example.md): one rewrite, before and after.
-- [Evals](../evals/): the `technical-writing-readme-rewrite` and `technical-writing-not-ui-copy` cases.
+- [Evals](../../evals/): the `technical-writing-readme-rewrite` and `technical-writing-not-ui-copy` cases.
 - [LICENSE](LICENSE): adapted from pstack by Lauren Tan, under the MIT licence.
 
 ### Sources and evidence
@@ -59,6 +57,6 @@ Link more lab skills into `/tmp/lab/skills/` to try them together. The skill the
 - Changes: repo rules first, ASD-STE100 sentence limits, and pstack's own repo rules removed.
 - Status: tested on one case. In `technical-writing-readme-rewrite`, typed as `/technical-writing`, 2 of 2 runs pass with the plugin and 0 of 2 pass without it.
 - Without the plugin, Claude does not read `CONTRIBUTING.md` and keeps "ratchet" and the semicolon. A PR description case passed 2 of 2 in both arms, so it was dropped.
-- Eval command: `claude plugin eval ./lab --eval-dir evals --case 'technical-writing-*' --scaffold`.
+- Eval command: `claude plugin eval plugins/writing --case 'technical-writing-*' --scaffold`.
 - Native check: Claude Code has no writing standard. Output styles set the chat tone for a whole session and are not picked by task.
 - Prior art: Matt Pocock's `writing-for-agents` covers docs that agents read. His `writing-*` skills shape articles. Neither covers engineering docs for people.
