@@ -278,28 +278,17 @@ if [ -n "$branch" ]; then
   add 1 1 2 "$label"
 fi
 
-# --- Mod state: modes and loop-brake streak, published by mods as files ---
-# Each file is parsed on its own so a corrupt one cannot hide the other.
-mod_mode=; mod_streak=0; mod_cap=3
+# --- Mod state: the session-modes mode, published by the mod as a file ---
+mod_mode=
 mod_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/mod-state"
 case "$session_id" in ""|*[!A-Za-z0-9._-]*) ;; *)
-  mod_m=; mod_l=
+  mod_m=
   [ -f "$mod_dir/$session_id.session-modes.json" ] && IFS= read -r -d '' mod_m < "$mod_dir/$session_id.session-modes.json"
-  [ -f "$mod_dir/$session_id.loop-brake.json" ] && IFS= read -r -d '' mod_l < "$mod_dir/$session_id.loop-brake.json"
-  if [ -n "$mod_m$mod_l" ]; then
-    for mod_line in $(jq -rn --arg m "$mod_m" --arg l "$mod_l" '
+  if [ -n "$mod_m" ]; then
+    mod_mode=$(jq -rn --arg m "$mod_m" '
       ($m | try fromjson catch {}) as $a
-      | ($l | try fromjson catch {}) as $b
-      | (if ($a.mode | IN("audit","no-pr","chat")) then "m:\($a.mode)" else empty end),
-        (if ($b.streak | type) == "number" then
-           "s:\($b.streak | floor):\(if ($b.cap | type) == "number" then $b.cap | floor else 3 end)"
-         else empty end)
-    ' 2>/dev/null); do
-      case "$mod_line" in
-        m:*) mod_mode=${mod_line#m:} ;;
-        s:*) mod_rest=${mod_line#s:}; mod_streak=$(int "${mod_rest%%:*}"); mod_cap=$(int "${mod_rest##*:}") ;;
-      esac
-    done
+      | if ($a.mode | IN("audit","no-pr","chat")) then $a.mode else empty end
+    ' 2>/dev/null)
   fi
   ;;
 esac
@@ -308,7 +297,6 @@ case "$mod_mode" in
   no-pr) add 1 1 3 "${bold}${yellow}no-PR mode${reset}" ;;
   chat)  add 1 1 3 "${bold}${yellow}chat mode${reset}" ;;
 esac
-[ "$mod_streak" -gt 0 ] && add 2 1 3 "${yellow}loop ${mod_streak}/${mod_cap}${reset}"
 
 # --- PR for this branch: cached gh result, refreshed off the render path ---
 pr_ci=

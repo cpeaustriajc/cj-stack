@@ -47,13 +47,13 @@ function world(on: On, transcript: string | Error, blocks = false) {
 const stop = ($: any) => $.classic.Stop({ session_id: 's1', transcript_path: '/t.jsonl', stop_hook_active: false })
 
 test('a correction during a skill run suggests hone for that skill', async ($, on) => {
-  const w = world(on, lines(skillUse('cj-stack:ui-polish'), claude, said('no, wrong easing')))
+  const w = world(on, lines(skillUse('design:ui-polish'), claude, said('no, wrong easing')))
   await stop($)
   expect(w.logs).toEqual(['1 correction during ui-polish. Run /hone ui-polish?'])
 })
 
 test('a slash command starts the skill', async ($, on) => {
-  const w = world(on, lines(command('/cj-stack:break-it'), claude, said('[Request interrupted by user]'), said("don't do that")))
+  const w = world(on, lines(command('/engineering:break-it'), claude, said('[Request interrupted by user]'), said("don't do that")))
   await stop($)
   expect(w.logs).toEqual(['2 corrections during break-it. Run /hone break-it?'])
 })

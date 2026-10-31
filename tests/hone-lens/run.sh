@@ -6,12 +6,13 @@ set -euo pipefail
 root="$(git rev-parse --show-toplevel)"; p="$(mktemp -d)"; trap 'rm -rf "$p"' EXIT
 mkdir -p "$p/.claude-plugin" "$p/skills" "$p/evals"
 # Copies, not symlinks: the eval sandbox refuses reads through a link to the repo.
-while read -r s; do cp -R "$root/skills/${s#./}" "$p/skills/"; done \
-  < <(python3 -I -c "import json,sys;print('\n'.join(json.load(open(sys.argv[1]))['skills']))" "$root/skills/.claude-plugin/plugin.json")
+for d in "$root"/plugins/*/skills/*/; do cp -R "${d%/}" "$p/skills/"; done
 if [[ -n "${1:-}" ]]; then
   rm -rf "$p/skills/hone"; mkdir -p "$p/old"
-  git -C "$root" archive "$1" skills/knowledge/hone | tar -x -C "$p/old"
-  mv "$p/old/skills/knowledge/hone" "$p/skills/hone"
+  # A ref from before the plugin split has hone in skills/knowledge/.
+  src=plugins/knowledge/skills/hone; git -C "$root" cat-file -e "$1:$src" 2>/dev/null || src=skills/knowledge/hone
+  git -C "$root" archive "$1" "$src" | tar -x -C "$p/old"
+  mv "$p/old/$src" "$p/skills/hone"
 fi
 echo '{"name":"cj-stack","version":"0.0.0-eval"}' > "$p/.claude-plugin/plugin.json"
 cp -R "$root/tests/hone-lens/cases/." "$p/evals/"

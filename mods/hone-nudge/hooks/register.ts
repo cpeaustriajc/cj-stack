@@ -4,12 +4,15 @@ type Api = Parameters<Hook<'classic.Stop'>>[0]
 
 const MOD = 'hone-nudge'
 const WEEK = 7 * 86_400_000
-// Keep SHIPPED in step with the skills array of the cj-stack plugin in marketplace.json.
-const SHIPPED = new Set([
-  'vision', 'shape', 'tickets', 'grill', 'project-knowledge', 'hone', 'break-it', 'ui-polish',
-  'feature-files', 'playbooks', 'interrogate', 'commit', 'create-pr',
+// Keep SHIPPED in step with the skills of the four skill plugins in plugins/<plugin>/skills/.
+const SHIPPED = new Map([
+  ['vision', 'planning'], ['shape', 'planning'], ['tickets', 'planning'], ['grill', 'planning'],
+  ['project-knowledge', 'knowledge'], ['hone', 'knowledge'],
+  ['playbooks', 'engineering'], ['break-it', 'engineering'], ['feature-files', 'engineering'],
+  ['interrogate', 'engineering'], ['commit', 'engineering'], ['create-pr', 'engineering'],
+  ['ui-polish', 'design'], ['painting-craft', 'design'],
 ])
-// Keep this detection in step with skills/knowledge/hone/scripts/corrections.py, which a separate plugin cannot import.
+// Keep this detection in step with plugins/knowledge/skills/hone/scripts/corrections.py, which a separate plugin cannot import.
 const CORRECTION = /^\s*(no\b|nope|why\b|stop\b|don'?t\b|do not\b|i already|i said|i meant|that's not|wrong|huh|wait\b|actually\b|\?\?)/i
 const INTERRUPT = '[Request interrupted by user'
 const COMMAND = /<command-name>\s*([^<\s]+)\s*<\/command-name>/
@@ -17,11 +20,11 @@ const COMMAND = /<command-name>\s*([^<\s]+)\s*<\/command-name>/
 type Entry = { type?: string; isSidechain?: boolean; message?: { content?: unknown } }
 type Block = { type?: string; text?: string; name?: string; id?: string; tool_use_id?: string; input?: { skill?: unknown }; content?: unknown }
 
-// A prefix other than cj-stack means someone else's skill of the same name.
+// A prefix other than the skill's own plugin means someone else's skill of the same name.
 function shippedName(raw: string): string | undefined {
   const parts = raw.trim().replace(/^\//, '').split(':')
   const name = parts[parts.length - 1]
-  const prefixOk = parts.length === 1 || parts[0] === 'cj-stack'
+  const prefixOk = parts.length === 1 || parts[0] === SHIPPED.get(name)
   return prefixOk && SHIPPED.has(name) ? name : undefined
 }
 

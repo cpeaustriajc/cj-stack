@@ -1,0 +1,112 @@
+---
+name: vision
+description: >
+  This skill should be used when the user has a product idea, asks "is this worth building" or if
+  a tool can sell, says "grill me on this idea", "plan the product" or "set up the initiative" or
+  wants a product update. No ideation.
+---
+
+# Vision
+
+The product level of a top-down plan, and the vaguest one, so this skill grills it itself. Read
+`../shape/references/top-down.md` first: the five rules, finding the tracker (use its adapter's
+Product row), and how writes are made and checked.
+
+## 1. Grill me
+
+Run the interview from `../grill/SKILL.md`, from **Grilling** to **Ending**: the ledger, rounds
+of questions with recommended answers, lookups before asking. Skip its sizing; a product idea is
+always grilled. An idea handed over from `scout` arrives with its filter scores, which answer
+the Real, Reach and copies rows of "Is it worth building"; start the ledger from them and ask only what scored
+unknown. What changes at this level:
+
+- **Breadth first.** Round 1 asks one question per branch before going deep on any: who it is
+  for, their problem today, whether it is worth it ("Is it worth building"), the destination, how we'll know it
+  worked, the first version's cut, and the riskiest unknown. Going deep early spends the
+  interview on a branch that the worth-it answer may cut.
+- **The ledger grows the product.** Each settled branch becomes a line of "Write the product". Show the
+  Features list growing each round, numbered F1…Fn.
+- **Vague may stay vague.** When I can't answer sharply and no lookup or prototype would settle
+  it, put it under Not yet specified and move on. Pressing a vague answer into a feature invents
+  one.
+- **Make it concrete.** Ask through one person in one moment ("Ana's domain lapses on Friday
+  night. What does she do first?"). When words aren't landing, offer a rough sketch, a mock
+  headline or a one-screen flow as an option.
+- **The riskiest unknown gets a test, not an opinion.** If a lookup, a prototype or a talk with a
+  user can settle it, make that the first item of the first project instead of deciding it here.
+
+The interview ends when every branch is settled, out of scope or not yet specified. Post the
+ledger as the draft product and ask whether it is right before writing anything.
+
+## 2. Is it worth building, and worth my time?
+
+Settle this first; every later answer depends on it. Look up what you can before asking. Ask who
+it is for if that isn't plain, because the questions differ:
+
+| Question | For others | For me alone |
+|---|---|---|
+| **Real** | Who has the problem, how often, and what they do now. A workaround people pay for or put up with is evidence; "it would be nice" is not. | How often I hit it and the minutes it costs. Five minutes a day is about 30 hours a year: the budget to beat, if time saved is the point. |
+| **Already solved** | Existing products, tools or a spreadsheet. Say what this does that they don't, or recommend one. | A tool 80% there with some setup, a script, a spreadsheet: an option to price, not a reason to stop. |
+| **Cost** | My weeks to a first usable version, plus running and upkeep. Estimates are mine; label yours as guesses. | Evenings and weekends, plus upkeep when an API or the OS changes. |
+| **Reach and copies** | How I reach the people who pay, and what a weekend copy built with an agent can't take: distribution I own, data that accrues per customer, a workflow it sits in, trust, compliance. If a copy with an audience would win, say so. | Not asked. |
+| **Displaces** | What else that time would go to; I decide which matters more. | The same. |
+| **Returns** | Money, time saved, learning or joy; say which. | Time saved, learning or joy. For learning or joy the time math doesn't apply, but the build gets a timebox ("two weekends") that ends in a keep-going or stop decision. |
+
+Then recommend one verdict, with its reason in a line: **build**; **shrink** (a smaller first
+version is worth it, the whole isn't yet); **test first** (one cheap check decides it: a landing
+page, five conversations, a prototype); or **don't build**, which ends the interview. Test first
+and don't build are good outcomes; say them plainly when the evidence points there.
+
+## 3. Write the product
+
+In the tracker object the adapter names for the Product level:
+
+```markdown
+Status: Draft | Confirmed (<date>, <approver>)
+
+## Destination
+<Who it is for, the problem it solves, what the product is once it exists, in neutral present
+tense: "Buyers find and buy a domain in one visit".>
+
+## Worth it
+<The verdict and why, from "Is it worth building".>
+
+## Success
+<One or two observations or measures that say it worked.>
+
+## Features
+F1. <Outcome in one line.> → <project, or "not yet shaped">
+
+## Sequence
+<The order features are shaped and built, and what each waits on. Start with the thinnest
+version of the whole product that works end to end and answers the riskiest unknown.>
+
+## Not yet specified
+- <What is surely coming but can't yet be stated sharply.>
+
+## Out of scope
+- <What this product deliberately is not.>
+```
+
+- **Features are outcomes**, one line each, not screens or components. Numbers never change; a
+  dropped feature is struck through, so projects citing it still resolve.
+- **Feature or not yet specified?** The test is whether it can be stated sharply now, not
+  whether it is next. A not-yet-specified item is coarser than a feature, and one later answer
+  may turn it into several features or none.
+- **Confirmed means complete**: Worth it and Out of scope are filled. A test-first verdict makes
+  the test the first item of the first project, and the product stays Draft until its result is
+  in.
+
+## 4. Hand down, in stages
+
+1. Once the product is Confirmed, create one project per feature in the Sequence's first step,
+   linked to the product and holding only the feature's line. Later features wait their turn.
+2. Hand the first project to `shape`. The next feature is shaped when the project before it
+   reaches Launch, or sooner if I say so, so later features benefit from what the launch taught.
+3. At each Launch, when a feature changes after its project exists, and for an update or an
+   audit, read `references/later.md`.
+
+## 5. From personal to sellable
+
+When something I built for myself might sell, read `references/personal-to-sellable.md` before
+you run "Is it worth building" again for others.

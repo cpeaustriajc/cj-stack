@@ -1,6 +1,6 @@
 # hone-nudge
 
-A mod (a plugin that adds a hook to Claude Code) that suggests `/hone <skill>` after you correct Claude during a cj-stack skill. It points you to the [hone skill](../../skills/knowledge/hone/README.md), which turns repeated corrections into lasting fixes.
+A mod (a plugin that adds a hook to Claude Code) that suggests `/hone <skill>` after you correct Claude during a cj-stack skill. It points you to the [hone skill](../../plugins/knowledge/skills/hone/README.md), which turns repeated corrections into lasting fixes.
 
 ## Why
 
@@ -15,11 +15,11 @@ hone-nudge reads the session transcript when a turn ends. If you corrected Claud
 /plugin install hone-nudge@cj-stack
 ```
 
-To see that it is on, run `claude plugin list` and look for `hone-nudge`. The mod is optional: `cj-stack` does not install it.
+To see that it is on, run `claude plugin list` and look for `hone-nudge`. The mod is optional: no skill plugin installs it.
 
 ## Example
 
-1. You run `/cj-stack:ui-polish`. Claude works on the screen.
+1. You run `/design:ui-polish`. Claude works on the screen.
 2. You reply "no, wrong easing". The message counts as a correction.
 3. Claude ends its turn. The mod finds one correction during `ui-polish`.
 
@@ -62,5 +62,5 @@ To turn the mod off, run `claude plugin disable hone-nudge@cj-stack`.
 
 - [hooks/register.ts](hooks/register.ts): the hook source.
 - [hooks/register.test.ts](hooks/register.test.ts): the tests.
-- [hone skill](../../skills/knowledge/hone/README.md): what to do after the nudge.
-- [.claude-plugin/plugin.json](.claude-plugin/plugin.json): the manifest.
+- [hone skill](../../plugins/knowledge/skills/hone/README.md): what to do after the nudge.
+- [marketplace.json](../../.claude-plugin/marketplace.json): the manifest, in this mod's entry.
