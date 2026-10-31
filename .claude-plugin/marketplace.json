@@ -140,28 +140,6 @@
       "category": "productivity"
     },
     {
-      "name": "kill-guard",
-      "displayName": "Kill Guard",
-      "description": "Keep other checkouts' servers running — denies a kill by process name or port; a named PID passes.",
-      "version": "0.1.1",
-      "author": {
-        "name": "John Carlo Austria"
-      },
-      "source": "./mods/kill-guard",
-      "category": "productivity"
-    },
-    {
-      "name": "git-guard",
-      "displayName": "Git Guard",
-      "description": "Keep work that git can lose — denies git branch -D, a force push to main and a discard on a dirty tree.",
-      "version": "0.1.1",
-      "author": {
-        "name": "John Carlo Austria"
-      },
-      "source": "./mods/git-guard",
-      "category": "productivity"
-    },
-    {
       "name": "test-guard",
       "displayName": "Test Guard",
       "description": "Stop tests changed to pass — denies an edit that changes or removes a test line at HEAD; additions pass.",
@@ -170,17 +148,6 @@
         "name": "John Carlo Austria"
       },
       "source": "./mods/test-guard",
-      "category": "productivity"
-    },
-    {
-      "name": "bash-trim",
-      "displayName": "Bash Trim",
-      "description": "Keep long sessions lean — cuts a long successful Bash output to its first 2,000 and last 3,000 characters.",
-      "version": "0.1.1",
-      "author": {
-        "name": "John Carlo Austria"
-      },
-      "source": "./mods/bash-trim",
       "category": "productivity"
     }
   ]

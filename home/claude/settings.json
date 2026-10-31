@@ -1,5 +1,6 @@
 {
   "cleanupPeriodDays": 7,
+  "bashOutputMaxChars": 10000,
   "env": {
     "CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY": "1",
     "CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE": "1",
@@ -166,8 +167,7 @@
     "frontend-design@anthropic-plugin-directory": true,
     "hone-nudge@cj-stack": true,
     "work-folder@cj-stack": true,
-    "session-modes@cj-stack": true,
-    "git-guard@cj-stack": true
+    "session-modes@cj-stack": true
   },
   "extraKnownMarketplaces": {
     "chrome-devtools-plugins": {
@@ -252,5 +252,5 @@
   "disableDeepLinkRegistration": "disable",
   "voiceEnabled": true,
   "autoUpdaterChannel": "latest",
-  "planDirectory": "./plans"
+  "plansDirectory": ".claude/work/plans"
 }

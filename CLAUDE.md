@@ -98,3 +98,16 @@ its settings and hooks, the auto-mode classifier. It adds only what the harness 
 
 This repo is the only source. Never hand-copy a skill into `~/.claude/skills` or a project's
 `.agents/skills`: a copy drifts, and a skill installed both ways is listed twice in every session.
+
+## Claude config is shared through chezmoi
+
+`home/claude/` holds the shared `~/.claude` config; templates in `$(chezmoi source-path)` include
+it and add the private parts. Never share machine state (`projects/`, memory, transcripts,
+`.claude.json`).
+
+- Edit here, then `chezmoi diff` and `chezmoi apply`: an apply silently reverts what Claude Code
+  wrote to `settings.json`. `chezmoi re-add` does not work on the templates.
+- For `settings.json`, run `dot_claude/.settings-capture.sh` in dotfiles: public part here,
+  private permissions to `.settings-private.json` there; commit both. `.settings-deny.json` stays
+  on this machine.
+- This repo is public: no sensitive information.
