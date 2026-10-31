@@ -22,7 +22,7 @@ files to `~`. It works on macOS and Linux.
 | `~/.claude/settings.json` | only the keys in `dot_claude/.settings.json`, merged by `dot_claude/modify_private_settings.json`; every other live key keeps its live text |
 | `~/.config/nvim/` | `dot_config/nvim/` |
 | `~/.config/tmux/` | `dot_config/tmux/`; `tmux.conf.tmpl` renders per OS |
-| `~/.zshrc` | `private_dot_zshrc` (mode 0600) |
+| `~/.zshrc` | `dot_zshrc` |
 
 tmux is deprecated: it is no longer maintained. Use `claude agents` for parallel sessions. The
 status bar uses Catppuccin Mocha (dark) or Latte (light), chosen from the system appearance when
