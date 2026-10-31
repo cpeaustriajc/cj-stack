@@ -1,9 +1,9 @@
 ---
 name: technical-writing
 description: >
-  This skill should be used when writing or reviewing a doc, README, RFC, spec, PR description
-  or commit message. It reads the repo's own writing rules first, then sets the structure and
-  the ASD-STE100 sentences.
+  This skill should be used when writing, rewriting or reviewing a doc, README, RFC, spec, PR
+  description or commit message, even one paragraph. It reads the repo's own writing rules
+  first, then applies ASD-STE100 sentences.
 ---
 
 # Technical writing
@@ -14,7 +14,7 @@ Write so a tired engineer understands on the first read.
 
 Before you write, read the repo's own writing rules: `CLAUDE.md`, `.claude/rules/`,
 `CONTRIBUTING`, and a docs style guide if one exists. Where they differ from this skill, they
-win. Example: in cj-stack, `.claude/rules/readme.md` sets the structure of a README.
+win. Example: a README rule in `.claude/rules/` sets the structure of a README.
 
 Three rules sit above the layers:
 

@@ -47,13 +47,15 @@ The opt-in `cj-lab` plugin ships it:
 - [SKILL.md](SKILL.md): the method and the sentence rules.
 - [references/diataxis.md](references/diataxis.md): the rules for each of the four modes.
 - [references/worked-example.md](references/worked-example.md): one rewrite, before and after.
-- [Evals](../evals/): the `technical-writing-*` cases.
+- [Evals](../evals/): the `technical-writing-readme-rewrite` and `technical-writing-not-ui-copy` cases.
 - [LICENSE](LICENSE): adapted from pstack by Lauren Tan, under the MIT licence.
 
 ### Sources and evidence
 
 - Source: pstack's `technical-writing` by Lauren Tan, from `cursor/plugins` at commit `4dd1d05`, under the MIT licence.
 - Changes: repo rules first, ASD-STE100 sentence limits, model-invocable, and pstack's own repo rules removed.
-- Status: untested. The eval result is in the cj-lab evals below.
+- Status: tested on one case. In `technical-writing-readme-rewrite`, 2 of 2 runs pass with the plugin and 0 of 2 pass without it.
+- Without the plugin, Claude does not read `CONTRIBUTING.md` and keeps "ratchet" and the semicolon. A PR description case passed 2 of 2 in both arms, so it was dropped.
+- Eval command: `claude plugin eval ./skills/in-progress --eval-dir evals --case 'technical-writing-*' --scaffold`.
 - Native check: Claude Code has no writing standard. Output styles set the chat tone for a whole session and are not picked by task.
 - Prior art: Matt Pocock's `writing-for-agents` covers docs that agents read. His `writing-*` skills shape articles. Neither covers engineering docs for people.
